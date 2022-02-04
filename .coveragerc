@@ -1,0 +1,7 @@
+[run]
+branch = true
+omit = */tests/*, */migrations/*, */urls.py, */settings/*, */wsgi.py, manage.py, fabfile.py, /usr/local/*, ./setup.py, ./acsia_agent_proj/manage.py 
+source = .
+
+[report]
+show_missing = true
