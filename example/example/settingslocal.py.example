@@ -27,7 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'spid_cie_oidc_op'
+    'spid_cie_oidc_trust_anchor'
 ]
 
 DATABASES = {
@@ -103,7 +103,7 @@ LOGGING = {
           "class": "logging.handlers.TimedRotatingFileHandler",
           "level": "INFO",
           "formatter": "default",
-          "filename": f"{BASE_DIR}/logs/spid_cie_oidc_op.log",
+          "filename": f"{BASE_DIR}/logs/trust_anchor.log",
           "when": "midnight",
           "backupCount": 96
         }
