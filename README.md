@@ -44,7 +44,7 @@ Install the example project and have a demo
 
 ````
 git clone https://github.com/peppelinux/spid-cie-oidc-trust-anchor
-cd spid-cie-oidc-op
+cd spid-cie-oidc-trust-anchor
 pip install -e .
 
 cd example
