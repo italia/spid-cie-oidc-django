@@ -1,13 +1,16 @@
-# spid-cie-oidc-authority
-SPID/CIE OIDC Federation Authority fully compliant to italian guidelines.
+# spid-cie-oidc
+SPID/CIE OIDC Federation SDK.
 
 This project proposes the following features, divided into separate applications:
 
-1. OIDC Federation 1.0 onboarding interface, management and enduser
+1. OIDC Federation 1.0 onboarding
 2. OIDC Federation 1.0 Authority with the following endpoints:
-    1. fetch
-    2. listing
-    3. evaluate endpoints
+    - fetch
+    - listing
+    - evaluate endpoints
+3. Openid Connect Provider
+4. Openid Connect Relying Party test suite, disabled for production execution contexts
+
 
 # Stack
 
@@ -33,17 +36,17 @@ virtualenv -p python3 --copies env
 source env/bin/activate
 ````
 
-Install __spid-cie-oidc-authority__ as python package and use it in your django project
+Install __spid-cie-oidc__ as python package and use it in your django project
 ````
-pip install spid-cie-oidc-authority
+pip install spid-cie-oidc
 
-# then include `spid_cie_oidc_authority` in your project settings.INSTALLED_APPS
+# then include `spid_cie_oidc` in your project settings.INSTALLED_APPS
 ````
 
 Install the example project and have a demo
 
 ````
-git clone https://github.com/peppelinux/spid-cie-oidc-authority
+git clone https://github.com/peppelinux/spid-cie-oidc
 cd spid-cie-oidc-trust-anchor
 pip install -e .
 

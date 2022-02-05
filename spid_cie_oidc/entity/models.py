@@ -2,8 +2,8 @@ from django.db import models
 from django.utils.translation import gettext as _
 from django.utils import timezone
 
-from spid_cie_oidc_entity.abstract_models import TimeStampedModel
-from spid_cie_oidc_entity.jwks import (
+from spid_cie_oidc.entity.abstract_models import TimeStampedModel
+from spid_cie_oidc.entity.jwks import (
     create_jwk,
     serialize_rsa_key,
     private_pem_from_jwk,
@@ -142,7 +142,9 @@ class FederationEntityConfiguration(TimeStampedModel):
     def entity_configuration(self):
         _now = timezone.localtime()
         conf = {
-          "exp": int((_now + datetime.timedelta(minutes = self.default_exp)).timestamp()),
+          "exp": int(
+            (_now + datetime.timedelta(minutes = self.default_exp)
+          ).timestamp()),
           "iat": int(_now.timestamp()),
           "iss": self.sub,
           "sub": self.sub,

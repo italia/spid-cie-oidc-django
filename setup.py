@@ -7,7 +7,7 @@ from glob import glob
 from setuptools import setup, find_packages
 
 SRC_FOLDER = '.'
-PKG_NAME = 'spid_cie_oidc_entity'
+PKG_NAME = 'spid_cie_oidc'
 
 INSTALL_REQUIRES = [
     "Django>=4.0",
@@ -20,7 +20,7 @@ INSTALL_REQUIRES = [
 with open(os.path.join(os.path.dirname(__file__), 'README.md')) as readme:
     README = readme.read()
 
-with open(f'{PKG_NAME}/__init__.py', 'r') as fd:
+with open(f'{SRC_FOLDER}{os.path.sep}{PKG_NAME}/__init__.py', 'r') as fd:
     VERSION = re.search(
         r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
         fd.read(), re.MULTILINE
@@ -39,10 +39,10 @@ setup(
     license=LICENSE,
     url=f"https://github.com/peppelinux/{PKG_NAME.replace('_', '-')}",
     packages=[PKG_NAME, ],
-    package_dir={PKG_NAME: f'{SRC_FOLDER}/{PKG_NAME}'},
+    package_dir={f"{PKG_NAME}": f"{SRC_FOLDER}/{PKG_NAME}"},
 
     package_data={
-        PKG_NAME: [
+        f"{PKG_NAME}": [
             i.replace(
                 f'{SRC_FOLDER}{os.path.sep}{PKG_NAME}{os.path.sep}', ''
             )

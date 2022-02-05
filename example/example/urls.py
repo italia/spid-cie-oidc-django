@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path, re_path
 from django.views.static import serve
 
-from spid_cie_oidc_entity.urls import urlpatterns as ta_urlpatterns
+from spid_cie_oidc.entity.urls import urlpatterns as ta_urlpatterns
 
 admin.site.site_header = "OIDC Federation Entity Administration"
 admin.site.site_title = "OIDC Federation"
