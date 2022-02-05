@@ -14,19 +14,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.conf import settings
-from django.contrib import admin
 from django.urls import path, re_path
-from django.views.static import serve
 
-from spid_cie_oidc_authority.urls import urlpatterns as ta_urlpatterns
+from . views import *
 
-admin.site.site_header = "OIDC Federation Entity Administration"
-admin.site.site_title = "OIDC Federation"
-admin.site.index_title = "Welcome to OIDC Federation Entity Admin backend"
 
 urlpatterns = [
-    path(f"{settings.ADMIN_PATH}/", admin.site.urls),
-    re_path('^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
+    path(
+            f".well-known/openid-federation",
+            entity_configuration,
+            name='entity_configuration'
+    ),
+    path(f"fetch/", fetch, name='oidcfed_fetch'),
 ]
-
-urlpatterns.extend(ta_urlpatterns)

@@ -3,14 +3,12 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-ACSIA_COMMANDS_OUTPUT_DIR = f"{BASE_DIR}/logs/outputs"
-
 # SECURITY WARNING: keep the secret key used in production secret!
 # CHANGE THIS VALUE
 SECRET_KEY = 'lrx(fg&+2e=$l=y8$!£$%$/£%412345234534543--345234-dfdfgsdf-myg%r3z!yjm(lg*l%-z'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 # the path corresponding the admin backend, default if not defined: admin/
 # CHANGE THIS VALUE
@@ -27,7 +25,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'spid_cie_oidc_trust_anchor'
+    'prettyjson',
+    'spid_cie_oidc_authority'
 ]
 
 DATABASES = {
@@ -58,7 +57,7 @@ USE_TZ = True
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 65000
 
 # email notification on errors
-# DEFAULT_FROM_EMAIL = 'acsia-agent-noreply@DOMAIN'
+# DEFAULT_FROM_EMAIL = 'fedauth-noreply@DOMAIN'
 # SERVER_EMAIL = DEFAULT_FROM_EMAIL
 # EMAIL_HOST = 'smtpservice.yourdomain.it'
 # EMAIL_HOST_USER = 'myemail@hotmail.com'
@@ -103,7 +102,7 @@ LOGGING = {
           "class": "logging.handlers.TimedRotatingFileHandler",
           "level": "INFO",
           "formatter": "default",
-          "filename": f"{BASE_DIR}/logs/trust_anchor.log",
+          "filename": f"{BASE_DIR}/logs/fedauth.log",
           "when": "midnight",
           "backupCount": 96
         }
