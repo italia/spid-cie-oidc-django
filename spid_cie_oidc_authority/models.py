@@ -81,12 +81,6 @@ class FederationAuthorityConfiguration(TimeStampedModel):
         help_text=_("federation_entity metadata"),
         default=dict,
     )
-    watchdog_check_interval = models.PositiveIntegerField(
-        default=5, help_text=_(
-            "Acsia agent will check watchdog commands and execute ephemeral "
-            "with this timeout."
-        )
-    )
     http_timeout = models.PositiveIntegerField(
         default=5, help_text=_("in seconds")
     )
