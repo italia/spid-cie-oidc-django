@@ -119,11 +119,9 @@ class FederationEntityConfiguration(TimeStampedModel):
     def public_jwks(self):
         res = []
         for i in self.jwks:
-            res.append(
-                serialize_rsa_key(
-                    key_from_jwk_dict(i).public_key()
-                )
-            )
+            skey = serialize_rsa_key(key_from_jwk_dict(i).public_key())
+            skey['kid'] = i['kid']
+            res.append(skey)
         return res
 
     @property
