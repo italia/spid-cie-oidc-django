@@ -1,15 +1,14 @@
 # spid-cie-oidc
-SPID/CIE OIDC Federation SDK.
+SPID/CIE OIDC Federation.
 
-This project proposes the following features, divided into separate applications:
+This project is a WiP and contains the following applications:
 
-1. OIDC Federation 1.0 onboarding
-2. OIDC Federation 1.0 Authority with the following endpoints:
+1. OIDC Federation 1.0 onboarding panel (spid_cie_oidc.onboarding)
+2. OIDC Federation 1.0 Authority (spid_cie_oidc.entity) with the following endpoints:
     - fetch
     - listing
     - evaluate endpoints
-3. Openid Connect Provider
-4. Openid Connect Relying Party test suite, disabled for production execution contexts
+3. Openid Connect Provider (spid_cie_oidc.provider) with Relying Party test suite
 
 
 # Stack
@@ -40,14 +39,14 @@ Install __spid-cie-oidc__ as python package and use it in your django project
 ````
 pip install spid-cie-oidc
 
-# then include `spid_cie_oidc` in your project settings.INSTALLED_APPS
+# then include `spid_cie_oidc.{app_name}` in your project settings.INSTALLED_APPS
 ````
 
 Install the example project and have a demo
 
 ````
 git clone https://github.com/peppelinux/spid-cie-oidc
-cd spid-cie-oidc-trust-anchor
+cd spid-cie-oidc
 pip install -e .
 
 cd example
@@ -57,7 +56,7 @@ cp example/settingslocal.py.example example/settingslocal.py
 ./manage.py migrate
 
 # load the demo configuration
-./manage.py loaddata ../dumps/example.json
+./manage.py loaddata dumps/example.json
 
 # create a super user
 ./manage.py createsuperuser
