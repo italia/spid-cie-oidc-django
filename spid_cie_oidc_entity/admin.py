@@ -14,9 +14,9 @@ class FederationEntityConfigurationAdmin(admin.ModelAdmin):
             # )
         # }
     # }
-    list_display = ('sub', 'created', 'verify_https_cert', 'is_active')
-    list_filter = ('created', 'is_active')
+    list_display = ('sub', 'created', 'kids', 'verify_https_cert', 'is_active')
+    list_filter = ('created', 'modified', 'is_active')
     # search_fields = ('command__name',)
     readonly_fields = (
-        "created", "modified", "entity_configuration"
+        "created", "modified", "entity_configuration", "pems", "kids"
     )

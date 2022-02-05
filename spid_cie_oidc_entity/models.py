@@ -3,10 +3,13 @@ from django.utils.translation import gettext as _
 from django.utils import timezone
 
 from spid_cie_oidc_entity.abstract_models import TimeStampedModel
-from spid_cie_oidc_entity.jwks import create_jwk
-from spid_cie_oidc_entity.jwtse import serialize_rsa_key
+from spid_cie_oidc_entity.jwks import (
+    create_jwk,
+    serialize_rsa_key,
+    private_pem_from_jwk,
+    public_pem_from_jwk
+)
 from cryptojwt.jwk.jwk import key_from_jwk_dict
-
 
 import datetime
 import json
@@ -123,6 +126,20 @@ class FederationEntityConfiguration(TimeStampedModel):
                 )
             )
         return res
+
+    @property
+    def pems(self):
+        res = {}
+        for i in self.jwks:
+            res[i["kid"]] = {
+                "public": private_pem_from_jwk(i),
+                "private": public_pem_from_jwk(i)
+            }
+        return json.dumps(res, indent=2)
+
+    @property
+    def kids(self):
+        return [i['kid'] for i in self.jwks]
     
     @property
     def entity_configuration(self):

@@ -1,13 +1,9 @@
 import base64
 import binascii
-import cryptography
 import json
 import logging
 
 from cryptojwt.exception import UnsupportedAlgorithm, VerificationError
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import serialization
-from cryptojwt.jwk.rsa import RSAKey, import_public_key_from_pem_data
 from cryptojwt.jwe.jwe import factory
 from cryptojwt.jwe.jwe_rsa import JWE_RSA
 from cryptojwt.jwk.jwk import key_from_jwk_dict
@@ -36,36 +32,6 @@ def unpad_jwt_head(jwt):
     padded = f"{b}{'=' * divmod(len(b),4)[1]}"
     jwe_header = json.loads(base64.b64decode(padded))
     return jwe_header
-
-
-def serialize_rsa_key(rsa_key, kind="public", hash_func="SHA-256"):
-    """
-    rsa_key can be
-        cryptography.hazmat.backends.openssl.rsa._RSAPublicKey
-        or
-        cryptography.hazmat.backends.openssl.rsa._RSAPrivateKey
-    """
-    if isinstance(rsa_key, cryptography.hazmat.backends.openssl.rsa._RSAPublicKey):
-        data = {"pub_key": rsa_key}
-    elif isinstance(rsa_key, cryptography.hazmat.backends.openssl.rsa._RSAPrivateKey):
-        data = {"priv_key": rsa_key}
-    elif isinstance(rsa_key, (str, bytes)):
-        if kind == "private":
-            data = {
-                "priv_key": serialization.load_pem_private_key(
-                    rsa_key, password=None, backend=default_backend()
-                )
-            }
-        else:
-            _rsa_key = rsa_key.decode() if isinstance(rsa_key, bytes) else rsa_key
-            data = {"pub_key": import_public_key_from_pem_data(_rsa_key)}
-
-    jwk_obj = RSAKey(**data)
-    thumbprint = jwk_obj.thumbprint(hash_function=hash_func)
-
-    jwk = jwk_obj.to_dict()
-    jwk["kid"] = thumbprint.decode()
-    return jwk
 
 
 def encrypt_dict(plain_dict, jwk_dict) -> str:
@@ -142,16 +108,3 @@ def verify_jws(jws:str, pub_jwk:dict):
     verifier = JWS(alg=_head['alg'])
     msg = verifier.verify_compact(jws, [_key])
     return msg
-
-
-def private_pem_from_jwk(jwk_dict:dict):
-    # exports private
-    
-    _k = key_from_jwk_dict(jwk_dict)
-    pk = _k.private_key()
-    pem = pk.private_bytes(
-        encoding=serialization.Encoding.PEM,
-        format=serialization.PrivateFormat.TraditionalOpenSSL,
-        encryption_algorithm=serialization.NoEncryption()
-    )
-    return pem.decode()
