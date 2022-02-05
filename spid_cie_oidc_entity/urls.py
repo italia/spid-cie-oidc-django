@@ -18,7 +18,7 @@ from django.urls import path
 
 from . views import entity_configuration, fetch
 
-_PREF = getattr(settings, 'OIDC_PREFIX')
+_PREF = getattr(settings, 'OIDC_PREFIX', "")
 
 urlpatterns = [
     path(
