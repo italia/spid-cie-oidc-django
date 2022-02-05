@@ -25,8 +25,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'prettyjson',
-    'spid_cie_oidc_authority'
+    #'prettyjson',
+    'spid_cie_oidc_entity'
 ]
 
 DATABASES = {

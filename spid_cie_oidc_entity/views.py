@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 
-from . models import FederationAuthorityConfiguration
+from . models import FederationEntityConfiguration
 from . jwtse import create_jws
 
 
@@ -10,7 +10,7 @@ def entity_configuration(request):
         OIDC Federation Entity Configuration at
         .well-known/openid-federation
     """
-    conf = FederationAuthorityConfiguration.objects.filter(
+    conf = FederationEntityConfiguration.objects.filter(
         is_active=True
     ).first()
     jws = create_jws(

@@ -7,7 +7,7 @@ from glob import glob
 from setuptools import setup, find_packages
 
 SRC_FOLDER = '.'
-PKG_NAME = 'spid_cie_oidc_authority'
+PKG_NAME = 'spid_cie_oidc_entity'
 
 INSTALL_REQUIRES = [
     "Django>=4.0",
@@ -31,7 +31,7 @@ LICENSE = "License :: OSI Approved :: Apache Software License"
 setup(
     name=PKG_NAME,
     version=VERSION,
-    description="SPID/CIE OIDC Federation Authority",
+    description="SPID/CIE OIDC Federation Entity",
     long_description=README,
     long_description_content_type='text/markdown',
     author='Giuseppe De Marco',

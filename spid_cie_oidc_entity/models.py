@@ -2,17 +2,18 @@ from django.db import models
 from django.utils.translation import gettext as _
 from django.utils import timezone
 
-from spid_cie_oidc_authority.abstract_models import TimeStampedModel
-from spid_cie_oidc_authority.jwks import create_jwk
+from spid_cie_oidc_entity.abstract_models import TimeStampedModel
+from spid_cie_oidc_entity.jwks import create_jwk
+from spid_cie_oidc_entity.jwtse import serialize_rsa_key
 from cryptojwt.jwk.jwk import key_from_jwk_dict
-from spid_cie_oidc_authority.jwtse import serialize_rsa_key
+
 
 import datetime
 import json
 import uuid
 
 
-class FederationAuthorityConfiguration(TimeStampedModel):
+class FederationEntityConfiguration(TimeStampedModel):
     """
         Federation Authority configuration.
     """
@@ -75,10 +76,17 @@ class FederationAuthorityConfiguration(TimeStampedModel):
         ),
         default=dict,
     )
-    federation_entity_metadata = models.JSONField(
+    entity_metadatas = models.JSONField(
         blank=False,
         null=False,
-        help_text=_("federation_entity metadata"),
+        help_text=_(
+            'federation_entity metadata, eg: '
+            '{"federation_entity": { ... },'
+            '"openid_provider": { ... },'
+            '"openid_relying_party": { ... },'
+            '"oauth_resource": { ... }'
+            '}'
+        ),
         default=dict,
     )
     http_timeout = models.PositiveIntegerField(
@@ -94,8 +102,8 @@ class FederationAuthorityConfiguration(TimeStampedModel):
     )
 
     class Meta:
-        verbose_name = "Federation Authority Configuration"
-        verbose_name_plural = "Federation Authority Configurations"
+        verbose_name = "Federation Entity Configuration"
+        verbose_name_plural = "Federation Entity Configurations"
 
 
     @staticmethod
@@ -115,7 +123,7 @@ class FederationAuthorityConfiguration(TimeStampedModel):
                 )
             )
         return res
-
+    
     @property
     def entity_configuration(self):
         _now = timezone.localtime()
@@ -125,10 +133,12 @@ class FederationAuthorityConfiguration(TimeStampedModel):
           "iss": self.sub,
           "sub": self.sub,
           "jwks": self.public_jwks,
-          "metadata": {
-            "federation_entity": self.federation_entity_metadata
-          }
+          "metadata": self.entity_metadatas
         }
+
+        if self.trust_marks_issuers:
+            conf['trust_marks_issuers'] = self.trust_marks_issuers
+        
         return json.dumps(conf, indent=2)
     
     def __str__(self):
