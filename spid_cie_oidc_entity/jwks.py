@@ -14,6 +14,7 @@ DEFAULT_HASH_FUNC = getattr(
     settings, "DEFAULT_HASH_FUNC", local_settings.DEFAULT_HASH_FUNC
 )
 
+
 def create_jwk(hash_func=None):
     key = new_rsa_key()
     thumbprint = key.thumbprint(hash_function=hash_func or DEFAULT_HASH_FUNC)
@@ -24,7 +25,7 @@ def create_jwk(hash_func=None):
 
 def private_pem_from_jwk(jwk_dict:dict):
     # exports private
-    
+
     _k = key_from_jwk_dict(jwk_dict)
     pk = _k.private_key()
     pem = pk.private_bytes(
@@ -37,7 +38,7 @@ def private_pem_from_jwk(jwk_dict:dict):
 
 def public_pem_from_jwk(jwk_dict:dict):
     # exports private
-    
+
     _k = key_from_jwk_dict(jwk_dict)
     pk = _k.public_key()
     cert = pk.public_bytes(

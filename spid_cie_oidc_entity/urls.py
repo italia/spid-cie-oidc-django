@@ -14,16 +14,17 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.conf import settings
-from django.urls import path, re_path
+from django.urls import path
 
-from . views import *
+from . views import entity_configuration, fetch
 
+_PREF = getattr(settings, 'OIDC_PREFIX')
 
 urlpatterns = [
     path(
-            f".well-known/openid-federation",
+            f"{_PREF}.well-known/openid-federation",
             entity_configuration,
             name='entity_configuration'
     ),
-    path(f"fetch/", fetch, name='oidcfed_fetch'),
+    path(f"{_PREF}fetch/", fetch, name='oidcfed_fetch'),
 ]

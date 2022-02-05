@@ -77,17 +77,17 @@ def decrypt_jwe(jwe, jwk_dict) -> dict:
 
 
 def create_jws(
-        payload:dict, jwk_dict:dict, alg:str = "RS256", headers:dict = {}
-    ) -> str:
-    
+            payload:dict, jwk_dict:dict, alg:str = "RS256", headers:dict = {}
+) -> str:
+
     headers['kid'] = jwk_dict['kid']
     headers['alg'] = alg
 
     _key = key_from_jwk_dict(jwk_dict)
     _signer = JWS(payload, alg=alg)
 
-    enc_head = base64.urlsafe_b64encode(json.dumps(headers).encode())
-    enc_payload = base64.urlsafe_b64encode(json.dumps(payload).encode())
+    base64.urlsafe_b64encode(json.dumps(headers).encode())
+    base64.urlsafe_b64encode(json.dumps(payload).encode())
     signature = _signer.sign_compact([_key])
     return signature
 
@@ -104,7 +104,7 @@ def verify_jws(jws:str, pub_jwk:dict):
         raise UnsupportedAlgorithm(
             f"{_alg} has beed disabled for security reason"
         )
-    
+
     verifier = JWS(alg=_head['alg'])
     msg = verifier.verify_compact(jws, [_key])
     return msg

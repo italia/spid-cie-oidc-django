@@ -23,7 +23,7 @@ class FederationEntityConfiguration(TimeStampedModel):
 
     def _create_jwks():
         return [create_jwk()]
-    
+
     uuid = models.UUIDField(
         blank=False, null=False, default=uuid.uuid4, unique=True,
         editable=False
@@ -108,13 +108,12 @@ class FederationEntityConfiguration(TimeStampedModel):
         verbose_name = "Federation Entity Configuration"
         verbose_name_plural = "Federation Entity Configurations"
 
-
-    @staticmethod
-    def get_active_conf():
+    @classmethod
+    def get_active_conf(cls):
         """
         returns the first available active acsia engine configuration found
         """
-        return AcsiaConfiguration.objects.filter(is_active=True).first()
+        return cls.objects.filter(is_active=True).first()
 
     @property
     def public_jwks(self):
@@ -140,7 +139,7 @@ class FederationEntityConfiguration(TimeStampedModel):
     @property
     def kids(self):
         return [i['kid'] for i in self.jwks]
-    
+
     @property
     def entity_configuration(self):
         _now = timezone.localtime()
@@ -155,9 +154,9 @@ class FederationEntityConfiguration(TimeStampedModel):
 
         if self.trust_marks_issuers:
             conf['trust_marks_issuers'] = self.trust_marks_issuers
-        
+
         return json.dumps(conf, indent=2)
-    
+
     def __str__(self):
         return "{} [{}]".format(
             self.sub, "active" if self.is_active else "--"
