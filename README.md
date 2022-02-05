@@ -1,4 +1,4 @@
-# spid-cie-oidc-trust-authority
+# spid-cie-oidc-authority
 SPID/CIE OIDC Federation Authority fully compliant to italian guidelines.
 
 This project proposes the following features, divided into separate applications:
@@ -62,6 +62,16 @@ cp example/settingslocal.py.example example/settingslocal.py
 # run the web server
 ./manage.py runserver
 ````
+
+# Usage
+
+Point you webbrowser to `http://localhost:8000/admin` to get management interface.
+
+Other endpoints are:
+
+- `.well-known/openid-federation`
+- `/fetch` [WiP]
+
 
 # Contribute
 
