@@ -4,7 +4,6 @@ from django.utils.translation import gettext as _
 
 from spid_cie_oidc.entity.abstract_models import TimeStampedModel
 
-
 import uuid
 
 
@@ -22,7 +21,6 @@ ENTITY_STATUS = {
     "not_valid": False,
     "unknown": None
 }
-
 
 
 class FederationDescendant(TimeStampedModel):

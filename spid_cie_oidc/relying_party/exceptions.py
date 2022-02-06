@@ -1,0 +1,2 @@
+class MisconfiguredClientIssuer(Exception):
+    pass

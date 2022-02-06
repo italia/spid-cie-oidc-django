@@ -79,7 +79,7 @@ class FederationEntityConfiguration(TimeStampedModel):
         ),
         default=dict,
     )
-    entity_metadatas = models.JSONField(
+    metadata = models.JSONField(
         blank=False,
         null=False,
         help_text=_(
@@ -149,7 +149,7 @@ class FederationEntityConfiguration(TimeStampedModel):
           "iss": self.sub,
           "sub": self.sub,
           "jwks": self.public_jwks,
-          "metadata": self.entity_metadatas
+          "metadata": self.metadata
         }
 
         if self.trust_marks_issuers:
