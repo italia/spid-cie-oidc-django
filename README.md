@@ -45,7 +45,7 @@ This is a Django Framework project built on top of [IdentityPython](https://idpy
 
 The Database storage engine can be one of which supported by Django, the example project comes with sqlite3.
 
-Dependencies
+#### Dependencies
 ````
 apt install python3-dev python3-pip git
 python3 -m pip install --upgrade pip
@@ -68,7 +68,6 @@ pip install spid-cie-oidc
 ````
 
 #### Install the example project for demo purpose
-Install the example project and have a demo
 
 ````
 git clone https://github.com/peppelinux/spid-cie-oidc
