@@ -115,19 +115,15 @@ Your contribution is welcome, no question is useless and no answer is obvious, w
 
 #### as end user
 
-In the event that some other functionality is required, relating to specific RFCs and draft of these, please open an issue to integrate them as soon as possibile.
+Please open an issue if you found any bugs, or if you want to ask some other functionality relating to software design or RFCs/draft/best-practices.
 
 #### as developer
 
 Please open your Pull Requests on the dev branch.
 
 
+# License and Authors
 
-# License
-
-Apache 2
-
-
-# Authors
+This software is released under the Apache 2 License by the following authors:
 
 - Giuseppe De Marco <giuseppe.demarco@teamdigitale.governo.it>
