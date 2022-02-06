@@ -10,7 +10,7 @@ make it easy to build an [Openid Connect Federation](https://openid.net/specs/op
 
 We have 4 applications, which can be installed separately within a django project.
 
-1. OIDC Federation 1.0 onboarding panel (__spid_cie_oidc.onboarding__)
+1. __OIDC Federation 1.0 onboarding panel__ (spid_cie_oidc.onboarding):
     - [frontend] not yet in roadmap, [help needed](https://github.com/peppelinux/spid-cie-oidc/issues/1)
     - [backend] Automatic checks on new registered entities (descendats):
         - entity configuration:
@@ -19,14 +19,14 @@ We have 4 applications, which can be installed separately within a django projec
             - best practices checks following AgID and IPZS OIDC Fed guidelines.
         - RP authz check following AgID and IPZS OIDC Fed guidelines.
 
-2. OIDC Federation 1.0 Authority (spid_cie_oidc.entity) with the following endpoints:
+2. __OIDC Federation 1.0 Authority__ (spid_cie_oidc.entity) with the following endpoints:
     - fetch
     - listing
     - evaluate endpoints
 
-3. Openid Connect Provider (spid_cie_oidc.provider) with Relying Party test suite
+3. __Openid Connect Provider__ (spid_cie_oidc.provider) with Relying Party test suite
 
-4. Openid Connect Relying Party (spid_cie_oidc.relying_party)
+4. __Openid Connect Relying Party__ (spid_cie_oidc.relying_party)
 
 
 # Stack
