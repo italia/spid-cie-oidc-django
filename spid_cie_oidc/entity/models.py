@@ -139,7 +139,7 @@ class FederationEntityConfiguration(TimeStampedModel):
         return [i['kid'] for i in self.jwks]
 
     @property
-    def entity_configuration(self):
+    def raw_entity_configuration(self):
         _now = timezone.localtime()
         conf = {
           "exp": int(
@@ -155,7 +155,11 @@ class FederationEntityConfiguration(TimeStampedModel):
         if self.trust_marks_issuers:
             conf['trust_marks_issuers'] = self.trust_marks_issuers
 
-        return json.dumps(conf, indent=2)
+        return conf
+        
+    @property
+    def entity_configuration(self):
+        return json.dumps(self.raw_entity_configuration, indent=2)
 
     def __str__(self):
         return "{} [{}]".format(

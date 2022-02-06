@@ -98,7 +98,7 @@ class FederationDescendant(TimeStampedModel):
 
     class Meta:
         verbose_name = "Federation Entity Descendant"
-        verbose_name_plural = "Federation Entity Descendant"
+        verbose_name_plural = "Federation Entity Descendants"
 
     def __str__(self):
         return "{} [{} and {}]".format(
@@ -136,7 +136,7 @@ class FederationDescendantContact(TimeStampedModel):
 
     class Meta:
         verbose_name = "Federation Entity Contact"
-        verbose_name_plural = "Federation Entity Contact"
+        verbose_name_plural = "Federation Entity Contacts"
 
     def __str__(self):
         return f"{self.contact} {self.entity.sub}"

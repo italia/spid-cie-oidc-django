@@ -1,14 +1,30 @@
 # spid-cie-oidc
-SPID/CIE OIDC Federation.
+SPID/CIE OIDC Federation SDK.
 
-This project is a WiP and contains the following applications:
+__This project is a WiP, the wait for the first stable release v0.6.0.__
 
-1. OIDC Federation 1.0 onboarding panel (spid_cie_oidc.onboarding)
+SPID/CIE OIDC Federation is a suite of Django applications designed to
+make it easy to build an [Openid Connect Federation](https://openid.net/specs/openid-connect-federation-1_0.html).
+
+We have 4 applications, which can be installed separately within a django project.
+
+1. OIDC Federation 1.0 onboarding panel (__spid_cie_oidc.onboarding__)
+    - [frontend] not yet in roadmap, [help needed](https://github.com/peppelinux/spid-cie-oidc/issues/1)
+    - [backend] Automatic checks on new registered entities (descendats):
+        - entity configuration:
+            - reachability
+            - signature validation
+            - best practices checks following AgID and IPZS OIDC Fed guidelines.
+        - RP authz check following AgID and IPZS OIDC Fed guidelines.
+
 2. OIDC Federation 1.0 Authority (spid_cie_oidc.entity) with the following endpoints:
     - fetch
     - listing
     - evaluate endpoints
+
 3. Openid Connect Provider (spid_cie_oidc.provider) with Relying Party test suite
+
+4. Openid Connect Relying Party (spid_cie_oidc.relying_party)
 
 
 # Stack
@@ -69,10 +85,14 @@ cp example/settingslocal.py.example example/settingslocal.py
 
 Point you webbrowser to `http://localhost:8000/admin` to get management interface.
 
-Other endpoints are:
+Available endpoints
 
-- `.well-known/openid-federation`
-- `/fetch` [WiP]
+### .well-known/openid-federation`
+Where the Entity Configuration is. `?format=json` will release a json for debug purpose.
+A prefix can be configured in global settings file with parameter `OIDC_PREFIX`.
+
+### /fetch
+...
 
 
 # Contribute
