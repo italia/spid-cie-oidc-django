@@ -41,7 +41,13 @@ class FederationDescendant(TimeStampedModel):
             "an unique code that identifies this entry. "
             "For italian public service it may be the IPA code."
         ),
-        
+    )
+    name = models.CharField(
+        max_length=33,
+        help_text=_(
+            "human readable name of this entity. "
+            "It may be a unit or organization name"
+        ),
     )
     sub = models.URLField(
         max_length=255,
