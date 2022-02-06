@@ -18,7 +18,7 @@ ALLOWED_HOSTS = ['*']
 AUTH_USER_MODEL = 'accounts.User'
 
 INSTALLED_APPS = [
-    'accounts',
+    'spid_cie_oidc.accounts',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -114,7 +114,7 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': False,
         },
-        'spid_cie_oidc_op': {
+        'spid_cie_oidc': {
             'handlers': ['console', 'mail_admins', "daily"],
             'level': 'INFO',
             'propagate': False,
