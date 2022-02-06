@@ -1,7 +1,7 @@
 # spid-cie-oidc
 SPID/CIE OIDC Federation SDK.
 
-__This project is a WiP, the wait for the first stable release v0.6.0.__
+__This project is a WiP, please wait for the first stable release v0.6.0.__
 
 SPID/CIE OIDC Federation is a suite of Django applications designed to
 make it easy to build an [Openid Connect Federation](https://openid.net/specs/openid-connect-federation-1_0.html).
@@ -29,9 +29,9 @@ We have 4 applications, which can be installed separately within a django projec
 
 # Stack
 
-This is a Django Framework project with 
+This is a Django Framework project built on top of [IdentityPython](https://idpy.org/) 
 [oidcmsg](https://github.com/IdentityPython/JWTConnect-Python-OidcMsg) and
-[cryptojwt](https://github.com/IdentityPython/JWTConnect-Python-CryptoJWT) di [IdentityPython](https://idpy.org/).
+[cryptojwt](https://github.com/IdentityPython/JWTConnect-Python-CryptoJWT).
 
 the Database storage engine can be one of which supported by Django.
 
@@ -87,7 +87,7 @@ Point you webbrowser to `http://localhost:8000/admin` to get management interfac
 
 Available endpoints
 
-### .well-known/openid-federation`
+### .well-known/openid-federation
 Where the Entity Configuration is. `?format=json` will release a json for debug purpose.
 A prefix can be configured in global settings file with parameter `OIDC_PREFIX`.
 
