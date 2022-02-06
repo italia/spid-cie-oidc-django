@@ -5,6 +5,9 @@ from django.utils.translation import gettext as _
 from spid_cie_oidc.entity.abstract_models import TimeStampedModel
 
 
+import uuid
+
+
 ENTITY_TYPES = (
     "openid_relying_party",
     "openid_provider",
@@ -26,6 +29,20 @@ class FederationDescendant(TimeStampedModel):
     """
         Federation OnBoarding entries.
     """
+
+    def def_uid():
+        return f"autouid-{uuid.uuid4()}"
+    
+    uid = models.CharField(
+        max_length=33,
+        default=def_uid,
+        unique=True,
+        help_text=_(
+            "an unique code that identifies this entry. "
+            "For italian public service it may be the IPA code."
+        ),
+        
+    )
     sub = models.URLField(
         max_length=255,
         blank=False,
@@ -45,7 +62,8 @@ class FederationDescendant(TimeStampedModel):
     registrant = models.ManyToManyField(
         get_user_model(),
         help_text=_(
-            "users that can login and modify sub, contacts and jwks"
+            "Logged in users can modify only sub, contacts and jwks "
+            "attributes, if they're owner of this entry. "
         )
     )
     jwks = models.JSONField(
