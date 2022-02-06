@@ -88,7 +88,7 @@ cp example/settingslocal.py.example example/settingslocal.py
 
 Point you webbrowser to `http://localhost:8000/admin` to get management interface.
 
-Available endpoints
+# Endpoints
 
 ### .well-known/openid-federation
 Where the Entity Configuration is. `?format=json` will release a json for debug purpose.
