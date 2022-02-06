@@ -11,7 +11,6 @@ each of these can be installed separately within a django project.
 
 Table of contents:
 
-- [SPID/CIE OIDC Federation SDK](#spidcie-oidc-federation-sdk)
 - [Features](#features)
 - [Setup](#setup)
   - [Dependencies](#dependencies)
