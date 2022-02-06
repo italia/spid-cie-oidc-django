@@ -85,7 +85,7 @@ cp example/settingslocal.py.example example/settingslocal.py
 
 # Usage
 
-Point you webbrowser to `http://localhost:8000/admin` to get management interface.
+Point your web browser to `http://localhost:8000/admin` to enter in the management interface.
 
 # Endpoints
 
