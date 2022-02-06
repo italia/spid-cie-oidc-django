@@ -10,7 +10,13 @@ make it easy to build an [Openid Connect Federation](https://openid.net/specs/op
 
 We have 4 applications, which can be installed separately within a django project.
 
-1. __OIDC Federation 1.0 onboarding panel__ (spid_cie_oidc.onboarding):
+1. __OIDC Federation 1.0 Authority/Intermediary__ (spid_cie_oidc.entity) with the following endpoints:
+    - entity configuration (.well-known/openid-federation)
+    - fetch
+    - listing
+    - evaluate endpoints
+
+2. __OIDC Federation 1.0 onboarding panel__ (spid_cie_oidc.onboarding):
     - [frontend] not yet in roadmap, [help needed](https://github.com/peppelinux/spid-cie-oidc/issues/1)
     - [backend] Automatic checks on new registered entities (descendats):
         - entity configuration:
@@ -19,15 +25,18 @@ We have 4 applications, which can be installed separately within a django projec
             - best practices checks following AgID and IPZS OIDC Fed guidelines.
         - RP authz check following AgID and IPZS OIDC Fed guidelines.
 
-2. __OIDC Federation 1.0 Authority__ (spid_cie_oidc.entity) with the following endpoints:
-    - fetch
-    - listing
-    - evaluate endpoints
+3. __Openid Connect Provider__ (spid_cie_oidc.provider) with Relying Party test suite  and the following endpoints:
+    - entity configuration (.well-known/openid-federation)
+    - authorization
+    - token
+    - introspection
+    - token revocation
 
-3. __Openid Connect Provider__ (spid_cie_oidc.provider) with Relying Party test suite
-
-4. __Openid Connect Relying Party__ (spid_cie_oidc.relying_party)
-
+4. __Openid Connect Relying Party__ (spid_cie_oidc.relying_party) with the following endpoints:
+    - entity configuration (.well-known/openid-federation)
+    - authorization
+    - auth code redirect
+    - logout
 
 # Stack
 
@@ -99,10 +108,10 @@ A prefix can be configured in global settings file with parameter `OIDC_PREFIX`.
 
 # Contribute
 
-as developer
+#### as developer
 ...
 
-as end user
+#### as end user
 ...
 
 
@@ -113,4 +122,4 @@ Apache 2
 
 # Authors
 
-Giuseppe De Marco <giuseppe.demarco@teamdigitale.governo.it>
+- Giuseppe De Marco <giuseppe.demarco@teamdigitale.governo.it>
