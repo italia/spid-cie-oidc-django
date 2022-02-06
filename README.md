@@ -35,7 +35,7 @@ This is a Django Framework project built on top of [IdentityPython](https://idpy
 [oidcmsg](https://github.com/IdentityPython/JWTConnect-Python-OidcMsg) and
 [cryptojwt](https://github.com/IdentityPython/JWTConnect-Python-CryptoJWT).
 
-the Database storage engine can be one of which supported by Django.
+The Database storage engine can be one of which supported by Django, the example project comes with sqlite3.
 
 # Setup
 
