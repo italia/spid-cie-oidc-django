@@ -1,6 +1,10 @@
 # spid-cie-oidc
 SPID/CIE OIDC Federation SDK.
 
+![CI build](https://github.com/peppelinux/spid-cie-oidc/workflows/spid-cie-oidc/badge.svg)
+![Python version](https://img.shields.io/badge/license-Apache%202-blue.svg)
+![py-versions](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9-blue.svg)
+
 __This project is a WiP, please wait for the first stable release v0.6.0.__
 
 SPID/CIE OIDC Federation is a suite of Django applications designed to
