@@ -37,14 +37,6 @@ each of these can be installed separately within a django project:
     - auth code redirect
     - logout
 
-# Stack
-
-This is a Django Framework project built on top of [IdentityPython](https://idpy.org/) 
-[oidcmsg](https://github.com/IdentityPython/JWTConnect-Python-OidcMsg) and
-[cryptojwt](https://github.com/IdentityPython/JWTConnect-Python-CryptoJWT).
-
-The Database storage engine can be one of which supported by Django, the example project comes with sqlite3.
-
 # Setup
 
 Dependencies
@@ -61,6 +53,15 @@ virtualenv -p python3 --copies env
 source env/bin/activate
 ````
 
+#### Stack
+
+This is a Django Framework project built on top of [IdentityPython](https://idpy.org/) 
+[oidcmsg](https://github.com/IdentityPython/JWTConnect-Python-OidcMsg) and
+[cryptojwt](https://github.com/IdentityPython/JWTConnect-Python-CryptoJWT).
+
+The Database storage engine can be one of which supported by Django, the example project comes with sqlite3.
+
+#### Django application
 Install __spid-cie-oidc__ as python package and use it in your django project
 ````
 pip install spid-cie-oidc
@@ -68,6 +69,7 @@ pip install spid-cie-oidc
 # then include `spid_cie_oidc.{app_name}` in your project settings.INSTALLED_APPS
 ````
 
+#### Example project for demo purpose
 Install the example project and have a demo
 
 ````
@@ -99,13 +101,13 @@ cd example
 ````
 Point your web browser to `http://localhost:8000/admin` to enter in the management interface.
 
-##  Endpoints
+###  Endpoints
 
-### .well-known/openid-federation
+#### .well-known/openid-federation
 Where the Entity Configuration is. `?format=json` will release a json for debug purpose.
 A prefix can be configured in global settings file with parameter `OIDC_PREFIX`.
 
-### /fetch
+#### /fetch
 ...
 
 
