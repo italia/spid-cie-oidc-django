@@ -11,19 +11,18 @@ each of these can be installed separately within a django project.
 
 Table of contents:
 
-* [SPID/CIE OIDC Federation SDK](#spidcie-oidc-federation-sdk)
-* [Features](#features)
-* [Setup](#setup)
-         * [Dependencies](#dependencies)
-         * [Install as Django application](#install-as-django-application)
-         * [Install the example project for demo purpose](#install-the-example-project-for-demo-purpose)
+- [Features](#features)
+- [Setup](#setup)
+  - [Dependencies](#dependencies)
+  - [Install as Django application](#install-as-django-application)
+  - [Install the example project for demo purpose](#install-the-example-project-for-demo-purpose)
 * [Usage](#usage)
-      * [Endpoints](#endpoints)
-         * [.well-known/openid-federation](#well-knownopenid-federation)
-         * [/fetch](#fetch)
+  - [Endpoints](#endpoints)
+    * [.well-known/openid-federation](#well-knownopenid-federation)
+    * [/fetch](#fetch)
 * [Contribute](#contribute)
-         * [as end user](#as-end-user)
-         * [as developer](#as-developer)
+  * [as end user](#as-end-user)
+  * [as developer](#as-developer)
 * [License and Authors](#license-and-authors)
 
 
