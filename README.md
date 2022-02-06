@@ -108,11 +108,16 @@ A prefix can be configured in global settings file with parameter `OIDC_PREFIX`.
 
 # Contribute
 
-#### as developer
-...
+Your contribution is welcome, no question is useless and no answer is obvious, we need you.
 
 #### as end user
-...
+
+In the event that some other functionality is required, relating to specific RFCs and draft of these, please open an issue to integrate them as soon as possibile.
+
+#### as developer
+
+Please open your Pull Requests on the dev branch.
+
 
 
 # License
