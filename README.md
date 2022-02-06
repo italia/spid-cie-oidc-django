@@ -86,13 +86,17 @@ cp example/settingslocal.py.example example/settingslocal.py
 
 # create a super user
 ./manage.py createsuperuser
-
-# run the web server
-./manage.py runserver
 ````
 
 # Usage
 
+````
+source env/bin/activate
+cd example
+
+# run the web server
+./manage.py runserver
+````
 Point your web browser to `http://localhost:8000/admin` to enter in the management interface.
 
 ##  Endpoints
