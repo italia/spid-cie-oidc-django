@@ -25,18 +25,21 @@ SECRET_KEY = 'django-insecure-m0r77dh0g^35=_c&_r$y9#=c@_*u4m($ir=8)(j)$9j!o=*1nj
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['*']
+AUTH_USER_MODEL = 'spid_cie_oidc_accounts.User'
 
 # Application definition
 
 INSTALLED_APPS = [
+    'spid_cie_oidc.accounts',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'spid_cie_oidc.entity',
+    'spid_cie_oidc.provider'
 ]
 
 MIDDLEWARE = [
@@ -103,14 +106,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
+LANGUAGE_CODE = 'it-it'
+TIME_ZONE = 'Europe/Rome'
 USE_I18N = True
-
+USE_L10N = True
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/

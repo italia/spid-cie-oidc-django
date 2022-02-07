@@ -9,37 +9,6 @@ from django.utils.translation import gettext as _
 logger = logging.getLogger(__name__)
 
 
-class OidcProviderDiscovery(object):
-    """
-        https://openid.net/specs/openid-connect-core-1_0.html#SelfIssued
-    """
-    def provider_discovery(self, client_conf:dict):
-        """
-            Minimal Provider Discovery endpoint request processing
-        """
-        oidc_op_wk_url = f"{client_conf['issuer']}/.well-known/openid-configuration"
-        oidc_op_wk = requests.get(
-            client_conf.get('discovery_url') or oidc_op_wk_url,
-            verify=client_conf['httpc_params']['verify']
-        )
-
-        if oidc_op_wk.status_code == 200:
-            return oidc_op_wk.json()
-        else: # pragma: no cover
-            raise Exception(
-                f'Provider Discovery returns {oidc_op_wk.status_code}'
-            )
-
-    def get_jwks_from_jwks_uri(self,
-                               jwks_uri:str,
-                               verify:bool=True)->tuple:
-        """
-            builds jwks objects, importable in a Key Jar
-        """
-        jwks_dict = requests.get(jwks_uri, verify=verify).json()
-        return jwks_dict, [key_from_jwk_dict(i) for i in jwks_dict["keys"]]
-
-
 class OidcUserInfo(object):
     """
         https://openid.net/specs/openid-connect-core-1_0.html#UserInfo

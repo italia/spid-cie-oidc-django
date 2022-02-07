@@ -43,12 +43,12 @@ pip install -r requirements.txt
 cd example
 ./manage.py migrate
 ./manage.py createsuperuser
-./manage.py runserver 0.0.0.0:8888
+./manage.py runserver 0.0.0.0:8001
 ````
 
 Open your web browser and go to your debug server url, eg:
 
-`http://localhost:8888/oidc/rp/begin?issuer_id=op_test`
+`http://localhost:8001/oidc/rp/begin?sub=op_test`
 
 where `issuer_id` is one of SPID/CIE OIDC providers.
 
@@ -83,7 +83,7 @@ spid-django-oidc have an application called `op_test` that's involved in testing
 
 So, first of all execute the test server as follow
 ````
-./manage.py runserver 0.0.0.0:8888
+./manage.py runserver 0.0.0.0:8001
 ````
 
 Then run the tests in a separate shell with `./manage.py test`.

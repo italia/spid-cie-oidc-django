@@ -123,8 +123,11 @@ Point your web browser to `http://localhost:8000/admin` to enter in the manageme
 Where the Entity Configuration is. `?format=json` will release a json for debug purpose.
 A prefix can be configured in global settings file with parameter `OIDC_PREFIX`.
 
+Available for trust anchors, providers and relying parties.
+
 #### /fetch
-...
+
+Available for trust anchors
 
 
 # Contribute

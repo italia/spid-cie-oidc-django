@@ -3,7 +3,7 @@ import logging
 
 from django.contrib import admin
 
-from . models import OidcAuthenticationRequest, OidcAuthenticationToken
+from . models import OidcAuthentication, OidcAuthenticationToken
 from . utils import html_json_preview
 
 logger = logging.getLogger(__name__)
@@ -23,8 +23,8 @@ class OidcAuthenticationTokenInline(admin.StackedInline):
                        'id_token_preview')
 
 
-@admin.register(OidcAuthenticationRequest)
-class OidcAuthenticationRequestAdmin(admin.ModelAdmin):
+@admin.register(OidcAuthentication)
+class OidcAuthenticationAdmin(admin.ModelAdmin):
     search_fields = ('endpoint', 'state', 'client_id')
     list_display = ('client_id', 'state', 'endpoint', 'created', 'modified')
     list_filter = ('created', 'endpoint')

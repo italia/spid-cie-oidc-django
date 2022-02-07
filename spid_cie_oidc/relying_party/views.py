@@ -16,11 +16,12 @@ from django.utils import timezone
 from django.utils.module_loading import import_string
 from django.utils.translation import gettext as _
 
+from spid_cie_oidc.entity.trust_chain import OidcFederationTrustManager
 from . import OAuth2BaseView
 from . exceptions import MisconfiguredClientIssuer
 from . oauth2 import *
 from . oidc import *
-from . models import OidcAuthenticationRequest, OidcAuthenticationToken
+from . models import OidcAuthentication
 from . utils import (http_dict_to_redirect_uri_path,
                      http_redirect_uri_to_dict,
                      get_issuer_keyjar,
@@ -30,22 +31,23 @@ from . utils import (http_dict_to_redirect_uri_path,
 logger = logging.getLogger(__name__)
 
 
-class SpidCieOidcRpBeginView(View, OidcProviderDiscovery):
+class SpidCieOidcRpBeginView(View):
     """ View which processes the actual Authz request and
         returns a Http Redirect
     """
 
-    def get_oidc_rp_issuer(self, request):
+    def get_federation_trust(self, request):
         """
             OIDC Federation Metadata discovery for a given sub/issuer_id
         """
-        available_issuers = settings.JWTCONN_RP_CLIENTS
+        # TODO
+        available_issuers = {}
         available_issuers_len = len(available_issuers)
 
         # todo: validate it upoun a schema
-        issuer_id = request.GET.get('issuer_id')
+        sub = request.GET.get('sub')
 
-        if not issuer_id:
+        if not sub:
             if available_issuers_len > 1:
                 # TODO - a provider selection page here!
                 raise NotImplemented()
@@ -113,7 +115,7 @@ class SpidCieOidcRpBeginView(View, OidcProviderDiscovery):
             provider_jwks = json.dumps(jwks_dict),
             provider_configuration = json.dumps(provider_conf)
         )
-        OidcAuthenticationRequest.objects.create(**authz_entry)
+        OidcAuthentication.objects.create(**authz_entry)
 
         authz_data.pop('code_verifier')
         uri_path = http_dict_to_redirect_uri_path(authz_data)
@@ -141,7 +143,7 @@ class SpidCieOidcRpCallbackView(OAuth2BaseView,
     def process_user_attributes(self,
                                 userinfo:dict,
                                 client_conf:dict,
-                                authz:OidcAuthenticationRequest):
+                                authz:OidcAuthentication):
         user_map = client_conf['user_attributes_map']
         data = dict()
         for k,v in user_map.items():
@@ -183,7 +185,7 @@ class SpidCieOidcRpCallbackView(OAuth2BaseView,
            docs here
         """
         request_args = {k: v for k, v in request.GET.items()}
-        authz = OidcAuthenticationRequest.objects.filter(
+        authz = OidcAuthentication.objects.filter(
             state=request_args.get('state'),
         )
         if not authz:

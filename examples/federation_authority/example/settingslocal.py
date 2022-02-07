@@ -12,7 +12,10 @@ DEBUG = True
 
 # the path corresponding the admin backend, default if not defined: admin/
 # CHANGE THIS VALUE
-ADMIN_PATH = 'admin'
+ADMIN_PATH = 'admin/'
+
+# required for onboarding checks
+FEDERATION_TRUST_ANCHOR = "http://localhost:8000"
 
 ALLOWED_HOSTS = ['*']
 AUTH_USER_MODEL = 'spid_cie_oidc_accounts.User'
@@ -34,7 +37,7 @@ DATABASES = {
     # if you need more power
     # 'default': {
     # 'ENGINE': 'django.db.backends.mysql',
-    # 'NAME': 'uniauth',
+    # 'NAME': 'that-username',
     # 'HOST': 'localhost',
     # 'USER': 'that-user',
     # 'PASSWORD': 'that-password',
@@ -49,8 +52,8 @@ DATABASES = {
 
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+LANGUAGE_CODE = 'it-it'
+TIME_ZONE = 'Europe/Rome'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True

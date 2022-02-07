@@ -24,8 +24,10 @@ admin.site.site_header = "OIDC Federation Entity Administration"
 admin.site.site_title = "OIDC Federation"
 admin.site.index_title = "Welcome to OIDC Federation Entity Admin backend"
 
+ADMIN_PATH = getattr(settings, 'ADMIN_PATH', 'admin/')
+
 urlpatterns = [
-    path(f"{settings.ADMIN_PATH}/", admin.site.urls),
+    path(f"{ADMIN_PATH}", admin.site.urls),
     re_path('^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
 ]
 

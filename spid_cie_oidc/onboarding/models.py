@@ -1,38 +1,32 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.db.models.signals import post_save
 from django.utils.translation import gettext as _
 
 from spid_cie_oidc.entity.abstract_models import TimeStampedModel
+from spid_cie_oidc.entity.models import (
+    ENTITY_TYPES,
+    ENTITY_STATUS,
+    FederationEntityConfiguration
+)
+from spid_cie_oidc.entity.trust_chain import trust_chain_builder
 
+import logging
 import uuid
 
-
-ENTITY_TYPES = (
-    "openid_relying_party",
-    "openid_provider",
-    "federation_entity",
-    "oauth_resource"
-)
-
-ENTITY_STATUS = {
-    "unreachable": False,
-    "valid": True,
-    "signature_failed": False,
-    "not_valid": False,
-    "unknown": None
-}
+logger = logging.getLogger(__name__)
 
 
 class FederationDescendant(TimeStampedModel):
     """
         Federation OnBoarding entries.
     """
-
+    
     def def_uid():
         return f"autouid-{uuid.uuid4()}"
     
     uid = models.CharField(
-        max_length=33,
+        max_length=1024,
         default=def_uid,
         unique=True,
         help_text=_(
@@ -68,7 +62,8 @@ class FederationDescendant(TimeStampedModel):
         help_text=_(
             "Logged in users can modify only sub, contacts and jwks "
             "attributes, if they're owner of this entry. "
-        )
+        ),
+        blank=True
     )
     jwks = models.JSONField(
         blank=False,
@@ -162,3 +157,20 @@ class FederationDescendantContact(TimeStampedModel):
 
     def __str__(self):
         return f"{self.contact} {self.entity.sub}"
+
+
+# signal on each save
+def trust_chain_trigger(**kwargs):
+    subject = kwargs['instance'].sub
+
+    # onboarding uses the first available configuration of federation_entity
+    fe = FederationEntityConfiguration.objects.filter(
+        is_active=True,
+    ).first()
+    
+    logger.info(
+        f"Receiving trust chain evaluation signal for {subject}"
+    )
+    return trust_chain_builder(subject)
+post_save.connect(trust_chain_trigger, sender=FederationDescendant)
+#

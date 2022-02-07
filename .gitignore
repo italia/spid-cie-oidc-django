@@ -128,3 +128,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 example/example/settingslocal.py
+!*/logs/README.md
+*/logs/*
+

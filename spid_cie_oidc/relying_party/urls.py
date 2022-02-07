@@ -17,7 +17,6 @@ urlpatterns += path('oidc/rp/callback',
 urlpatterns += path('echo_attributes',
                     SpidCieOidcRpCallbackEchoAttributes.as_view(),
                     name='spid_cie_rp_echo_attributes'),
-
 urlpatterns += path('oidc/rp/logout',
                     oidc_rpinitiated_logout,
                     name='spid_cie_rpinitiated_logout'),

@@ -10,7 +10,7 @@ from . utils import decode_token, get_issuer_keyjar
 logger = logging.getLogger(__name__)
 
 
-class OidcAuthenticationRequest(models.Model):
+class OidcAuthentication(models.Model):
     client_id = models.CharField(max_length=255)
     state = models.CharField(max_length=255,
                              unique=True, default='state-is-unique')
@@ -24,6 +24,10 @@ class OidcAuthenticationRequest(models.Model):
 
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "OIDC Authentication"
+        verbose_name_plural = "OIDC Authentications"
 
     def __str__(self):
         return f'{self.client_id} {self.state} to {self.endpoint}'
@@ -43,7 +47,7 @@ class OidcAuthenticationToken(models.Model):
     user = models.ForeignKey(get_user_model(),
                              on_delete=models.SET_NULL,
                              blank=True, null=True)
-    authz_request = models.ForeignKey(OidcAuthenticationRequest,
+    authz_request = models.ForeignKey(OidcAuthentication,
                                       on_delete=models.CASCADE)
     code = models.CharField(max_length=255, blank=True, null=True)
     access_token = models.TextField(blank=True, null=True)

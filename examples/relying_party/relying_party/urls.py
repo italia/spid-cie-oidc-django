@@ -1,4 +1,4 @@
-"""relying_party URL Configuration
+"""acsia_agent_proj URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.0/topics/http/urls/
@@ -13,9 +13,24 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path
+from django.views.static import serve
+
+from spid_cie_oidc.entity.urls import urlpatterns as ta_urlpatterns
+from spid_cie_oidc.relying_party.urls import urlpatterns as rp_urlpatterns
+
+admin.site.site_header = "OIDC Federation Relying Party Administration"
+admin.site.site_title = "OIDC Federation Relying Party"
+admin.site.index_title = "Welcome to OIDC Federation Relying Party Admin backend"
+
+ADMIN_PATH = getattr(settings, 'ADMIN_PATH', 'admin/')
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path(f"{ADMIN_PATH}", admin.site.urls),
+    re_path('^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
 ]
+
+urlpatterns.extend(ta_urlpatterns)
+urlpatterns.extend(rp_urlpatterns)

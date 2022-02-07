@@ -27,11 +27,18 @@ DISABLED_JWT_ALGS = getattr(
 logger = logging.getLogger(__name__)
 
 
-def unpad_jwt_head(jwt):
-    b = jwt.split(".")[0]
+def unpad_jwt_element(jwt:str, position:int) -> dict:
+    b = jwt.split(".")[position]
     padded = f"{b}{'=' * divmod(len(b),4)[1]}"
-    jwe_header = json.loads(base64.b64decode(padded))
-    return jwe_header
+    data = json.loads(base64.b64decode(padded))
+    return data
+
+def unpad_jwt_head(jwt:str) -> dict:
+    return unpad_jwt_element(jwt, position = 0)
+
+
+def unpad_jwt_payload(jwt:str) -> dict:
+    return unpad_jwt_element(jwt, position = 1)
 
 
 def encrypt_dict(plain_dict, jwk_dict) -> str:
@@ -86,8 +93,6 @@ def create_jws(
     _key = key_from_jwk_dict(jwk_dict)
     _signer = JWS(payload, alg=alg)
 
-    base64.urlsafe_b64encode(json.dumps(headers).encode())
-    base64.urlsafe_b64encode(json.dumps(payload).encode())
     signature = _signer.sign_compact([_key])
     return signature
 
@@ -97,7 +102,9 @@ def verify_jws(jws:str, pub_jwk:dict):
 
     _head = unpad_jwt_head(jws)
     if _head.get('kid') != pub_jwk['kid']:
-        raise Exception(f"kid error: {_head.get('kid')} != {pub_jwk['kid']}")
+        raise Exception(
+            f"kid error: {_head.get('kid')} != {pub_jwk['kid']}"
+        )
 
     _alg = _head['alg']
     if _alg in DISABLED_JWT_ALGS or not _alg:
