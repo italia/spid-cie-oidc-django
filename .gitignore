@@ -130,4 +130,4 @@ dmypy.json
 example/example/settingslocal.py
 !*/logs/README.md
 */logs/*
-
+examples/federation_authority/logs/

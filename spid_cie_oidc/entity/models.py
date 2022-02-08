@@ -1,3 +1,5 @@
+from django.contrib import messages
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext as _
 from django.utils import timezone
@@ -16,12 +18,13 @@ import json
 import uuid
 
 
-ENTITY_TYPES = (
+ENTITY_TYPE_LEAFS = [
     "openid_relying_party",
     "openid_provider",
-    "federation_entity",
     "oauth_resource"
-)
+]
+
+ENTITY_TYPES = ["federation_entity"] + ENTITY_TYPE_LEAFS
 
 ENTITY_STATUS = {
     "unreachable": False,
@@ -33,11 +36,26 @@ ENTITY_STATUS = {
 }
 
 
+def is_leaf(statement_metadata):
+    for _typ in ENTITY_TYPE_LEAFS:
+        if _typ in statement_metadata:
+            return True
+
+
 class FederationEntityConfiguration(TimeStampedModel):
     """
         Federation Authority configuration.
     """
-
+    def validate_entity_metadata(value):
+        status = False
+        for i in ENTITY_TYPES:
+            if i in value:
+                status = True
+        if not status:
+            raise ValidationError(
+                _(f'Need to specify one of {", ".join(ENTITY_TYPES)}')
+            )
+    
     def _create_jwks():
         return [create_jwk()]
 
@@ -109,6 +127,7 @@ class FederationEntityConfiguration(TimeStampedModel):
             '}'
         ),
         default=dict,
+        validators=[validate_entity_metadata,]
     )
 
     is_active = models.BooleanField(
@@ -153,6 +172,10 @@ class FederationEntityConfiguration(TimeStampedModel):
         return [i['kid'] for i in self.jwks]
 
     @property
+    def is_leaf(self):
+        return is_leaf(self.metadata)
+    
+    @property
     def raw_entity_configuration(self):
         _now = timezone.localtime()
         conf = {
@@ -168,6 +191,14 @@ class FederationEntityConfiguration(TimeStampedModel):
 
         if self.trust_marks_issuers:
             conf['trust_marks_issuers'] = self.trust_marks_issuers
+
+        if self.is_leaf:
+            if self.authority_hints:
+                conf['authority_hints'] = self.authority_hints
+            else:
+                _msg = f'Entity {self.sub} is a leaf and requires authority_hints valued'
+                logger.error(_msg)
+                messages.add_message(request, messages.ERROR, _msg)
 
         return conf
         

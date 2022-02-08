@@ -1,6 +1,12 @@
-class TrustChainHttpError(Exception):
+class HttpError(Exception):
     pass
 
 
-class EntityStatementUnknownKid(Exception):
+class TrustChainHttpError(HttpError):
     pass
+
+
+class UnknownKid(Exception):
+    pass
+
+
