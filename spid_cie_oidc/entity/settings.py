@@ -1,17 +1,38 @@
+OIDCFED_FEDERATION_WELLKNOWN_URL = ".well-known/openid-federation"
+
 DEFAULT_JWE_ALG = "RSA-OAEP"
 DEFAULT_JWE_ENC = "A256CBC-HS512"
 DEFAULT_JWS_ALG = "RS256"
-DISABLED_JWT_ALGS = ("RSA_1_5", "none")
+
+SIGNING_ALG_VALUES_SUPPORTED = [
+    "RS256",
+    "RS384",
+    "RS512",
+    "ES256",
+    "ES384",
+    "ES512"
+]
+
+ENCRYPTION_ALG_VALUES_SUPPORTED = [
+    "RSA-OAEP",
+    "RSA-OAEP-256",
+    "ECDH-ES",
+    "ECDH-ES+A128KW",
+    "ECDH-ES+A192KW",
+    "ECDH-ES+A256KW"
+]
+
 DEFAULT_HASH_FUNC = "SHA-256"
 
 # This is required in general project settings
-# FEDERATION_TRUST_ANCHOR = https://...
+# OIDCFED_FEDERATION_TRUST_ANCHORS = [https://..., ]
 
-FEDERATION_WELLKNOWN_URL = ".well-known/openid-federation"
-MAX_DISCOVERY_REQUESTS = 5
+OIDCFED_ALLOWED_TRUST_MARKS = []
+OIDCFED_FILTER_BY_TRUST_MARKS = True
 
 # the metadata discovery will only processes the first MAXIMUM_AUTHORITY_HINTS
-MAXIMUM_AUTHORITY_HINTS = 2
+OIDCFED_MAXIMUM_AUTHORITY_HINTS = 2
+OIDCFED_MAX_PATH_LEN = 1
 
 HTTPC_PARAMS = {
     "verify": True,

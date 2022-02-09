@@ -22,7 +22,7 @@ def get_jwks(jwt_payload:dict, httpc_params:dict = {}):
     )
 
 
-def get_statement(url:dict, httpc_params:dict = {}) -> EntityConfiguration:
+def get_statement(url:dict, httpc_params:dict = {}) -> str:
     """
         Fetches an entity statement/configuration
     """
@@ -39,15 +39,23 @@ class EntityConfiguration:
         The self issued/signed statement of a federation entity
     """
 
-    def __init__(self, jwt:str, httpc_params:dict = {}):
+    def __init__(
+        self, jwt:str, httpc_params:dict = {},
+        filter_allowed_trust_marks:list = [],
+        trust_anchors_entity_confs = [],
+        trust_mark_issuers_entity_confs = [],
+    ):
         self.jwt = jwt
         self.header = unpad_jwt_head(jwt)
         self.payload = unpad_jwt_payload(jwt)
-        self.is_valid = False
         self.jwks = get_jwks(self.payload, httpc_params)
         self.kids = [i.get('kid') for i in _jwks]
         self.httpc_params = httpc_params
-
+        
+        self.filter_by_allowed_trust_marks = filter_by_allowed_trust_marks
+        self.trust_anchors_entity_confs = trust_anchors_entity_confs
+        self.trust_mark_issuers_entity_confs = trust_mark_issuers_entity_confs
+        
         # a dict with sup_sub : superior entity configuration
         self.verified_superiors = {}
         # as previous but with superiors with invalid entity configurations
@@ -56,6 +64,8 @@ class EntityConfiguration:
         # a dict with sup_sub : entity statement issued for self
         self.verified_by_superiors = {}
         self.failed_by_superiors = {}
+
+        self.is_valid = False
 
     def validate_by_itself(self) -> bool:
         """
@@ -71,7 +81,18 @@ class EntityConfiguration:
         self.is_valid = True
         return True
 
-    def get_superiors(self, authority_hints:list = []) -> list[EntityConfiguration]:
+    def has_valid_trust_marks(self) -> bool:
+        """
+            validate the entity configuration ony if marked by a well known
+            trust mark, issued by a trusted issuer
+        """
+        if not self.filter_by_allowed_trust_marks:
+            return True
+
+        # TODO
+        
+
+    def get_superiors(self, authority_hints:list = []): # -> dict[str, EntityConfiguration]:
         """
             get superiors entity configurations
         """
@@ -105,15 +126,12 @@ class EntityConfiguration:
         verify_jws(jwt, self.jwks[self.kids.index(header['kid'])])
         return True
     
-    def validate_by_superior_statement(
-            self, jwt:str, ec:EntityConfiguration) -> bool:
+    def validate_by_superior_statement(self, jwt:str) -> bool:
         """
-            statement jwt issued by a superior
-            validated with the jwks contained in the Entity Configuration
-            of the superior
+            jwt is a statement issued by a superior
 
-            then the validated statement have to carry
-            the pub jwks to validate self
+            this method validates self with the jwks contained in statement
+            of the superior
         """
         is_valid = None
         superior_sub = ec.payload.get('sub')
@@ -137,12 +155,15 @@ class EntityConfiguration:
         
     def validate_by_superiors(
             self,
-            superiors_entity_configurations:list[EntityConfiguration],
+            superiors_entity_configurations:list,
             max_superiors:int = 12
-        ):
+        ): # -> dict[str, EntityConfiguration]:
         """
             validates the entity configuration with the entity statements
             issued by its superiors
+
+            this methods create self.verified_superiors and failed ones
+            and self.verified_by_superiors and failed ones
         """
         if len(superiors_entity_configurations) > max_superiors:
             logger.warning(
@@ -167,17 +188,16 @@ class EntityConfiguration:
                 fetch_api_url = ec.payload['metadata']['federation_entity']['federation_api_endpoint']
             except KeyError:
                 logger.warning(
-                    _invalid_ec_msg
-                    "Missing federation_api_endpoint in federation_entity metadata"
+                    f"{_invalid_ec_msg} Missing federation_api_endpoint in federation_entity metadata"
                 )
                 self.invalid_superiors[ec.payload['sub']] = validate_by_superior_statement(jwt, ec)
                 continue
 
             else:
                 jwt = get_statement(fetch_api_url, self.httpc_params)
-                res[ec.payload['sub']] = validate_by_superior_statement(jwt, ec)
-                
-                
+                self.verified_by_superiors[ec.payload['sub']] = validate_by_superior_statement(jwt, ec)
+
+        return self.verified_by_superiors
 
     def __str__(self) -> str:
         return f"{self.payload['sub']} valid {self.is_valid}"

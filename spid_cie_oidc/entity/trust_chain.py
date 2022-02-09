@@ -3,6 +3,7 @@ import requests
 
 from collections import OrderedDict
 from django.conf import settings
+from typing import Union
 
 from . import settings as settings_local
 from . exceptions import HttpError
@@ -10,14 +11,14 @@ from . statements import get_statement, EntityConfiguration
 
 
 HTTPC_PARAMS = getattr(settings, "HTTPC_PARAMS", settings_local.HTTPC_PARAMS)
-FEDERATION_WELLKNOWN_URL = getattr(
-    settings, 'FEDERATION_WELLKNOWN_URL', settings_local.FEDERATION_WELLKNOWN_URL
+OIDCFED_FEDERATION_WELLKNOWN_URL = getattr(
+    settings, 'OIDCFED_FEDERATION_WELLKNOWN_URL', settings_local.OIDCFED_FEDERATION_WELLKNOWN_URL
 )
-MAXIMUM_AUTHORITY_HINTS = getattr(
-    settings, 'MAXIMUM_AUTHORITY_HINTS', settings_local.MAXIMUM_AUTHORITY_HINTS
+OIDCFED_MAXIMUM_AUTHORITY_HINTS = getattr(
+    settings, 'OIDCFED_MAXIMUM_AUTHORITY_HINTS', settings_local.OIDCFED_MAXIMUM_AUTHORITY_HINTS
 )
-MAX_DISCOVERY_REQUESTS = getattr(
-    settings, 'MAX_DISCOVERY_REQUESTS', settings_local.MAX_DISCOVERY_REQUESTS
+OIDCFED_MAX_PATH_LEN = getattr(
+    settings, 'OIDCFED_MAX_PATH_LEN', settings_local.OIDCFED_MAX_PATH_LEN
 )
 logger = logging.getLogger(__name__)
 
@@ -25,20 +26,25 @@ logger = logging.getLogger(__name__)
 class TrustChainBuilder:
     """
         A trust walker that fetches statements and evaluate the evaluables
+
+        max_intermediaries means how many hops are allowed to the trust anchor
+        max_authority_hints means how much authority_hints to follow on each hop
     """
     def __init__(
         self, subject:str, trust_anchor:str, httpc_params:dict = {},
-        max_path_length:int = None, **kwargs
+        max_intermediaries:int = 1, max_authority_hints:int = 10,
+        **kwargs
     ) -> None:
         
         self.subject = subject
         self.httpc_params = httpc_params
         self.trust_anchor = trust_anchor
-        self.max_path_length = max_path_length or MAX_DISCOVERY_REQUESTS
         self.is_valid = False
         self.statements_collection = OrderedDict()
-        self.entity_configuration:EntityConfiguration = None
-
+        self.entity_configuration:Union[None, EntityConfiguration] = None
+        self.tree_of_trust = OrderedDict()
+        self.max_intermediaries = max_intermediaries
+        
     def apply_metadata_policy(self) -> dict:
         """
             returns the final metadata
@@ -46,22 +52,53 @@ class TrustChainBuilder:
         # TODO
         return {}
 
-    def metadata_discovery(self, jwt):
+    def discover_trusted_superiors(self, ecs:list):
+        for ec in ecs:
+            ec.get_superiors()
+            if not ec.verified_superiors:
+                # TODO
+                pass
+
+        return ec
+
+    def metadata_discovery(self, jwt) -> dict:
+        """
+            return a chain of verified statements
+            from the lower up to the trust anchor
+        """
         logger.info(f"Starting Metadata Discovery for {self.subject}")
-        ec = self.entity_configuration = EntityConfiguration(jwt)
+        self.entity_configuration = EntityConfiguration(jwt)
+        try:
+            self.entity_configuration.validate_by_itself()
+        except Exceptions as e:
+            logger.error(
+                f"Metadata Discovery Entity Configuration validation error: {e}"
+            )
+            return {}
 
-        # here we decide the discovery policy
-        # how many hints we'll follow
-        # if we want to give to them a priority
-        if not ec.get_superiors():
-            # TODO: check is this subject matches to a trust anchor
+        self.tree_of_trust[0] = [self.entity_configuration]
+        # max_intermediaries - 2 means that root entity and trust anchor
+        # are not considered as intermediaries
+        while self.tree_of_trust < self.max_intermediaries - 2:
+            # here we decide the discovery policy
+            # how many hints we'll follow
+            # if we want to give to them a priority
+            
+            # if not :
+                # TODO: check is this subject matches to a trustable anchor
+                # pass
+                # break
+
+            # for su
             pass
+            
 
-        
+            
+            
 
         
     def get_entity_configuration(self):
-        url = f"{self.subject}{FEDERATION_WELLKNOWN_URL}"
+        url = f"{self.subject}{OIDCFED_FEDERATION_WELLKNOWN_URL}"
         logger.info(f"Starting Entity Configuration Request for {url}")
         jwt = get_statement(url)
         return jwt
@@ -78,15 +115,15 @@ class TrustChainBuilder:
             raise e 
 
 
-def trust_chain_builder(subject:str, httpc_params:dict = {}) -> TrustChain:
+def trust_chain_builder(subject:str, httpc_params:dict = {}) -> TrustChainBuilder:
     """
         Minimal Provider Discovery endpoint request processing
     """
     tc = TrustChainBuilder(
         subject,
-        settings.FEDERATION_TRUST_ANCHOR,
+        settings.OIDCFED_FEDERATION_TRUST_ANCHORS,
         httpc_params = HTTPC_PARAMS,
-        max_length = MAX_DISCOVERY_REQUESTS
+        max_length = OIDCFED_MAX_PATH_LEN
     )
     tc.start()
 

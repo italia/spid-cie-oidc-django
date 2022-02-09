@@ -15,15 +15,21 @@ from . import settings as local_settings
 JWS_ALG = getattr(
     settings, "DEFAULT_JWS_ALG", local_settings.DEFAULT_JWS_ALG
 )
-JWE_ALG = getattr(
+DEFAULT_JWE_ALG = getattr(
     settings, "DEFAULT_JWE_ALG", local_settings.DEFAULT_JWE_ALG
 )
 JWE_ENC = getattr(
     settings, "DEFAULT_JWE_ENC", local_settings.DEFAULT_JWE_ENC
 )
-DISABLED_JWT_ALGS = getattr(
-    settings, "DISABLED_JWT_ALGS", local_settings.DISABLED_JWT_ALGS
+SIGNING_ALG_VALUES_SUPPORTED = getattr(
+    settings, "SIGNING_ALG_VALUES_SUPPORTED",
+    local_settings.SIGNING_ALG_VALUES_SUPPORTED
 )
+ENCRYPTION_ALG_VALUES_SUPPORTED = getattr(
+    settings, "ENCRYPTION_ALG_VALUES_SUPPORTED",
+    local_settings.ENCRYPTION_ALG_VALUES_SUPPORTED
+)
+
 logger = logging.getLogger(__name__)
 
 
@@ -67,7 +73,7 @@ def decrypt_jwe(jwe, jwk_dict) -> dict:
     _enc = jwe_header.get("enc", JWE_ENC)
     jwe_header.get("kid")
 
-    if _alg in DISABLED_JWT_ALGS:
+    if _alg not in ENCRYPTION_ALG_VALUES_SUPPORTED:
         raise UnsupportedAlgorithm(
             f"{_alg} has beed disabled for security reason"
         )
@@ -84,7 +90,7 @@ def decrypt_jwe(jwe, jwk_dict) -> dict:
 
 
 def create_jws(
-            payload:dict, jwk_dict:dict, alg:str = "RS256", headers:dict = {}
+    payload:dict, jwk_dict:dict, alg:str = "RS256", headers:dict = {}
 ) -> str:
 
     headers['kid'] = jwk_dict['kid']
@@ -107,7 +113,7 @@ def verify_jws(jws:str, pub_jwk:dict):
         )
 
     _alg = _head['alg']
-    if _alg in DISABLED_JWT_ALGS or not _alg:
+    if _alg not in SIGNING_ALG_VALUES_SUPPORTED or not _alg:
         raise UnsupportedAlgorithm(
             f"{_alg} has beed disabled for security reason"
         )
