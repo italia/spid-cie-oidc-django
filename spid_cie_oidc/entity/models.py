@@ -168,8 +168,12 @@ class FederationEntityConfiguration(TimeStampedModel):
         return json.dumps(res, indent=2)
 
     @property
-    def kids(self):
+    def kids(self) -> list:
         return [i['kid'] for i in self.jwks]
+
+    @property
+    def type(self) -> list:
+        return [i for i in self.metadata.keys()]
 
     @property
     def is_leaf(self):

@@ -1,5 +1,4 @@
 import logging
-import requests
 
 from collections import OrderedDict
 from django.conf import settings
@@ -7,13 +6,14 @@ from typing import Union
 
 from . import settings as settings_local
 from . exceptions import HttpError
-from . statements import get_statement, EntityConfiguration
+from . statements import (
+    get_entity_configuration,
+    get_statement,
+    EntityConfiguration
+)
 
 
 HTTPC_PARAMS = getattr(settings, "HTTPC_PARAMS", settings_local.HTTPC_PARAMS)
-OIDCFED_FEDERATION_WELLKNOWN_URL = getattr(
-    settings, 'OIDCFED_FEDERATION_WELLKNOWN_URL', settings_local.OIDCFED_FEDERATION_WELLKNOWN_URL
-)
 OIDCFED_MAXIMUM_AUTHORITY_HINTS = getattr(
     settings, 'OIDCFED_MAXIMUM_AUTHORITY_HINTS', settings_local.OIDCFED_MAXIMUM_AUTHORITY_HINTS
 )
@@ -91,21 +91,10 @@ class TrustChainBuilder:
 
             # for su
             pass
-            
-
-            
-            
-
-        
-    def get_entity_configuration(self):
-        url = f"{self.subject}{OIDCFED_FEDERATION_WELLKNOWN_URL}"
-        logger.info(f"Starting Entity Configuration Request for {url}")
-        jwt = get_statement(url)
-        return jwt
 
     def start(self):
         try:
-            jwt = self.get_entity_configuration(
+            jwt = get_entity_configuration(
                 self.subject, httpc_params = self.httpc_params
             )
             self.metadata_discovery(jwt)

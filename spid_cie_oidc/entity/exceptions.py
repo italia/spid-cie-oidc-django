@@ -1,3 +1,5 @@
+from django.core.exceptions import ValidationError
+
 class HttpError(Exception):
     pass
 
@@ -10,3 +12,9 @@ class UnknownKid(Exception):
     pass
 
 
+class MissingAuthorityHintsClaim(ValidationError):
+    pass
+
+
+class NotDescendant(ValidationError):
+    pass

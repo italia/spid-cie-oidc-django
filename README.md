@@ -104,6 +104,9 @@ cp example/settingslocal.py.example example/settingslocal.py
 
 # create a super user
 ./manage.py createsuperuser
+
+# backup your data (upgrade example data)
+./manage.py dumpdata -e spid_cie_oidc_accounts -e admin -e auth -e contenttypes -e sessions > dumps/example.json 
 ````
 
 # Usage

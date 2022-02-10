@@ -72,6 +72,13 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = 65000
 ADMINS = [('name surname', 'user1@DOMAIN'),
           ('name surnale', 'user2@DOMAIN'),]
 
+OIDCFED_FEDERATION_TRUST_ANCHORS = ["http://127.0.0.1:8000/"]
+OIDCFED_FEDERATION_TRUST_MARKS_PROFILES = {
+    "openid_relying_party__public": {},
+    "openid_relying_party__private": {},
+
+}
+
 # LOGGING
 LOGGING = {
     'version': 1,

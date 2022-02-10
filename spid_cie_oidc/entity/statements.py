@@ -5,6 +5,12 @@ from . jwtse import (
     unpad_jwt_payload
 )
 
+import logging
+import requests
+
+OIDCFED_FEDERATION_WELLKNOWN_URL = ".well-known/openid-federation"
+logger = logging.getLogger(__name__)
+
 
 def jwks_from_jwks_uri(jwks_uri:str, httpc_params:dict = {}) -> dict:
     try:
@@ -17,21 +23,30 @@ def jwks_from_jwks_uri(jwks_uri:str, httpc_params:dict = {}) -> dict:
 
 def get_jwks(jwt_payload:dict, httpc_params:dict = {}):
     return (
-        self.payload.get('jwks') or
-        jwks_from_jwks_uri(jwks_uri, httpc_params)
+        jwt_payload.get('jwks')
+        # TODO: we must only support signed_jwks_uri
+        #or jwks_from_jwks_uri(jwks_uri, httpc_params)
     )
 
-
-def get_statement(url:dict, httpc_params:dict = {}) -> str:
+def get_statement(url:str, httpc_params:dict = {}) -> str:
     """
         Fetches an entity statement/configuration
     """
-    req = requests.get(_url, **httpc_params)
+    req = requests.get(url, **httpc_params)
     if req.status_code != 200:
         raise HttpError(
             f"{_url} returns http status code: {req.status_code}"
         )
     return req.content.decode()
+
+
+def get_entity_configuration(subject):
+    if subject[-1] != '/':
+        subject = f"{subject}/"
+    url = f"{subject}{OIDCFED_FEDERATION_WELLKNOWN_URL}"
+    logger.info(f"Starting Entity Configuration Request for {url}")
+    jwt = get_statement(url)
+    return jwt
 
 
 class EntityConfiguration:
@@ -41,7 +56,7 @@ class EntityConfiguration:
 
     def __init__(
         self, jwt:str, httpc_params:dict = {},
-        filter_allowed_trust_marks:list = [],
+        filter_by_allowed_trust_marks:list = [],
         trust_anchors_entity_confs = [],
         trust_mark_issuers_entity_confs = [],
     ):
@@ -49,7 +64,7 @@ class EntityConfiguration:
         self.header = unpad_jwt_head(jwt)
         self.payload = unpad_jwt_payload(jwt)
         self.jwks = get_jwks(self.payload, httpc_params)
-        self.kids = [i.get('kid') for i in _jwks]
+        self.kids = [i.get('kid') for i in self.jwks]
         self.httpc_params = httpc_params
         
         self.filter_by_allowed_trust_marks = filter_by_allowed_trust_marks
@@ -72,7 +87,7 @@ class EntityConfiguration:
             validates the entity configuration by it self
         """
         # TODO: pydantic entity configuration validation here
-        if jwt_head.get('kid') not in self.kids:
+        if self.header.get('kid') not in self.kids:
             raise UnknownKid(
                 f"{self.header.get('kid')} not found in {self.jwks}"
             )

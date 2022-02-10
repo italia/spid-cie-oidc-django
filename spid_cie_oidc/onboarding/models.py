@@ -1,4 +1,6 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.signals import post_save
 from django.utils.translation import gettext as _
@@ -9,19 +11,96 @@ from spid_cie_oidc.entity.models import (
     ENTITY_STATUS,
     FederationEntityConfiguration
 )
-from spid_cie_oidc.entity.trust_chain import trust_chain_builder
+
+from spid_cie_oidc.entity.exceptions import (
+    MissingAuthorityHintsClaim,
+    NotDescendant
+)
+from spid_cie_oidc.entity.statements import (
+    get_entity_configuration,
+    EntityConfiguration
+)
+from spid_cie_oidc.entity.trust_chain import HTTPC_PARAMS
+
+# from spid_cie_oidc.entity import settings as settings_local
 
 import logging
 import uuid
 
+
 logger = logging.getLogger(__name__)
+
+
+class FederationEntityProfile(TimeStampedModel):
+    """
+        Federation OnBoarding profile.
+        It optionally defines trust marks templates
+    """
+    name = models.CharField(
+        max_length=33,
+        help_text=_(
+            "Profile name. "
+        ),
+    )
+    profile_id = models.CharField(
+        max_length=1024,
+        help_text=_(
+            "Profile id. It SHOULD be a URL but feel free to put whatever"
+        ),
+        unique=True
+    )
+    trust_mark_template = models.JSONField(
+        blank=True,
+        help_text=_("trust marks template for this profile"),
+        default=dict,
+    )
+
+    class Meta:
+        verbose_name = "Federation Entity Profile"
+        verbose_name_plural = "Federation Entity Profiles"
+
+    def __str__(self):
+        return f"{self.name} {self.profile_id}"
 
 
 class FederationDescendant(TimeStampedModel):
     """
         Federation OnBoarding entries.
     """
-    
+
+    def validate_entity_configuration(value):
+        """
+            value is the sub url
+        """
+        try:
+            jwt = get_entity_configuration(value)
+        except Exception as e:
+            raise ValidationError(
+                f"Failed to fetch Entity Configuration for {value}: {e}"
+            )
+        ec = EntityConfiguration(jwt, httpc_params = HTTPC_PARAMS)
+        ec.validate_by_itself()
+
+        authority_hints = ec.payload.get('authority_hints', [])
+        if not authority_hints:
+            raise MissingAuthorityHintsClaim(
+                "authority_hints must be present "
+                "in a descendant entity configuration"
+            )
+
+        proper_descendant = False
+        for i in authority_hints:
+            if i in settings.OIDCFED_FEDERATION_TRUST_ANCHORS:
+                proper_descendant = True
+                break
+        if not proper_descendant:
+            raise NotDescendant(
+                "This participant MUST have one of "
+                f"{', '.join(settings.OIDCFED_FEDERATION_TRUST_ANCHORS)} in "
+                f"its authority_hints claim. It has: {authority_hints}"
+            )
+
+
     def def_uid():
         return f"autouid-{uuid.uuid4()}"
     
@@ -46,9 +125,8 @@ class FederationDescendant(TimeStampedModel):
         blank=False,
         null=False,
         unique=True,
-        help_text=_(
-            "URL that identifies this Entity in the Federation."
-        ),
+        help_text=_("URL that identifies this Entity in the Federation."),
+        validators = [validate_entity_configuration]
     )
     type = models.CharField(
         max_length=33,
@@ -56,6 +134,14 @@ class FederationDescendant(TimeStampedModel):
         default='openid_relying_party',
         choices = [(i,i) for i in ENTITY_TYPES],
         help_text=_("OpenID Connect Federation entity type")
+    )
+    profiles = models.ManyToManyField(
+        "FederationEntityAssignedProfile",
+        help_text=_(
+            "Active profiles for this entity. "
+            "Defined by QaD test and optionally editable by staff. "
+        ),
+        blank=True
     )
     registrant = models.ManyToManyField(
         get_user_model(),
@@ -125,6 +211,24 @@ class FederationDescendant(TimeStampedModel):
         )
 
 
+class FederationEntityAssignedProfile(TimeStampedModel):
+    descendant = models.ForeignKey(
+        FederationDescendant,
+        on_delete=models.CASCADE
+    )
+    profile = models.ForeignKey(
+        FederationEntityProfile,
+        on_delete=models.CASCADE
+    )
+
+    class Meta:
+        verbose_name = "Federation Entity Assigned Profile"
+        verbose_name_plural = "Federation Assigned Profiles"
+
+    def __str__(self):
+        return f"{self.profile} [{self.descendant}]"
+
+
 class FederationDescendantContact(TimeStampedModel):
     """
         Federation OnBoarding entries.
@@ -160,17 +264,17 @@ class FederationDescendantContact(TimeStampedModel):
 
 
 # signal on each save
-def trust_chain_trigger(**kwargs):
-    subject = kwargs['instance'].sub
+# def trust_chain_trigger(**kwargs):
+    # subject = kwargs['instance'].sub
 
     # onboarding uses the first available configuration of federation_entity
-    fe = FederationEntityConfiguration.objects.filter(
-        is_active=True,
-    ).first()
+    # fe = FederationEntityConfiguration.objects.filter(
+        # is_active=True,
+    # ).first()
     
-    logger.info(
-        f"Receiving trust chain evaluation signal for {subject}"
-    )
-    return trust_chain_builder(subject)
-post_save.connect(trust_chain_trigger, sender=FederationDescendant)
+    # logger.info(
+        # f"Receiving trust chain evaluation signal for {subject}"
+    # )
+    # return trust_chain_builder(subject)
+# post_save.connect(trust_chain_trigger, sender=FederationDescendant)
 #
