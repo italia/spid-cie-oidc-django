@@ -16,14 +16,10 @@ Including another URLconf
 from django.conf import settings
 from django.urls import path
 
-from . views import entity_configuration
+from . views import fetch
 
 _PREF = getattr(settings, 'OIDC_PREFIX', "")
 
 urlpatterns = [
-    path(
-            f"{_PREF}.well-known/openid-federation",
-            entity_configuration,
-            name='entity_configuration'
-    ),
+    path(f"{_PREF}fetch/", fetch, name='oidcfed_fetch'),
 ]

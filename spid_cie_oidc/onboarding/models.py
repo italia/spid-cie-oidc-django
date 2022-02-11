@@ -108,7 +108,8 @@ class FederationDescendant(TimeStampedModel):
 
     def def_uid():
         return f"autouid-{uuid.uuid4()}"
-    
+
+
     uid = models.CharField(
         max_length=1024,
         default=def_uid,
@@ -193,6 +194,13 @@ class FederationDescendant(TimeStampedModel):
         verbose_name = "Federation Entity Descendant"
         verbose_name_plural = "Federation Entity Descendants"
 
+    @property
+    def trust_marks(self):
+        #
+        profiles = FederationEntityAssignedProfile.objects.filter(descendant = self)
+        return [i.trust_mark for i in profiles]
+            
+        
     def __str__(self):
         return "{} [{} and {}]".format(
             self.sub,
@@ -246,7 +254,6 @@ class FederationEntityAssignedProfile(TimeStampedModel):
             'trust_mark': self.trust_mark_as_jws
         }
 
-
     def __str__(self):
         return f"{self.profile} [{self.descendant}]"
 
@@ -272,9 +279,7 @@ class FederationDescendantContact(TimeStampedModel):
         max_length=255,
         blank=False,
         null=False,
-        choices = [
-            (i, i) for i in ('email', 'telephone', 'other')
-        ]
+        choices = [(i, i) for i in ('email', 'telephone', 'other')]
     )
 
     class Meta:

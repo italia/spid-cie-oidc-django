@@ -42,6 +42,7 @@ Table of contents:
             - signature validation
             - best practices checks following AgID and IPZS OIDC Fed guidelines.
         - RP authz check following AgID and IPZS OIDC Fed guidelines.
+        - trust marks forgery
 
 3. __Openid Connect Provider__ (spid_cie_oidc.provider) with Relying Party test suite  and the following endpoints:
     - entity configuration (.well-known/openid-federation)
@@ -150,4 +151,4 @@ Please open your Pull Requests on the dev branch.
 
 This software is released under the Apache 2 License by the following authors:
 
-- Giuseppe De Marco <giuseppe.demarco@teamdigitale.governo.it>
+- Giuseppe De Marco <giuseppe.demarco@teamdigitale.governo.it>.

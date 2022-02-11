@@ -16,6 +16,60 @@ ADMIN_PATH = 'admin/'
 
 # required for onboarding checks
 FEDERATION_TRUST_ANCHOR = "http://localhost:8000"
+FEDERATION_DEFAULT_METADATA_POLICY = {
+    "openid_relying_party": {
+      # TODO: to be customized for each entities, not somethinf to default!
+      # "client_id": {"value":  "https://rp.example.it/spid"},
+      # "redirect_uris": {
+        # "subset_of": [
+          # "https://rp.example.it/spid/cb1", 
+          # "https://rp.example.it/spid/cb2"
+        # ]
+      # },
+      # "organization_name": {"value": "Example RP organization name"},
+      # "logo_uri": {
+         # "one_of": [
+            # "https://rp.example.it/logo_small.jpg",
+            # "https://rp.example.it/logo_big.jpg"
+         # ],
+         # "default": "https://rp.example.it/logo_small.jpg"
+      # },
+       # "policy_uri": {
+         # "value": "https://rp.example.it/policy.html"
+       # },
+       # "tos_uri": {
+         # "value": "https://rp.example.it/tos.html"
+      # },
+      "grant_types": {
+        "subset_of": [
+          "authorization_code",
+          "refresh_token"
+         ]
+      },
+      "scopes": {
+        "superset_of": ["openid"],
+        "subset_of": ["openid", "offline_access"]
+    },
+
+    # TODO: to be customized for each actor
+    # "constraints": {
+      # "naming_constraints": {
+        # "permitted": [
+          # "https://rp.example.it"
+      # ]
+    # },
+
+    # defines how many intermediaries are allowed to this trust anchor
+    "max_path_length": 1
+  },
+
+  # TODO: TBD
+  "openid_provider": {},
+  "federation_entity": {},
+  "oauth_resource": {}
+  
+}
+
 
 ALLOWED_HOSTS = ['*']
 AUTH_USER_MODEL = 'spid_cie_oidc_accounts.User'

@@ -1,3 +1,4 @@
+from cryptojwt.jwk.jwk import key_from_jwk_dict
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -11,7 +12,7 @@ from spid_cie_oidc.entity.jwks import (
     private_pem_from_jwk,
     public_pem_from_jwk
 )
-from cryptojwt.jwk.jwk import key_from_jwk_dict
+from spid_cie_oidc.entity.jwtse import create_jws
 
 import datetime
 import json
@@ -129,7 +130,6 @@ class FederationEntityConfiguration(TimeStampedModel):
         default=dict,
         validators=[validate_entity_metadata,]
     )
-
     is_active = models.BooleanField(
         default=False, help_text=_(
             "If this configuration is active. "
@@ -180,7 +180,7 @@ class FederationEntityConfiguration(TimeStampedModel):
         return is_leaf(self.metadata)
     
     @property
-    def raw_entity_configuration(self):
+    def entity_configuration_as_dict(self):
         _now = timezone.localtime()
         conf = {
           "exp": int(
@@ -207,8 +207,16 @@ class FederationEntityConfiguration(TimeStampedModel):
         return conf
         
     @property
-    def entity_configuration(self):
-        return json.dumps(self.raw_entity_configuration, indent=2)
+    def entity_configuration_as_json(self):
+        return json.dumps(self.entity_configuration_as_dict, indent=2)
+
+    @property
+    def entity_configuration_as_jws(self):
+        return create_jws(
+            self.entity_configuration_as_dict,
+            self.jwks[0],
+            alg=self.default_signature_alg
+        )
 
     def __str__(self):
         return "{} [{}]".format(

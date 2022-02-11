@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 
 from . models import FederationEntityConfiguration
-from . jwtse import create_jws
+from . statements import OIDCFED_FEDERATION_WELLKNOWN_URL
 
 
 def entity_configuration(request):
@@ -12,7 +12,7 @@ def entity_configuration(request):
         .well-known/openid-federation
     """
     _sub = request.build_absolute_uri().split(
-        '.well-known/openid-federation'
+        OIDCFED_FEDERATION_WELLKNOWN_URL
     )[0]
     conf = FederationEntityConfiguration.objects.filter(
         # TODO: check for reverse proxy and forwarders ...
@@ -22,17 +22,13 @@ def entity_configuration(request):
 
     if not conf:
         raise Http404()
-    
-    jws = create_jws(
-        conf.entity_configuration, conf.jwks[0], alg=conf.default_signature_alg
-    )
+
     if request.GET.get('format') == 'json':
-        return JsonResponse(conf.raw_entity_configuration, safe=False)
+        return JsonResponse(
+            conf.entity_configuration_as_dict, safe=False
+        )
     else:
         return HttpResponse(
-            jws, content_type="application/jose"
+            conf.entity_configuration_as_jws,
+            content_type="application/jose"
         )
-
-
-def fetch(request):
-    return HttpResponse('not implemented')

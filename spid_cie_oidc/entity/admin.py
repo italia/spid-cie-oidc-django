@@ -17,7 +17,7 @@ class FederationEntityConfigurationAdmin(admin.ModelAdmin):
     list_filter = ('created', 'modified', 'is_active')
     # search_fields = ('command__name',)
     readonly_fields = (
-        "created", "modified", "entity_configuration", "pems", "kids", "type"
+        "created", "modified", "entity_configuration_as_json", "pems", "kids", "type"
     )
 
 
