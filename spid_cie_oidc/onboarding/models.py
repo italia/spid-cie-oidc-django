@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
@@ -20,10 +22,13 @@ from spid_cie_oidc.entity.statements import (
     get_entity_configuration,
     EntityConfiguration
 )
+from spid_cie_oidc.entity.jwtse import create_jws
 from spid_cie_oidc.entity.trust_chain import HTTPC_PARAMS
+from spid_cie_oidc.entity.utils import iat_now
 
 # from spid_cie_oidc.entity import settings as settings_local
 
+import json
 import logging
 import uuid
 
@@ -135,14 +140,6 @@ class FederationDescendant(TimeStampedModel):
         choices = [(i,i) for i in ENTITY_TYPES],
         help_text=_("OpenID Connect Federation entity type")
     )
-    profiles = models.ManyToManyField(
-        "FederationEntityAssignedProfile",
-        help_text=_(
-            "Active profiles for this entity. "
-            "Defined by QaD test and optionally editable by staff. "
-        ),
-        blank=True
-    )
     registrant = models.ManyToManyField(
         get_user_model(),
         help_text=_(
@@ -156,13 +153,6 @@ class FederationDescendant(TimeStampedModel):
         null=False,
         help_text=_("a list of public keys"),
         default=list
-    )
-    trust_marks = models.JSONField(
-        blank=True,
-        help_text=_(
-            "trust marks released for this subject"
-        ),
-        default=list,
     )
     metadata_policy = models.JSONField(
         blank=True,
@@ -220,10 +210,42 @@ class FederationEntityAssignedProfile(TimeStampedModel):
         FederationEntityProfile,
         on_delete=models.CASCADE
     )
+    issuer = models.ForeignKey(
+        FederationEntityConfiguration,
+        on_delete=models.CASCADE
+    )
 
     class Meta:
         verbose_name = "Federation Entity Assigned Profile"
         verbose_name_plural = "Federation Assigned Profiles"
+
+    @property
+    def trust_mark_as_dict(self) -> dict:
+        data = deepcopy(self.profile.trust_mark_template)
+        data['sub'] = self.descendant.sub
+        data['iss'] = self.issuer.sub
+        data['iat'] = iat_now()
+        return data
+
+    @property
+    def trust_mark_as_json(self):
+        return json.dumps(self.trust_mark_as_dict)
+    
+    @property
+    def trust_mark_as_jws(self):
+        return create_jws(
+            self.trust_mark_as_dict,
+            self.issuer.jwks[0],
+            alg=self.issuer.default_signature_alg
+        )
+
+    @property
+    def trust_mark(self):
+        return {
+            'id': self.profile.profile_id,
+            'trust_mark': self.trust_mark_as_jws
+        }
+
 
     def __str__(self):
         return f"{self.profile} [{self.descendant}]"
