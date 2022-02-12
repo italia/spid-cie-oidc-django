@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models.signals import post_save
+# from django.db.models.signals import post_save
 from django.utils.translation import gettext as _
 
 from spid_cie_oidc.entity.abstract_models import TimeStampedModel
@@ -23,17 +23,38 @@ from spid_cie_oidc.entity.statements import (
     EntityConfiguration
 )
 from spid_cie_oidc.entity.jwtse import create_jws
+from spid_cie_oidc.entity.validators import validate_public_jwks
 from spid_cie_oidc.entity.trust_chain import HTTPC_PARAMS
 from spid_cie_oidc.entity.utils import iat_now
+from spid_cie_oidc.entity.utils import exp_from_now
+from typing import Union
 
-# from spid_cie_oidc.entity import settings as settings_local
+from . import settings as local_settings
 
 import json
 import logging
 import uuid
 
 
+FEDERATION_DEFAULT_POLICY = getattr(
+    settings, "FEDERATION_DEFAULT_POLICY",
+    local_settings.FEDERATION_DEFAULT_POLICY
+)
 logger = logging.getLogger(__name__)
+
+
+def get_first_self_trust_anchor(sub:str = None) -> Union[FederationEntityConfiguration, None]:
+    """
+        get the first available Trust Anchor that represent self
+        as a qualified issuer
+    """
+    lk = dict(
+        metadata__federation_entity__isnull=False,
+        is_active=True
+    )
+    if sub:
+        lk['sub'] = sub
+    return FederationEntityConfiguration.objects.filter(**lk).first()
 
 
 class FederationEntityProfile(TimeStampedModel):
@@ -46,6 +67,13 @@ class FederationEntityProfile(TimeStampedModel):
         help_text=_(
             "Profile name. "
         ),
+    )
+    profile_category = models.CharField(
+        max_length=64,
+        help_text=_(
+            "Profile id. It SHOULD be a URL but feel free to put whatever"
+        ),
+        choices=[(i, i) for i in ENTITY_TYPES]
     )
     profile_id = models.CharField(
         max_length=1024,
@@ -72,7 +100,7 @@ class FederationDescendant(TimeStampedModel):
     """
         Federation OnBoarding entries.
     """
-
+    
     def validate_entity_configuration(value):
         """
             value is the sub url
@@ -153,7 +181,8 @@ class FederationDescendant(TimeStampedModel):
         blank=False,
         null=False,
         help_text=_("a list of public keys"),
-        default=list
+        default=list,
+        validators=[validate_public_jwks]
     )
     metadata_policy = models.JSONField(
         blank=True,
@@ -199,8 +228,52 @@ class FederationDescendant(TimeStampedModel):
         #
         profiles = FederationEntityAssignedProfile.objects.filter(descendant = self)
         return [i.trust_mark for i in profiles]
-            
+
+    @property
+    def entity_profiles(self):
+        return [
+            i.profile.profile_category
+            for i in FederationEntityAssignedProfile.objects.filter(
+                descendant = self
+            )
+        ]
+
+    @property
+    def entity_statement_as_dict(self):
+
+        policies = {
+            k:local_settings.FEDERATION_DEFAULT_POLICY[k]
+            for k in self.entity_profiles
+        }
+
+        # apply custom policies if defined
+        policies.update(self.metadata_policy)
         
+        data = {
+          "exp": exp_from_now(),
+          "iat": iat_now(),
+          "iss": get_first_self_trust_anchor().sub,
+          "sub": self.sub,
+          "jwks": {
+            "keys": self.jwks
+          },
+          "metadata_policy": policies
+        }
+        return data
+
+    @property
+    def entity_statement_as_json(self):
+        return json.dumps(self.entity_statement_as_dict)
+
+    @property
+    def entity_statement_as_jws(self):
+        issuer = get_first_self_trust_anchor()
+        return create_jws(
+            self.entity_statement_as_dict,
+            issuer.jwks[0],
+            alg=issuer.default_signature_alg
+        )
+
     def __str__(self):
         return "{} [{} and {}]".format(
             self.sub,

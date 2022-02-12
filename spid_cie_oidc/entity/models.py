@@ -13,6 +13,7 @@ from spid_cie_oidc.entity.jwks import (
     public_pem_from_jwk
 )
 from spid_cie_oidc.entity.jwtse import create_jws
+from spid_cie_oidc.entity.utils import exp_from_now, iat_now
 
 import datetime
 import json
@@ -181,12 +182,9 @@ class FederationEntityConfiguration(TimeStampedModel):
     
     @property
     def entity_configuration_as_dict(self):
-        _now = timezone.localtime()
         conf = {
-          "exp": int(
-            (_now + datetime.timedelta(minutes = self.default_exp)
-          ).timestamp()),
-          "iat": int(_now.timestamp()),
+          "exp": exp_from_now(self.default_exp),
+          "iat": iat_now(),
           "iss": self.sub,
           "sub": self.sub,
           "jwks": self.public_jwks,

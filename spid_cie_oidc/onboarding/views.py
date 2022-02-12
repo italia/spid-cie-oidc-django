@@ -1,3 +1,7 @@
+from django.http import Http404
+from django.http import HttpResponse
+from django.http import JsonResponse
+
 from django.shortcuts import render
 
 from spid_cie_oidc.entity.models import FederationEntityConfiguration
@@ -5,33 +9,25 @@ from spid_cie_oidc.onboarding.models import FederationDescendant
 from spid_cie_oidc.entity.views import entity_configuration
 from spid_cie_oidc.entity.jwtse import create_jws
 
-from . models import 
+from . models import  FederationDescendant, get_first_self_trust_anchor
 
 
 def fetch(request):
     if request.GET.get('iss'):
-        iss = FederationEntityConfiguration.objects.filter(
-            sub = request.GET['iss'], is_active=True
-        ).first()
+        iss = get_first_self_trust_anchor(sub = request.GET['iss'])
     else:
-        iss = FederationEntityConfiguration.objects.filter(
-            metadata__federation_entity__isnull=False,
-            is_null=False
-        ).first()
+        iss = get_first_self_trust_anchor()
 
     if not request.GET.get('sub'):
         return entity_configuration(request)
 
     sub = FederationDescendant.objects.filter(
-        sub=sub, is_active=True
+        sub=request.GET['sub'], is_active=True
     ).first()
 
     if request.GET.get('format') == 'json':
-        return JsonResponse(sub.entity_statement_as_json, safe=False)
+        return JsonResponse(sub.entity_statement_as_dict, safe=False)
     else:
-        jws = create_jws(
-            sub.entity_statement, iss.jwks[0], alg=iss.default_signature_alg
-        )
         return HttpResponse(
-            jws, content_type="application/jose"
+            sub.entity_statement_as_jws, content_type="application/jose"
         )
