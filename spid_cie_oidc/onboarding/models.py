@@ -40,6 +40,11 @@ FEDERATION_DEFAULT_POLICY = getattr(
     settings, "FEDERATION_DEFAULT_POLICY",
     local_settings.FEDERATION_DEFAULT_POLICY
 )
+FEDERATION_DEFAUL_EXP = getattr(
+    settings, "FEDERATION_DEFAUL_EXP",
+    local_settings.FEDERATION_DEFAUL_EXP
+)
+
 logger = logging.getLogger(__name__)
 
 
@@ -250,7 +255,7 @@ class FederationDescendant(TimeStampedModel):
         policies.update(self.metadata_policy)
         
         data = {
-          "exp": exp_from_now(),
+          "exp": exp_from_now(minutes=FEDERATION_DEFAUL_EXP),
           "iat": iat_now(),
           "iss": get_first_self_trust_anchor().sub,
           "sub": self.sub,

@@ -24,6 +24,11 @@ ENCRYPTION_ENC_SUPPORTED = getattr(
     entity_settings.ENCRYPTION_ENC_SUPPORTED
 )
 
+FEDERATION_DEFAUL_EXP = getattr(
+    settings, "FEDERATION_DEFAUL_EXP",
+    entity_settings.FEDERATION_DEFAUL_EXP
+)
+
 FEDERATION_DEFAULT_POLICY = {
     "openid_provider": {
       # TODO: be dynamic

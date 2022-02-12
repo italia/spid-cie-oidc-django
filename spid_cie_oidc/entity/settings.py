@@ -44,3 +44,5 @@ HTTPC_PARAMS = {
     "verify": True,
     "timeout": 4
 }
+
+FEDERATION_DEFAUL_EXP = 2880
