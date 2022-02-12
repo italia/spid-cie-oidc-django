@@ -97,8 +97,35 @@ class FederationEntityProfile(TimeStampedModel):
         verbose_name = "Federation Entity Profile"
         verbose_name_plural = "Federation Entity Profiles"
 
+    @property
+    def trust_mark_template_as_json(self):
+        return json.dumps(self.trust_mark_template)
+    
     def __str__(self):
         return f"{self.name} {self.profile_id}"
+
+
+class Jwk(TimeStampedModel):
+
+    kid = models.CharField(
+        max_length=1024,
+        unique=True,
+        help_text=_("unique code that identifies this jwks. "),
+    )
+    jwk = models.JSONField(
+        blank=False,
+        null=False,
+        help_text=_("Public jwk"),
+        default=dict,
+        validators=[validate_public_jwks]
+    )
+
+    class Meta:
+        verbose_name = "JWKs"
+        verbose_name_plural = "JWKs"
+
+    def __str__(self):
+        return f"{self.kid}"
 
 
 class FederationDescendant(TimeStampedModel):
@@ -182,13 +209,6 @@ class FederationDescendant(TimeStampedModel):
         ),
         blank=True
     )
-    jwks = models.JSONField(
-        blank=False,
-        null=False,
-        help_text=_("a list of public keys"),
-        default=list,
-        validators=[validate_public_jwks]
-    )
     metadata_policy = models.JSONField(
         blank=True,
         help_text=_("if present overloads the DEFAULT policy"),
@@ -235,6 +255,10 @@ class FederationDescendant(TimeStampedModel):
         return [i.trust_mark for i in profiles]
 
     @property
+    def trust_marks_as_json(self):
+        return json.dumps(self.trust_marks)
+    
+    @property
     def entity_profiles(self):
         return [
             i.profile.profile_category
@@ -244,7 +268,12 @@ class FederationDescendant(TimeStampedModel):
         ]
 
     @property
-    def entity_statement_as_dict(self):
+    def entity_statement_as_dict(self) -> dict:
+        jwks = [i.jwk.jwk for i in FederationDescendantJwk.objects.filter(
+                descendant=self
+        )]
+        if not jwks:
+            return {}
 
         policies = {
             k:local_settings.FEDERATION_DEFAULT_POLICY[k]
@@ -260,7 +289,7 @@ class FederationDescendant(TimeStampedModel):
           "iss": get_first_self_trust_anchor().sub,
           "sub": self.sub,
           "jwks": {
-            "keys": self.jwks
+            "keys": jwks
           },
           "metadata_policy": policies
         }
@@ -285,6 +314,20 @@ class FederationDescendant(TimeStampedModel):
             self.status,
             "active" if self.is_active else "--"
         )
+
+
+class FederationDescendantJwk(TimeStampedModel):
+    descendant = models.ForeignKey(
+        FederationDescendant,
+        on_delete=models.CASCADE
+    )
+    jwk = models.ForeignKey(
+        Jwk,
+        on_delete=models.CASCADE
+    )
+    
+    def __str__(self):
+        return f"{self.descendant.sub} {self.jwk.kid}"
 
 
 class FederationEntityAssignedProfile(TimeStampedModel):

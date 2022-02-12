@@ -1,11 +1,14 @@
 from cryptojwt.jwk.jwk import key_from_jwk_dict
 from django.core.exceptions import ValidationError
 from . jwks import serialize_rsa_key
+from typing import Union
 
 import json
 
 
-def validate_public_jwks(values:list):
+def validate_public_jwks(values:Union[dict, list]):
+    if isinstance(values, dict):
+        values = [values]
     try:
         for jwk_dict in values:
             _k = key_from_jwk_dict(jwk_dict)
@@ -19,7 +22,9 @@ def validate_public_jwks(values:list):
         raise ValidationError(f"Not valid: {e}")
 
 
-def validate_private_jwks(values:list):
+def validate_private_jwks(values:Union[dict, list]):
+    if isinstance(values, dict):
+        values = [values]
     try:
         for jwk_dict in values:
             _k = key_from_jwk_dict(jwk_dict)
