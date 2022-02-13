@@ -5,7 +5,6 @@ from .models import (
     FederationDescendantContact,
     FederationEntityProfile,
     FederationEntityAssignedProfile,
-    Jwk,
     FederationDescendantJwk
 )
 
@@ -36,13 +35,6 @@ class FederationDescendantAdmin(admin.ModelAdmin):
         FederationDescendantJwkAdminInline,
         FederationDescendantContactAdminInline
     )
-
-
-@admin.register(Jwk)
-class JwkAdmin(admin.ModelAdmin):
-    list_display = ('kid', 'created')
-    list_filter = ('created', 'modified')
-    search_fields = ('kid',)
 
 
 @admin.register(FederationDescendantJwk)

@@ -11,7 +11,8 @@ from spid_cie_oidc.entity.abstract_models import TimeStampedModel
 from spid_cie_oidc.entity.models import (
     ENTITY_TYPES,
     ENTITY_STATUS,
-    FederationEntityConfiguration
+    FederationEntityConfiguration,
+    PublicJwk
 )
 
 from spid_cie_oidc.entity.exceptions import (
@@ -23,7 +24,6 @@ from spid_cie_oidc.entity.statements import (
     EntityConfiguration
 )
 from spid_cie_oidc.entity.jwtse import create_jws
-from spid_cie_oidc.entity.validators import validate_public_jwks
 from spid_cie_oidc.entity.trust_chain import HTTPC_PARAMS
 from spid_cie_oidc.entity.utils import iat_now
 from spid_cie_oidc.entity.utils import exp_from_now
@@ -103,29 +103,6 @@ class FederationEntityProfile(TimeStampedModel):
     
     def __str__(self):
         return f"{self.name} {self.profile_id}"
-
-
-class Jwk(TimeStampedModel):
-
-    kid = models.CharField(
-        max_length=1024,
-        unique=True,
-        help_text=_("unique code that identifies this jwks. "),
-    )
-    jwk = models.JSONField(
-        blank=False,
-        null=False,
-        help_text=_("Public jwk"),
-        default=dict,
-        validators=[validate_public_jwks]
-    )
-
-    class Meta:
-        verbose_name = "JWKs"
-        verbose_name_plural = "JWKs"
-
-    def __str__(self):
-        return f"{self.kid}"
 
 
 class FederationDescendant(TimeStampedModel):
@@ -322,9 +299,13 @@ class FederationDescendantJwk(TimeStampedModel):
         on_delete=models.CASCADE
     )
     jwk = models.ForeignKey(
-        Jwk,
+        PublicJwk,
         on_delete=models.CASCADE
     )
+
+    class Meta:
+        verbose_name = "Federation Descendant Public JWK"
+        verbose_name_plural = "Federation Descendant Public JWKs"
     
     def __str__(self):
         return f"{self.descendant.sub} {self.jwk.kid}"
@@ -345,8 +326,8 @@ class FederationEntityAssignedProfile(TimeStampedModel):
     )
 
     class Meta:
-        verbose_name = "Federation Entity Assigned Profile"
-        verbose_name_plural = "Federation Assigned Profiles"
+        verbose_name = "Federation Entity Descendant Assigned Profile"
+        verbose_name_plural = "Federation Descendant Assigned Profiles"
 
     @property
     def trust_mark_as_dict(self) -> dict:

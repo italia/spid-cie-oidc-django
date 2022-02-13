@@ -1,7 +1,11 @@
 from django.contrib import admin
 # from prettyjson import PrettyJSONWidget
 
-from .models import FederationEntityConfiguration, TrustChain
+from .models import (
+    FederationEntityConfiguration,
+    TrustChain,
+    PublicJwk
+)
 
 
 @admin.register(FederationEntityConfiguration)
@@ -31,3 +35,11 @@ class TrustChainAdmin(admin.ModelAdmin):
         "resultant_metadata", "type", "status", "status_log", "chain",
         "exp", "iat"
     )
+
+
+@admin.register(PublicJwk)
+class PublicJwkAdmin(admin.ModelAdmin):
+    list_display = ('kid', 'created')
+    list_filter = ('created', 'modified')
+    search_fields = ('kid',)
+    readonly_fields = ('created', 'modified', 'jwk_as_json')
