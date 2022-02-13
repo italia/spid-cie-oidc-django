@@ -30,7 +30,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'example.urls'
+ROOT_URLCONF = 'federation_authority.urls'
 
 TEMPLATES = [
     {
@@ -48,7 +48,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'example.wsgi.application'
+WSGI_APPLICATION = 'federation_authority.wsgi.application'
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators

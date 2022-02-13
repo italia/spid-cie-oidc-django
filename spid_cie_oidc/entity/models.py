@@ -160,14 +160,18 @@ class FederationEntityConfiguration(TimeStampedModel):
         return res
 
     @property
-    def pems(self):
+    def pems_as_dict(self):
         res = {}
         for i in self.jwks:
             res[i["kid"]] = {
-                "public": private_pem_from_jwk(i),
-                "private": public_pem_from_jwk(i)
+                "private": private_pem_from_jwk(i),
+                "public": public_pem_from_jwk(i)
             }
-        return json.dumps(res, indent=2)
+        return res
+
+    @property
+    def pems_as_json(self):
+        return json.dumps(self.pems_as_dict, indent=2)
 
     @property
     def kids(self) -> list:
@@ -248,6 +252,42 @@ class PublicJwk(TimeStampedModel):
 
     def __str__(self):
         return f"{self.kid}"
+
+
+class FetchedEntityStatement(TimeStampedModel):
+    """
+        Entity Statement acquired by a third party
+    """
+    iss = models.URLField(
+        max_length=255,
+        blank=False,
+        help_text=_(
+            "URL that identifies the issuer of this statement in the Federation. "
+        )
+    )
+    sub = models.URLField(
+        max_length=255,
+        blank=False,
+        help_text=_(
+            "URL that identifies this Entity in the Federation. "
+        )
+    )
+    exp = models.DateTimeField()
+    iat = models.DateTimeField()
+
+    statement = models.JSONField(
+        blank=False,
+        null=False,
+        help_text=_("Entity statement"),
+        default=dict
+    )
+
+    class Meta:
+        verbose_name = "Fetched Entity Statement"
+        verbose_name_plural = "Fetched Entity Statement"
+    
+    def __str__(self):
+        return f"{self.sub} issued by {self.iss}"
 
 
 class TrustChain(TimeStampedModel):

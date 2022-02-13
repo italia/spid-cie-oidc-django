@@ -87,7 +87,7 @@ pip install spid-cie-oidc
 # then include `spid_cie_oidc.{app_name}` in your project settings.INSTALLED_APPS
 ````
 
-#### Install the example project for demo purpose
+#### Setup the example project for demo purpose
 
 ````
 git clone https://github.com/peppelinux/spid-cie-oidc
@@ -118,10 +118,20 @@ cp example/settingslocal.py.example example/settingslocal.py
 
 # Usage
 
+The demo propose a small federation composed by the following entities:
+
+ - Federation Authority, acts as trust anchor and onboarding system. It's available at `http://localhost:8000`
+ - OpenID Relying Party, available at `http://localhost:8001`
+ - OpenID Provider, available at `http://localhost:8002`
+
+Activate the environment
 ````
 source env/bin/activate
-cd example
+cd examples
+````
 
+Then enter in the single applications projects (__federation_authority/__ or __relying_party/__ or __provider/__):
+````
 # run the web server
 ./manage.py runserver
 ````

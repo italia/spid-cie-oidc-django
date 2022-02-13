@@ -5,6 +5,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 
 from spid_cie_oidc.entity.models import FederationEntityConfiguration
+from spid_cie_oidc.entity.policy import apply_policy
 from spid_cie_oidc.onboarding.models import (
     FederationDescendant,
     FederationEntityAssignedProfile,
@@ -62,3 +63,30 @@ def entity_list(request):
 
     entries = FederationEntityAssignedProfile.objects.filter(**_q).values_list('descendant__sub', flat=True)
     return JsonResponse(list(entries), safe=False)
+
+
+def resolve_entity_statement(request):
+    """
+        resolves the final metadata of its descendants
+    """
+    if not all(
+        request.GET.get('sub'),
+        request.GET.get('anchor'),
+    ):
+        raise Http404("sub and anchor parameters are REQUIRED.")
+
+    # TODO: resolve also other entities in a federation
+    # TODO: release a metadata on top of a resolved trust chain
+    if request.GET.get('iss'):
+        iss = get_first_self_trust_anchor(sub = request.GET['iss'])
+    else:
+        iss = get_first_self_trust_anchor()
+    
+    entity = FederationDescendant.objects.filter(
+        sub = request.GET['sub'], is_active = True
+    )
+
+    # filter by type
+    if request.GET.get('type'):
+        policy = entity.metadata_policy.get(request.GET['type'])
+        #metadata = 
