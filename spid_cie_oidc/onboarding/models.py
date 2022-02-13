@@ -270,6 +270,13 @@ class FederationDescendant(TimeStampedModel):
           },
           "metadata_policy": policies
         }
+        # add contacts
+        contacts = FederationDescendantContact.objects.filter(
+            entity=self).values_list('contact', flat=True)
+        
+        if contacts:
+            data["contacts"] = {'add': [i for i in contacts]}
+
         return data
 
     @property
