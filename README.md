@@ -93,8 +93,17 @@ pip install spid-cie-oidc
 git clone https://github.com/peppelinux/spid-cie-oidc
 cd spid-cie-oidc
 pip install -e .
+````
 
-cd example
+In `examples/` folder you have three demostrations projects:
+ - federation_authority
+ - relying_party
+ - provider
+
+for each of the them you have to create the db and load the example data , as follows:
+
+````
+cd examples/$project_name
 cp example/settingslocal.py.example example/settingslocal.py
 # then customize (optional) example/settingslocal.py
 
@@ -105,9 +114,6 @@ cp example/settingslocal.py.example example/settingslocal.py
 
 # create a super user
 ./manage.py createsuperuser
-
-# backup your data (upgrade example data)
-./manage.py dumpdata -e spid_cie_oidc_accounts -e admin -e auth -e contenttypes -e sessions > dumps/example.json 
 ````
 
 # Usage
@@ -121,6 +127,7 @@ cd example
 ````
 Point your web browser to `http://localhost:8000/admin` to enter in the management interface.
 
+
 ###  Endpoints
 
 #### .well-known/openid-federation
@@ -129,9 +136,38 @@ A prefix can be configured in global settings file with parameter `OIDC_PREFIX`.
 
 Available for trust anchors, providers and relying parties.
 
+Demo examples are:
+
+ - `http://127.0.0.1:8000/.well-known/openid-federation?format=json`
+ - `http://127.0.0.1:8000/.well-known/openid-federation`
+
 #### /fetch
 
-Available for trust anchors
+Available for trust anchors and intermediates.
+Releases an Entity Statement related to a subject (descendant).
+
+Demo examples are:
+
+ - `http://127.0.0.1:8000/fetch/?sub=http://127.0.0.1:8001/&format=json`
+ - `http://127.0.0.1:8000/fetch/?sub=http://127.0.0.1:8001/`
+
+#### /list
+
+Available for trust anchors and intermediates.
+Lists all the descendant entities.
+
+ - `http://127.0.0.1:8000/list/`
+ - `http://127.0.0.1:8000/list/?is_leaf=false`
+ - `http://127.0.0.1:8000/list/?is_leaf=true`
+
+# Hints
+
+Backup your demo data
+
+````
+# backup your data (upgrade example data)
+./manage.py dumpdata -e spid_cie_oidc_accounts -e admin -e auth -e contenttypes -e sessions > dumps/example.json
+````
 
 
 # Contribute

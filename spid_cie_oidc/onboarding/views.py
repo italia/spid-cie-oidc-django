@@ -7,11 +7,15 @@ from django.shortcuts import render
 from spid_cie_oidc.entity.models import FederationEntityConfiguration
 from spid_cie_oidc.onboarding.models import (
     FederationDescendant,
+    FederationEntityAssignedProfile,
     get_first_self_trust_anchor
 )
 from spid_cie_oidc.entity.jwtse import create_jws
 
-from . models import  FederationDescendant, get_first_self_trust_anchor
+from . models import (
+    FederationDescendant,
+    get_first_self_trust_anchor
+)
 
 
 def fetch(request):
@@ -44,3 +48,17 @@ def fetch(request):
         return HttpResponse(
             sub.entity_statement_as_jws, content_type="application/jose"
         )
+
+
+def entity_list(request):
+    if request.GET.get('is_leaf') == 'true':
+        _q = {'profile__profile_category__in' : (
+                'openid_relying_party', 'openid_provider'
+            )}
+    elif request.GET.get('is_leaf') == 'false':
+        _q = {'profile__profile_category' : 'federation_entity'}
+    else:
+        _q = {}
+
+    entries = FederationEntityAssignedProfile.objects.filter(**_q).values_list('descendant__sub', flat=True)
+    return JsonResponse(list(entries), safe=False)
