@@ -188,3 +188,11 @@ Please open your Pull Requests on the dev branch.
 This software is released under the Apache 2 License by the following authors:
 
 - Giuseppe De Marco <giuseppe.demarco@teamdigitale.governo.it>.
+
+# Note
+
+This project proposes an implementation of the italian OIDC Federation profile with
+__automatic_client_registration__ and the adoption of the trust marks as mandatory.
+
+If you're looking for a fully compliant implementation of OIDC Federation 1.0,
+with explicit client registration, please look at idpy's [fedservice](https://github.com/rohe/fedservice).
