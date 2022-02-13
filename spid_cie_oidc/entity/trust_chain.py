@@ -7,8 +7,8 @@ from typing import Union
 from . import settings as settings_local
 from . exceptions import HttpError
 from . statements import (
-    get_entity_configuration,
-    get_statement,
+    get_entity_configurations,
+    get_entity_statements,
     EntityConfiguration
 )
 

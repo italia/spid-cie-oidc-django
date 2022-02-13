@@ -20,7 +20,7 @@ from spid_cie_oidc.entity.exceptions import (
     NotDescendant
 )
 from spid_cie_oidc.entity.statements import (
-    get_entity_configuration,
+    get_entity_configurations,
     EntityConfiguration
 )
 from spid_cie_oidc.entity.jwtse import create_jws
@@ -115,7 +115,7 @@ class FederationDescendant(TimeStampedModel):
             value is the sub url
         """
         try:
-            jwt = get_entity_configuration(value)
+            jwt = get_entity_configurations(value)[0]
         except Exception as e:
             raise ValidationError(
                 f"Failed to fetch Entity Configuration for {value}: {e}"

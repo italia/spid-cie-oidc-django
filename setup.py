@@ -12,9 +12,9 @@ PKG_NAME = 'spid_cie_oidc'
 INSTALL_REQUIRES = [
     "Django>=4.0",
     "oidcmsg>=1.5.4",
-    "requests>=2.26.0"
     "pydantic>=1.8.2",
-    "pytz>=2021.3"
+    "pytz>=2021.3",
+    "aiohttp"
 ]
 
 with open(os.path.join(os.path.dirname(__file__), 'README.md')) as readme:

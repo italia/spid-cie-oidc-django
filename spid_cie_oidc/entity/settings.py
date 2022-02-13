@@ -1,3 +1,5 @@
+import aiohttp
+
 DEFAULT_JWE_ENC = "A256CBC-HS512"
 ENCRYPTION_ENC_SUPPORTED = [
     "A128CBC-HS256",
@@ -40,9 +42,16 @@ OIDCFED_FILTER_BY_TRUST_MARKS = True
 OIDCFED_MAXIMUM_AUTHORITY_HINTS = 2
 OIDCFED_MAX_PATH_LEN = 1
 
+# old, for requests
+# HTTPC_PARAMS = {
+    # "verify": True,
+    # "timeout": 4
+# }
+
+# for aiohttp
 HTTPC_PARAMS = {
-    "verify": True,
-    "timeout": 4
+    "connection": {"ssl": True},
+    "session" : {"timeout": aiohttp.ClientTimeout(total=4)}
 }
 
 FEDERATION_DEFAUL_EXP = 2880

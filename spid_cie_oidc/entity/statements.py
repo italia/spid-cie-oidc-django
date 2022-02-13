@@ -5,20 +5,17 @@ from . jwtse import (
     unpad_jwt_payload
 )
 
+import asyncio
 import logging
-import requests
+from . http_client import http_get
+
 
 OIDCFED_FEDERATION_WELLKNOWN_URL = ".well-known/openid-federation"
 logger = logging.getLogger(__name__)
 
 
-def jwks_from_jwks_uri(jwks_uri:str, httpc_params:dict = {}) -> dict:
-    try:
-        jwks_dict = requests.get(jwks_uri, **httpc_params).json()
-        return jwks_dict
-    except Exception as e:
-        logger.error(f"Connecting to {jwks_uri}: {e}")
-        return [{}]
+def jwks_from_jwks_uri(jwks_uri:str, httpc_params:dict = {}) -> list:
+    return [json.loads(asyncio.run(http_get([url], httpc_params)))]
 
 
 def get_jwks(jwt_payload:dict, httpc_params:dict = {}):
@@ -28,25 +25,29 @@ def get_jwks(jwt_payload:dict, httpc_params:dict = {}):
         #or jwks_from_jwks_uri(jwks_uri, httpc_params)
     )
 
-def get_statement(url:str, httpc_params:dict = {}) -> str:
+def get_entity_statements(urls:list, httpc_params:dict = {}) -> list:
     """
         Fetches an entity statement/configuration
     """
-    req = requests.get(url, **httpc_params)
-    if req.status_code != 200:
-        raise HttpError(
-            f"{_url} returns http status code: {req.status_code}"
-        )
-    return req.content.decode()
+    if isinstance(urls, str):
+        urls = [urls]
+    for url in urls:
+        logger.info(f"Starting Entity Statement Request for {url}")
+    responses = asyncio.run(http_get(urls, httpc_params))
+    return responses
 
 
-def get_entity_configuration(subject):
-    if subject[-1] != '/':
-        subject = f"{subject}/"
-    url = f"{subject}{OIDCFED_FEDERATION_WELLKNOWN_URL}"
-    logger.info(f"Starting Entity Configuration Request for {url}")
-    jwt = get_statement(url)
-    return jwt
+def get_entity_configurations(subjects:list, httpc_params:dict = {}):
+    if isinstance(subjects, str):
+        subjects = [subjects]
+    urls = []
+    for subject in subjects:
+        if subject[-1] != '/':
+            subject = f"{subject}/"
+        url = f"{subject}{OIDCFED_FEDERATION_WELLKNOWN_URL}"
+        urls.append(url)
+        logger.info(f"Starting Entity Configuration Request for {url}")
+    return asyncio.run(http_get(urls, httpc_params))
 
 
 class EntityConfiguration:
@@ -107,15 +108,15 @@ class EntityConfiguration:
         # TODO
         
 
-    def get_superiors(self, authority_hints:list = []): # -> dict[str, EntityConfiguration]:
+    async def get_superiors(self, authority_hints:list = []): # -> dict[str, EntityConfiguration]:
         """
             get superiors entity configurations
         """
         # apply limits if defined
         authority_hints = authority_hints or self.payload['authority_hints']
 
-        for sup_url in authority_hints:
-            jwt = get_statement(sup_url, self.httpc_params)
+        jwts = get_entity_statements(authority_hints, self.httpc_params)
+        for jwt in jwts:
             ec = self.__class__(jwt, httpc_params=self.httpc_params)
 
             if ec.validate_by_itself():
@@ -168,7 +169,7 @@ class EntityConfiguration:
         target[superior_sub] = payload
         return is_valid
         
-    def validate_by_superiors(
+    async def validate_by_superiors(
             self,
             superiors_entity_configurations:list,
             max_superiors:int = 12
@@ -209,7 +210,8 @@ class EntityConfiguration:
                 continue
 
             else:
-                jwt = get_statement(fetch_api_url, self.httpc_params)
+                jwts = get_entity_statements([fetch_api_url], self.httpc_params)
+                jwt = jwts[0]
                 self.verified_by_superiors[ec.payload['sub']] = validate_by_superior_statement(jwt, ec)
 
         return self.verified_by_superiors

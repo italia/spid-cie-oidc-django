@@ -34,7 +34,11 @@ class FederationEntityConfigurationAdmin(admin.ModelAdmin):
             data[k] = {}
             for i in ('public', 'private'):
                 data[k][i] = v[i].replace('\n', '<br>')
-            res += f"<b>{k}</b><br><br>{data[k]['public']}<br>{data[k]['private']}<br><hr>"
+            res += (
+                f"<b>{k}</b><br><br>"
+                f"{data[k]['public']}<br>"
+                f"{data[k]['private']}<br><hr>"
+            )
         return mark_safe(res)
     
 
@@ -63,4 +67,6 @@ class FetchedEntityStatementAdmin(admin.ModelAdmin):
     list_display = ('sub', 'iss', 'exp', 'iat', 'created', 'modified')
     list_filter = ('created', 'modified', 'exp', 'iat')
     search_fields = ('sub', 'iss')
-    readonly_fields = ('created', 'modified', 'iat', 'exp', 'iss', 'sub')
+    readonly_fields = (
+        'sub', 'statement', 'created', 'modified', 'iat', 'exp', 'iss'
+    )
