@@ -275,7 +275,13 @@ class FederationDescendant(TimeStampedModel):
             entity=self).values_list('contact', flat=True)
         
         if contacts:
-            data["contacts"] = {'add': [i for i in contacts]}
+            for k,v in data['metadata_policy'].items():
+                if data['metadata_policy'][k].get("contacts"):
+                    data['metadata_policy'][k]["contacts"].update(
+                        {'add': [i for i in contacts]}
+                    )
+                else:
+                    data['metadata_policy'][k]["contacts"] = {'add': [i for i in contacts]}
 
         return data
 

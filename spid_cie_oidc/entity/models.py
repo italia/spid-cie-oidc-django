@@ -207,7 +207,7 @@ class FederationEntityConfiguration(TimeStampedModel):
         
     @property
     def entity_configuration_as_json(self):
-        return json.dumps(self.entity_configuration_as_dict, indent=2)
+        return json.dumps(self.entity_configuration_as_dict)
 
     @property
     def entity_configuration_as_jws(self):
