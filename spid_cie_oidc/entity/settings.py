@@ -54,4 +54,4 @@ HTTPC_PARAMS = {
     "session" : {"timeout": aiohttp.ClientTimeout(total=4)}
 }
 
-FEDERATION_DEFAUL_EXP = 2880
+FEDERATION_DEFAULT_EXP = 2880

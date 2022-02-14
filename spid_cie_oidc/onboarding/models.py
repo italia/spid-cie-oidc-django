@@ -40,9 +40,9 @@ FEDERATION_DEFAULT_POLICY = getattr(
     settings, "FEDERATION_DEFAULT_POLICY",
     local_settings.FEDERATION_DEFAULT_POLICY
 )
-FEDERATION_DEFAUL_EXP = getattr(
-    settings, "FEDERATION_DEFAUL_EXP",
-    local_settings.FEDERATION_DEFAUL_EXP
+FEDERATION_DEFAULT_EXP = getattr(
+    settings, "FEDERATION_DEFAULT_EXP",
+    local_settings.FEDERATION_DEFAULT_EXP
 )
 
 logger = logging.getLogger(__name__)
@@ -258,10 +258,10 @@ class FederationDescendant(TimeStampedModel):
         }
 
         # apply custom policies if defined
-        policies.update(self.metadata_policy)
+        policies.update(self.metadata_policy)         
         
         data = {
-          "exp": exp_from_now(minutes=FEDERATION_DEFAUL_EXP),
+          "exp": exp_from_now(minutes=FEDERATION_DEFAULT_EXP),
           "iat": iat_now(),
           "iss": get_first_self_trust_anchor().sub,
           "sub": self.sub,
@@ -281,7 +281,14 @@ class FederationDescendant(TimeStampedModel):
                         {'add': [i for i in contacts]}
                     )
                 else:
-                    data['metadata_policy'][k]["contacts"] = {'add': [i for i in contacts]}
+                    data['metadata_policy'][k]["contacts"] = {
+                        'add': [i for i in contacts]
+                    }
+
+        # include active trust marks
+        tm = self.trust_marks
+        if tm:
+            data['trust_marks'] = tm
 
         return data
 

@@ -1,4 +1,5 @@
 from cryptojwt.jwk.jwk import key_from_jwk_dict
+from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -16,8 +17,10 @@ from spid_cie_oidc.entity.jwtse import create_jws
 from spid_cie_oidc.entity.validators import validate_public_jwks
 from spid_cie_oidc.entity.utils import exp_from_now, iat_now
 
+
 import datetime
 import json
+import spid_cie_oidc.entity.settings as local_settings
 import uuid
 
 
@@ -37,6 +40,10 @@ ENTITY_STATUS = {
     "unknown": None,
     "expired": None
 }
+FEDERATION_DEFAULT_EXP = getattr(
+    settings, "FEDERATION_DEFAULT_EXP",
+    local_settings.FEDERATION_DEFAULT_EXP
+)
 
 
 def is_leaf(statement_metadata):
@@ -76,7 +83,7 @@ class FederationEntityConfiguration(TimeStampedModel):
         )
     )
     default_exp = models.PositiveIntegerField(
-        default=33,
+        default=FEDERATION_DEFAULT_EXP,
         help_text=_(
             "how many minutes from now() an issued statement must expire"
         )
@@ -91,7 +98,9 @@ class FederationEntityConfiguration(TimeStampedModel):
     authority_hints = models.JSONField(
         blank=True,
         null=False,
-        help_text=_("only required if this Entity is an intermediary"),
+        help_text=_(
+            "only required if this Entity is an intermediary or leaf."
+        ),
         default=list,
     )
     jwks = models.JSONField(
