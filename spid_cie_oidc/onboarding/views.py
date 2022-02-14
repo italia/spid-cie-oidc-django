@@ -29,7 +29,6 @@ def fetch(request):
     sub = FederationDescendant.objects.filter(
         sub=request.GET["sub"], is_active=True
     ).first()
-
     if not sub:
         raise Http404()
 

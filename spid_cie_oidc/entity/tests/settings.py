@@ -20,6 +20,39 @@ TM_ISSUERS = {
 }
 FA_CONSTRAINTS = {"max_path_length": 1}
 
+ta_conf_data = dict(
+    sub=TA_SUB,
+    metadata=FA_METADATA,
+    constraints=FA_CONSTRAINTS,
+    is_active=1,
+    trust_marks_issuers=TM_ISSUERS,
+)
+
+rp_onboarding_data = dict(
+    name = "RP Test",
+    sub = "http://rp-test/",
+    type = "openid_relying_party",
+    
+    metadata_policy = {"openid_relying_party": {"scopes": {"value": ["openid"]}}},
+    is_active=True
+)
+
+TRUST_MARK_PAYLOAD = {
+    "iss": "$.issuer_sub",
+    "sub": "$.sub",
+    "iat": 1579621160,
+    "id": "https://www.spid.gov.it/certification/rp",
+    "mark": "https://www.agid.gov.it/themes/custom/agid/logo.svg",
+    "ref": "https://docs.italia.it/italia/spid/spid-regole-tecniche-oidc/it/stabile/index.html"
+}
+
+RP_PROFILE = {
+    "name": "SPID Public SP",
+    "profile_category": "openid_relying_party",
+    "profile_id": "https://www.spid.gov.it/openid-federation/agreement/sp-public/",
+    "trust_mark_template": TRUST_MARK_PAYLOAD
+}
+
 RP_METADATA = {
     "openid_relying_party": {
         "application_type": "web",

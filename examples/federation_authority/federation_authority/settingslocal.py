@@ -84,7 +84,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # 'prettyjson',
     'spid_cie_oidc.entity',
-    'spid_cie_oidc.onboarding'
+    'spid_cie_oidc.onboarding',
+    'spid_cie_oidc.relying_party'
 ]
 
 DATABASES = {

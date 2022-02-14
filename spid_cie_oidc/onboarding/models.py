@@ -65,22 +65,21 @@ class FederationEntityProfile(TimeStampedModel):
 
     name = models.CharField(
         max_length=33,
-        help_text=_("Profile name. "),
+        help_text=_("Profile name. ")
     )
     profile_category = models.CharField(
         max_length=64,
         help_text=_("Profile id. It SHOULD be a URL but feel free to put whatever"),
-        choices=[(i, i) for i in ENTITY_TYPES],
+        choices=[(i, i) for i in ENTITY_TYPES]
     )
     profile_id = models.CharField(
         max_length=1024,
         help_text=_("Profile id. It SHOULD be a URL but feel free to put whatever"),
-        unique=True,
+        unique=True
     )
     trust_mark_template = models.JSONField(
-        blank=True,
         help_text=_("trust marks template for this profile"),
-        default=dict,
+        default=dict
     )
 
     class Meta:

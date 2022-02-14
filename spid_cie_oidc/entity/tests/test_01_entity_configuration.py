@@ -3,18 +3,10 @@ from django.test import TestCase, Client
 from django.urls import reverse
 
 from spid_cie_oidc.entity.models import *
-from spid_cie_oidc.entity.jwtse import verify_jws, unpad_jwt_head, unpad_jwt_payload
+from spid_cie_oidc.entity.jwtse import verify_jws
 
 from . import get_admin_change_view_url
 from .settings import *
-
-ta_conf_data = dict(
-    sub=TA_SUB,
-    metadata=FA_METADATA,
-    constraints=FA_CONSTRAINTS,
-    is_active=1,
-    trust_marks_issuers=TM_ISSUERS,
-)
 
 
 class EntityConfigurationTest(TestCase):

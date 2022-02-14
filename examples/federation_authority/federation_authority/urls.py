@@ -34,3 +34,7 @@ urlpatterns = [
 
 urlpatterns.extend(entity_urlpatterns)
 urlpatterns.extend(ta_urlpatterns)
+
+if 'spid_cie_oidc.relying_party' in settings.INSTALLED_APPS:
+    from spid_cie_oidc.relying_party.urls import urlpatterns as rp_urlpatterns
+    urlpatterns.extend(rp_urlpatterns)
