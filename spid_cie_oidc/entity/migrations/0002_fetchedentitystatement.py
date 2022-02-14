@@ -6,25 +6,48 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('spid_cie_oidc_entity', '0001_initial'),
+        ("spid_cie_oidc_entity", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='FetchedEntityStatement',
+            name="FetchedEntityStatement",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('modified', models.DateTimeField(auto_now=True)),
-                ('iss', models.URLField(help_text='URL that identifies the issuer of this statement in the Federation. ', max_length=255)),
-                ('sub', models.URLField(help_text='URL that identifies this Entity in the Federation. ', max_length=255)),
-                ('exp', models.DateTimeField()),
-                ('iat', models.DateTimeField()),
-                ('statement', models.JSONField(default=dict, help_text='Entity statement')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("modified", models.DateTimeField(auto_now=True)),
+                (
+                    "iss",
+                    models.URLField(
+                        help_text="URL that identifies the issuer of this statement in the Federation. ",
+                        max_length=255,
+                    ),
+                ),
+                (
+                    "sub",
+                    models.URLField(
+                        help_text="URL that identifies this Entity in the Federation. ",
+                        max_length=255,
+                    ),
+                ),
+                ("exp", models.DateTimeField()),
+                ("iat", models.DateTimeField()),
+                (
+                    "statement",
+                    models.JSONField(default=dict, help_text="Entity statement"),
+                ),
             ],
             options={
-                'verbose_name': 'Fetched Entity Statement',
-                'verbose_name_plural': 'Fetched Entity Statement',
+                "verbose_name": "Fetched Entity Statement",
+                "verbose_name_plural": "Fetched Entity Statement",
             },
         ),
     ]

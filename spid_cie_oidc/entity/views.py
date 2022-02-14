@@ -2,33 +2,28 @@ from django.http import Http404
 from django.http import HttpResponse
 from django.http import JsonResponse
 
-from . models import FederationEntityConfiguration
-from . statements import OIDCFED_FEDERATION_WELLKNOWN_URL
+from .models import FederationEntityConfiguration
+from .statements import OIDCFED_FEDERATION_WELLKNOWN_URL
 
 
 def entity_configuration(request):
     """
-        OIDC Federation Entity Configuration at
-        .well-known/openid-federation
+    OIDC Federation Entity Configuration at
+    .well-known/openid-federation
     """
-    _sub = request.build_absolute_uri().split(
-        OIDCFED_FEDERATION_WELLKNOWN_URL
-    )[0]
+    _sub = request.build_absolute_uri().split(OIDCFED_FEDERATION_WELLKNOWN_URL)[0]
     conf = FederationEntityConfiguration.objects.filter(
         # TODO: check for reverse proxy and forwarders ...
-        sub = _sub, 
-        is_active=True
+        sub=_sub,
+        is_active=True,
     ).first()
 
     if not conf:
         raise Http404()
 
-    if request.GET.get('format') == 'json':
-        return JsonResponse(
-            conf.entity_configuration_as_dict, safe=False
-        )
+    if request.GET.get("format") == "json":
+        return JsonResponse(conf.entity_configuration_as_dict, safe=False)
     else:
         return HttpResponse(
-            conf.entity_configuration_as_jws,
-            content_type="application/jose"
+            conf.entity_configuration_as_jws, content_type="application/jose"
         )

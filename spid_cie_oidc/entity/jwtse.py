@@ -12,39 +12,36 @@ from django.conf import settings
 
 from . import settings as local_settings
 
-JWS_ALG = getattr(
-    settings, "DEFAULT_JWS_ALG", local_settings.DEFAULT_JWS_ALG
-)
-DEFAULT_JWE_ALG = getattr(
-    settings, "DEFAULT_JWE_ALG", local_settings.DEFAULT_JWE_ALG
-)
-JWE_ENC = getattr(
-    settings, "DEFAULT_JWE_ENC", local_settings.DEFAULT_JWE_ENC
-)
+JWS_ALG = getattr(settings, "DEFAULT_JWS_ALG", local_settings.DEFAULT_JWS_ALG)
+DEFAULT_JWE_ALG = getattr(settings, "DEFAULT_JWE_ALG", local_settings.DEFAULT_JWE_ALG)
+DEFAULT_JWE_ENC = getattr(settings, "DEFAULT_JWE_ENC", local_settings.DEFAULT_JWE_ENC)
 SIGNING_ALG_VALUES_SUPPORTED = getattr(
-    settings, "SIGNING_ALG_VALUES_SUPPORTED",
-    local_settings.SIGNING_ALG_VALUES_SUPPORTED
+    settings,
+    "SIGNING_ALG_VALUES_SUPPORTED",
+    local_settings.SIGNING_ALG_VALUES_SUPPORTED,
 )
 ENCRYPTION_ALG_VALUES_SUPPORTED = getattr(
-    settings, "ENCRYPTION_ALG_VALUES_SUPPORTED",
-    local_settings.ENCRYPTION_ALG_VALUES_SUPPORTED
+    settings,
+    "ENCRYPTION_ALG_VALUES_SUPPORTED",
+    local_settings.ENCRYPTION_ALG_VALUES_SUPPORTED,
 )
 
 logger = logging.getLogger(__name__)
 
 
-def unpad_jwt_element(jwt:str, position:int) -> dict:
+def unpad_jwt_element(jwt: str, position: int) -> dict:
     b = jwt.split(".")[position]
     padded = f"{b}{'=' * divmod(len(b),4)[1]}"
     data = json.loads(base64.b64decode(padded))
     return data
 
-def unpad_jwt_head(jwt:str) -> dict:
-    return unpad_jwt_element(jwt, position = 0)
+
+def unpad_jwt_head(jwt: str) -> dict:
+    return unpad_jwt_element(jwt, position=0)
 
 
-def unpad_jwt_payload(jwt:str) -> dict:
-    return unpad_jwt_element(jwt, position = 1)
+def unpad_jwt_payload(jwt: str) -> dict:
+    return unpad_jwt_element(jwt, position=1)
 
 
 def encrypt_dict(plain_dict, jwk_dict) -> str:
@@ -52,9 +49,9 @@ def encrypt_dict(plain_dict, jwk_dict) -> str:
     _key = key_from_jwk_dict(jwk_dict)
     _rsa = JWE_RSA(
         json.dumps(plain_dict).encode(),
-        alg=JWE_ALG,
-        enc=JWE_ENC,
-        kid=_key.kid
+        alg=DEFAULT_JWE_ALG,
+        enc=DEFAULT_JWE_ENC,
+        kid=_key.kid,
     )
     jwe = _rsa.encrypt(_key.public_key())
     logger.debug(f"Encrypted dict as JWE: {jwe}")
@@ -69,14 +66,12 @@ def decrypt_jwe(jwe, jwk_dict) -> dict:
         logger.error(f"Failed to extract JWT header: {e}")
         raise VerificationError("The JWT is not valid")
 
-    _alg = jwe_header.get("alg", JWE_ALG)
-    _enc = jwe_header.get("enc", JWE_ENC)
+    _alg = jwe_header.get("alg", DEFAULT_JWE_ALG)
+    _enc = jwe_header.get("enc", DEFAULT_JWE_ENC)
     jwe_header.get("kid")
 
     if _alg not in ENCRYPTION_ALG_VALUES_SUPPORTED:
-        raise UnsupportedAlgorithm(
-            f"{_alg} has beed disabled for security reason"
-        )
+        raise UnsupportedAlgorithm(f"{_alg} has beed disabled for security reason")
 
     _decryptor = factory(jwe, alg=_alg, enc=_enc)
 
@@ -90,11 +85,11 @@ def decrypt_jwe(jwe, jwk_dict) -> dict:
 
 
 def create_jws(
-    payload:dict, jwk_dict:dict, alg:str = "RS256", headers:dict = {}
+    payload: dict, jwk_dict: dict, alg: str = "RS256", headers: dict = {}
 ) -> str:
 
-    headers['kid'] = jwk_dict['kid']
-    headers['alg'] = alg
+    headers["kid"] = jwk_dict["kid"]
+    headers["alg"] = alg
 
     _key = key_from_jwk_dict(jwk_dict)
     _signer = JWS(payload, alg=alg)
@@ -103,21 +98,17 @@ def create_jws(
     return signature
 
 
-def verify_jws(jws:str, pub_jwk:dict):
+def verify_jws(jws: str, pub_jwk: dict):
     _key = key_from_jwk_dict(pub_jwk)
 
     _head = unpad_jwt_head(jws)
-    if _head.get('kid') != pub_jwk['kid']:
-        raise Exception(
-            f"kid error: {_head.get('kid')} != {pub_jwk['kid']}"
-        )
+    if _head.get("kid") != pub_jwk["kid"]:
+        raise Exception(f"kid error: {_head.get('kid')} != {pub_jwk['kid']}")
 
-    _alg = _head['alg']
+    _alg = _head["alg"]
     if _alg not in SIGNING_ALG_VALUES_SUPPORTED or not _alg:
-        raise UnsupportedAlgorithm(
-            f"{_alg} has beed disabled for security reason"
-        )
+        raise UnsupportedAlgorithm(f"{_alg} has beed disabled for security reason")
 
-    verifier = JWS(alg=_head['alg'])
+    verifier = JWS(alg=_head["alg"])
     msg = verifier.verify_compact(jws, [_key])
     return msg

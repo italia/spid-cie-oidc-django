@@ -23,7 +23,7 @@ def create_jwk(hash_func=None):
     return jwk
 
 
-def private_pem_from_jwk(jwk_dict:dict):
+def private_pem_from_jwk(jwk_dict: dict):
     # exports private
 
     _k = key_from_jwk_dict(jwk_dict)
@@ -31,19 +31,19 @@ def private_pem_from_jwk(jwk_dict:dict):
     pem = pk.private_bytes(
         encoding=serialization.Encoding.PEM,
         format=serialization.PrivateFormat.TraditionalOpenSSL,
-        encryption_algorithm=serialization.NoEncryption()
+        encryption_algorithm=serialization.NoEncryption(),
     )
     return pem.decode()
 
 
-def public_pem_from_jwk(jwk_dict:dict):
+def public_pem_from_jwk(jwk_dict: dict):
     # exports private
 
     _k = key_from_jwk_dict(jwk_dict)
     pk = _k.public_key()
     cert = pk.public_bytes(
         encoding=serialization.Encoding.PEM,
-        format=serialization.PublicFormat.SubjectPublicKeyInfo
+        format=serialization.PublicFormat.SubjectPublicKeyInfo,
     )
     return cert.decode()
 
@@ -55,13 +55,9 @@ def serialize_rsa_key(rsa_key, kind="public", hash_func="SHA-256"):
         or
         cryptography.hazmat.backends.openssl.rsa._RSAPrivateKey
     """
-    if isinstance(
-            rsa_key, cryptography.hazmat.backends.openssl.rsa._RSAPublicKey
-    ):
+    if isinstance(rsa_key, cryptography.hazmat.backends.openssl.rsa._RSAPublicKey):
         data = {"pub_key": rsa_key}
-    elif isinstance(
-            rsa_key, cryptography.hazmat.backends.openssl.rsa._RSAPrivateKey
-    ):
+    elif isinstance(rsa_key, cryptography.hazmat.backends.openssl.rsa._RSAPrivateKey):
         data = {"priv_key": rsa_key}
     elif isinstance(rsa_key, (str, bytes)):
         if kind == "private":

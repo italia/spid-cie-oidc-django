@@ -1,12 +1,11 @@
-from django.test import TestCase, Client, RequestFactory
+from django.test import Client, TestCase
 from django.urls import reverse
 
-from . models import OidcAuthenticationToken
-from . utils import html_json_preview
+from .models import OidcAuthenticationToken
+from .utils import html_json_preview
 
 
 class OidcRpTest(TestCase):
-
     def test_stupid_logout(self):
         # a stupid logout that MUST fail
         url = f'{reverse("spid_cie_oidc_relying_party:spid_cie_rpinitiated_logout")}'
@@ -24,7 +23,7 @@ class OidcRpTest(TestCase):
         authz_url = f'{reverse("op_test:spid_oidc_op_authz")}?{res.url.split("?")[1]}'
         res = req.get(authz_url)
         self.assertTrue(res.status_code == 302)
-        self.assertIn('code=', res.url)
+        self.assertIn("code=", res.url)
 
         url = f'{reverse("spid_cie_oidc_relying_party:spid_cie_rp_callback")}?{res.url.split("?")[1]}'
         res = req.get(url)
@@ -32,7 +31,7 @@ class OidcRpTest(TestCase):
 
         url = f'{reverse("spid_cie_oidc_relying_party:spid_cie_rp_echo_attributes")}'
         res = req.get(url)
-        self.assertIn('sando', res.content.decode())
+        self.assertIn("sando", res.content.decode())
 
         # test models
         tokens = OidcAuthenticationToken.objects.first()

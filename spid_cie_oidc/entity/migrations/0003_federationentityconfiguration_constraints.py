@@ -6,13 +6,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('spid_cie_oidc_entity', '0002_fetchedentitystatement'),
+        ("spid_cie_oidc_entity", "0002_fetchedentitystatement"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='federationentityconfiguration',
-            name='constraints',
-            field=models.JSONField(default=dict, help_text='\n{\n  "naming_constraints": {\n    "permitted": [\n      "https://.example.com"\n    ],\n    "excluded": [\n      "https://east.example.com"\n    ]\n  },\n  "max_path_length": 2\n}\n'),
+            model_name="federationentityconfiguration",
+            name="constraints",
+            field=models.JSONField(
+                default=dict,
+                help_text='\n{\n  "naming_constraints": {\n    "permitted": [\n      "https://.example.com"\n    ],\n    "excluded": [\n      "https://east.example.com"\n    ]\n  },\n  "max_path_length": 2\n}\n',
+            ),
         ),
     ]

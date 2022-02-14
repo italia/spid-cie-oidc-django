@@ -7,18 +7,11 @@ ENCRYPTION_ENC_SUPPORTED = [
     "A256CBC-HS512",
     "A128GCM",
     "A192GCM",
-    "A256GCM"
+    "A256GCM",
 ]
 
 DEFAULT_JWS_ALG = "RS256"
-SIGNING_ALG_VALUES_SUPPORTED = [
-    "RS256",
-    "RS384",
-    "RS512",
-    "ES256",
-    "ES384",
-    "ES512"
-]
+SIGNING_ALG_VALUES_SUPPORTED = ["RS256", "RS384", "RS512", "ES256", "ES384", "ES512"]
 
 DEFAULT_JWE_ALG = "RSA-OAEP"
 ENCRYPTION_ALG_VALUES_SUPPORTED = [
@@ -27,7 +20,7 @@ ENCRYPTION_ALG_VALUES_SUPPORTED = [
     "ECDH-ES",
     "ECDH-ES+A128KW",
     "ECDH-ES+A192KW",
-    "ECDH-ES+A256KW"
+    "ECDH-ES+A256KW",
 ]
 
 DEFAULT_HASH_FUNC = "SHA-256"
@@ -44,14 +37,14 @@ OIDCFED_MAX_PATH_LEN = 1
 
 # old, for requests
 # HTTPC_PARAMS = {
-    # "verify": True,
-    # "timeout": 4
+# "verify": True,
+# "timeout": 4
 # }
 
 # for aiohttp
 HTTPC_PARAMS = {
     "connection": {"ssl": True},
-    "session" : {"timeout": aiohttp.ClientTimeout(total=4)}
+    "session": {"timeout": aiohttp.ClientTimeout(total=4)},
 }
 
 FEDERATION_DEFAULT_EXP = 2880

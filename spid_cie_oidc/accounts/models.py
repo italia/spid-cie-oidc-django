@@ -25,12 +25,12 @@ class User(AbstractUser):
         ordering = ["username"]
         verbose_name_plural = _("Users")
 
-    def clear_sessions(self): # pragma: no cover
+    def clear_sessions(self):  # pragma: no cover
         user_sessions = []
         for session in Session.objects.all():
             if str(self.pk) == session.get_decoded().get("_auth_user_id"):
                 user_sessions.append(session.pk)
         return Session.objects.filter(pk__in=user_sessions).delete()
 
-    def __str__(self): # pragma: no cover
+    def __str__(self):  # pragma: no cover
         return "{} {}".format(self.first_name, self.last_name)
