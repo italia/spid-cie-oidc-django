@@ -34,7 +34,7 @@ def decode_token(bearer_token, keyjar, verify_sign=True):
 
 
 def random_string(n=27):
-    return "".join(random.choices(string.ascii_letters + string.digits, k=n))
+    return "".join(random.choices(string.ascii_letters + string.digits, k=n)) # nosec
 
 
 def get_pkce(code_challenge_method: str = "S256", code_challenge_length: int = 64):
@@ -75,4 +75,4 @@ def validate_jwt(jwt: str, key_jar):
 def html_json_preview(value):
     msg = json.loads(value or "{}")
     dumps = json.dumps(msg, indent=2)
-    return mark_safe(dumps.replace("\n", "<br>").replace(" ", "&nbsp"))
+    return mark_safe(dumps.replace("\n", "<br>").replace(" ", "&nbsp")) # nosec

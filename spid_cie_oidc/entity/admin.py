@@ -51,7 +51,7 @@ class FederationEntityConfigurationAdmin(admin.ModelAdmin):
                 f"{data[k]['public']}<br>"
                 f"{data[k]['private']}<br><hr>"
             )
-        return mark_safe(res)
+        return mark_safe(res) # nosec
 
 
 @admin.register(TrustChain)
