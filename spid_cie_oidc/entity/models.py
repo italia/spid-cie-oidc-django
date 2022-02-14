@@ -132,6 +132,28 @@ class FederationEntityConfiguration(TimeStampedModel):
         default=dict,
         validators=[validate_entity_metadata,]
     )
+    constraints = models.JSONField(
+        blank=False,
+        null=False,
+        help_text=_(
+            """
+{
+  "naming_constraints": {
+    "permitted": [
+      "https://.example.com"
+    ],
+    "excluded": [
+      "https://east.example.com"
+    ]
+  },
+  "max_path_length": 2
+}
+"""
+        ),
+        default=dict,
+        # TODO
+        # validators=[validate_entity_metadata,]
+    )
     is_active = models.BooleanField(
         default=False, help_text=_(
             "If this configuration is active. "
@@ -198,6 +220,9 @@ class FederationEntityConfiguration(TimeStampedModel):
 
         if self.trust_marks_issuers:
             conf['trust_marks_issuers'] = self.trust_marks_issuers
+
+        if self.constraints:
+            conf['constraints'] = self.constraints
 
         if self.is_leaf:
             if self.authority_hints:

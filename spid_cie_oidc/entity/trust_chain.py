@@ -17,9 +17,6 @@ HTTPC_PARAMS = getattr(settings, "HTTPC_PARAMS", settings_local.HTTPC_PARAMS)
 OIDCFED_MAXIMUM_AUTHORITY_HINTS = getattr(
     settings, 'OIDCFED_MAXIMUM_AUTHORITY_HINTS', settings_local.OIDCFED_MAXIMUM_AUTHORITY_HINTS
 )
-OIDCFED_MAX_PATH_LEN = getattr(
-    settings, 'OIDCFED_MAX_PATH_LEN', settings_local.OIDCFED_MAX_PATH_LEN
-)
 logger = logging.getLogger(__name__)
 
 
@@ -31,20 +28,29 @@ class TrustChainBuilder:
         max_authority_hints means how much authority_hints to follow on each hop
     """
     def __init__(
-        self, subject:str, trust_anchor:str, httpc_params:dict = {},
-        max_intermediaries:int = 1, max_authority_hints:int = 10,
+        self, subject:str, trust_anchor:EntityConfiguration,
+        httpc_params:dict = {},
+        max_authority_hints:int = 10,
+        subject_configuration:EntityConfiguration = None,
+        required_trust_marks:list = [],
         **kwargs
     ) -> None:
-        
+
         self.subject = subject
+        self.subject_configuration = subject_configuration
         self.httpc_params = httpc_params
         self.trust_anchor = trust_anchor
+        self.required_trust_marks = required_trust_marks
         self.is_valid = False
+
         self.statements_collection = OrderedDict()
-        self.entity_configuration:Union[None, EntityConfiguration] = None
         self.tree_of_trust = OrderedDict()
-        self.max_intermediaries = max_intermediaries
-        
+
+        self.max_authority_hints = max_authority_hints
+
+        # dynamically valued
+        self.max_path_len = 0
+
     def apply_metadata_policy(self) -> dict:
         """
             returns the final metadata
@@ -61,58 +67,113 @@ class TrustChainBuilder:
 
         return ec
 
-    def metadata_discovery(self, jwt) -> dict:
+    def validate_last_path_to_trust_anchor(self, ec:EntityConfiguration):
+        logger.info(f"Validating {self.subject} to {self.trust_anchor}")
+        
+        if not ec.get('authority_hints'):
+            # TODO: specialize exception
+            raise Exception(f"{ec.sub} doesn't have any authority hints!")
+        elif self.trust_anchor.sub not in ec['authority_hints']:
+            # TODO: specialize exception
+            raise Exception(
+                f"{self.subject} doesn't have {self.trust_anchor.sub} "
+                "in its authority hints "
+                f"but max_path_len is equal to {self.max_path_len}."
+            )
+
+        vbs = ec.validate_by_superiors(
+            superiors_entity_configurations = [self.trust_anchor]
+        )
+        if not vbs:
+            logger.warning(
+                f"Trust chain failed for {self.subject}"
+            )
+
+        # TODO
+        # TODO: everything is ok right now ... apply metadata policy!
+
+    def trust_walker(self, jwt) -> dict:
         """
             return a chain of verified statements
             from the lower up to the trust anchor
         """
-        logger.info(f"Starting Metadata Discovery for {self.subject}")
-        self.entity_configuration = EntityConfiguration(jwt)
-        try:
-            self.entity_configuration.validate_by_itself()
-        except Exceptions as e:
-            logger.error(
-                f"Metadata Discovery Entity Configuration validation error: {e}"
-            )
-            return {}
+        if self.max_path_len == 0:
+            self.validate_last_path_to_trust_anchor(self.subject_configuration)
 
-        self.tree_of_trust[0] = [self.entity_configuration]
+        logger.info(f"Starting a Walk into Metadata Discovery for {self.subject}")
+        self.tree_of_trust[0] = [self.subject_configuration]
+
         # max_intermediaries - 2 means that root entity and trust anchor
         # are not considered as intermediaries
-        while self.tree_of_trust < self.max_intermediaries - 2:
-            # here we decide the discovery policy
-            # how many hints we'll follow
-            # if we want to give to them a priority
+        while (len(self.tree_of_trust) - 1) <= self.max_path_len:
+            last_path_n = list[self.tree_of_trust.keys()][-1]
+            last_ecs = self.tree_of_trust[last_path_n]
+            sup_ecs = []
+            for last_ec in last_ecs:
+                superiors = last_ec.get_superiors(self.max_authority_hints)
+                validated_by = last_ec.validate_by_superiors(
+                    superiors_entity_configurations = superiors
+                )
+                sup_ecs.extend(list(validated_by.values()))
             
-            # if not :
-                # TODO: check is this subject matches to a trustable anchor
-                # pass
-                # break
+            self.tree_of_trust[last_path_n+1] = sup_ecs
 
-            # for su
-            pass
+        # the path is end ... is it valid?
+        # validate_last_path_to_trust_anchor(self.subject_configuration)
+        
+    def get_trust_anchor_configuration(self) -> None:
+        if not self.trust_anchor or not self.trust_anchor.items()[0][1]:
+            logger.info(f"Starting Metadata Discovery for {self.subject}")
+            ta_jwt  = get_entity_configuration(
+                self.trust_anchor, httpc_params = self.httpc_params
+            )
+            self.trust_anchor_configuration = EntityConfiguration(ta_jwt)
+            self.trust_anchor_configuration.validate_by_itself()
+            
+            if self.trust_anchor_configuration.payload.get(
+                'constraints', {}
+            ).get('max_path_length'):
+                
+                self.max_path_len = int(
+                    self.trust_anchor_configuration.payload[
+                        'constraints']['max_path_length']
+                )
 
-    def start(self):
-        try:
+    def get_subject_configuration(self) -> None:
+        if not self.subject_configuration:
             jwt = get_entity_configuration(
                 self.subject, httpc_params = self.httpc_params
             )
-            self.metadata_discovery(jwt)
+            self.subject_configuration = EntityConfiguration(jwt)
+            self.subject_configuration.validate_by_itself()
+
+            # TODO
+            # TODO: self.subject_configuration.get_valid_trust_marks()
+            # valid trust marks to be compared to self.required_trust_marks
+            
+    def start(self):
+        try:
+            self.get_trust_anchor_configuration()
+            self.get_subject_configuration()
+            self.trust_walker()
         except Exception as e:
             self.is_valid = False
             logger.error(f"{e}")
             raise e 
 
 
-def trust_chain_builder(subject:str, httpc_params:dict = {}) -> TrustChainBuilder:
+def trust_chain_builder(
+        subject:str, trust_anchor:dict,
+        httpc_params:dict = {}, required_trust_marks:list = []
+    ) -> TrustChainBuilder:
     """
         Minimal Provider Discovery endpoint request processing
     """
     tc = TrustChainBuilder(
         subject,
-        settings.OIDCFED_FEDERATION_TRUST_ANCHORS,
-        httpc_params = HTTPC_PARAMS,
-        max_length = OIDCFED_MAX_PATH_LEN
+        trust_anchor = trust_anchor,
+        required_trust_marks = required_trust_marks,
+        httpc_params = HTTPC_PARAMS
     )
     tc.start()
 

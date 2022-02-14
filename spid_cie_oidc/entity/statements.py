@@ -58,12 +58,13 @@ class EntityConfiguration:
     def __init__(
         self, jwt:str, httpc_params:dict = {},
         filter_by_allowed_trust_marks:list = [],
-        trust_anchors_entity_confs = [],
-        trust_mark_issuers_entity_confs = [],
+        trust_anchors_entity_confs:dict = [],
+        trust_mark_issuers_entity_confs:dict = [],
     ):
         self.jwt = jwt
         self.header = unpad_jwt_head(jwt)
         self.payload = unpad_jwt_payload(jwt)
+        self.sub = self.payload['sub']
         self.jwks = get_jwks(self.payload, httpc_params)
         self.kids = [i.get('kid') for i in self.jwks]
         self.httpc_params = httpc_params
@@ -82,7 +83,7 @@ class EntityConfiguration:
         self.failed_by_superiors = {}
 
         self.is_valid = False
-
+    
     def validate_by_itself(self) -> bool:
         """
             validates the entity configuration by it self
@@ -97,24 +98,31 @@ class EntityConfiguration:
         self.is_valid = True
         return True
 
-    def has_valid_trust_marks(self) -> bool:
+    def get_valid_trust_marks(self) -> bool:
         """
             validate the entity configuration ony if marked by a well known
             trust mark, issued by a trusted issuer
         """
-        if not self.filter_by_allowed_trust_marks:
-            return True
-
+        # if not self.filter_by_allowed_trust_marks:
+            # return True
         # TODO
-        
+        raise NotImplementedError()
 
-    async def get_superiors(self, authority_hints:list = []): # -> dict[str, EntityConfiguration]:
+    def get_superiors(self, authority_hints:list = [], max_authority_hints:int = 0): # -> dict[str, EntityConfiguration]:
         """
             get superiors entity configurations
         """
         # apply limits if defined
         authority_hints = authority_hints or self.payload['authority_hints']
-
+        if max_authority_hints and authority_hints != authority_hints[:max_authority_hints]:
+            logger.warning(
+                f"Found {len(authority_hints)} but "
+                f"authority maximum hints is set to {max_authority_hints}. "
+                "the following authorities will be ignored: "
+                f"{', '.join(authority_hints[max_authority_hints:])}"
+            )
+            authority_hints = authority_hints[:max_authority_hints]
+        
         jwts = get_entity_statements(authority_hints, self.httpc_params)
         for jwt in jwts:
             ec = self.__class__(jwt, httpc_params=self.httpc_params)
@@ -169,10 +177,9 @@ class EntityConfiguration:
         target[superior_sub] = payload
         return is_valid
         
-    async def validate_by_superiors(
+    def validate_by_superiors(
             self,
-            superiors_entity_configurations:list,
-            max_superiors:int = 12
+            superiors_entity_configurations:dict = {},
         ): # -> dict[str, EntityConfiguration]:
         """
             validates the entity configuration with the entity statements
@@ -181,24 +188,8 @@ class EntityConfiguration:
             this methods create self.verified_superiors and failed ones
             and self.verified_by_superiors and failed ones
         """
-        if len(superiors_entity_configurations) > max_superiors:
-            logger.warning(
-                f"Found {len(superiors_entity_configurations)} but "
-                f"authority maximum hints is set to {max_superiors}. "
-                "the following authorities will be ignored: "
-                f"{', '.join(superiors_entity_configurations[max_superiors:])}"
-            )
 
-        # TODO: asyncio loop
-        for ec in superiors_entity_configurations[:max_superiors]:
-            _invalid_ec_msg = (
-                f"{ec.payload['sub']} is not a valid Entity Configuration. "
-                "Skipped by EntityConfiguration.validate_by_superiors. "
-            )
-            if not ec.is_valid:
-                logger.warning(_invalid_ec_msg)
-                continue
-
+        for ec in superiors_entity_configurations:
             try:
                 # get superior fetch url
                 fetch_api_url = ec.payload['metadata']['federation_entity']['federation_api_endpoint']
@@ -212,9 +203,9 @@ class EntityConfiguration:
             else:
                 jwts = get_entity_statements([fetch_api_url], self.httpc_params)
                 jwt = jwts[0]
-                self.verified_by_superiors[ec.payload['sub']] = validate_by_superior_statement(jwt, ec)
+                self.verified_by_superiors[ec.sub] = validate_by_superior_statement(jwt, ec)
 
         return self.verified_by_superiors
 
     def __str__(self) -> str:
-        return f"{self.payload['sub']} valid {self.is_valid}"
+        return f"{self.sub} valid {self.is_valid}"

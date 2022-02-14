@@ -154,14 +154,14 @@ class FederationDescendant(TimeStampedModel):
         help_text=_(
             "an unique code that identifies this entry. "
             "For italian public service it may be the IPA code."
-        ),
+        )
     )
     name = models.CharField(
         max_length=33,
         help_text=_(
             "human readable name of this entity. "
             "It may be a unit or organization name"
-        ),
+        )
     )
     sub = models.URLField(
         max_length=255,
@@ -189,12 +189,12 @@ class FederationDescendant(TimeStampedModel):
     metadata_policy = models.JSONField(
         blank=True,
         help_text=_("if present overloads the DEFAULT policy"),
-        default=dict,
+        default=dict
     )
     constraints = models.JSONField(
         blank=True,
         help_text=_("if present overloads the DEFAULT policy"),
-        default=dict,
+        default=dict
     )
     extended_claims = models.JSONField(
         blank=True,
@@ -202,7 +202,7 @@ class FederationDescendant(TimeStampedModel):
             "a dictionary containing any other claim like: "
             "jti, crti, policy_language_crit and any other extension"
         ),
-        default=dict,
+        default=dict
     )
     status = models.CharField(
         max_length=33,
@@ -215,7 +215,7 @@ class FederationDescendant(TimeStampedModel):
     status_log = models.JSONField(
         blank=True,
         help_text=_("status log"),
-        default=dict,
+        default=dict
     )
     is_active = models.BooleanField(
         default=False, help_text=_("If this entity is active. ")
@@ -353,7 +353,7 @@ class FederationEntityAssignedProfile(TimeStampedModel):
     @property
     def trust_mark_as_json(self):
         return json.dumps(self.trust_mark_as_dict)
-    
+
     @property
     def trust_mark_as_jws(self):
         return create_jws(

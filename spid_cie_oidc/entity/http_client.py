@@ -5,7 +5,7 @@ async def fetch(session, url, httpc_params:dict = {}):
     async with session.get(url, **httpc_params.get('connection', {})) as response:
         if response.status != 200:
             # response.raise_for_status()
-            return await ""
+            return ""
         return await response.text()
 
 
