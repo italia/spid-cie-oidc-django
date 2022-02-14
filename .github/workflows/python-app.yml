@@ -1,0 +1,65 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: spid_cie_oidc
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+          - '3.8'
+          - '3.9'
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install python dependencies
+      run: |
+        # sudo apt update && sudo apt python3-dev python3-pip
+        python -m pip install --upgrade pip
+        python -m pip install -r requirements-dev.txt
+
+    - name: Install satosa_oidcop
+      run: |
+        pip install -e .
+    - name: Lint with flake8
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 ./spid_cie_oidc  --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        flake8 ./spid_cie_oidc --count --exit-zero --statistics --max-line-length 120
+    - name: spid_cie_oidc onboarding and entity test
+      run: |
+        cd examples/federation_authority
+        coverage erase
+        coverage run ./manage.py test spid_cie_oidc.entity
+        coverage report -m
+    #- name: Upload coverage to Codecov
+      #uses: codecov/codecov-action@v1
+      #with:
+        #token: ${{ secrets.CODECOV_TOKEN }}
+        #file: example/coverage.xml
+        #flags: unittests
+        #env_vars: OS,PYTHON
+        #name: codecov-umbrella
+        #fail_ci_if_error: true
+        #path_to_write_report: ./codecov_report.txt
+        # verbose: true
+    - name: Bandit Security Scan
+      run: |
+        bandit -r -x tests/ spid_cie_oidc/*
