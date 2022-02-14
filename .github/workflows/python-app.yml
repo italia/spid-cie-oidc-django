@@ -45,9 +45,8 @@ jobs:
         flake8 ./spid_cie_oidc --count --exit-zero --statistics --max-line-length 120
     - name: spid_cie_oidc onboarding and entity test
       run: |
-        cd examples/federation_authority
         coverage erase
-        coverage run ./manage.py test spid_cie_oidc.entity
+        coverage run examples/federation_authority/manage.py test spid_cie_oidc.entity
         coverage report -m
     #- name: Upload coverage to Codecov
       #uses: codecov/codecov-action@v1
