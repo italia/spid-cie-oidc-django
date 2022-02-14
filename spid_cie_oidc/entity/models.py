@@ -132,8 +132,7 @@ class FederationEntityConfiguration(TimeStampedModel):
         ],
     )
     constraints = models.JSONField(
-        blank=False,
-        null=False,
+        blank=True,
         help_text=_(
             """
 {

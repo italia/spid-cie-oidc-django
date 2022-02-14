@@ -38,3 +38,16 @@ urlpatterns.extend(ta_urlpatterns)
 if 'spid_cie_oidc.relying_party' in settings.INSTALLED_APPS:
     from spid_cie_oidc.relying_party.urls import urlpatterns as rp_urlpatterns
     urlpatterns.extend(rp_urlpatterns)
+
+    from spid_cie_oidc.entity.views import entity_configuration
+
+    urlpatterns.extend(
+        [
+            path(
+                f"oidc/rp/.well-known/openid-federation",
+                entity_configuration,
+                name="rp_entity_configuration",
+            ),
+        ]
+    )
+    
