@@ -45,12 +45,12 @@ class EntityConfigurationTest(TestCase):
             isinstance(self.ta_conf, FederationEntityConfiguration)
         )
         self.assertFalse(self.ta_conf.is_leaf)
+        
         for i in (
             'public_jwks',
             'pems_as_json',
             'kids',
             'type',
-            'entity_configuration_as_json',
             'entity_configuration_as_jws'
         ):
             attr = getattr(self.ta_conf, i)
