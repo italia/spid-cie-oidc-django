@@ -12,29 +12,36 @@ each of these can be installed separately within a django project.
 Table of contents:
 
 - [Features](#features)
-- [Setup](#setup)
-  - [Dependencies](#dependencies)
-  - [Install as Django application](#install-as-django-application)
-  - [Install the example project for demo purpose](#install-the-example-project-for-demo-purpose)
+* [Setup](#setup)
+    * [Dependencies](#dependencies)
+      * [Install as Django application](#install-as-django-application)
+      * [Setup the example project for demo purpose](#setup-the-example-project-for-demo-purpose)
 * [Usage](#usage)
-  - [Endpoints](#endpoints)
-    * [.well-known/openid-federation](#well-knownopenid-federation)
-    * [/fetch](#fetch)
+    * [Endpoints](#endpoints)
+      * [.well-known/openid-federation](#well-knownopenid-federation)
+      * [/fetch](#fetch)
+      * [/list](#list)
+* [Hints](#hints)
 * [Contribute](#contribute)
-  * [as end user](#as-end-user)
-  * [as developer](#as-developer)
+    * [as end user](#as-end-user)
+    * [as developer](#as-developer)
 * [License and Authors](#license-and-authors)
+* [Note](#note)
 
 
 # Features
 
-1. __OIDC Federation 1.0 Authority/Intermediary__ (spid_cie_oidc.entity) with the following endpoints:
+1. __OIDC Federation 1.0 Authority/Intermediary__
+    Django application name: __spid_cie_oidc.entity__.
+    Endpoints:
     - entity configuration (.well-known/openid-federation)
     - fetch
     - listing
     - evaluate endpoints
+    - trust mark status
 
-2. __OIDC Federation 1.0 onboarding panel__ (spid_cie_oidc.onboarding):
+2. __OIDC Federation 1.0 onboarding panel__:
+    Django application name: __spid_cie_oidc.onboarding__.
     - [frontend] not yet in roadmap, [help needed](https://github.com/peppelinux/spid-cie-oidc/issues/1)
     - [backend] Automatic checks on new registered entities (descendats):
         - entity configuration:
@@ -44,14 +51,22 @@ Table of contents:
         - RP authz check following AgID and IPZS OIDC Fed guidelines.
         - trust marks forgery
 
-3. __Openid Connect Provider__ (spid_cie_oidc.provider) with Relying Party test suite  and the following endpoints:
+3. __Openid Connect Provider__
+    Identity Provider with additional test suite.
+    Django application name: __spid_cie_oidc.provider__.
+
+    Endpoints:
     - entity configuration (.well-known/openid-federation)
     - authorization
     - token
     - introspection
     - token revocation
 
-4. __Openid Connect Relying Party__ (spid_cie_oidc.relying_party) with the following endpoints:
+4. __Openid Connect Relying Party__
+    Relying Party with additional test suite.
+    Django application name: __spid_cie_oidc.relying_party__.
+
+    Endpoints:
     - entity configuration (.well-known/openid-federation)
     - authorization
     - auth code redirect
