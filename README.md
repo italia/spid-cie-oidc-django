@@ -119,8 +119,8 @@ for each of the them you have to create the db and load the example data , as fo
 
 ````
 cd examples/$project_name
-cp example/settingslocal.py.example example/settingslocal.py
-# then customize (optional) example/settingslocal.py
+cp $project_name/settingslocal.py.example $project_name/settingslocal.py
+# then customize (optional) $project_name/settingslocal.py
 
 ./manage.py migrate
 
@@ -156,7 +156,7 @@ Point your web browser to `http://localhost:8000/admin` to enter in the manageme
 ###  Endpoints
 
 #### .well-known/openid-federation
-Where the Entity Configuration is. `?format=json` will release a json for debug purpose.
+Where the Entity Configuration can be downloaded. `?format=json` will release a json for debug purpose.
 A prefix can be configured in global settings file with parameter `OIDC_PREFIX`.
 
 Available for trust anchors, providers and relying parties.
@@ -190,10 +190,9 @@ Lists all the descendant entities.
 Backup your demo data
 
 ````
-# backup your data (upgrade example data)
+# backup your data (upgrade example data), -e excludes.
 ./manage.py dumpdata -e spid_cie_oidc_accounts -e admin -e auth -e contenttypes -e sessions > dumps/example.json
 ````
-
 
 # Contribute
 
@@ -205,8 +204,15 @@ Please open an issue if you found any bugs, or if you want to ask some other fun
 
 #### as developer
 
-Please open your Pull Requests on the dev branch.
+Please open your Pull Requests on the dev branch. 
+Please consider the following project branch and scopes:
 
+ - main: where we merge the code before doing a stable release.
+ - dev: where we push our code during development.
+ - other: where a new feature/contribution/bugfix will be handled, revisioned and then merged to dev branch.
+
+In this project we adopt [Semver](https://semver.org/lang/it/) and
+[Conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) specifications.
 
 # License and Authors
 

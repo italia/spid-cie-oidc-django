@@ -2,7 +2,13 @@
 
 We use [Roland's implementation](https://github.com/rohe/fedservice/blob/master/src/fedservice/entity_statement/policy.py) for appling metadata policy and retrieve a final metadata.
 
-Example
+#### Example
+Enter in your project shell
+````
+./manage.py runserver
+````
+
+Then
 
 ````
 from spid_cie_oidc.entity.policy import apply_policy
