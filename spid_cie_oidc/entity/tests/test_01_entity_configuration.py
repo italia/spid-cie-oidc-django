@@ -1,7 +1,9 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase, Client
+from django.urls import reverse
 
 from spid_cie_oidc.entity.models import *
+from spid_cie_oidc.entity.jwtse import verify_jws, unpad_jwt_head, unpad_jwt_payload
 
 from . import get_admin_change_view_url
 from .settings import *
@@ -53,3 +55,11 @@ class EntityConfigurationTest(TestCase):
         md = self.ta_conf.entity_configuration_as_dict["metadata"]["federation_entity"]
         for i in ("federation_api_endpoint",):
             self.assertTrue(md.get(i))
+
+        # dulcis in fundo -> test the .well-knwon/openid-federation
+        wk_url = reverse("entity_configuration")
+        c = Client()
+        res = c.get(wk_url)
+        verify_jws(res.content.decode(), self.ta_conf.jwks[0])
+        
+    

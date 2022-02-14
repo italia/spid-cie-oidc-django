@@ -1,4 +1,4 @@
-TA_SUB = "http://that-fa.org"
+TA_SUB = "http://testserver/"
 FA_METADATA = {
     "federation_entity": {
         "contacts": ["ops@localhost"],
