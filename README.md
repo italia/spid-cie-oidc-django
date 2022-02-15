@@ -9,7 +9,7 @@ SPID/CIE OIDC Federation is a suite of Django applications designed to
 make it easy to build an [Openid Connect Federation](https://openid.net/specs/openid-connect-federation-1_0.html), 
 each of these can be installed separately within a django project.
 
-Table of contents:
+# Contents
 
 - [Features](#features)
 * [Setup](#setup)
@@ -32,7 +32,9 @@ Table of contents:
 # Features
 
 1. __OIDC Federation 1.0 Authority/Intermediary__
+
     Django application name: __spid_cie_oidc.entity__.
+    
     Endpoints:
     - entity configuration (.well-known/openid-federation)
     - fetch
@@ -41,7 +43,9 @@ Table of contents:
     - trust mark status
 
 2. __OIDC Federation 1.0 onboarding panel__:
+
     Django application name: __spid_cie_oidc.onboarding__.
+    
     - [frontend] not yet in roadmap, [help needed](https://github.com/peppelinux/spid-cie-oidc/issues/1)
     - [backend] Automatic checks on new registered entities (descendats):
         - entity configuration:
@@ -52,7 +56,9 @@ Table of contents:
         - trust marks forgery
 
 3. __Openid Connect Provider__
+
     Identity Provider with additional test suite.
+    
     Django application name: __spid_cie_oidc.provider__.
 
     Endpoints:
@@ -64,7 +70,9 @@ Table of contents:
     - userinfo endpoint
 
 4. __Openid Connect Relying Party__
+
     Relying Party with additional test suite.
+    
     Django application name: __spid_cie_oidc.relying_party__.
 
     Endpoints:
@@ -201,23 +209,23 @@ Your contribution is welcome, no question is useless and no answer is obvious, w
 
 #### as end user
 
-Please open an issue if you found any bugs, or if you want to ask some other functionality relating to software design or RFCs/draft/best-practices.
+Please open an issue if you've discoveerd a bug or if you want to ask some features.
 
 #### as developer
 
-Please open your Pull Requests on the dev branch. 
-Please consider the following project branch and scopes:
+Please open your Pull Requests on the __dev__ branch. 
+Please consider the following branches:
 
- - main: where we merge the code before doing a stable release.
- - dev: where we push our code during development.
- - other: where a new feature/contribution/bugfix will be handled, revisioned and then merged to dev branch.
+ - __main__: where we merge the code before tag a new stable release.
+ - __dev__: where we push our code during development.
+ - __other-custom-name__: where a new feature/contribution/bugfix will be handled, revisioned and then merged to dev branch.
 
 In this project we adopt [Semver](https://semver.org/lang/it/) and
 [Conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) specifications.
 
 # License and Authors
 
-This software is released under the Apache 2 License by the following authors:
+This software is released under the Apache 2 License by:
 
 - Giuseppe De Marco <giuseppe.demarco@teamdigitale.governo.it>.
 
