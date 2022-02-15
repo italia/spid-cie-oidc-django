@@ -61,6 +61,7 @@ Table of contents:
     - token
     - introspection
     - token revocation
+    - userinfo endpoint
 
 4. __Openid Connect Relying Party__
     Relying Party with additional test suite.
