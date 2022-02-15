@@ -39,6 +39,7 @@ Table of contents:
     - listing
     - evaluate endpoints
     - trust mark status
+    - userinfo endpoint
 
 2. __OIDC Federation 1.0 onboarding panel__:
     Django application name: __spid_cie_oidc.onboarding__.
