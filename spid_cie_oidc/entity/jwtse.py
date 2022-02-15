@@ -12,7 +12,7 @@ from django.conf import settings
 
 from . import settings as local_settings
 
-JWS_ALG = getattr(settings, "DEFAULT_JWS_ALG", local_settings.DEFAULT_JWS_ALG)
+DEFAULT_JWS_ALG = getattr(settings, "DEFAULT_JWS_ALG", local_settings.DEFAULT_JWS_ALG)
 DEFAULT_JWE_ALG = getattr(settings, "DEFAULT_JWE_ALG", local_settings.DEFAULT_JWE_ALG)
 DEFAULT_JWE_ENC = getattr(settings, "DEFAULT_JWE_ENC", local_settings.DEFAULT_JWE_ENC)
 SIGNING_ALG_VALUES_SUPPORTED = getattr(

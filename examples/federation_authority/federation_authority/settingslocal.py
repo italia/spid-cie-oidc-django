@@ -1,11 +1,13 @@
 import os
+from django.core.management.utils import get_random_secret_key
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # CHANGE THIS VALUE
-SECRET_KEY = 'lrx(fg&+2e=$l=y8$!£$%$/£%412345234534543--345234-dfdfgsdf-myg%r3z!yjm(lg*l%-z'
+# SECRET_KEY = 'lrx(fg&+2e=$l=y8$!£$%$/£%412345234534543--345234-dfdfgsdf-myg%r3z!yjm(lg*l%-z'
+SECRET_KEY = get_random_secret_key()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
