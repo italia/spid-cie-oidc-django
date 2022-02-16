@@ -22,7 +22,8 @@ def fetch(request):
             return JsonResponse(conf.entity_configuration_as_dict, safe=False)
         else:
             return HttpResponse(
-                conf.entity_configuration_as_jws, content_type="application/jose"
+                conf.entity_configuration_as_jws,
+                content_type="application/jose"
             )
 
     sub = FederationDescendant.objects.filter(
@@ -45,7 +46,9 @@ def fetch(request):
 def entity_list(request):
     if request.GET.get("is_leaf").lower() == "true":
         _q = {
-            "profile__profile_category__in": ("openid_relying_party", "openid_provider")
+            "profile__profile_category__in": (
+                "openid_relying_party", "openid_provider"
+            )
         }
     elif request.GET.get("is_leaf").lower() == "false":
         _q = {"profile__profile_category": "federation_entity"}
@@ -75,7 +78,9 @@ def resolve_entity_statement(request):
     # else:
     # iss = get_first_self_trust_anchor()
 
-    entity = FederationDescendant.objects.filter(sub=request.GET["sub"], is_active=True)
+    entity = FederationDescendant.objects.filter(
+        sub=request.GET["sub"], is_active=True
+    )
 
     # filter by type
     if request.GET.get("type"):

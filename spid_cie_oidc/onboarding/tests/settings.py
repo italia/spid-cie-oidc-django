@@ -27,7 +27,7 @@ RP_METADATA = {
     "openid_relying_party": {
         "application_type": "web",
         "client_registration_types": ["automatic"],
-        "client_name": "Name of this service called https://rp.example.it/spid",
+        "client_name": f"Name of this service called {rp_onboarding_data['sub']}",
         "contacts": ["ops@rp.example.it"],
         "grant_types": ["refresh_token", "authorization_code"],
         "jwks": {
@@ -36,7 +36,7 @@ RP_METADATA = {
             "e": "AQAB",
             "kid": "2C3zbeQjgx3jk-CHSqK3pLhdPeV9Fn5eSBPMNUp7vQk",
         },
-        "redirect_uris": ["https://rp.example.it/spid/callback"],
+        "redirect_uris": [f"{rp_onboarding_data['sub']}/spid/callback"],
         "response_types": ["code"],
         "subject_type": "pairwise",
     }

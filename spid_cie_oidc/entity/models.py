@@ -239,11 +239,12 @@ class FederationEntityConfiguration(TimeStampedModel):
         return json.dumps(self.entity_configuration_as_dict)
 
     @property
-    def entity_configuration_as_jws(self):
+    def entity_configuration_as_jws(self, **kwargs):
         return create_jws(
             self.entity_configuration_as_dict,
             self.jwks[0],
             alg=self.default_signature_alg,
+            **kwargs
         )
 
     def __str__(self):

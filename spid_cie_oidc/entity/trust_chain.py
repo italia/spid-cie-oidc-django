@@ -2,6 +2,7 @@ import logging
 
 from collections import OrderedDict
 from django.conf import settings
+from typing import Union
 
 from . import settings as settings_local
 from .statements import (
@@ -30,7 +31,7 @@ class TrustChainBuilder:
     def __init__(
         self,
         subject: str,
-        trust_anchor: EntityConfiguration,
+        trust_anchor: Union[str, EntityConfiguration],
         httpc_params: dict = {},
         max_authority_hints: int = 10,
         subject_configuration: EntityConfiguration = None,
@@ -172,7 +173,7 @@ class TrustChainBuilder:
 
 def trust_chain_builder(
     subject: str,
-    trust_anchor: dict,
+    trust_anchor: EntityConfiguration,
     httpc_params: dict = {},
     required_trust_marks: list = [],
 ) -> TrustChainBuilder:
