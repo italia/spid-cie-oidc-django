@@ -43,7 +43,7 @@ Table of contents:
 2. __OIDC Federation 1.0 onboarding panel__:
     Django application name: __spid_cie_oidc.onboarding__.
     - [frontend] not yet in roadmap, [help needed](https://github.com/peppelinux/spid-cie-oidc/issues/1)
-    - [backend] Automatic checks on new registered entities (descendats):
+    - [backend] Automatic checks on new registered entities (descendants):
         - entity configuration:
             - reachability
             - signature validation
