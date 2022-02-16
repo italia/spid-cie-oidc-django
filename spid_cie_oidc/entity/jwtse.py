@@ -44,7 +44,7 @@ def unpad_jwt_payload(jwt: str) -> dict:
     return unpad_jwt_element(jwt, position=1)
 
 
-def encrypt_dict(plain_dict, jwk_dict) -> str:
+def encrypt_dict(plain_dict:dict, jwk_dict:dict) -> str:
     logger.debug(f"Encrypting dict as JWE: " f"{plain_dict}")
     _key = key_from_jwk_dict(jwk_dict)
     _rsa = JWE_RSA(
@@ -58,7 +58,7 @@ def encrypt_dict(plain_dict, jwk_dict) -> str:
     return jwe
 
 
-def decrypt_jwe(jwe, jwk_dict) -> dict:
+def decrypt_jwe(jwe:str, jwk_dict:dict) -> dict:
     # get header
     try:
         jwe_header = unpad_jwt_head(jwe)

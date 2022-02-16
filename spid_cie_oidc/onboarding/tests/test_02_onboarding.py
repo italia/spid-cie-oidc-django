@@ -27,8 +27,18 @@ class OnBoardingTest(TestCase):
             issuer = self.ta_conf
         )
         
-    def test_fetch(self):
+    def test_fetch_endpoint(self):
         url = reverse('oidcfed_fetch')
         c = Client()
         res = c.get(url, data={'sub': self.rp.sub})
         verify_jws(res.content.decode(), self.ta_conf.jwks[0])
+
+    def test_list_endpoint(self):
+        url = reverse('oidcfed_list')
+        c = Client()
+        res = c.get(url, data={'is_leaf': True})
+        self.assertTrue(
+            res.json()[0] == self.rp.sub
+        )
+        res = c.get(url, data={'is_leaf': False})
+        self.assertFalse(res.json())

@@ -92,32 +92,39 @@ class TrustChainBuilder:
         # TODO
         # TODO: everything is ok right now ... apply metadata policy!
 
-    def trust_walker(self, jwt) -> dict:
+    def discovery(self, jwt) -> dict:
         """
         return a chain of verified statements
         from the lower up to the trust anchor
         """
-        if self.max_path_len == 0:
-            self.validate_last_path_to_trust_anchor(self.subject_configuration)
-
         logger.info(f"Starting a Walk into Metadata Discovery for {self.subject}")
         self.tree_of_trust[0] = [self.subject_configuration]
 
-        # max_intermediaries - 2 means that root entity and trust anchor
-        # are not considered as intermediaries
-        while (len(self.tree_of_trust) - 1) <= self.max_path_len:
+        while (len(self.tree_of_trust) - 1) < self.max_path_len:
             last_path_n = list[self.tree_of_trust.keys()][-1]
             last_ecs = self.tree_of_trust[last_path_n]
+
+            # check if trust_anchor is already available
+            # TODO : here
+            
             sup_ecs = []
             for last_ec in last_ecs:
-                superiors = last_ec.get_superiors(self.max_authority_hints)
-                validated_by = last_ec.validate_by_superiors(
-                    superiors_entity_configurations=superiors
-                )
+                try:
+                    superiors = last_ec.get_superiors(self.max_authority_hints)
+                    validated_by = last_ec.validate_by_superiors(
+                        superiors_entity_configurations=superiors
+                    )
+                except Exception as e:
+                    logger.warning(
+                        f"Metadata discovery exception: {e}"
+                    )
                 sup_ecs.extend(list(validated_by.values()))
 
             self.tree_of_trust[last_path_n + 1] = sup_ecs
 
+        # so we have all the intermediaries right now
+        self.validate_last_path_to_trust_anchor(self.subject_configuration)
+        
         # the path is end ... is it valid?
         # validate_last_path_to_trust_anchor(self.subject_configuration)
 
@@ -156,7 +163,7 @@ class TrustChainBuilder:
         try:
             self.get_trust_anchor_configuration()
             self.get_subject_configuration()
-            self.trust_walker()
+            self.discovery()
         except Exception as e:
             self.is_valid = False
             logger.error(f"{e}")
@@ -178,11 +185,13 @@ def trust_chain_builder(
         required_trust_marks=required_trust_marks,
         httpc_params=HTTPC_PARAMS,
     )
-    tc.start()
+    tc.discovery()
 
     if not tc.is_valid:
         last_url = tuple(tc.endpoints_https_contents.keys())[-1]
-        logger.error(f"Got {tc.endpoints_https_contents[last_url][0]} for {last_url}")
+        logger.error(
+            f"Got {tc.endpoints_https_contents[last_url][0]} for {last_url}"
+        )
 
 
 class OidcFederationTrustManager:
