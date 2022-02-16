@@ -45,6 +45,7 @@ jobs:
         flake8 ./spid_cie_oidc --count --exit-zero --statistics --max-line-length 120
     - name: spid_cie_oidc onboarding and entity test
       run: |
+        cp examples/federation_authority/federation_authority/settingslocal.py.example examples/federation_authority/federation_authority/settingslocal.py
         coverage erase
         coverage run examples/federation_authority/manage.py test spid_cie_oidc
         coverage report -m --skip-covered
