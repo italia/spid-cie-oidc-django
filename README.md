@@ -9,6 +9,14 @@ SPID/CIE OIDC Federation is a suite of Django applications designed to
 make it easy to build an [Openid Connect Federation](https://openid.net/specs/openid-connect-federation-1_0.html), 
 each of these can be installed separately within a django project.
 
+spid_cie_oidc is a Python Package that contains five Django applications:
+
+- __spid_cie_oidc.accounts__: customizable app that extended the Django User model.
+- __spid_cie_oidc.entity__: OIDC Federation django app, with models and API that implements OIDC Federation 1.0 Entity Statements, metadata discovery, Trust Chain, Trust Marks and Metadata policy.
+- __spid_cie_oidc.onboarding__: OIDC Federation OnBoarding demo application.
+- __spid_cie_oidc.relying_party__: OIDC Relying Party and test suite for OIDC Providers.
+- __spid_cie_oidc.provider__: OIDC Provider and test suite for OIDC Relying Parties.
+
 # Contents
 
 - [Features](#features)
@@ -32,8 +40,6 @@ each of these can be installed separately within a django project.
 # Features
 
 1. __OIDC Federation 1.0 Authority/Intermediary__
-
-    Django application name: __spid_cie_oidc.entity__.
     
     Endpoints:
     - entity configuration (.well-known/openid-federation)
@@ -44,8 +50,6 @@ each of these can be installed separately within a django project.
 
 2. __OIDC Federation 1.0 onboarding panel__:
 
-    Django application name: __spid_cie_oidc.onboarding__.
-    
     - [frontend] not yet in roadmap, [help needed](https://github.com/peppelinux/spid-cie-oidc/issues/1)
     - [backend] Automatic checks on new registered entities (descendats):
         - entity configuration:
@@ -55,12 +59,8 @@ each of these can be installed separately within a django project.
         - RP authz check following AgID and IPZS OIDC Fed guidelines.
         - trust marks forgery
 
-3. __Openid Connect Provider__
-
-    Identity Provider with additional test suite.
+3. __Openid Connect Provider__. Identity Provider with additional test suite.
     
-    Django application name: __spid_cie_oidc.provider__.
-
     Endpoints:
     - entity configuration (.well-known/openid-federation)
     - authorization
@@ -69,12 +69,8 @@ each of these can be installed separately within a django project.
     - token revocation
     - userinfo endpoint
 
-4. __Openid Connect Relying Party__
-
-    Relying Party with additional test suite.
+4. __Openid Connect Relying Party__. Relying Party with additional test suite.
     
-    Django application name: __spid_cie_oidc.relying_party__.
-
     Endpoints:
     - entity configuration (.well-known/openid-federation)
     - authorization

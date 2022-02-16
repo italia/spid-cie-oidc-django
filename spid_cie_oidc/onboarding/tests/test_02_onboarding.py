@@ -10,6 +10,7 @@ from spid_cie_oidc.onboarding.tests.settings import *
 
 
 class OnBoardingTest(TestCase):
+
     def setUp(self):
         self.ta_conf = FederationEntityConfiguration.objects.create(**ta_conf_data)
         self.rp_profile = FederationEntityProfile.objects.create(**RP_PROFILE)
@@ -26,7 +27,7 @@ class OnBoardingTest(TestCase):
             profile = self.rp_profile,
             issuer = self.ta_conf
         )
-        
+
     def test_fetch_endpoint(self):
         url = reverse('oidcfed_fetch')
         c = Client()

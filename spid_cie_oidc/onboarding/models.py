@@ -219,8 +219,7 @@ class FederationDescendant(TimeStampedModel):
             for i in FederationEntityAssignedProfile.objects.filter(descendant=self)
         ]
 
-    @property
-    def entity_statement_as_dict(self) -> dict:
+    def entity_statement_as_dict(self, iss:str=None, aud:list=None) -> dict:
         jwks = [
             i.jwk.jwk for i in FederationDescendantJwk.objects.filter(descendant=self)
         ]
@@ -235,13 +234,16 @@ class FederationDescendant(TimeStampedModel):
         policies.update(self.metadata_policy)
 
         data = {
-            "exp": exp_from_now(minutes=FEDERATION_DEFAULT_EXP),
+            "exp": exp_from_now(minutes = FEDERATION_DEFAULT_EXP),
             "iat": iat_now(),
-            "iss": get_first_self_trust_anchor().sub,
+            "iss": get_first_self_trust_anchor(iss).sub,
             "sub": self.sub,
             "jwks": {"keys": jwks},
             "metadata_policy": policies,
         }
+        if aud:
+            data['aud'] = [aud] if isinstance(aud, str) else aud
+        
         # add contacts
         contacts = FederationDescendantContact.objects.filter(entity=self).values_list(
             "contact", flat=True
@@ -266,14 +268,13 @@ class FederationDescendant(TimeStampedModel):
         return data
 
     @property
-    def entity_statement_as_json(self):
-        return json.dumps(self.entity_statement_as_dict)
+    def entity_statement_as_json(self, iss:str=None, aud:list=None) -> str:
+        return json.dumps(self.entity_statement_as_dict(iss, aud))
 
-    @property
-    def entity_statement_as_jws(self):
-        issuer = get_first_self_trust_anchor()
+    def entity_statement_as_jws(self, iss:str=None, aud:list=None) -> str:
+        issuer = get_first_self_trust_anchor(iss)
         return create_jws(
-            self.entity_statement_as_dict,
+            self.entity_statement_as_dict(iss, aud),
             issuer.jwks[0],
             alg=issuer.default_signature_alg,
         )

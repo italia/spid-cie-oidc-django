@@ -11,11 +11,10 @@ from spid_cie_oidc.onboarding.models import (
 
 
 def fetch(request):
-    # TODO: iss paramenter support
-    # if request.GET.get('iss'):
-    # iss = get_first_self_trust_anchor(sub = request.GET['iss'])
-    # else:
-    # iss = get_first_self_trust_anchor()
+    if request.GET.get('iss'):
+        iss = get_first_self_trust_anchor(sub = request.GET['iss'])
+    else:
+        iss = get_first_self_trust_anchor()
 
     if not request.GET.get("sub"):
         conf = get_first_self_trust_anchor()
@@ -33,10 +32,13 @@ def fetch(request):
         raise Http404()
 
     if request.GET.get("format") == "json":
-        return JsonResponse(sub.entity_statement_as_dict, safe=False)
+        return JsonResponse(
+            sub.entity_statement_as_dict(iss.sub, request.GET.get('aud')
+        ), safe=False)
     else:
         return HttpResponse(
-            sub.entity_statement_as_jws, content_type="application/jose"
+            sub.entity_statement_as_jws(iss.sub, request.GET.get('aud')),
+            content_type="application/jose"
         )
 
 
