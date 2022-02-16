@@ -5,7 +5,7 @@ We use [Roland's implementation](https://github.com/rohe/fedservice/blob/master/
 #### Example
 Enter in your project shell
 ````
-./manage.py runserver
+./manage.py shell
 ````
 
 Then
