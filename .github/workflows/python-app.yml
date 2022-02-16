@@ -46,8 +46,8 @@ jobs:
     - name: spid_cie_oidc onboarding and entity test
       run: |
         coverage erase
-        coverage run examples/federation_authority/manage.py test spid_cie_oidc.entity
-        coverage report -m
+        coverage run examples/federation_authority/manage.py test spid_cie_oidc
+        coverage report -m --skip-covered
     #- name: Upload coverage to Codecov
       #uses: codecov/codecov-action@v1
       #with:
