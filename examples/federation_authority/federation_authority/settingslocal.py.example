@@ -86,10 +86,6 @@ INSTALLED_APPS = [
     'spid_cie_oidc.entity',
     'spid_cie_oidc.onboarding',
     'spid_cie_oidc.relying_party'
-    # 'bootstrap'
-    'sass_processor',
-    'bootstrap_italia_template',
-    'django_unical_bootstrap_italia',
 ]
 
 DATABASES = {
