@@ -4,6 +4,7 @@ from django.urls import reverse
 from spid_cie_oidc.entity.jwtse import verify_jws
 from spid_cie_oidc.entity.models import *
 from spid_cie_oidc.entity.trust_chain import trust_chain_builder
+from spid_cie_oidc.entity.statements import EntityConfiguration
 from spid_cie_oidc.onboarding.models import *
 
 from spid_cie_oidc.entity.tests.settings import *
@@ -45,8 +46,8 @@ class OnBoardingTest(TestCase):
         res = c.get(url, data={'is_leaf': False})
         self.assertFalse(res.json())
 
-    # def test_trust_chain(self):
-        # trust_chain_builder(
-            # subject = rp_onboarding_data['sub'],
-            
-        # )
+    def test_trust_chain(self):
+        trust_chain_builder(
+            subject = rp_onboarding_data['sub'],
+            trust_anchor = 
+        )

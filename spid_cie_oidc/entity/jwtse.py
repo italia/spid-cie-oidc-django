@@ -95,7 +95,7 @@ def create_jws(
     return signature
 
 
-def verify_jws(jws: str, pub_jwk: dict, **kwargs):
+def verify_jws(jws: str, pub_jwk: dict, **kwargs) -> str:
     _key = key_from_jwk_dict(pub_jwk)
 
     _head = unpad_jwt_head(jws)
@@ -104,7 +104,9 @@ def verify_jws(jws: str, pub_jwk: dict, **kwargs):
 
     _alg = _head["alg"]
     if _alg not in SIGNING_ALG_VALUES_SUPPORTED or not _alg:
-        raise UnsupportedAlgorithm(f"{_alg} has beed disabled for security reason")
+        raise UnsupportedAlgorithm(
+            f"{_alg} has beed disabled for security reason"
+        )
 
     verifier = JWS(alg=_head["alg"], **kwargs)
     msg = verifier.verify_compact(jws, [_key])
