@@ -1,0 +1,69 @@
+<!-- Extends default Bootstrap Unical Italia template -->
+{% extends 'bootstrap-italia-base.html' %}
+
+{% load static %}
+
+{% block extra_head %}
+{{ block.super }}
+{% endblock extra_head %}
+
+<!-- URL link top left -->
+{% block header_slim_org_url %}
+https://www.spid.gov.it/
+{% endblock header_slim_org_url %}
+
+<!-- Name top left -->
+{% block header_slim_org_name %}
+demo
+{% endblock header_slim_org_name %}
+
+<!-- Mobile slim_org_name -->
+{% block header_slim_mobile_org_name %}
+demo
+{% endblock header_slim_mobile_org_name %}
+
+<!-- Make empty areas -->
+{% block header_mobile_arrow %}{% endblock header_mobile_arrow %}
+{% block header_mobile_slim_menu %}{% endblock header_mobile_slim_menu %}
+
+<!-- Logo in Header -->
+{% block header_center_logo %}
+<!-- <img class="icon" src="{% static 'images/logo.png' %}" /> -->
+{% endblock header_center_logo %}
+
+<!-- Organization name in Header -->
+{% block header_center_org_name %}
+demo
+{% endblock header_center_org_name %}
+
+<!-- Organization description in Header -->
+{% block header_center_org_subname %}
+demo
+{% endblock header_center_org_subname %}
+
+{% block main_menu %}
+{% endblock main_menu %}
+
+<!-- Logo in Footer -->
+{% block footer_logo %}
+<!-- <img class="icon" src="{% static 'images/logo_white.png' %}" /> -->
+{% endblock footer_logo %}
+
+<!-- Organization name in Footer -->
+{% block footer_org_name %}
+demo
+{% endblock footer_org_name %}
+
+<!-- Organization name in Footer -->
+{% block footer_org_subname %}
+demo
+{% endblock footer_org_subname %}
+
+{% block extra_scripts %}
+{% block bootstrap_italia_validation %}
+
+{% endblock bootstrap_italia_validation %}
+{% endblock extra_scripts %}
+
+{% block footer_menu_section %}
+{% endblock footer_menu_section %}

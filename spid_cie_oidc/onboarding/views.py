@@ -1,6 +1,7 @@
 from django.http import Http404
 from django.http import HttpResponse
 from django.http import JsonResponse
+from django.shortcuts import render
 
 
 from spid_cie_oidc.onboarding.models import (
@@ -86,3 +87,6 @@ def resolve_entity_statement(request):
     if request.GET.get("type"):
         entity.metadata_policy.get(request.GET["type"])
         # metadata =
+
+def demo (request):
+    return render(request, 'demo.html')
