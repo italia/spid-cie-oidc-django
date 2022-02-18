@@ -1,11 +1,29 @@
 rp_onboarding_data = dict(
     name = "RP Test",
-    sub = "http://rp-test/",
+    sub = "http://rp-test/oidc/rp",
     type = "openid_relying_party",
     
     metadata_policy = {"openid_relying_party": {"scopes": {"value": ["openid"]}}},
     is_active=True
 )
+
+rp_conf = {
+    "sub": rp_onboarding_data['sub'],
+    "metadata": {
+        "openid_relying_party": {
+            "application_type": "web",
+            "client_registration_types": ["automatic"],
+            "client_name": "Name of this service called https://rp.example.it/spid",
+            "contacts": ["ops@rp.example.it"],
+            "grant_types": ["refresh_token", "authorization_code"],
+            "redirect_uris": ["https://rp.example.it/spid/callback"],
+            "response_types": ["code"],
+            "subject_type": "pairwise"
+        }
+    },
+    "authority_hints": ["http://127.0.0.1:8000/"],
+    "is_active" : True
+}
 
 TRUST_MARK_PAYLOAD = {
     "iss": "$.issuer_sub",

@@ -224,10 +224,12 @@ class FederationDescendant(TimeStampedModel):
             i.jwk.jwk for i in FederationDescendantJwk.objects.filter(descendant=self)
         ]
         if not jwks:
+            logger.warning(f"Any JWKs found for {self.sub}")
             return {}
 
         policies = {
-            k: local_settings.FEDERATION_DEFAULT_POLICY[k] for k in self.entity_profiles
+            k: local_settings.FEDERATION_DEFAULT_POLICY[k]
+            for k in self.entity_profiles
         }
 
         # apply custom policies if defined
@@ -328,7 +330,10 @@ class FederationEntityAssignedProfile(TimeStampedModel):
 
     @property
     def trust_mark(self):
-        return {"id": self.profile.profile_id, "trust_mark": self.trust_mark_as_jws}
+        return {
+            "id": self.profile.profile_id,
+            "trust_mark": self.trust_mark_as_jws
+        }
 
     def __str__(self):
         return f"{self.profile} [{self.descendant}]"

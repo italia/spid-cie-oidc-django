@@ -1,3 +1,5 @@
+from spid_cie_oidc.entity.jwks import create_jwk
+
 TA_SUB = "http://testserver/"
 FA_METADATA = {
     "federation_entity": {
@@ -25,5 +27,5 @@ ta_conf_data = dict(
     metadata=FA_METADATA,
     constraints=FA_CONSTRAINTS,
     is_active=1,
-    trust_marks_issuers=TM_ISSUERS,
+    trust_marks_issuers=TM_ISSUERS
 )

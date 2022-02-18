@@ -36,13 +36,22 @@ class TrustChainBuilder:
         max_authority_hints: int = 10,
         subject_configuration: EntityConfiguration = None,
         required_trust_marks: list = [],
+
+        # TODO - prefetch cache
+        pre_fetched_entity_configurations = {},
+        pre_fetched_statements = {},
+        #
+         
         **kwargs,
     ) -> None:
 
         self.subject = subject
         self.subject_configuration = subject_configuration
         self.httpc_params = httpc_params
+
         self.trust_anchor = trust_anchor
+        self.trust_anchor_configuration = None
+        
         self.required_trust_marks = required_trust_marks
         self.is_valid = False
 
@@ -73,16 +82,16 @@ class TrustChainBuilder:
     def validate_last_path_to_trust_anchor(self, ec: EntityConfiguration):
         logger.info(f"Validating {self.subject} to {self.trust_anchor}")
 
-        if not ec.get("authority_hints"):
-            # TODO: specialize exception
-            raise Exception(f"{ec.sub} doesn't have any authority hints!")
-        elif self.trust_anchor.sub not in ec["authority_hints"]:
-            # TODO: specialize exception
-            raise Exception(
-                f"{self.subject} doesn't have {self.trust_anchor.sub} "
-                "in its authority hints "
-                f"but max_path_len is equal to {self.max_path_len}."
-            )
+        # TODO: specialize exception
+        # if not ec.payload.get("authority_hints"):
+            
+            # raise Exception(f"{ec.sub} doesn't have any authority hints!")
+        # elif self.trust_anchor.sub not in ec["authority_hints"]:
+            # raise Exception(
+                # f"{self.subject} doesn't have {self.trust_anchor.sub} "
+                # "in its authority hints "
+                # f"but max_path_len is equal to {self.max_path_len}."
+            # )
 
         vbs = ec.validate_by_superiors(
             superiors_entity_configurations=[self.trust_anchor]
@@ -93,16 +102,15 @@ class TrustChainBuilder:
         # TODO
         # TODO: everything is ok right now ... apply metadata policy!
 
-    def discovery(self, jwt) -> dict:
+    def discovery(self) -> dict:
         """
         return a chain of verified statements
         from the lower up to the trust anchor
         """
         logger.info(f"Starting a Walk into Metadata Discovery for {self.subject}")
         self.tree_of_trust[0] = [self.subject_configuration]
-
         while (len(self.tree_of_trust) - 1) < self.max_path_len:
-            last_path_n = list[self.tree_of_trust.keys()][-1]
+            last_path_n = list(self.tree_of_trust.keys())[-1]
             last_ecs = self.tree_of_trust[last_path_n]
 
             # check if trust_anchor is already available
@@ -110,16 +118,18 @@ class TrustChainBuilder:
             
             sup_ecs = []
             for last_ec in last_ecs:
-                try:
-                    superiors = last_ec.get_superiors(self.max_authority_hints)
-                    validated_by = last_ec.validate_by_superiors(
-                        superiors_entity_configurations=superiors
-                    )
-                except Exception as e:
-                    logger.warning(
-                        f"Metadata discovery exception: {e}"
-                    )
+                # try:
+                superiors = last_ec.get_superiors(
+                    max_authority_hints = self.max_authority_hints
+                )
+                validated_by = last_ec.validate_by_superiors(
+                    superiors_entity_configurations=superiors
+                )
                 sup_ecs.extend(list(validated_by.values()))
+                # except Exception as e:
+                    # logger.exception(
+                        # f"Metadata discovery exception for {last_ec.sub}: {e}"
+                    # )
 
             self.tree_of_trust[last_path_n + 1] = sup_ecs
 
@@ -130,7 +140,9 @@ class TrustChainBuilder:
         # validate_last_path_to_trust_anchor(self.subject_configuration)
 
     def get_trust_anchor_configuration(self) -> None:
-        if not self.trust_anchor or not self.trust_anchor.items()[0][1]:
+        if isinstance(self.trust_anchor, EntityConfiguration):
+            self.trust_anchor_configuration = self.trust_anchor
+        elif not self.trust_anchor_configuration and isinstance(self.trust_anchor, str):
             logger.info(f"Starting Metadata Discovery for {self.subject}")
             ta_jwt = get_entity_configurations(
                 self.trust_anchor, httpc_params=self.httpc_params
@@ -138,22 +150,23 @@ class TrustChainBuilder:
             self.trust_anchor_configuration = EntityConfiguration(ta_jwt)
             self.trust_anchor_configuration.validate_by_itself()
 
-            if self.trust_anchor_configuration.payload.get("constraints", {}).get(
-                "max_path_length"
-            ):
+        # 
+        if self.trust_anchor_configuration.payload.get("constraints", {}).get(
+            "max_path_length"
+        ):
 
-                self.max_path_len = int(
-                    self.trust_anchor_configuration.payload["constraints"][
-                        "max_path_length"
-                    ]
-                )
+            self.max_path_len = int(
+                self.trust_anchor_configuration.payload["constraints"][
+                    "max_path_length"
+                ]
+            )
 
     def get_subject_configuration(self) -> None:
         if not self.subject_configuration:
             jwt = get_entity_configurations(
                 self.subject, httpc_params=self.httpc_params
             )
-            self.subject_configuration = EntityConfiguration(jwt)
+            self.subject_configuration = EntityConfiguration(jwt[0])
             self.subject_configuration.validate_by_itself()
 
             # TODO
@@ -186,7 +199,8 @@ def trust_chain_builder(
         required_trust_marks=required_trust_marks,
         httpc_params=HTTPC_PARAMS,
     )
-    tc.discovery()
+    tc.start()
+    breakpoint()
 
     if not tc.is_valid:
         last_url = tuple(tc.endpoints_https_contents.keys())[-1]

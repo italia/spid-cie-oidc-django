@@ -213,7 +213,7 @@ class FederationEntityConfiguration(TimeStampedModel):
             "iat": iat_now(),
             "iss": self.sub,
             "sub": self.sub,
-            "jwks": self.public_jwks,
+            "jwks": {"keys": self.public_jwks},
             "metadata": self.metadata,
         }
 
