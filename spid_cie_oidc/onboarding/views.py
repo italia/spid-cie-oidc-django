@@ -1,13 +1,17 @@
+import imp
+from multiprocessing import context
 from django.http import Http404
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.shortcuts import render
+from .registration import RegistrationForm
 
 
 from spid_cie_oidc.onboarding.models import (
     FederationDescendant,
     FederationEntityAssignedProfile,
     get_first_self_trust_anchor,
+    
 )
 
 
@@ -88,5 +92,14 @@ def resolve_entity_statement(request):
         entity.metadata_policy.get(request.GET["type"])
         # metadata =
 
-def demo (request):
-    return render(request, 'demo.html')
+def onboarding_landing (request):
+    return render(request, 'onboarding_landing.html')
+
+def onboarding_registration (request):
+    form = RegistrationForm()
+
+    context ={'form': form}
+    return render(request, 'onboarding_registration.html', context)
+
+def onboarding_entities (request):
+    return render(request, 'onboarding_entities.html')

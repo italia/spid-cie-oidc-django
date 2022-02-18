@@ -1,0 +1,37 @@
+<!-- Extends default Bootstrap Unical Italia template -->
+{% extends 'base.html' %}
+
+{% load static %}
+{% load i18n %}
+
+{% block page_title %}
+{% trans "OIDC Federation onboarding system" %}
+{% endblock page_title %}
+
+{% block container %}
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+<div class="container" style="padding:2rem;">
+  <div id="list-entity">
+    <ul>
+      <li v-for="todo in todos">
+        <p>[[ todo.text ]]</p>
+      </li>
+    </ul>
+  </div>
+</div>
+<script>
+  var vueObject = new Vue({
+    el: '#list-entity',
+    delimiters: ['[[', ']]'],
+    data: {
+      todos: [
+        { text: 'Learn JavaScript' },
+        { text: 'Learn Vue.js' },
+        { text: 'Build Something Awesome' },
+        { text: 'Build Something Awesome' }
+      ]
+    }
+  })
+</script>
+{% endblock container %}

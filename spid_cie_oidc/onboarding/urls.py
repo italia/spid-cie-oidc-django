@@ -16,12 +16,20 @@ Including another URLconf
 from django.conf import settings
 from django.urls import path
 
-from .views import fetch, entity_list, demo
+from .views import (
+    fetch, 
+    entity_list, 
+    onboarding_landing, 
+    onboarding_registration, 
+    onboarding_entities
+)
 
 _PREF = getattr(settings, "OIDC_PREFIX", "")
 
 urlpatterns = [
     path(f"{_PREF}fetch/", fetch, name="oidcfed_fetch"),
     path(f"{_PREF}list/", entity_list, name="oidcfed_list"),
-    path(f"{_PREF}demo/", demo, name="oidc_demo"),
+    path(f"{_PREF}onboarding/demo/", onboarding_landing, name="oidc_onboarding_demo"),
+    path(f"{_PREF}onboarding/registration/", onboarding_registration, name="oidc_onboarding_registration"),
+    path(f"{_PREF}onboarding/entities/", onboarding_entities, name="oidc_onboarding_entities"),
 ]

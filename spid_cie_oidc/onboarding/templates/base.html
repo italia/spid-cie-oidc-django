@@ -2,9 +2,11 @@
 {% extends 'bootstrap-italia-base.html' %}
 
 {% load static %}
+{% load i18n %}
 
 {% block extra_head %}
-{{ block.super }}
+    {{ block.super }}  
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
 {% endblock extra_head %}
 
 <!-- URL link top left -->
@@ -14,12 +16,12 @@ https://www.spid.gov.it/
 
 <!-- Name top left -->
 {% block header_slim_org_name %}
-demo
+    {% trans "OIDC Federation onboarding system" %}
 {% endblock header_slim_org_name %}
 
 <!-- Mobile slim_org_name -->
 {% block header_slim_mobile_org_name %}
-demo
+    {% trans "OIDC Federation onboarding system" %}
 {% endblock header_slim_mobile_org_name %}
 
 <!-- Make empty areas -->
@@ -33,12 +35,12 @@ demo
 
 <!-- Organization name in Header -->
 {% block header_center_org_name %}
-demo
+    {% trans "OIDC Federation onboarding system" %}
 {% endblock header_center_org_name %}
 
 <!-- Organization description in Header -->
 {% block header_center_org_subname %}
-demo
+    {% trans "OIDC Federation onboarding system" %}
 {% endblock header_center_org_subname %}
 
 {% block main_menu %}
@@ -51,12 +53,12 @@ demo
 
 <!-- Organization name in Footer -->
 {% block footer_org_name %}
-demo
+    {% trans "OIDC Federation onboarding system" %}
 {% endblock footer_org_name %}
 
 <!-- Organization name in Footer -->
 {% block footer_org_subname %}
-demo
+    {% trans "OIDC Federation onboarding system" %}
 {% endblock footer_org_subname %}
 
 {% block extra_scripts %}
