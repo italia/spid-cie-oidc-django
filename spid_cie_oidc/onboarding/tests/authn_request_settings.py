@@ -49,3 +49,29 @@ AUTHN_REQUEST_CIE = {
     "state": "fyZiOL9Lf2CeKuNT2JzxiLRDink0uPcd",
     "ui_locales": ["codice1", "codice2", "codice3"]
 }
+
+AUTHN_RESPONSE_SPID = {
+    "code":"usDwMnEzJPpG5oaV8x3j&",
+    "state": "fyZiOL9Lf2CeKuNT2JzxiLRDink0uPcd&",
+}
+
+AUTHN_RESPONSE_CIE = {
+    "code":"usDwMnEzJPpG5oaV8x3j&",
+    "state": "fyZiOL9Lf2CeKuNT2JzxiLRDink0uPcd&",
+    "iss": "https://idserver.servizicie.interno.gov.it"
+}
+
+AUTHN_ERROR_RESPONSE_SPID = {
+    "error": "invalid_request",
+    "error_description": "request%20malformata&",
+    "code":"usDwMnEzJPpG5oaV8x3j&",
+    "state": "fyZiOL9Lf2CeKuNT2JzxiLRDink0uPcd&"
+}
+
+AUTHN_ERROR_RESPONSE_CIE = {
+    "error": "unsupported_response_type",
+    "error_description": "hai sbagliato",
+    "code":"usDwMnEzJPpG5oaV8x3j&",
+    "state": "fyZiOL9Lf2CeKuNT2JzxiLRDink0uPcd&",
+    "iss": "https://idserver.servizicie.interno.gov.it"
+}

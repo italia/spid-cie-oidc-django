@@ -29,8 +29,8 @@ class AuthRequestTest(TestCase):
                 logger.info(e.json())
 
         logger.info(AuthenticationRequestSpid.schema_json(indent=2))
+        logger.info(AuthenticationRequestCie.schema_json(indent=2))
         validate_spid()
-        #logger.info(AuthenticationRequestCie.schema_json(indent=2))
         validate_cie()
         
 
