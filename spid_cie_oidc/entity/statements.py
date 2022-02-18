@@ -129,7 +129,8 @@ class EntityConfiguration:
         raise NotImplementedError()
 
     def get_superiors(
-        self, authority_hints: list = [], max_authority_hints: int = 0
+        self, authority_hints: list = [], max_authority_hints: int = 0,
+        superiors_hints: list = []
     ) -> dict:
         """
         get superiors entity configurations
@@ -148,7 +149,12 @@ class EntityConfiguration:
             )
             authority_hints = authority_hints[:max_authority_hints]
 
+        for sup in superiors_hints:
+            if sup.sub in authority_hints:
+                authority_hints.pop(sup.sub)
+
         logger.info(f"Getting Entity Configurations for {authority_hints}")
+        
         jwts = get_entity_configurations(authority_hints, self.httpc_params)
         for jwt in jwts:
             ec = self.__class__(jwt, httpc_params=self.httpc_params)
@@ -159,6 +165,19 @@ class EntityConfiguration:
                 target = self.failed_superiors
 
             target[ec.payload["sub"]] = ec
+
+        if superiors_hints:
+            logger.info(f"Getting Cached Entity Configurations for {[i.sub for i in superiors_hints]}")
+        
+        for ec in superiors_hints:
+            # TODO: this is a replied code, it must be generalized and merged with the previous one
+            if ec.validate_by_itself():
+                target = self.verified_superiors
+            else:
+                target = self.failed_superiors
+
+            target[ec.payload["sub"]] = ec
+
         return self.verified_superiors
 
     def validate_descendant_statement(self, jwt: str) -> bool:
@@ -174,7 +193,7 @@ class EntityConfiguration:
         verify_jws(jwt, self.jwks[self.kids.index(header["kid"])])
         return True
 
-    def validate_by_superior_statement(self, jwt: str, ec) -> bool:
+    def validate_by_superior_statement(self, jwt: str, ec):
         """
         jwt is a statement issued by a superior
 
@@ -194,12 +213,12 @@ class EntityConfiguration:
             is_valid = False
 
         if is_valid:
-            target = self.verified_superiors
+            target = self.verified_by_superiors
         else:
             target = self.failed_superiors
 
         target[payload["iss"]] = payload
-        return is_valid
+        return self.verified_by_superiors.get(ec.sub)
 
     def validate_by_superiors(
         self,
@@ -212,8 +231,12 @@ class EntityConfiguration:
         this methods create self.verified_superiors and failed ones
         and self.verified_by_superiors and failed ones
         """
-
+        
         for ec in superiors_entity_configurations:
+            if ec.sub in ec.verified_by_superiors:
+                # already featched and cached
+                continue
+            
             try:
                 # get superior fetch url
                 fetch_api_url = ec.payload["metadata"]["federation_entity"][
@@ -230,9 +253,7 @@ class EntityConfiguration:
             else:
                 jwts = get_entity_statements([fetch_api_url], self.httpc_params)
                 jwt = jwts[0]
-                self.verified_by_superiors[
-                    ec.sub
-                ] = self.validate_by_superior_statement(jwt, ec)
+                self.validate_by_superior_statement(jwt, ec)
 
         return self.verified_by_superiors
 

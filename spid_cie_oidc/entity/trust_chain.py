@@ -80,7 +80,7 @@ class TrustChainBuilder:
         return ec
 
     def validate_last_path_to_trust_anchor(self, ec: EntityConfiguration):
-        logger.info(f"Validating {self.subject} to {self.trust_anchor}")
+        logger.info(f"Validating {self.subject} with {self.trust_anchor}")
 
         # TODO: specialize exception
         # if not ec.payload.get("authority_hints"):
@@ -92,13 +92,18 @@ class TrustChainBuilder:
                 # "in its authority hints "
                 # f"but max_path_len is equal to {self.max_path_len}."
             # )
-
-        vbs = ec.validate_by_superiors(
-            superiors_entity_configurations=[self.trust_anchor]
-        )
+        if self.trust_anchor_configuration.sub not in ec.verified_by_superiors:
+            vbs = ec.validate_by_superiors(
+                superiors_entity_configurations=[self.trust_anchor]
+            )
+        else:
+            vbs = ec.verified_by_superiors
+            
         if not vbs:
             logger.warning(f"Trust chain failed for {self.subject}")
-
+        else:
+            self.is_valid = True
+        
         # TODO
         # TODO: everything is ok right now ... apply metadata policy!
 
@@ -118,30 +123,30 @@ class TrustChainBuilder:
             
             sup_ecs = []
             for last_ec in last_ecs:
-                # try:
-                superiors = last_ec.get_superiors(
-                    max_authority_hints = self.max_authority_hints
-                )
-                validated_by = last_ec.validate_by_superiors(
-                    superiors_entity_configurations=superiors
-                )
-                sup_ecs.extend(list(validated_by.values()))
-                # except Exception as e:
-                    # logger.exception(
-                        # f"Metadata discovery exception for {last_ec.sub}: {e}"
-                    # )
+                try:
+                    superiors = last_ec.get_superiors(
+                        max_authority_hints = self.max_authority_hints,
+                        superiors_hints = [self.trust_anchor_configuration]
+                    )
+                    validated_by = last_ec.validate_by_superiors(
+                        superiors_entity_configurations=superiors.values()
+                    )
+                    sup_ecs.extend(list(validated_by.values()))
+                except Exception as e:
+                    logger.exception(
+                        f"Metadata discovery exception for {last_ec.sub}: {e}"
+                    )
 
             self.tree_of_trust[last_path_n + 1] = sup_ecs
 
         # so we have all the intermediaries right now
         self.validate_last_path_to_trust_anchor(self.subject_configuration)
-        
-        # the path is end ... is it valid?
-        # validate_last_path_to_trust_anchor(self.subject_configuration)
 
     def get_trust_anchor_configuration(self) -> None:
+
         if isinstance(self.trust_anchor, EntityConfiguration):
             self.trust_anchor_configuration = self.trust_anchor
+
         elif not self.trust_anchor_configuration and isinstance(self.trust_anchor, str):
             logger.info(f"Starting Metadata Discovery for {self.subject}")
             ta_jwt = get_entity_configurations(
@@ -200,14 +205,15 @@ def trust_chain_builder(
         httpc_params=HTTPC_PARAMS,
     )
     tc.start()
-    breakpoint()
 
     if not tc.is_valid:
         last_url = tuple(tc.endpoints_https_contents.keys())[-1]
         logger.error(
             f"Got {tc.endpoints_https_contents[last_url][0]} for {last_url}"
         )
-
+        return False
+    else:
+        return True
 
 class OidcFederationTrustManager:
     """
