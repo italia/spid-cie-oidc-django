@@ -1,6 +1,6 @@
 
 from pydantic import BaseModel, HttpUrl,  constr, ValidationError, conlist
-from typing import Literal, Optional, List
+from typing import Literal, Optional
 
 #vengono accettati anche altri campi oltre a quelli elencati
 
@@ -46,9 +46,10 @@ CLAIMS = {
 class AuthenticationRequest(BaseModel):
     client_id: HttpUrl
     response_type: Literal['code']
-    # A space-separated string of the scopes, "openid" ci deve essere obbligatoriamente
-    # possibili valori ['openid', 'offline_access', 'profile', 'email']
-    scope: str
+    # A space-separated string of the scopes, "openid" mandatory
+    # ['openid', 'offline_access', 'profile', 'email']
+    # FIX: deve esser limitato a un'occorrenza per ogni possibile valore
+    scope: constr(regex=r'openid(\s(offline_access|profile|email))*$')
     code_challenge: str 
     code_challenge_method: Literal['S256']
     nonce: constr(min_length = 32)
@@ -57,8 +58,9 @@ class AuthenticationRequest(BaseModel):
     acr_values: constr(regex=r'https://www.spid.gov.it/SpidL[123](\shttps://www.spid.gov.it/SpidL[123])?(\shttps://www.spid.gov.it/SpidL[123])?$')
     claims : Optional[dict]
     state: constr(min_length = 32)
-    # definire espressione regolare: elenco codici separtati da spazio
-    ui_locales: Optional[str]
+    # FIX: definire espressione regolare: elenco codici separtati da spazio
+    # FIX: esiste un'espressione regolare per i codici [RFC5646]
+    ui_locales: Optional[constr(regex=r'[^ ]+(\s([^ ]+))*')]
 def validate_message(msg:dict) -> None:
     claims = msg['claims']
     for k,v in claims.items(): 
