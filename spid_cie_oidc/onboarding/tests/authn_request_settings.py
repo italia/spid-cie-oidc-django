@@ -1,15 +1,46 @@
 AUTHN_REQUEST_SPID = {
     "client_id": "https://rp.cie.it/callback1/",
     "response_type": "code",
-    "scope": "openid offline_access",
+    "scope": ["openid", "offline_access"],
+    "code_challenge": "codeChallenge",
+    "code_challenge_method": "S256",
+    "nonce": "12345678123456781234567812345678inpiu",
+    "prompt": "verify",
+    "redirect_uri": "https://rp.cie.it/callback1/",
+    "acr_values": ["https://www.spid.gov.it/SpidL2", "https://www.spid.gov.it/SpidL1"],
+    "claims":{
+        "userinfo":{
+            "given_name": {"values": ["str", "str"] },
+            "family_name": None,
+            "birthdate": {"value": "str" }
+            },
+            "id_token":{
+                "given_name": {"values": ["str", "str"] },
+                "family_name": None,
+                "birthdate": {"value": "str" }
+                }
+    },
+    "state": "fyZiOL9Lf2CeKuNT2JzxiLRDink0uPcd",
+    "ui_locales": "codice1 codice2 codice3"
+}
+
+AUTHN_REQUEST_CIE = {
+    "client_id": "https://rp.cie.it/callback1/",
+    "response_type": "code",
+    "scope": ["openid", "offline_access", "email", "profile"],
     "code_challenge": "codeChallenge",
     "code_challenge_method": "S256",
     "nonce": "12345678123456781234567812345678inpiu",
     "prompt": "consent login",
     "redirect_uri": "https://rp.cie.it/callback1/",
-    "acr_values": "https://www.spid.gov.it/SpidL2 https://www.spid.gov.it/SpidL1",
+    "acr_values": ["CIE_L2", "CIE_L1"],
     "claims":{
         "userinfo":{
+            "given_name": {"values": ["str", "str"] },
+            "family_name": None,
+            "birthdate": {"value": "str" }
+            },
+        "id_token":{
             "given_name": {"values": ["str", "str"] },
             "family_name": None,
             "birthdate": {"value": "str" }
