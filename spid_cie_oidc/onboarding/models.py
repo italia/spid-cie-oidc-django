@@ -364,40 +364,6 @@ class FederationDescendantContact(TimeStampedModel):
     def __str__(self):
         return f"{self.contact} {self.entity.sub}"
 
-class EntityModel(models.Model):
-
-    organization_name = models.CharField(
-        max_length=100, 
-        null=False, 
-        blank=False,
-        name="organization Name",
-    )
-
-    url_entity = models.CharField(
-        max_length=200, 
-        null=False, 
-        blank=False,
-        name="url of the entity"
-    )
-
-    url_available = models.CharField(
-        max_length=200, 
-        null=False, 
-        blank=False,
-        name="url of the page where the SPID/CIE button is available"
-    )
-
-    public_jwks_of_entities = models.CharField(
-        max_length=10000, 
-        null=False, 
-        blank=False,
-        name="public jwks of the entities"
-    )
-
-    def __str__(self):
-        return self.organization_name + ' ' + self.url_available + ' ' + self.url_available + ' ' + self.public_jwks_of_entities
-
-
 
 # signal on each save
 # def trust_chain_trigger(**kwargs):

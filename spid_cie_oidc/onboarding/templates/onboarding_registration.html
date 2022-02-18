@@ -10,10 +10,11 @@
 
 
 {% block container %}
-<div class="container" style="padding:2rem;">
-   <h1 class="text-center welcomeText">
+<div class="container pt-2 p-3">
+   <h1 class="text-left">
       {% trans "Onboarding your entity" %}
    </h1>
+   <p>{% lorem 1 %}</p>
    <form method="post" action="">
       {% csrf_token %}
       {% for form_field in form %}

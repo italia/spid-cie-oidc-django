@@ -4,7 +4,7 @@ from django.http import Http404
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.shortcuts import render
-from .registration import RegistrationForm
+from .onboardingforms import OnboardingRegistrationForm
 
 
 from spid_cie_oidc.onboarding.models import (
@@ -96,7 +96,7 @@ def onboarding_landing (request):
     return render(request, 'onboarding_landing.html')
 
 def onboarding_registration (request):
-    form = RegistrationForm()
+    form = OnboardingRegistrationForm()
 
     context ={'form': form}
     return render(request, 'onboarding_registration.html', context)
