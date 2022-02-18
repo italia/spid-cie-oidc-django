@@ -12,5 +12,4 @@ class AuthRequestTest(TestCase):
             print("CHECK PASSED")
         except ValidationError as e:
             print("CHECK FAILED, SEE ERRORS:")
-            breakpoint()
             print(e.json())

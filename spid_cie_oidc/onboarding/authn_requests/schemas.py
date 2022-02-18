@@ -1,6 +1,6 @@
 
-from pydantic import BaseModel, HttpUrl,  constr, ValidationError, conlist, validator
-from typing import List, Literal, Optional, Union
+from pydantic import BaseModel, HttpUrl,  constr, ValidationError, conlist
+from typing import Literal, Optional
 
 #vengono accettati anche altri campi oltre a quelli elencati
 
@@ -16,9 +16,6 @@ class ClaimsTypeStringValues(BaseModel):
 class UserInfo(BaseModel): 
     given_name: Optional[dict]
     family_name: Optional[dict]
-    # family_name: Optional[Union[ClaimsTypeEssential, ClaimsTypeStringValue, ClaimsTypeStringValues, None]]
-    # birthdate: Optional[Union[ClaimsTypeEssential, ClaimsTypeStringValue, ClaimsTypeStringValues, None]]
-    # fiscal_number: Optional[Union[ClaimsTypeEssential, ClaimsTypeStringValue, ClaimsTypeStringValues, None]]
 
 class IdToken(UserInfo):
     pass
@@ -26,7 +23,7 @@ class IdToken(UserInfo):
 TYPES = {
     'essential': ClaimsTypeEssential,
     'value': ClaimsTypeStringValue,
-    'values': ClaimsTypeStringValues
+    'values': ClaimsTypeStringValues,
 }
 
 CLAIMS = {
@@ -51,10 +48,11 @@ def validate_message(msg:dict) -> None:
     claims = msg['claims']
     for k,v in claims.items(): 
         claims_items = CLAIMS[k]
-        for k_type, v_type in TYPES.items():
-            validator = v_type
-            breakpoint()
-            validator(claims_items(**v))
-
+        claims_items(**v)
+        for k_item, v_item in v.items():
+            if v_item is not None:
+                for k_type, v_type in TYPES.items():
+                    validator = v_type
+                    validator(**v_item)
 
 

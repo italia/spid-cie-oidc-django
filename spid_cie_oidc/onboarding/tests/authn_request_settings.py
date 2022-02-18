@@ -10,7 +10,7 @@ AUTHN_REQUEST_SPID = {
     "acr_values": "https://www.spid.gov.it/SpidL2 https://www.spid.gov.it/SpidL1",
     "claims":{
         "userinfo":{
-            "given_name": {"value": ["str", "str", "str"] },
+            "given_name": {"values": ["str", "str"] },
             "family_name": None
             }
     },
