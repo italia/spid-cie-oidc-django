@@ -105,6 +105,10 @@ class EntityConfiguration:
         self.verified_by_superiors = {}
         self.failed_by_superiors = {}
 
+        # a dict with the paylaod of valid entity statements for each descendant subject
+        self.verified_descendant_statements = {}
+        self.failed_descendant_statements = {}
+
         self.is_valid = False
 
     def validate_by_itself(self) -> bool:
@@ -154,7 +158,7 @@ class EntityConfiguration:
             if sup.sub in authority_hints:
                 authority_hints.pop(sup.sub)
 
-        logger.info(f"Getting Entity Configurations for {authority_hints}")
+        logger.debug(f"Getting Entity Configurations for {authority_hints}")
 
         jwts = get_entity_configurations(authority_hints, self.httpc_params)
         for jwt in jwts:
@@ -168,10 +172,14 @@ class EntityConfiguration:
             target[ec.payload["sub"]] = ec
 
         if superiors_hints:
-            logger.info(f"Getting Cached Entity Configurations for {[i.sub for i in superiors_hints]}")
+            logger.info(
+                "Getting Cached Entity Configurations for "
+                f"{[i.sub for i in superiors_hints]}"
+            )
 
         for ec in superiors_hints:
-            # TODO: this is a replied code, it must be generalized and merged with the previous one
+            # TODO: this is a copy/pasted code with the previous for statement
+            # TODO: it must be generalized and merged with the previous one
             if ec.validate_by_itself():
                 target = self.verified_superiors
             else:
@@ -189,10 +197,14 @@ class EntityConfiguration:
         header = unpad_jwt_head(jwt)
         unpad_jwt_payload(jwt)
         if header.get("kid") not in self.kids:
-            raise UnknownKid(f"{self.header.get('kid')} not found in {self.jwks}")
+            raise UnknownKid(
+                f"{self.header.get('kid')} not found in {self.jwks}"
+            )
         # verify signature
-        verify_jws(jwt, self.jwks[self.kids.index(header["kid"])])
-        return True
+        payload = verify_jws(jwt, self.jwks[self.kids.index(header["kid"])])
+
+        self.verified_descendant_statements[payload['sub']] = payload
+        return self.verified_descendant_statements
 
     def validate_by_superior_statement(self, jwt: str, ec):
         """
@@ -202,6 +214,7 @@ class EntityConfiguration:
         of the superior
         """
         is_valid = None
+        payload = {}
         try:
             payload = unpad_jwt_payload(jwt)
             ec.validate_by_itself()
@@ -210,15 +223,22 @@ class EntityConfiguration:
             _kids = [i.get("kid") for i in _jwks]
             verify_jws(self.jwt, _jwks[_kids.index(self.header["kid"])])
             is_valid = True
-        except Exception:
+        except Exception as e:
+            logger.warning(
+                f"{self.sub} failed validation with "
+                f"{ec.sub}'s superior statement {payload}. "
+                f"Exception: {e}"
+            )
             is_valid = False
 
         if is_valid:
             target = self.verified_by_superiors
+            ec.verified_descendant_statements[self.sub] = payload
         else:
             target = self.failed_superiors
+            ec.failed_descendant_statements[self.sub] = payload
 
-        target[payload["iss"]] = payload
+        target[payload["iss"]] = ec
         return self.verified_by_superiors.get(ec.sub)
 
     def validate_by_superiors(
@@ -245,8 +265,8 @@ class EntityConfiguration:
                 ]
             except KeyError:
                 logger.warning(
-                    "Missing federation_api_endpoint in federation_entity metadata "
-                    f"for {self.sub} by {ec.sub}."
+                    "Missing federation_api_endpoint in  "
+                    f"federation_entity metadata for {self.sub} by {ec.sub}."
                 )
                 self.invalid_superiors[ec.sub] = None
                 continue

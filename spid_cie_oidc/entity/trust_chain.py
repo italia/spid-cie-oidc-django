@@ -4,6 +4,8 @@ from collections import OrderedDict
 from django.conf import settings
 from typing import Union
 
+from spid_cie_oidc.entity.policy import apply_policy
+
 from . import settings as settings_local
 from .statements import (
     get_entity_configurations,
@@ -42,6 +44,8 @@ class TrustChainBuilder:
         pre_fetched_statements = {},
         #
 
+        metadata_type = 'openid_provider',
+        
         **kwargs,
     ) -> None:
 
@@ -56,24 +60,62 @@ class TrustChainBuilder:
         self.is_valid = False
 
         self.statements_collection = OrderedDict()
+
         self.tree_of_trust = OrderedDict()
+        self.trust_path = [] # list of valid subjects up to trust anchor
 
         self.max_authority_hints = max_authority_hints
 
         # dynamically valued
         self.max_path_len = 0
 
+        self.metadata_type = metadata_type
+        self.final_metadata:dict = {}
+
     def apply_metadata_policy(self) -> dict:
         """
-        returns the final metadata
+            filters the trust path from subject to trust anchor
+            apply the metadata policies along the path and 
+            returns the final metadata
         """
-        # TODO
-        return {}
+        # find the path of trust
+        if not self.trust_path:
+            self.trust_path = [self.subject_configuration]
+
+        logger.info(f"Applying metadata policy for {self.subject} over {self.trust_path}")
+        last_path = self.tree_of_trust[len(self.trust_path)-1]
+
+        path_found = False
+        for ec in last_path:
+            for sup_ec in ec.verified_by_superiors.values():
+                while (len(self.trust_path) -2 <= self.max_path_len):
+                    if sup_ec.sub == self.trust_anchor_configuration.sub:
+                        path_found = True
+                        self.trust_path.append(
+                            sup_ec.verified_descendant_statements[self.subject]
+                        )
+                        break
+                    if sup_ec.verified_by_superiors:
+                        self.trust_path.append(sup_ec.sub)
+                        self.apply_metadata_policy()
+                    else:
+                        logger.info(
+                            f"'Cul de sac' in {sup_ec.sub} for {self.subject} "
+                            f"to {self.trust_anchor_configuration.sub}"
+                        )
+                        self.trust_path = []
+
+        # once I filtered a concrete and unique trust path I can apply the metadata policy
+        if path_found:
+            self.final_metadata = self.subject_configuration.payload['metadata'][self.metadata_type]
+            for i in self.trust_path[1:]:
+                _pol = i['metadata_policy'][self.metadata_type]
+                self.final_metadata = apply_policy(self.final_metadata, _pol)
+        return self.final_metadata
 
     def validate_last_path_to_trust_anchor(self, ec: EntityConfiguration):
         logger.info(f"Validating {self.subject} with {self.trust_anchor}")
-
-        if self.trust_anchor_configuration.sub not in ec.verified_by_superiors:
+        if self.trust_anchor_configuration.sub not in ec.verified_superiors:
             vbs = ec.validate_by_superiors(
                 superiors_entity_configurations=[self.trust_anchor]
             )
@@ -84,9 +126,8 @@ class TrustChainBuilder:
             logger.warning(f"Trust chain failed for {self.subject}")
         else:
             self.is_valid = True
-
-        # TODO
-        # TODO: everything is ok right now ... apply metadata policy!
+            # breakpoint()
+            self.apply_metadata_policy()
 
     def discovery(self) -> dict:
         """
@@ -98,9 +139,6 @@ class TrustChainBuilder:
         while (len(self.tree_of_trust) - 1) < self.max_path_len:
             last_path_n = list(self.tree_of_trust.keys())[-1]
             last_ecs = self.tree_of_trust[last_path_n]
-
-            # check if trust_anchor is already available
-            # TODO : here
 
             sup_ecs = []
             for last_ec in last_ecs:
@@ -140,7 +178,6 @@ class TrustChainBuilder:
         if self.trust_anchor_configuration.payload.get("constraints", {}).get(
             "max_path_length"
         ):
-
             self.max_path_len = int(
                 self.trust_anchor_configuration.payload["constraints"][
                     "max_path_length"
@@ -175,36 +212,30 @@ def trust_chain_builder(
     trust_anchor: EntityConfiguration,
     httpc_params: dict = {},
     required_trust_marks: list = [],
+    metadata_type: str = 'openid_provider',
 ) -> TrustChainBuilder:
     """
     Minimal Provider Discovery endpoint request processing
+
+    metadata_type MUST be one of
+        openid_provider
+        openid_relying_party
+        oauth_resource
     """
     tc = TrustChainBuilder(
         subject,
         trust_anchor=trust_anchor,
         required_trust_marks=required_trust_marks,
         httpc_params=HTTPC_PARAMS,
+        metadata_type = metadata_type
     )
     tc.start()
 
     if not tc.is_valid:
-        last_url = tuple(tc.endpoints_https_contents.keys())[-1]
         logger.error(
-            f"Got {tc.endpoints_https_contents[last_url][0]} for {last_url}"
+            "The tree of trust cannot be validated for "
+            f"{tc.subject}: {tc.tree_of_trust}"
         )
         return False
     else:
-        return True
-
-
-class OidcFederationTrustManager:
-    """
-    https://openid.net/specs/openid-connect-federation-1_0.html#rfc.section.3.2
-    """
-
-    def trust_cached(self, subject):
-        """
-        Checks if we already have a valid trust chains for this sub
-
-        saves the trust chain and returns it
-        """
+        return tc

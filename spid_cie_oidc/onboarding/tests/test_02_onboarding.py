@@ -60,12 +60,15 @@ class OnBoardingTest(TestCase):
 
     @override_settings(HTTP_CLIENT_SYNC=True)
     @patch("requests.get", return_value=EntityResponse())
-    def test_trust_chain(self, mocked):
+    def test_trust_chain_valid_no_intermediaries(self, mocked):
         url = reverse('entity_configuration')
         jwt = get_entity_configurations(url)
         trust_anchor_ec = EntityConfiguration(jwt[0])
         
-        trust_chain_builder(
+        trust_chain = trust_chain_builder(
             subject = rp_onboarding_data['sub'],
-            trust_anchor = trust_anchor_ec
+            trust_anchor = trust_anchor_ec,
+            metadata_type = 'openid_relying_party'
         )
+        self.assertTrue(trust_chain)
+        self.assertTrue(trust_chain.final_metadata)
