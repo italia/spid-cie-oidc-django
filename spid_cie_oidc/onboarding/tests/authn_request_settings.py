@@ -1,7 +1,7 @@
 AUTHN_REQUEST_SPID = {
     "client_id": "https://rp.cie.it/callback1/",
     "response_type": "code",
-    "scope": "openid",
+    "scope": "openid offline_access",
     "code_challenge": "codeChallenge",
     "code_challenge_method": "S256",
     "nonce": "12345678123456781234567812345678inpiu",
@@ -11,8 +11,10 @@ AUTHN_REQUEST_SPID = {
     "claims":{
         "userinfo":{
             "given_name": {"values": ["str", "str"] },
-            "family_name": None
+            "family_name": None,
+            "birthdate": {"value": "str" }
             }
     },
-    "state": "fyZiOL9Lf2CeKuNT2JzxiLRDink0uPcd"
+    "state": "fyZiOL9Lf2CeKuNT2JzxiLRDink0uPcd",
+    "ui_locales": "codice1 codice2 codice3"
 }
