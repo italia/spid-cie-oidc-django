@@ -83,7 +83,7 @@ class AuthenticationRequest(BaseModel):
     claims : Optional[dict]
     state: constr(min_length = 32)
     # TODO: to be improved
-    ui_locales: Optional[constr(regex=r'[^ ]+(\s([^ ]+))*')]
+    ui_locales: Optional[List[str]]
     
         
 

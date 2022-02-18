@@ -21,7 +21,7 @@ AUTHN_REQUEST_SPID = {
                 }
     },
     "state": "fyZiOL9Lf2CeKuNT2JzxiLRDink0uPcd",
-    "ui_locales": "codice1 codice2 codice3"
+    "ui_locales": ["codice1", "codice2", "codice3"]
 }
 
 AUTHN_REQUEST_CIE = {
@@ -47,5 +47,5 @@ AUTHN_REQUEST_CIE = {
             }
     },
     "state": "fyZiOL9Lf2CeKuNT2JzxiLRDink0uPcd",
-    "ui_locales": "codice1 codice2 codice3"
+    "ui_locales": ["codice1", "codice2", "codice3"]
 }
