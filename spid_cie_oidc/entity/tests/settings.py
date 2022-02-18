@@ -1,4 +1,3 @@
-from spid_cie_oidc.entity.jwks import create_jwk
 
 TA_SUB = "http://testserver/"
 FA_METADATA = {

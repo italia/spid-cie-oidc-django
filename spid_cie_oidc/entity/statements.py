@@ -41,6 +41,7 @@ def get_http_url(urls: list, httpc_params: dict = {}) -> list:
 
     return responses
 
+
 def get_entity_statements(urls: list, httpc_params: dict = {}) -> list:
     """
     Fetches an entity statement/configuration
@@ -87,7 +88,7 @@ class EntityConfiguration:
             _msg = f"Missing jwks in the statement for {self.sub}"
             logger.error(_msg)
             raise MissingJwksClaim(_msg)
-        
+
         self.kids = [i.get("kid") for i in self.jwks]
         self.httpc_params = httpc_params
 
@@ -154,7 +155,7 @@ class EntityConfiguration:
                 authority_hints.pop(sup.sub)
 
         logger.info(f"Getting Entity Configurations for {authority_hints}")
-        
+
         jwts = get_entity_configurations(authority_hints, self.httpc_params)
         for jwt in jwts:
             ec = self.__class__(jwt, httpc_params=self.httpc_params)
@@ -168,7 +169,7 @@ class EntityConfiguration:
 
         if superiors_hints:
             logger.info(f"Getting Cached Entity Configurations for {[i.sub for i in superiors_hints]}")
-        
+
         for ec in superiors_hints:
             # TODO: this is a replied code, it must be generalized and merged with the previous one
             if ec.validate_by_itself():
@@ -231,12 +232,12 @@ class EntityConfiguration:
         this methods create self.verified_superiors and failed ones
         and self.verified_by_superiors and failed ones
         """
-        
+
         for ec in superiors_entity_configurations:
             if ec.sub in ec.verified_by_superiors:
                 # already featched and cached
                 continue
-            
+
             try:
                 # get superior fetch url
                 fetch_api_url = ec.payload["metadata"]["federation_entity"][

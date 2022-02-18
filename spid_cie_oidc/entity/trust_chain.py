@@ -41,7 +41,7 @@ class TrustChainBuilder:
         pre_fetched_entity_configurations = {},
         pre_fetched_statements = {},
         #
-         
+
         **kwargs,
     ) -> None:
 
@@ -51,7 +51,7 @@ class TrustChainBuilder:
 
         self.trust_anchor = trust_anchor
         self.trust_anchor_configuration = None
-        
+
         self.required_trust_marks = required_trust_marks
         self.is_valid = False
 
@@ -70,40 +70,21 @@ class TrustChainBuilder:
         # TODO
         return {}
 
-    def discover_trusted_superiors(self, ecs: list):
-        for ec in ecs:
-            ec.get_superiors()
-            if not ec.verified_superiors:
-                # TODO
-                pass
-
-        return ec
-
     def validate_last_path_to_trust_anchor(self, ec: EntityConfiguration):
         logger.info(f"Validating {self.subject} with {self.trust_anchor}")
 
-        # TODO: specialize exception
-        # if not ec.payload.get("authority_hints"):
-            
-            # raise Exception(f"{ec.sub} doesn't have any authority hints!")
-        # elif self.trust_anchor.sub not in ec["authority_hints"]:
-            # raise Exception(
-                # f"{self.subject} doesn't have {self.trust_anchor.sub} "
-                # "in its authority hints "
-                # f"but max_path_len is equal to {self.max_path_len}."
-            # )
         if self.trust_anchor_configuration.sub not in ec.verified_by_superiors:
             vbs = ec.validate_by_superiors(
                 superiors_entity_configurations=[self.trust_anchor]
             )
         else:
             vbs = ec.verified_by_superiors
-            
+
         if not vbs:
             logger.warning(f"Trust chain failed for {self.subject}")
         else:
             self.is_valid = True
-        
+
         # TODO
         # TODO: everything is ok right now ... apply metadata policy!
 
@@ -120,7 +101,7 @@ class TrustChainBuilder:
 
             # check if trust_anchor is already available
             # TODO : here
-            
+
             sup_ecs = []
             for last_ec in last_ecs:
                 try:
@@ -155,7 +136,7 @@ class TrustChainBuilder:
             self.trust_anchor_configuration = EntityConfiguration(ta_jwt)
             self.trust_anchor_configuration.validate_by_itself()
 
-        # 
+        #
         if self.trust_anchor_configuration.payload.get("constraints", {}).get(
             "max_path_length"
         ):
@@ -214,6 +195,7 @@ def trust_chain_builder(
         return False
     else:
         return True
+
 
 class OidcFederationTrustManager:
     """
