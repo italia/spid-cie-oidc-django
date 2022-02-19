@@ -99,10 +99,7 @@ class OnBoardingTest(TestCase):
         self.assertTrue(isinstance(trust_chain.exp, int))
         self.assertTrue(isinstance(trust_chain.exp_datetime, datetime.datetime))
 
-
-    @override_settings(HTTP_CLIENT_SYNC=True)
-    @patch("requests.get", return_value=EntityResponseWithIntermediate())
-    def test_trust_chain_valid_with_intermediaries(self, mocked):
+    def _create_federation_with_intermediary(self) -> EntityConfiguration:
         jwt = get_entity_configurations(self.ta_conf.sub)
         trust_anchor_ec = EntityConfiguration(jwt[0])
 
@@ -127,7 +124,14 @@ class OnBoardingTest(TestCase):
         )
         self.rp_conf.authority_hints = [intermediary_conf['sub']]
         self.rp_conf.save()
-
+        return trust_anchor_ec
+        
+    @override_settings(HTTP_CLIENT_SYNC=True)
+    @patch("requests.get", return_value=EntityResponseWithIntermediate())
+    def test_trust_chain_valid_with_intermediaries(self, mocked):
+        
+        trust_anchor_ec = self._create_federation_with_intermediary()
+        
         trust_chain = trust_chain_builder(
             subject = self.rp.sub,
             trust_anchor = trust_anchor_ec,
