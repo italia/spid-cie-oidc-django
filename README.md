@@ -137,56 +137,15 @@ Then enter in the single applications projects (__federation_authority/__ or __r
 Point your web browser to `http://localhost:8000/admin` to enter in the management interface.
 
 
-### Endpoints
-
-#### .well-known/openid-federation
-Where the Entity Configuration can be downloaded. `?format=json` will release a json for debug purpose.
-A prefix can be configured in global settings file with parameter `OIDC_PREFIX`.
-
-Available for trust anchors, providers and relying parties.
-
-Demo examples are:
-
- - `http://127.0.0.1:8000/.well-known/openid-federation?format=json`
- - `http://127.0.0.1:8000/.well-known/openid-federation`
-
-#### /fetch
-
-Available for trust anchors and intermediates.
-Releases an Entity Statement related to a subject (descendant).
-
-Demo examples are:
-
- - `http://127.0.0.1:8000/fetch/?sub=http://127.0.0.1:8001/&format=json`
- - `http://127.0.0.1:8000/fetch/?sub=http://127.0.0.1:8001/`
-
-#### /list
-
-Available for trust anchors and intermediates.
-Lists all the descendant entities.
-
- - `http://127.0.0.1:8000/list/`
- - `http://127.0.0.1:8000/list/?is_leaf=false`
- - `http://127.0.0.1:8000/list/?is_leaf=true`
-
-## Hints
-
-Backup your demo data
-
-````
-# backup your data (upgrade example data), -e excludes.
-./manage.py dumpdata -e spid_cie_oidc_accounts -e admin -e auth -e contenttypes -e sessions > dumps/example.json
-````
-
 ## Contribute
 
 Your contribution is welcome, no question is useless and no answer is obvious, we need you.
 
-#### as end user
+#### Contribute as end user
 
 Please open an issue if you've discoveerd a bug or if you want to ask some features.
 
-#### as developer
+#### Contribute as developer
 
 Please open your Pull Requests on the __dev__ branch. 
 Please consider the following branches:
@@ -194,6 +153,15 @@ Please consider the following branches:
  - __main__: where we merge the code before tag a new stable release.
  - __dev__: where we push our code during development.
  - __other-custom-name__: where a new feature/contribution/bugfix will be handled, revisioned and then merged to dev branch.
+
+#### Hints
+
+Backup your demo data
+
+````
+# backup your data (upgrade example data), -e excludes.
+./manage.py dumpdata -e spid_cie_oidc_accounts -e admin -e auth -e contenttypes -e sessions > dumps/example.json
+````
 
 In this project we adopt [Semver](https://semver.org/lang/it/) and
 [Conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) specifications.
