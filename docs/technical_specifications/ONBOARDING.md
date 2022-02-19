@@ -71,3 +71,13 @@ this report would be also available in HTML format.
 - the onboarding staff in any time can add more profiles and trust marks  through the FederationDescendant back office panel
 - an entity configuration with trust marks and metadata policy applied, signed by the Trust Anchor of the onboarding system, is automatically created and published to its __Resolve Entity Statement__ endpoint.
 - an email is sent to the user to inform on the succesfull state of the onboarding and the final entity configuration
+
+
+### Considerations
+
+1. it would be necessary to "regulate" how the entities must expose a trigger url of the authn request.
+This would allow us to batch automate testing and obtain asynchronous reports and request states.
+Automatically a warning email would be sent to users.
+
+2. It would be useful to standardize a "quota" to avoid that "the usual primers"
+can make too many stupid requests all at once, that is, max N batch testing can be performed per day for a single applicant.
