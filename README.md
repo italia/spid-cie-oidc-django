@@ -16,6 +16,12 @@ each of these can be installed separately within a django project, these are:
 - __spid_cie_oidc.relying_party__: OIDC Relying Party and test suite for OIDC Providers.
 - __spid_cie_oidc.provider__: OIDC Provider and test suite for OIDC Relying Parties.
 
+All the operation related to JWT signature and encryption, and part of OIDC messages operations, 
+are built on top of [IdentityPython](https://idpy.org/):
+
+- [oidcmsg](https://github.com/IdentityPython/JWTConnect-Python-OidcMsg)
+- [cryptojwt](https://github.com/IdentityPython/JWTConnect-Python-CryptoJWT)
+
 # Contents
 
 - [Features](#features)
@@ -36,55 +42,30 @@ each of these can be installed separately within a django project, these are:
 * [Note](#note)
 
 
-# Features
+## Technical specifications
 
-1. __OIDC Federation 1.0 Authority/Intermediary__
-    
-    Endpoints:
-    - entity configuration (.well-known/openid-federation)
-    - fetch
-    - listing
-    - evaluate endpoints
-    - trust mark status
+1. [__Authority/Intermediary__](docs/tecnhical_specifications/ENTITY.md)
+2. [OIDC Federation 1.0 onboarding service DEMO__](docs/tecnhical_specifications/ONBOARDING.md)
+3. [__Openid Connect Provider__](docs/tecnhical_specifications/PROVIDER.md)
+4. [__Openid Connect Relying Party__](docs/tecnhical_specifications/RELYING_PARTY.md)
 
-2. __OIDC Federation 1.0 onboarding panel DEMO__:
 
-    > ⚠️ This application is not intended for production use.
-    
-    - [frontend](https://github.com/peppelinux/spid-cie-oidc/issues/1)
-    - [backend] Automatic checks on new registered entities (descendats):
-        - entity configuration:
-            - reachability
-            - signature validation
-            - best practices checks following AgID and IPZS OIDC Fed guidelines.
-        - RP authz check following AgID and IPZS OIDC Fed guidelines.
-        - trust marks forgery
+## Project structure
 
-3. __Openid Connect Provider__. Identity Provider with additional test suite.
-    
-    Endpoints:
-    - entity configuration (.well-known/openid-federation)
-    - authorization
-    - token
-    - introspection
-    - token revocation
-    - userinfo endpoint
+We have all the Django apps available in the folder `spid_cie_oidc/`.
+The examples projects are instead in the folder `examples/`.
 
-4. __Openid Connect Relying Party__. Relying Party with additional test suite.
-    
-    Endpoints:
-    - entity configuration (.well-known/openid-federation)
-    - authorization
-    - auth code redirect
-    - logout
+There is a substantial difference between an app and a project.
+The app is installed using a common python package manager, such as poetry or pip,
+and can be used, inherited, and integrated into other projects.
 
-# Setup
+A project is a service configuration that integrates one or more applications.
 
-This is a Django Framework project built on top of [IdentityPython](https://idpy.org/) 
-[oidcmsg](https://github.com/IdentityPython/JWTConnect-Python-OidcMsg) and
-[cryptojwt](https://github.com/IdentityPython/JWTConnect-Python-CryptoJWT).
 
-The Database storage engine can be one of which supported by Django, the example project comes with sqlite3.
+## Setup
+
+The Database storage engine can be one of which supported by Django,
+the example project comes with sqlite3.
 
 #### Dependencies
 ````
