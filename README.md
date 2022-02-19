@@ -22,7 +22,8 @@ are built on top of [IdentityPython](https://idpy.org/):
 - [oidcmsg](https://github.com/IdentityPython/JWTConnect-Python-OidcMsg)
 - [cryptojwt](https://github.com/IdentityPython/JWTConnect-Python-CryptoJWT)
 
-# Contents
+
+## Contents
 
 - [Features](#features)
 * [Setup](#setup)
@@ -61,11 +62,14 @@ and can be used, inherited, and integrated into other projects.
 
 A project is a service configuration that integrates one or more applications.
 
-
 ## Setup
 
-The Database storage engine can be one of which supported by Django,
-the example project comes with sqlite3.
+This is a Django Framework project built on top of [IdentityPython](https://idpy.org/) 
+[oidcmsg](https://github.com/IdentityPython/JWTConnect-Python-OidcMsg) and
+[cryptojwt](https://github.com/IdentityPython/JWTConnect-Python-CryptoJWT).
+
+The Database storage engine can be one of which supported by Django, the example project comes with sqlite3.
+
 
 #### Dependencies
 ````
@@ -118,7 +122,7 @@ cp $project_name/settingslocal.py.example $project_name/settingslocal.py
 ./manage.py createsuperuser
 ````
 
-# Usage
+## Usage
 
 The demo propose a small federation composed by the following entities:
 
@@ -140,7 +144,7 @@ Then enter in the single applications projects (__federation_authority/__ or __r
 Point your web browser to `http://localhost:8000/admin` to enter in the management interface.
 
 
-###  Endpoints
+### Endpoints
 
 #### .well-known/openid-federation
 Where the Entity Configuration can be downloaded. `?format=json` will release a json for debug purpose.
@@ -172,7 +176,7 @@ Lists all the descendant entities.
  - `http://127.0.0.1:8000/list/?is_leaf=false`
  - `http://127.0.0.1:8000/list/?is_leaf=true`
 
-# Hints
+## Hints
 
 Backup your demo data
 
@@ -181,7 +185,7 @@ Backup your demo data
 ./manage.py dumpdata -e spid_cie_oidc_accounts -e admin -e auth -e contenttypes -e sessions > dumps/example.json
 ````
 
-# Contribute
+## Contribute
 
 Your contribution is welcome, no question is useless and no answer is obvious, we need you.
 
@@ -201,16 +205,16 @@ Please consider the following branches:
 In this project we adopt [Semver](https://semver.org/lang/it/) and
 [Conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) specifications.
 
-# License and Authors
+## License and Authors
 
 This software is released under the Apache 2 License by:
 
 - Giuseppe De Marco <giuseppe.demarco@teamdigitale.governo.it>.
 
-# Note
+## Note
 
 This project proposes an implementation of the italian OIDC Federation profile with
 __automatic_client_registration__ and the adoption of the trust marks as mandatory.
 
 If you're looking for a fully compliant implementation of OIDC Federation 1.0,
-with explicit client registration, please look at idpy's [fedservice](https://github.com/rohe/fedservice).
+with a full support of explicit client registration, please look at idpy's [fedservice](https://github.com/rohe/fedservice).
