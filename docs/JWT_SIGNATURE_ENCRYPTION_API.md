@@ -5,9 +5,8 @@ Enter in your project shell
 ````
 ./manage.py shell
 ````
-Define a jwt and a payload, for example:
+Define a jwt, for example:
 ````
-
 jwk=
 {
     'kty': 'RSA', 
@@ -16,7 +15,16 @@ jwk=
     'n':'3i5vV-_4nF_ES1BU86Zf2Bj6SiyGdGM3Izc2GrvtknQQCzpT3QlGv2d_wMrzVTS7PmZlvjyi2Qceq8EmEwbsIa5R8G57fxSpE0HL33giJfhpe8ublY4hGb6tEqSbHiFcgiF4T-Ft_98pz4nZtKTcesMZ8CcDUd9ibaLXGM4vaiUhSt76X1qOzqJHqAKMG-9VGm5DD2GSe7cu1yvaMCMPU6DGOqHYoBSkSbsnLelsRg6sINh6mZfb39odTJlOMFGhlg665702kc_iqqxd8jpyOh94vBagmJB4EQqI1qEte8sTMeBkVRpSLDoV5uNTlp2ZdINu1SakmaHB3WeStwC1lw', 'd':'QvPRP7mjvFOrjlp9zxJyzWbxfYqfVdFUGzuXBUVeWQS6lPeVsAUMmb8xo0JFQ4bpaetne4VAOZBIsM86jv9GBvxF2uMgOfJa5N-t9QB5oeGSv-hiURYMaXqpIvYRfGnnO5ukasXu5O0150GOJj6L5j6GwXSwLmrXeVxZ3zK63QwVl71xU1LR-lO0wLbqQROIT37Jw72B__wBk3QC0HjbrPv1fUVxKB3RCDR43X7PQkMPOfRHxicyp2MA4mLhLvuoRTTI4dfnd8Ou-xX5ctVzYmL0EMxPCleDFDIn9gTxpgCH95sVi-Zg6Zw5k1J_cchoD4AgGSSt2dr9mbiTRjLlcQ', 'p':'8BHX7hErQjESybgfzcX0hZmM-e1EWaM76uNJop9BiqRlBz9f-XxuC40A032AaZFDXqxVi3W0Hn1vJA6lSj9mGY5HEY-YVWAdOLLjM12oQ_cnH6czElExAoppUeMWsDEewDbZTn6rX5silcZ8Pu7Tsj-KSjPVzl9dr1w76EzsYj8', 
     'q':'7Oy3PGm3MjVlgTlgHnRKC-IcoB50hCBiqwACVcnlIgpg9Kt_srV7NWdmo5DJFIdrrvkjmN4wi9IOknSymStU-sB8BepnnterjPyBOr9PbttUP13qcOjuvjzD7Tr0IGou3yhA-YOuO9hOluhqd4tJIkdxT_X9qxgFQx5NSnsBpqk'
 }
+````
+or create a new one:
+````
+from spid_cie_oidc.entity.jwks import create_jwk
 
+jwk = create_jwk()
+````
+Define a payload for example:
+
+````
 payload=
 {
     'client_id': 'https://rp.cie.it', 
