@@ -156,7 +156,12 @@ class EntityConfiguration:
 
         for sup in superiors_hints:
             if sup.sub in authority_hints:
-                authority_hints.pop(sup.sub)
+                logger.info(
+                    "Getting Cached Entity Configurations for "
+                    f"{[i.sub for i in superiors_hints]}"
+                )
+                authority_hints.pop(authority_hints.index(sup.sub))
+                self.verified_superiors[sup.sub] = sup
 
         logger.debug(f"Getting Entity Configurations for {authority_hints}")
 
@@ -171,13 +176,8 @@ class EntityConfiguration:
 
             target[ec.payload["sub"]] = ec
 
-        if superiors_hints:
-            logger.info(
-                "Getting Cached Entity Configurations for "
-                f"{[i.sub for i in superiors_hints]}"
-            )
-
-        for ec in superiors_hints:
+        for ahints in authority_hints:
+            ec = target[ahints]
             # TODO: this is a copy/pasted code with the previous for statement
             # TODO: it must be generalized and merged with the previous one
             if ec.validate_by_itself():
@@ -195,7 +195,8 @@ class EntityConfiguration:
         """
         # TODO: pydantic entity configuration validation here
         header = unpad_jwt_head(jwt)
-        unpad_jwt_payload(jwt)
+        payload = unpad_jwt_payload(jwt)
+        
         if header.get("kid") not in self.kids:
             raise UnknownKid(
                 f"{self.header.get('kid')} not found in {self.jwks}"
@@ -209,7 +210,8 @@ class EntityConfiguration:
     def validate_by_superior_statement(self, jwt: str, ec):
         """
         jwt is a statement issued by a superior
-
+        ec is a superior entity configuration
+        
         this method validates self with the jwks contained in statement
         of the superior
         """
@@ -252,7 +254,6 @@ class EntityConfiguration:
         this methods create self.verified_superiors and failed ones
         and self.verified_by_superiors and failed ones
         """
-
         for ec in superiors_entity_configurations:
             if ec.sub in ec.verified_by_superiors:
                 # already featched and cached

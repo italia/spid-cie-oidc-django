@@ -38,14 +38,11 @@ class TrustChainBuilder:
         max_authority_hints: int = 10,
         subject_configuration: EntityConfiguration = None,
         required_trust_marks: list = [],
-
-        # TODO - prefetch cache
-        pre_fetched_entity_configurations = {},
-        pre_fetched_statements = {},
-        #
-
         metadata_type = 'openid_provider',
-        
+        # TODO - prefetch cache?
+        # pre_fetched_entity_configurations = {},
+        # pre_fetched_statements = {},
+        #
         **kwargs,
     ) -> None:
 
@@ -82,7 +79,9 @@ class TrustChainBuilder:
         if not self.trust_path:
             self.trust_path = [self.subject_configuration]
 
-        logger.info(f"Applying metadata policy for {self.subject} over {self.trust_path}")
+        logger.info(
+            f"Applying metadata policy for {self.subject} over {self.trust_path}"
+        )
         last_path = self.tree_of_trust[len(self.trust_path)-1]
 
         path_found = False
@@ -104,6 +103,7 @@ class TrustChainBuilder:
                             f"to {self.trust_anchor_configuration.sub}"
                         )
                         self.trust_path = []
+                        break
 
         # once I filtered a concrete and unique trust path I can apply the metadata policy
         if path_found:

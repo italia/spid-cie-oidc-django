@@ -1,3 +1,5 @@
+from spid_cie_oidc.entity.jwks import create_jwk
+
 rp_onboarding_data = dict(
     name = "RP Test",
     sub = "http://rp-test/oidc/rp",
@@ -21,9 +23,33 @@ rp_conf = {
             "subject_type": "pairwise"
         }
     },
-    "authority_hints": ["http://127.0.0.1:8000/"],
+    "authority_hints": ["http://testserver/"],
     "is_active" : True
 }
+
+intermediary_conf = {
+    "sub": "http://intermediary-test",
+    "metadata": {
+        "federation_entity": {
+            "contacts": ["ops@localhost"],
+            "federation_api_endpoint": "http://intermediary-test/fetch",
+            "homepage_uri": f"http://intermediary-test",
+            "name": "example Intermediate",
+        }
+    },
+    "trust_marks": [create_jwk()],
+    "authority_hints": ["http://testserver/"],
+    "is_active" : True
+}
+intermediary_onboarding_data = dict(
+    name = "intermediary-test",
+    sub = "http://intermediary-test",
+    type = "federation_entity",
+    
+    # metadata_policy = {"openid_relying_party": {"scopes": {"value": ["openid"]}}},
+    is_active=True
+)
+
 
 TRUST_MARK_PAYLOAD = {
     "iss": "$.issuer_sub",

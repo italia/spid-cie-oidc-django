@@ -223,14 +223,14 @@ class FederationEntityConfiguration(TimeStampedModel):
         if self.constraints:
             conf["constraints"] = self.constraints
 
-        if self.is_leaf:
-            if self.authority_hints:
-                conf["authority_hints"] = self.authority_hints
-            else:
-                _msg = (
-                    f"Entity {self.sub} is a leaf and requires authority_hints valued"
-                )
-                logger.error(_msg)
+        
+        if self.authority_hints:
+            conf["authority_hints"] = self.authority_hints
+        elif self.is_leaf:
+            _msg = (
+                f"Entity {self.sub} is a leaf and requires authority_hints valued"
+            )
+            logger.error(_msg)
 
         return conf
 

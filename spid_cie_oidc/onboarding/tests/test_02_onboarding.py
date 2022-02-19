@@ -21,14 +21,12 @@ class OnBoardingTest(TestCase):
         self.rp_conf = FederationEntityConfiguration.objects.create(**rp_conf)
 
         self.rp_profile = FederationEntityProfile.objects.create(**RP_PROFILE)
-
         self.rp = FederationDescendant.objects.create(**rp_onboarding_data)
 
         self.rp_jwk = PublicJwk.objects.create(
             jwk = self.rp_conf.public_jwks[0],
             kid = self.rp_conf.public_jwks[0]['kid']
         )
-
         FederationDescendantJwk.objects.create(
             descendant=self.rp,
             jwk = self.rp_jwk
@@ -38,7 +36,7 @@ class OnBoardingTest(TestCase):
             profile = self.rp_profile,
             issuer = self.ta_conf
         )
-    
+
     def test_fetch_endpoint(self):
         url = reverse('oidcfed_fetch')
         c = Client()
@@ -61,12 +59,47 @@ class OnBoardingTest(TestCase):
     @override_settings(HTTP_CLIENT_SYNC=True)
     @patch("requests.get", return_value=EntityResponse())
     def test_trust_chain_valid_no_intermediaries(self, mocked):
-        url = reverse('entity_configuration')
-        jwt = get_entity_configurations(url)
+        jwt = get_entity_configurations(self.ta_conf.sub)
         trust_anchor_ec = EntityConfiguration(jwt[0])
         
         trust_chain = trust_chain_builder(
             subject = rp_onboarding_data['sub'],
+            trust_anchor = trust_anchor_ec,
+            metadata_type = 'openid_relying_party'
+        )
+        self.assertTrue(trust_chain)
+        self.assertTrue(trust_chain.final_metadata)
+
+    @override_settings(HTTP_CLIENT_SYNC=True)
+    @patch("requests.get", return_value=IntermediateEntityResponse())
+    def test_trust_chain_valid_with_intermediaries(self, mocked):
+        jwt = get_entity_configurations(self.ta_conf.sub)
+        trust_anchor_ec = EntityConfiguration(jwt[0])
+
+        self.intermediate = FederationEntityConfiguration.objects.create(
+            **intermediary_conf
+        )
+        self.intermediate_jwk = PublicJwk.objects.create(
+            jwk = self.intermediate.public_jwks[0],
+            kid = self.intermediate.public_jwks[0]['kid']
+        )
+        self.intermediate_desc = FederationDescendant.objects.create(
+            **intermediary_onboarding_data
+        )
+        FederationDescendantJwk.objects.create(
+            descendant=self.intermediate_desc,
+            jwk = self.intermediate_jwk
+        )
+        FederationEntityAssignedProfile.objects.create(
+            descendant = self.rp,
+            profile = self.rp_profile,
+            issuer = self.intermediate
+        )
+        self.rp_conf.authority_hints = [intermediary_conf['sub']]
+        self.rp_conf.save()
+
+        trust_chain = trust_chain_builder(
+            subject = self.rp.sub,
             trust_anchor = trust_anchor_ec,
             metadata_type = 'openid_relying_party'
         )
