@@ -23,7 +23,7 @@ The Technical specifications of this SDKs are available here:
 3. [__Openid Connect Provider__](docs/technical_specifications/PROVIDER.md)
 4. [__Openid Connect Relying Party__](docs/technical_specifications/RELYING_PARTY.md)
 
-## Project structure
+## Contents
 
 We have all the Django apps available in the folder `spid_cie_oidc/`.
 The examples projects are instead in the folder `examples/`.
@@ -34,23 +34,16 @@ and can be used, inherited, and integrated into other projects.
 
 A project is a service configuration that integrates one or more applications.
 
-
-## Contents
-
 - [Features](#features)
 * [Setup](#setup)
     * [Dependencies](#dependencies)
       * [Install as Django application](#install-as-django-application)
       * [Setup the example project for demo purpose](#setup-the-example-project-for-demo-purpose)
 * [Usage](#usage)
-    * [Endpoints](#endpoints)
-      * [.well-known/openid-federation](#well-knownopenid-federation)
-      * [/fetch](#fetch)
-      * [/list](#list)
-* [Hints](#hints)
 * [Contribute](#contribute)
-    * [as end user](#as-end-user)
-    * [as developer](#as-developer)
+    * [Contribute as end user](#contribute-as-end-user)
+    * [Contribute as developer](#contribute-as-developer)
+    * [Hints](#hints)
 * [License and Authors](#license-and-authors)
 * [Note](#note)
 
