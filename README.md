@@ -7,9 +7,7 @@
 
 SPID/CIE OIDC Federation is a suite of Django applications designed to
 make it easy to build an [Openid Connect Federation](https://openid.net/specs/openid-connect-federation-1_0.html), 
-each of these can be installed separately within a django project.
-
-spid_cie_oidc is a Python Package that contains five Django applications:
+each of these can be installed separately within a django project, these are:
 
 - __spid_cie_oidc.accounts__: customizable app that extended the Django User model.
 - __spid_cie_oidc.entity__: OIDC Federation django app, with models and API that implements OIDC Federation 1.0 Entity Statements, metadata discovery, Trust Chain, Trust Marks and Metadata policy.
