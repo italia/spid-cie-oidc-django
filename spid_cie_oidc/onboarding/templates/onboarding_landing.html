@@ -1,28 +1,21 @@
 <!-- Extends default Bootstrap Unical Italia template -->
 {% extends 'base.html' %}
-
-{% load static %}
 {% load i18n %}
-
-{% block page_title %}
-{% trans "OIDC Federation onboarding system" %}
-{% endblock page_title %}
-
 
 {% block container %}
 <div>
-   <div class="container" style="margin-top:20px; padding:1rem">
+   <div class="container pt-2 p-3">
       <h1 class="text-left">
          {% trans "Welcome" %}
       </h1>
       <h4 class="card-title">
          {% trans "The onboarding system allows you to view the federated entity and to accredit your entity" %}
       </h4>
-      <div class="text-center" style="margin:10px">
+      <div class="text-center p-1">
          <a href="{% url 'oidc_onboarding_entities' %}" class="btn btn-primary btn-lg btn-block">Show accredited
             entities</a>
       </div>
-      <div class="text-center" style="margin:10px">
+      <div class="text-center p-1">
          <a href="{% url 'oidc_onboarding_registration' %}" class="btn btn-success btn-lg btn-block">Credit your
             entity</a>
       </div>
