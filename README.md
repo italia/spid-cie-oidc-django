@@ -45,7 +45,7 @@ A project is a service configuration that integrates one or more applications.
     * [Contribute as developer](#contribute-as-developer)
     * [Hints](#hints)
 * [License and Authors](#license-and-authors)
-* [Note](#note)
+* [Implementations notes](#implementation-notes)
 
 
 ## Setup
