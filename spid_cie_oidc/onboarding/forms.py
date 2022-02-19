@@ -5,19 +5,24 @@ class OnboardingRegistrationForm(forms.Form):
     
     organization_name = forms.CharField(
         label= "organization Name",
-        max_length=100,
+        error_messages={'required' : 'Enter your organization name'}
     )
 
     url_entity = forms.URLField(
         initial='https://',
-        label="url of the entity"
+        label="url of the entity",
+        error_messages={'required' : 'Enter your url of the entity'}
     )
 
     url_available = forms.URLField(
         initial='http://',
-        label="url of the page where the SPID/CIE button is available"
+        label="url of the page where the SPID/CIE button is available",
+        error_messages={
+            'required' : 'Enter the url of the page where the SPID/CIE button is available'}
     )
 
-    public_jwks_of_entities = forms.CharField(
-        label="public jwks of the entities"
+    public_jwks = forms.CharField(
+        label="public jwks of the entities",
+        error_messages={
+            'required' : 'Enter the public jwks of the entities'}
     )
