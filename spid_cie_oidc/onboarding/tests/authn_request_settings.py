@@ -75,3 +75,20 @@ AUTHN_ERROR_RESPONSE_CIE = {
     "state": "fyZiOL9Lf2CeKuNT2JzxiLRDink0uPcd&",
     "iss": "https://idserver.servizicie.interno.gov.it"
 }
+
+TOKEN_AUTHN_CODE_REQUEST = {
+    "client_id": "https://rp.cie.it",
+    "client_assertion": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiw...",
+    "client_assertion_type": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+    "code":"usDwMnEzJPpG5oaV8x3j&",
+    "code_verifier": "9g8S40MozM3NSqjHnhi7OnsE38jklFv2&",
+    "grant_type": "authorization_code"
+}
+
+TOKEN_REFRESH_REQUEST = {
+    "client_id": "https://rp.cie.it",
+    "client_assertion": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiw...",
+    "client_assertion_type": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+    "grant_type": "refresh_token",
+    "refresh_token": "8xLOxBtZp8"
+}
