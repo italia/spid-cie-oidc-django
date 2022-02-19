@@ -13,6 +13,8 @@ from spid_cie_oidc.onboarding.tests.mocked_responses import *
 
 from unittest.mock import patch
 
+import datetime
+
 
 class OnBoardingTest(TestCase):
 
@@ -93,6 +95,9 @@ class OnBoardingTest(TestCase):
             (len(trust_chain.trust_path) -2) == trust_chain.max_path_len
         )
 
+        self.assertTrue(isinstance(trust_chain.exp, int))
+        self.assertTrue(isinstance(trust_chain.exp_datetime, datetime.datetime))
+        
     @override_settings(HTTP_CLIENT_SYNC=True)
     @patch("requests.get", return_value=IntermediateEntityResponse())
     def test_trust_chain_valid_with_intermediaries(self, mocked):

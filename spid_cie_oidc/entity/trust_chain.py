@@ -11,6 +11,7 @@ from .statements import (
     get_entity_configurations,
     EntityConfiguration,
 )
+from . utils import datetime_from_exp
 
 
 HTTPC_PARAMS = getattr(settings, "HTTPC_PARAMS", settings_local.HTTPC_PARAMS)
@@ -70,6 +71,8 @@ class TrustChainBuilder:
         self.metadata_type = metadata_type
         self.final_metadata:dict = {}
 
+        self.exp = 0
+        
     def apply_metadata_policy(self) -> dict:
         """
             filters the trust path from subject to trust anchor
@@ -122,8 +125,20 @@ class TrustChainBuilder:
                 ).get(self.metadata_type, {})
                 self.final_metadata = apply_policy(self.final_metadata, _pol)
 
+        # set exp
+        self.set_exp()
         return self.final_metadata
 
+    @property
+    def exp_datetime(self):
+        if self.exp:
+            return datetime_from_exp(self.exp)
+    
+    def set_exp(self):
+        exps = [i.payload['exp'] for i in self.trust_path]
+        if exps:
+            self.exp = min(*exps)
+    
     def discovery(self) -> bool:
         """
         return a chain of verified statements
