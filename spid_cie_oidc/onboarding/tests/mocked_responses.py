@@ -7,7 +7,6 @@ from spid_cie_oidc.entity.exceptions import HttpError
 from spid_cie_oidc.entity.tests.settings import ta_conf_data
 from . settings import rp_onboarding_data, intermediary_conf
 
-import json
 import logging
 logger = logging.getLogger(__name__)
 

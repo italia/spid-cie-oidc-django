@@ -196,7 +196,7 @@ class EntityConfiguration:
         # TODO: pydantic entity configuration validation here
         header = unpad_jwt_head(jwt)
         payload = unpad_jwt_payload(jwt)
-        
+
         if header.get("kid") not in self.kids:
             raise UnknownKid(
                 f"{self.header.get('kid')} not found in {self.jwks}"
@@ -211,7 +211,7 @@ class EntityConfiguration:
         """
         jwt is a statement issued by a superior
         ec is a superior entity configuration
-        
+
         this method validates self with the jwks contained in statement
         of the superior
         """

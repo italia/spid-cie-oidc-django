@@ -81,18 +81,18 @@ class TrustChainBuilder:
         elif self.trust_path[-1].sub == self.trust_anchor_configuration.sub:
             # ok trust path completed, I just have to return over all the parent calls
             return
-        
+
         logger.info(
             f"Applying metadata policy for {self.subject} over "
             f"{self.trust_anchor_configuration.sub} starting from "
             f"{self.trust_path[-1]}"
         )
-        last_path = self.tree_of_trust[len(self.trust_path)-1]
+        last_path = self.tree_of_trust[len(self.trust_path) - 1]
 
         path_found = False
         for ec in last_path:
             for sup_ec in ec.verified_by_superiors.values():
-                while (len(self.trust_path) -2 < self.max_path_len):
+                while (len(self.trust_path) - 2 < self.max_path_len):
                     if sup_ec.sub == self.trust_anchor_configuration.sub:
                         self.trust_path.append(sup_ec)
                         path_found = True
@@ -115,7 +115,7 @@ class TrustChainBuilder:
             )
             self.final_metadata = self.subject_configuration.payload['metadata'][self.metadata_type]
             for i in range(len(self.trust_path))[::-1]:
-                descendant = self.trust_path[i-1].sub
+                self.trust_path[i - 1].sub
                 _pol = self.trust_path[i].verified_descendant_statements.get(
                     'metadata_policy', {}
                 ).get(self.metadata_type, {})
@@ -132,7 +132,7 @@ class TrustChainBuilder:
         self.tree_of_trust[0] = [self.subject_configuration]
 
         # ecs_history = []
-        
+
         while (len(self.tree_of_trust) - 2) < self.max_path_len:
             last_path_n = list(self.tree_of_trust.keys())[-1]
             last_ecs = self.tree_of_trust[last_path_n]
@@ -142,11 +142,11 @@ class TrustChainBuilder:
 
                 # TODO: Metadata discovery loop prevention
                 # if last_ec.sub in ecs_history:
-                    # logger.warning(
-                        # f"Metadata discovery loop detection for {last_ec.sub}. "
-                        # f"Already present in {ecs_history}"
-                    # )
-                
+                # logger.warning(
+                # f"Metadata discovery loop detection for {last_ec.sub}. "
+                # f"Already present in {ecs_history}"
+                # )
+
                 try:
                     superiors = last_ec.get_superiors(
                         max_authority_hints = self.max_authority_hints,
@@ -193,8 +193,8 @@ class TrustChainBuilder:
             logger.error(
                 f"Trust Anchor Entity Configuration failed for {self.trust_anchor}. "
                 f"{e}"
-        )
-        
+            )
+
         if self.trust_anchor_configuration.payload.get("constraints", {}).get(
             "max_path_length"
         ):

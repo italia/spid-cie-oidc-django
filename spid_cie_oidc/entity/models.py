@@ -223,7 +223,6 @@ class FederationEntityConfiguration(TimeStampedModel):
         if self.constraints:
             conf["constraints"] = self.constraints
 
-        
         if self.authority_hints:
             conf["authority_hints"] = self.authority_hints
         elif self.is_leaf:
