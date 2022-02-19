@@ -30,9 +30,4 @@ class AuthRequestTest(TestCase):
     def test_validate_cie(self):
         AuthenticationRequestCie(**AUTHN_REQUEST_CIE)
         validate_message(AUTHN_REQUEST_CIE, AuthenticationRequestCie.get_claims())
-
-# logger.info(AuthenticationRequestSpid.schema_json(indent=2))
-# logger.info(AuthenticationRequestCie.schema_json(indent=2))
-        
-
         

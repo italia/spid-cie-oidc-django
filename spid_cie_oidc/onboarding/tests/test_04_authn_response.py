@@ -1,7 +1,6 @@
 import logging
 
 from django.test import TestCase
-from pydantic import ValidationError
 from spid_cie_oidc.onboarding.validators.authn_response import (
     AuthenticationErrorResponse, AuthenticationErrorResponseCie,
     AuthenticationResponse, AuthenticationResponseCie)
@@ -25,9 +24,3 @@ class AuthResponseTest(TestCase):
 
     def test_validate_error_response_cie(self):
         AuthenticationErrorResponseCie(**AUTHN_ERROR_RESPONSE_CIE)
-        
-    
-# logger.info(AuthenticationResponse.schema_json(indent=2))
-# logger.info(AuthenticationResponseCie.schema_json(indent=2))
-# logger.info(AuthenticationErrorResponse.schema_json(indent=2))
-# logger.info(AuthenticationErrorResponseCie.schema_json(indent=2))
