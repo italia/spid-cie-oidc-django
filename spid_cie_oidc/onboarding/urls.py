@@ -29,7 +29,7 @@ _PREF = getattr(settings, "OIDC_PREFIX", "")
 urlpatterns = [
     path(f"{_PREF}fetch/", fetch, name="oidcfed_fetch"),
     path(f"{_PREF}list/", entity_list, name="oidcfed_list"),
-    path(f"{_PREF}onboarding/demo/", onboarding_landing, name="oidc_onboarding_demo"),
+    path(f"{_PREF}onboarding/landing/", onboarding_landing, name="oidc_onboarding_landing"),
     path(f"{_PREF}onboarding/registration/", onboarding_registration, name="oidc_onboarding_registration"),
     path(f"{_PREF}onboarding/entities/", onboarding_entities, name="oidc_onboarding_entities"),
 ]
