@@ -269,7 +269,6 @@ class FederationDescendant(TimeStampedModel):
 
         return data
 
-    @property
     def entity_statement_as_json(self, iss:str = None, aud:list = None) -> str:
         return json.dumps(self.entity_statement_as_dict(iss, aud))
 

@@ -18,71 +18,83 @@ class DummyContent:
 
 
 class EntityResponse:
+
     def __init__(self):
         self.status_code = 200
         self.req_counter = 0
         self.client = Client()
+        self.result = None
 
+    def result_as_jws(self):
+        self.req_counter += 1
+        logger.info(unpad_jwt_payload(self.result.content.decode()))
+        return self.result.content
+    
+    def trust_anchor_ec(self):
+        url = reverse('entity_configuration')
+        res = self.client.get(url, data={'sub': ta_conf_data['sub']})
+        return res
+
+    def rp_ec(self):
+        rp = FederationEntityConfiguration.objects.get(sub=rp_onboarding_data['sub'])
+        res = DummyContent(rp.entity_configuration_as_jws)
+        return res
+
+    def fetch_rp_from_ta(self):
+        url = reverse('oidcfed_fetch')
+        res = self.client.get(url, data={'sub': rp_onboarding_data['sub']})
+        return res
+
+
+class EntityResponseNoIntermediate(EntityResponse):
+    
     @property
     def content(self):
         if self.req_counter == 0:
-            url = reverse('entity_configuration')
-            res = self.client.get(url, data={'sub': ta_conf_data['sub']})
+            self.result = self.trust_anchor_ec()
         elif self.req_counter == 1:
-            rp = FederationEntityConfiguration.objects.get(sub=rp_onboarding_data['sub'])
-            res = DummyContent(rp.entity_configuration_as_jws)
+            self.result =self.rp_ec()
         elif self.req_counter == 2:
-            url = reverse('oidcfed_fetch')
-            res = self.client.get(url, data={'sub': rp_onboarding_data['sub']})
+            self.result = self.fetch_rp_from_ta()
         elif self.req_counter > 2:
             raise NotImplementedError(
                 "The mocked resposes seems to be not aligned with the correct flow"
             )
         
-        self.req_counter += 1
-        logger.info(unpad_jwt_payload(res.content.decode()))
-        return res.content
+        return self.result_as_jws()
 
 
-class IntermediateEntityResponse(EntityResponse):
-
+class EntityResponseWithIntermediate(EntityResponse):
+    
     @property
     def content(self):
         if self.req_counter == 0:
-            url = reverse('entity_configuration')
-            res = self.client.get(url, data={'sub': ta_conf_data['sub']})
+            self.result = self.trust_anchor_ec()
         elif self.req_counter == 1:
-            rp = FederationEntityConfiguration.objects.get(sub=rp_onboarding_data['sub'])
-            res = DummyContent(rp.entity_configuration_as_jws)
+            self.result = self.rp_ec()
         elif self.req_counter == 2:
             sa = FederationEntityConfiguration.objects.get(sub=intermediary_conf['sub'])
-            res = DummyContent(sa.entity_configuration_as_jws)
+            self.result = DummyContent(sa.entity_configuration_as_jws)
         elif self.req_counter == 3:
             url = reverse('oidcfed_fetch')
-            res = self.client.get(url,
+            self.result = self.client.get(url,
                 data={'sub': rp_onboarding_data['sub'], 'iss': intermediary_conf['sub']}
             )
         elif self.req_counter == 4:
             url = reverse('oidcfed_fetch')
-            res = self.client.get(url, data={'sub': intermediary_conf['sub']})
+            self.result = self.client.get(url, data={'sub': intermediary_conf['sub']})
         elif self.req_counter == 5:
             url = reverse('entity_configuration')
-            res = self.client.get(url, data={'sub': ta_conf_data['sub']})
+            self.result = self.client.get(url, data={'sub': ta_conf_data['sub']})
         
         elif self.req_counter > 5:
             raise NotImplementedError(
                 "The mocked resposes seems to be not aligned with the correct flow"
             )
 
-        if res.status_code != 200:
+        if self.result.status_code != 200:
             raise HttpError(
                 f"Something went wrong with Http Request: {res.__dict__}"
             )
         
-        self.req_counter += 1
-        logger.info(
-            # json.dumps(
-                unpad_jwt_payload(res.content.decode()),
-                # indent=2)
-            )
-        return res.content
+        return self.result_as_jws()

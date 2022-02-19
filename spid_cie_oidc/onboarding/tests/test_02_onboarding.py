@@ -65,8 +65,9 @@ class OnBoardingTest(TestCase):
         self.assertTrue(res.json())
         self.assertEqual(res.status_code, 200)
 
+
     @override_settings(HTTP_CLIENT_SYNC=True)
-    @patch("requests.get", return_value=EntityResponse())
+    @patch("requests.get", return_value=EntityResponseNoIntermediate())
     def test_trust_chain_valid_no_intermediaries(self, mocked):
 
         self.ta_conf.constraints = {"max_path_length": 0}
@@ -97,9 +98,10 @@ class OnBoardingTest(TestCase):
 
         self.assertTrue(isinstance(trust_chain.exp, int))
         self.assertTrue(isinstance(trust_chain.exp_datetime, datetime.datetime))
-        
+
+
     @override_settings(HTTP_CLIENT_SYNC=True)
-    @patch("requests.get", return_value=IntermediateEntityResponse())
+    @patch("requests.get", return_value=EntityResponseWithIntermediate())
     def test_trust_chain_valid_with_intermediaries(self, mocked):
         jwt = get_entity_configurations(self.ta_conf.sub)
         trust_anchor_ec = EntityConfiguration(jwt[0])
