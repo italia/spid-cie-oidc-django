@@ -5,7 +5,7 @@ Enter in your project shell
 ````
 ./manage.py shell
 ````
-Define a jwt, for example:
+Define a jwk, for example:
 ````
 jwk=
 {
@@ -59,4 +59,26 @@ create_jws(payload,jwk)
 
 ````
 'eyJhbGciOiJSUzI1NiIsImtpZCI6IkZpZll4MDNibm9zRDhtNmdZUUlmTkhOUDljTV9TYW05VGM1bkxsb0lJcmMifQ.eyJjbGllbnRfaWQiOiJodHRwczovL3JwLmNpZS5pdCIsInJlc3BvbnNlX3R5cGUiOiJjb2RlIiwic2NvcGUiOiJvcGVuaWQiLCJjb2RlX2NoYWxsZW5nZSI6InFXSmxNZTB4ZGJYckt4VG03MkVwSDY1OWJVeEF4dzgwIiwiY29kZV9jaGFsbGVuZ2VfbWV0aG9kIjoiUzI1NiIsIm5vbmNlIjoiTUJ6R3F5ZjlReXREMjhldXB5V2hTcU1qNzhXTnFwYzIiLCJwcm9tcHQiOiJjb25zZW50IGxvZ2luIiwicmVkaXJlY3RfdXJpIjoiaHR0cHM6Ly9ycC5jaWUuaXQvY2FsbGJhY2sxLyIsImFjcl92YWx1ZXMiOiJDSUVfTDEgQ0lFX0wyIiwiY2xhaW1zIjp7ImlkX3Rva2VuIjp7ImZhbWlseV9uYW1lIjp7ImVzc2VudGlhbCI6dHJ1ZX0sImVtYWlsIjp7ImVzc2VudGlhbCI6dHJ1ZX19LCJ1c2VyaW5mbyI6eyJuYW1lIjpudWxsLCJmYW1pbHlfbmFtZSI6bnVsbH19LCJzdGF0ZSI6ImZ5WmlPTDlMZjJDZUt1TlQySnp4aUxSRGluazB1UGNkIn0.x5E2S55W1_Sh6xzBNRjaYr7rhI0vIqLhZBlG7XtimL60IgZHe9IdrDwGFzY6jezT8j_poxppGAP5j7HJYGKkrzhLJHKSQyIlgeWXDy5FEBAJstcV6fCSRIeeuPhnNOT-pGGCI1p_WBKolztmv_EfILoDsY9MiKAe87k_2DOxRCcYzIwRUSZGoyb8g59t6oDylugelDNxG9-27rPth8k7suoJZiTc9zZ4U3wAOqlkPX0BfhtYPYATI6jZfftwQJYb2Rm081Pml5A_G7DIUO10k5_jDzaL_yna85AFBjuEfy5NqQhe4OTqGmN5xq_iv8c06m6tLyxraXQZSfC4_4fheQ'
+````
+
+# Verify a jws
+
+Enter in your project shell
+
+````
+./manage.py shell
+````
+
+Create a jwk
+
+````
+from spid_cie_oidc.entity.jwks import create_jwk
+
+jwk = create_jwk()
+````
+Then verify 
+
+````
+from spid_cie_oidc.entity.jwtse  import verify_jws
+verify_jws(jws, jwk)
 ````
