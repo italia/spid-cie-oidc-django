@@ -141,7 +141,7 @@ class EntityConfiguration:
         get superiors entity configurations
         """
         # apply limits if defined
-        authority_hints = authority_hints or self.payload["authority_hints"]
+        authority_hints = authority_hints or self.payload.get("authority_hints", [])
         if (
             max_authority_hints
             and authority_hints != authority_hints[:max_authority_hints]
@@ -273,6 +273,10 @@ class EntityConfiguration:
                 continue
 
             else:
+                logger.info(
+                    f"Getting entity statements from {fetch_api_url}  for "
+                    f"{self.sub}"
+                )
                 jwts = get_entity_statements([fetch_api_url], self.httpc_params)
                 jwt = jwts[0]
                 self.validate_by_superior_statement(jwt, ec)

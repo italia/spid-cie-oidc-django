@@ -7,6 +7,7 @@ from spid_cie_oidc.entity.exceptions import HttpError
 from spid_cie_oidc.entity.tests.settings import ta_conf_data
 from . settings import rp_onboarding_data, intermediary_conf
 
+import json
 import logging
 logger = logging.getLogger(__name__)
 
@@ -80,5 +81,9 @@ class IntermediateEntityResponse(EntityResponse):
             )
         
         self.req_counter += 1
-        logger.info(unpad_jwt_payload(res.content.decode()))
+        logger.info(
+            # json.dumps(
+                unpad_jwt_payload(res.content.decode()),
+                # indent=2)
+            )
         return res.content

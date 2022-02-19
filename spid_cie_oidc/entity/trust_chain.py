@@ -111,23 +111,8 @@ class TrustChainBuilder:
             for i in self.trust_path[1:]:
                 _pol = i['metadata_policy'][self.metadata_type]
                 self.final_metadata = apply_policy(self.final_metadata, _pol)
+
         return self.final_metadata
-
-    def validate_last_path_to_trust_anchor(self, ec: EntityConfiguration):
-        logger.info(f"Validating {self.subject} with {self.trust_anchor}")
-        if self.trust_anchor_configuration.sub not in ec.verified_superiors:
-            vbs = ec.validate_by_superiors(
-                superiors_entity_configurations=[self.trust_anchor]
-            )
-        else:
-            vbs = ec.verified_by_superiors
-
-        if not vbs:
-            logger.warning(f"Trust chain failed for {self.subject}")
-        else:
-            self.is_valid = True
-            # breakpoint()
-            self.apply_metadata_policy()
 
     def discovery(self) -> dict:
         """
@@ -158,8 +143,12 @@ class TrustChainBuilder:
 
             self.tree_of_trust[last_path_n + 1] = sup_ecs
 
-        # so we have all the intermediaries right now
-        self.validate_last_path_to_trust_anchor(self.subject_configuration)
+        last_path = list(self.tree_of_trust.keys())[-1]
+        if self.tree_of_trust[0][0].is_valid and self.tree_of_trust[last_path][0].is_valid:
+            self.is_valid = True
+
+        self.apply_metadata_policy()
+
 
     def get_trust_anchor_configuration(self) -> None:
 
@@ -172,9 +161,15 @@ class TrustChainBuilder:
                 self.trust_anchor, httpc_params=self.httpc_params
             )
             self.trust_anchor_configuration = EntityConfiguration(ta_jwt)
-            self.trust_anchor_configuration.validate_by_itself()
 
-        #
+        try:
+            self.trust_anchor_configuration.validate_by_itself()
+        except Exception as e:
+            logger.error(
+                f"Trust Anchor Entity Configuration failed for {self.trust_anchor}. "
+                f"{e}"
+        )
+        
         if self.trust_anchor_configuration.payload.get("constraints", {}).get(
             "max_path_length"
         ):
