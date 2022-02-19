@@ -16,11 +16,23 @@ each of these can be installed separately within a django project, these are:
 - __spid_cie_oidc.relying_party__: OIDC Relying Party and test suite for OIDC Providers.
 - __spid_cie_oidc.provider__: OIDC Provider and test suite for OIDC Relying Parties.
 
-All the operation related to JWT signature and encryption, and part of OIDC messages operations, 
-are built on top of [IdentityPython](https://idpy.org/):
+The Technical specifications of this SDKs are available here:
 
-- [oidcmsg](https://github.com/IdentityPython/JWTConnect-Python-OidcMsg)
-- [cryptojwt](https://github.com/IdentityPython/JWTConnect-Python-CryptoJWT)
+1. [__Authority/Intermediary__](docs/tecnhical_specifications/ENTITY.md)
+2. [__OIDC Federation 1.0 onboarding service DEMO__](docs/tecnhical_specifications/ONBOARDING.md)
+3. [__Openid Connect Provider__](docs/tecnhical_specifications/PROVIDER.md)
+4. [__Openid Connect Relying Party__](docs/tecnhical_specifications/RELYING_PARTY.md)
+
+## Project structure
+
+We have all the Django apps available in the folder `spid_cie_oidc/`.
+The examples projects are instead in the folder `examples/`.
+
+There is a substantial difference between an app and a project.
+The app is installed using a common python package manager, such as poetry or pip,
+and can be used, inherited, and integrated into other projects.
+
+A project is a service configuration that integrates one or more applications.
 
 
 ## Contents
@@ -42,25 +54,6 @@ are built on top of [IdentityPython](https://idpy.org/):
 * [License and Authors](#license-and-authors)
 * [Note](#note)
 
-
-## Technical specifications
-
-1. [__Authority/Intermediary__](docs/tecnhical_specifications/ENTITY.md)
-2. [OIDC Federation 1.0 onboarding service DEMO__](docs/tecnhical_specifications/ONBOARDING.md)
-3. [__Openid Connect Provider__](docs/tecnhical_specifications/PROVIDER.md)
-4. [__Openid Connect Relying Party__](docs/tecnhical_specifications/RELYING_PARTY.md)
-
-
-## Project structure
-
-We have all the Django apps available in the folder `spid_cie_oidc/`.
-The examples projects are instead in the folder `examples/`.
-
-There is a substantial difference between an app and a project.
-The app is installed using a common python package manager, such as poetry or pip,
-and can be used, inherited, and integrated into other projects.
-
-A project is a service configuration that integrates one or more applications.
 
 ## Setup
 
@@ -211,7 +204,13 @@ This software is released under the Apache 2 License by:
 
 - Giuseppe De Marco <giuseppe.demarco@teamdigitale.governo.it>.
 
-## Note
+## Implementation notes
+
+All the operation related to JWT signature and encryption, and part of OIDC messages operations, 
+are built on top of [IdentityPython](https://idpy.org/):
+
+- [oidcmsg](https://github.com/IdentityPython/JWTConnect-Python-OidcMsg)
+- [cryptojwt](https://github.com/IdentityPython/JWTConnect-Python-CryptoJWT)
 
 This project proposes an implementation of the italian OIDC Federation profile with
 __automatic_client_registration__ and the adoption of the trust marks as mandatory.
