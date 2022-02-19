@@ -8,6 +8,10 @@
     {{ block.super }}  
 {% endblock extra_head %}
 
+{% block page_title %}
+{% trans "OIDC Federation onboarding system" %}
+{% endblock page_title %}
+
 <!-- URL link top left -->
 {% block header_slim_org_url %}
 https://www.spid.gov.it/
