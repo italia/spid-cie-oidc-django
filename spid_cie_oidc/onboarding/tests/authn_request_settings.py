@@ -24,6 +24,52 @@ AUTHN_REQUEST_SPID = {
     "ui_locales": ["codice1", "codice2", "codice3"]
 }
 
+AUTHN_REQUEST_SPID_NO_CLIENT_ID = {
+    "response_type": "code",
+    "scope": ["openid", "offline_access"],
+    "code_challenge": "codeChallenge",
+    "code_challenge_method": "S256",
+    "nonce": "12345678123456781234567812345678inpiu",
+    "prompt": "verify",
+    "redirect_uri": "https://rp.cie.it/callback1/",
+    "acr_values": ["https://www.spid.gov.it/SpidL2", "https://www.spid.gov.it/SpidL1"],
+    "claims":{
+        "userinfo":{
+            "given_name": {"values": ["str", "str"] },
+            "family_name": None,
+            "birthdate": {"value": "str" }
+            },
+            "id_token":{
+                "given_name": {"values": ["str", "str"] },
+                "family_name": None,
+                "birthdate": {"value": "str" }
+                }
+    },
+    "state": "fyZiOL9Lf2CeKuNT2JzxiLRDink0uPcd",
+    "ui_locales": ["codice1", "codice2", "codice3"]
+}
+
+AUTHN_REQUEST_SPID_NO_CORRECT_CLAIMS = {
+    "client_id": "https://rp.cie.it/callback1/",
+    "response_type": "code",
+    "scope": ["openid", "offline_access"],
+    "code_challenge": "codeChallenge",
+    "code_challenge_method": "S256",
+    "nonce": "12345678123456781234567812345678inpiu",
+    "prompt": "verify",
+    "redirect_uri": "https://rp.cie.it/callback1/",
+    "acr_values": ["https://www.spid.gov.it/SpidL2", "https://www.spid.gov.it/SpidL1"],
+    "claims":{
+        "userinfo":{
+            "given_name": {"values": ["str"] },
+            "family_name": None,
+            "birthdate": {"value": "str" }
+            },
+    },
+    "state": "fyZiOL9Lf2CeKuNT2JzxiLRDink0uPcd",
+    "ui_locales": ["codice1", "codice2", "codice3"]
+}
+
 AUTHN_REQUEST_CIE = {
     "client_id": "https://rp.cie.it/callback1/",
     "response_type": "code",
@@ -92,3 +138,5 @@ TOKEN_REFRESH_REQUEST = {
     "grant_type": "refresh_token",
     "refresh_token": "8xLOxBtZp8"
 }
+
+ISS = "https://idserver.servizicie.interno.gov.it"
