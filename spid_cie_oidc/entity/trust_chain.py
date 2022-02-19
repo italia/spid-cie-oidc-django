@@ -78,55 +78,75 @@ class TrustChainBuilder:
         # find the path of trust
         if not self.trust_path:
             self.trust_path = [self.subject_configuration]
-
+        elif self.trust_path[-1].sub == self.trust_anchor_configuration.sub:
+            # ok trust path completed, I just have to return over all the parent calls
+            return
+        
         logger.info(
-            f"Applying metadata policy for {self.subject} over {self.trust_path}"
+            f"Applying metadata policy for {self.subject} over "
+            f"{self.trust_anchor_configuration.sub} starting from "
+            f"{self.trust_path[-1]}"
         )
         last_path = self.tree_of_trust[len(self.trust_path)-1]
 
         path_found = False
         for ec in last_path:
             for sup_ec in ec.verified_by_superiors.values():
-                while (len(self.trust_path) -2 <= self.max_path_len):
+                while (len(self.trust_path) -2 < self.max_path_len):
                     if sup_ec.sub == self.trust_anchor_configuration.sub:
+                        self.trust_path.append(sup_ec)
                         path_found = True
-                        self.trust_path.append(
-                            sup_ec.verified_descendant_statements[self.subject]
-                        )
                         break
                     if sup_ec.verified_by_superiors:
-                        self.trust_path.append(sup_ec.sub)
+                        self.trust_path.append(sup_ec)
                         self.apply_metadata_policy()
                     else:
                         logger.info(
                             f"'Cul de sac' in {sup_ec.sub} for {self.subject} "
                             f"to {self.trust_anchor_configuration.sub}"
                         )
-                        self.trust_path = []
+                        self.trust_path = [self.subject_configuration]
                         break
 
         # once I filtered a concrete and unique trust path I can apply the metadata policy
         if path_found:
+            logger.info(
+                f"Found a trust path: {self.trust_path}"
+            )
             self.final_metadata = self.subject_configuration.payload['metadata'][self.metadata_type]
-            for i in self.trust_path[1:]:
-                _pol = i['metadata_policy'][self.metadata_type]
+            for i in range(len(self.trust_path))[::-1]:
+                descendant = self.trust_path[i-1].sub
+                _pol = self.trust_path[i].verified_descendant_statements.get(
+                    'metadata_policy', {}
+                ).get(self.metadata_type, {})
                 self.final_metadata = apply_policy(self.final_metadata, _pol)
 
         return self.final_metadata
 
-    def discovery(self) -> dict:
+    def discovery(self) -> bool:
         """
         return a chain of verified statements
         from the lower up to the trust anchor
         """
         logger.info(f"Starting a Walk into Metadata Discovery for {self.subject}")
         self.tree_of_trust[0] = [self.subject_configuration]
-        while (len(self.tree_of_trust) - 1) < self.max_path_len:
+
+        # ecs_history = []
+        
+        while (len(self.tree_of_trust) - 2) < self.max_path_len:
             last_path_n = list(self.tree_of_trust.keys())[-1]
             last_ecs = self.tree_of_trust[last_path_n]
 
             sup_ecs = []
             for last_ec in last_ecs:
+
+                # TODO: Metadata discovery loop prevention
+                # if last_ec.sub in ecs_history:
+                    # logger.warning(
+                        # f"Metadata discovery loop detection for {last_ec.sub}. "
+                        # f"Already present in {ecs_history}"
+                    # )
+                
                 try:
                     superiors = last_ec.get_superiors(
                         max_authority_hints = self.max_authority_hints,
@@ -135,20 +155,25 @@ class TrustChainBuilder:
                     validated_by = last_ec.validate_by_superiors(
                         superiors_entity_configurations=superiors.values()
                     )
-                    sup_ecs.extend(list(validated_by.values()))
+                    vbv = list(validated_by.values())
+                    sup_ecs.extend(vbv)
+                    # ecs_history.extend([i.sub for i in vbv])
                 except Exception as e:
                     logger.exception(
                         f"Metadata discovery exception for {last_ec.sub}: {e}"
                     )
 
-            self.tree_of_trust[last_path_n + 1] = sup_ecs
+            if sup_ecs:
+                self.tree_of_trust[last_path_n + 1] = sup_ecs
+            else:
+                break
 
         last_path = list(self.tree_of_trust.keys())[-1]
         if self.tree_of_trust[0][0].is_valid and self.tree_of_trust[last_path][0].is_valid:
             self.is_valid = True
 
         self.apply_metadata_policy()
-
+        return self.is_valid
 
     def get_trust_anchor_configuration(self) -> None:
 
