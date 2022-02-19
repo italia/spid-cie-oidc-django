@@ -5,7 +5,7 @@ from spid_cie_oidc.onboarding.validators.authn_response import (
     AuthenticationErrorResponse, AuthenticationErrorResponseCie,
     AuthenticationResponse, AuthenticationResponseCie)
 
-from .authn_request_settings import (AUTHN_ERROR_RESPONSE_CIE,
+from .authn_responses_settings import (AUTHN_ERROR_RESPONSE_CIE,
                                      AUTHN_ERROR_RESPONSE_SPID,
                                      AUTHN_RESPONSE_CIE, AUTHN_RESPONSE_SPID)
 

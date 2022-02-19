@@ -1,3 +1,6 @@
+from typing import Literal
+
+
 rp_onboarding_data = dict(
     name = "RP Test",
     sub = "http://rp-test/",
@@ -41,3 +44,5 @@ RP_METADATA = {
         "subject_type": "pairwise",
     }
 }
+
+ISS = Literal['https://idserver.servizicie.interno.gov.it']

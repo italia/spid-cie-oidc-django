@@ -4,7 +4,7 @@ from django.test import TestCase
 from spid_cie_oidc.onboarding.validators.token_request import (
     TokenAuthnCodeRequest, TokenRefreshRequest)
 
-from .authn_request_settings import (TOKEN_AUTHN_CODE_REQUEST,
+from .token_request_settings import (TOKEN_AUTHN_CODE_REQUEST,
                                      TOKEN_REFRESH_REQUEST)
 
 logger = logging.getLogger(__name__)
