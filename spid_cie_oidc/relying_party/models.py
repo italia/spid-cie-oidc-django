@@ -3,7 +3,6 @@ import logging
 
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.utils.safestring import mark_safe
 
 from .utils import decode_token, get_issuer_keyjar
 

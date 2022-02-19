@@ -1,5 +1,6 @@
 # SPID/CIE OIDC Federation SDK
 
+![CI build](https://github.com/peppelinux/spid-cie-oidc-django/workflows/spid_cie_oidc/badge.svg)
 ![Python version](https://img.shields.io/badge/license-Apache%202-blue.svg)
 ![py-versions](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9-blue.svg)
 
@@ -46,9 +47,11 @@ each of these can be installed separately within a django project, these are:
     - evaluate endpoints
     - trust mark status
 
-2. __OIDC Federation 1.0 onboarding panel__:
+2. __OIDC Federation 1.0 onboarding panel DEMO__:
 
-    - [frontend] not yet in roadmap, [help needed](https://github.com/peppelinux/spid-cie-oidc/issues/1)
+    > ⚠️ This application is not intended for production use.
+    
+    - [frontend](https://github.com/peppelinux/spid-cie-oidc/issues/1)
     - [backend] Automatic checks on new registered entities (descendats):
         - entity configuration:
             - reachability

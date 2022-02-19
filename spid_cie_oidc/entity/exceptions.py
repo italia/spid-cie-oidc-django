@@ -13,6 +13,10 @@ class UnknownKid(Exception):
     pass
 
 
+class MissingJwksClaim(ValidationError):
+    pass
+
+
 class MissingAuthorityHintsClaim(ValidationError):
     pass
 
