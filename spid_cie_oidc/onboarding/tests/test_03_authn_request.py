@@ -13,35 +13,26 @@ logger = logging.getLogger(__name__)
 
 class AuthRequestTest(TestCase):
 
-    def validate_spid(self):
+    def test_validate_spid(self):
         AuthenticationRequestSpid(**AUTHN_REQUEST_SPID)
         validate_message(AUTHN_REQUEST_SPID, AuthenticationRequestSpid.get_claims())
 
-    def validate_spid_no_client_id(self):
-        AuthenticationRequestSpid(**AUTHN_REQUEST_SPID_NO_CLIENT_ID) 
-        validate_message(AUTHN_REQUEST_SPID_NO_CLIENT_ID, AuthenticationRequestSpid.get_claims())
+    def test_validate_spid_no_client_id(self):
+        with self.assertRaises(ValidationError):
+            AuthenticationRequestSpid(**AUTHN_REQUEST_SPID_NO_CLIENT_ID) 
+            validate_message(AUTHN_REQUEST_SPID_NO_CLIENT_ID, AuthenticationRequestSpid.get_claims())
 
-    def validate_spid_no_correct_claims(self):
-        AuthenticationRequestSpid(**AUTHN_REQUEST_SPID_NO_CORRECT_CLAIMS) 
-        validate_message(AUTHN_REQUEST_SPID_NO_CORRECT_CLAIMS, AuthenticationRequestSpid.get_claims())
+    def test_validate_spid_no_correct_claims(self):
+        with self.assertRaises(ValidationError):
+            AuthenticationRequestSpid(**AUTHN_REQUEST_SPID_NO_CORRECT_CLAIMS) 
+            validate_message(AUTHN_REQUEST_SPID_NO_CORRECT_CLAIMS, AuthenticationRequestSpid.get_claims())
     
-    def validate_cie(self):
+    def test_validate_cie(self):
         AuthenticationRequestCie(**AUTHN_REQUEST_CIE)
         validate_message(AUTHN_REQUEST_CIE, AuthenticationRequestCie.get_claims())
 
 # logger.info(AuthenticationRequestSpid.schema_json(indent=2))
 # logger.info(AuthenticationRequestCie.schema_json(indent=2))
-auth_request_test = AuthRequestTest()
-auth_request_test.validate_spid()
-logger.info("AUTHN REQUEST SPID CHECK PASSED")
-auth_request_test.validate_cie()
-logger.info("AUTHN REQUEST CIE CHECK PASSED")
-with auth_request_test.assertRaises(ValidationError):
-    auth_request_test.validate_spid_no_client_id()
-logger.info("AUTHN REQUEST SPID NO CLIENT_ID CHECK PASSED")
-with auth_request_test.assertRaises(ValidationError):
-    auth_request_test.validate_spid_no_correct_claims()
-logger.info("AUTHN REQUEST SPID NO CORRECT CLAIMS CHECK PASSED")
         
 
         
