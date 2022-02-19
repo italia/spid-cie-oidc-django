@@ -1,13 +1,6 @@
 <!-- Extends default Bootstrap Unical Italia template -->
 {% extends 'base.html' %}
-
-{% load static %}
 {% load i18n %}
-
-{% block page_title %}
-{% trans "OIDC Federation onboarding system" %}
-{% endblock page_title %}
-
 
 {% block container %}
 <div class="container pt-2 p-3">
@@ -18,16 +11,18 @@
    <form method="post" action="">
       {% csrf_token %}
       {% for form_field in form %}
+
       <div class="form-row">
          <div class="col-12 form-group my-3">
             <input type="{{ form_field.field.widget.input_type }}" class="form-control"
-               id="id_{{ form_field.html_name }}" name="{{ form_field.name }}" aria-labelledby="">
+               id="id_{{ form_field.html_name }}" name="{{ form_field.name }}">
             <label for="id_{{ form_field.html_name }}">
                <span class="form-label-content">
                   {{ form_field.label }}
                </span>
             </label>
          </div>
+         <span for="id_{{ form_field.html_name }}">{{ form_field.errors }}</span>
       </div>
       {% endfor %}
       <input type="submit" name="confirm" class="btn btn-lg btn-success btn-block"
