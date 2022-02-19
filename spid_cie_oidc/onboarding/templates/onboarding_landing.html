@@ -12,12 +12,14 @@
          {% trans "The onboarding system allows you to view the federated entity and to accredit your entity" %}
       </h4>
       <div class="text-center p-1">
-         <a href="{% url 'oidc_onboarding_entities' %}" class="btn btn-primary btn-lg btn-block">Show accredited
-            entities</a>
+         <a href="{% url 'oidc_onboarding_entities' %}"
+          class="btn btn-primary btn-lg btn-block">
+          {% Show accredited entities %}</a>
       </div>
       <div class="text-center p-1">
-         <a href="{% url 'oidc_onboarding_registration' %}" class="btn btn-success btn-lg btn-block">Credit your
-            entity</a>
+         <a href="{% url 'oidc_onboarding_registration' %}" 
+         class="btn btn-success btn-lg btn-block">
+         {% Credit your entity %}</a>
       </div>
 
    </div>
