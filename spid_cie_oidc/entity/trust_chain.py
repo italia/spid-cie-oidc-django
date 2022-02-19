@@ -56,7 +56,8 @@ class TrustChainBuilder:
         self.required_trust_marks = required_trust_marks
         self.is_valid = False
 
-        self.statements_collection = OrderedDict()
+        # TODO: to be removed? deprecation
+        # self.statements_collection = OrderedDict()
 
         self.tree_of_trust = OrderedDict()
         self.trust_path = [] # list of valid subjects up to trust anchor

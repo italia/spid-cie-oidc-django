@@ -53,12 +53,23 @@ class OnBoardingTest(TestCase):
         self.assertTrue(
             res.json()[0] == self.rp.sub
         )
+        self.assertEqual(res.status_code, 200)
+        
         res = c.get(url, data={'is_leaf': False})
         self.assertFalse(res.json())
+        self.assertEqual(res.status_code, 200)
+        
+        res = c.get(url, data={})
+        self.assertTrue(res.json())
+        self.assertEqual(res.status_code, 200)
 
     @override_settings(HTTP_CLIENT_SYNC=True)
     @patch("requests.get", return_value=EntityResponse())
     def test_trust_chain_valid_no_intermediaries(self, mocked):
+
+        self.ta_conf.constraints = {"max_path_length": 0}
+        self.ta_conf.save()
+        
         jwt = get_entity_configurations(self.ta_conf.sub)
         trust_anchor_ec = EntityConfiguration(jwt[0])
         
@@ -69,6 +80,18 @@ class OnBoardingTest(TestCase):
         )
         self.assertTrue(trust_chain)
         self.assertTrue(trust_chain.final_metadata)
+
+        for i in trust_chain.tree_of_trust.values():
+            for ec in i:
+                self.assertTrue(ec.is_valid)
+
+        for ec in trust_chain.trust_path:
+            self.assertTrue(ec.is_valid)
+
+        self.assertTrue(len(trust_chain.trust_path) == 2)
+        self.assertTrue(
+            (len(trust_chain.trust_path) -2) == trust_chain.max_path_len
+        )
 
     @override_settings(HTTP_CLIENT_SYNC=True)
     @patch("requests.get", return_value=IntermediateEntityResponse())
@@ -105,3 +128,15 @@ class OnBoardingTest(TestCase):
         )
         self.assertTrue(trust_chain)
         self.assertTrue(trust_chain.final_metadata)
+
+        for i in trust_chain.tree_of_trust.values():
+            for ec in i:
+                self.assertTrue(ec.is_valid)
+
+        for ec in trust_chain.trust_path:
+            self.assertTrue(ec.is_valid)
+
+        self.assertTrue(len(trust_chain.trust_path) == 3)
+        self.assertTrue(
+            (len(trust_chain.trust_path) -2) == trust_chain.max_path_len
+        )

@@ -177,4 +177,5 @@ This project proposes an implementation of the italian OIDC Federation profile w
 __automatic_client_registration__ and the adoption of the trust marks as mandatory.
 
 If you're looking for a fully compliant implementation of OIDC Federation 1.0,
-with a full support of explicit client registration, please look at idpy's [fedservice](https://github.com/rohe/fedservice).
+with a full support of explicit client registration, please look at idpy's
+[fedservice](https://github.com/rohe/fedservice).

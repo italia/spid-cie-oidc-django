@@ -47,7 +47,8 @@ Example of FETCH request
 
 #### listing
 
-As described in the official specification [here](https://openid.net/specs/openid-connect-federation-1_0.html#rfc.section.7.3.1).
+As described in the official specification
+[here](https://openid.net/specs/openid-connect-federation-1_0.html#rfc.section.7.3.1).
 It should be available only for __trust anchors__ and __intermediates__.
 
 Lists all the descendant entities.
