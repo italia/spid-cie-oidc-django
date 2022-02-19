@@ -35,6 +35,8 @@ and can be used, inherited, and integrated into other projects.
 A project is a service configuration that integrates one or more applications.
 In this repository we have three example project for demo purpose.
 
+### Summary
+
 - [Features](#features)
 * [Setup](#setup)
     * [Dependencies](#dependencies)
@@ -50,10 +52,6 @@ In this repository we have three example project for demo purpose.
 
 
 ## Setup
-
-This is a Django Framework project built on top of [IdentityPython](https://idpy.org/) 
-[oidcmsg](https://github.com/IdentityPython/JWTConnect-Python-OidcMsg) and
-[cryptojwt](https://github.com/IdentityPython/JWTConnect-Python-CryptoJWT).
 
 The Database storage engine can be one of which supported by Django, the example project comes with sqlite3.
 
