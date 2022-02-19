@@ -4,7 +4,8 @@ from django import forms
 class OnboardingRegistrationForm(forms.Form):
     
     organization_name = forms.CharField(
-        label= "organization Name"
+        label= "organization Name",
+        max_length=100,
     )
 
     url_entity = forms.URLField(
