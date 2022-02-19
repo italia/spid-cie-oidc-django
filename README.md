@@ -18,10 +18,10 @@ each of these can be installed separately within a django project, these are:
 
 The Technical specifications of this SDKs are available here:
 
-1. [__Authority/Intermediary__](docs/tecnhical_specifications/ENTITY.md)
-2. [__OIDC Federation 1.0 onboarding service DEMO__](docs/tecnhical_specifications/ONBOARDING.md)
-3. [__Openid Connect Provider__](docs/tecnhical_specifications/PROVIDER.md)
-4. [__Openid Connect Relying Party__](docs/tecnhical_specifications/RELYING_PARTY.md)
+1. [__Authority/Intermediary__](docs/technical_specifications/ENTITY.md)
+2. [__OIDC Federation 1.0 onboarding service DEMO__](docs/technical_specifications/ONBOARDING.md)
+3. [__Openid Connect Provider__](docs/technical_specifications/PROVIDER.md)
+4. [__Openid Connect Relying Party__](docs/technical_specifications/RELYING_PARTY.md)
 
 ## Project structure
 
