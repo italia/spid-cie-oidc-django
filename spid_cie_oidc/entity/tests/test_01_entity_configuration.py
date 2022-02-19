@@ -31,7 +31,9 @@ class EntityConfigurationTest(TestCase):
                 FederationEntityConfiguration,
             )
         )
-        self.assertTrue(isinstance(self.ta_conf, FederationEntityConfiguration))
+        self.assertTrue(
+            isinstance(self.ta_conf, FederationEntityConfiguration)
+        )
         self.assertFalse(self.ta_conf.is_leaf)
 
         for i in (

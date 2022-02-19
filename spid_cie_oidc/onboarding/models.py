@@ -219,15 +219,17 @@ class FederationDescendant(TimeStampedModel):
             for i in FederationEntityAssignedProfile.objects.filter(descendant=self)
         ]
 
-    def entity_statement_as_dict(self, iss:str=None, aud:list=None) -> dict:
+    def entity_statement_as_dict(self, iss:str = None, aud:list = None) -> dict:
         jwks = [
             i.jwk.jwk for i in FederationDescendantJwk.objects.filter(descendant=self)
         ]
         if not jwks:
+            logger.warning(f"Any JWKs found for {self.sub}")
             return {}
 
         policies = {
-            k: local_settings.FEDERATION_DEFAULT_POLICY[k] for k in self.entity_profiles
+            k: local_settings.FEDERATION_DEFAULT_POLICY[k]
+            for k in self.entity_profiles
         }
 
         # apply custom policies if defined
@@ -243,7 +245,7 @@ class FederationDescendant(TimeStampedModel):
         }
         if aud:
             data['aud'] = [aud] if isinstance(aud, str) else aud
-        
+
         # add contacts
         contacts = FederationDescendantContact.objects.filter(entity=self).values_list(
             "contact", flat=True
@@ -268,10 +270,10 @@ class FederationDescendant(TimeStampedModel):
         return data
 
     @property
-    def entity_statement_as_json(self, iss:str=None, aud:list=None) -> str:
+    def entity_statement_as_json(self, iss:str = None, aud:list = None) -> str:
         return json.dumps(self.entity_statement_as_dict(iss, aud))
 
-    def entity_statement_as_jws(self, iss:str=None, aud:list=None) -> str:
+    def entity_statement_as_jws(self, iss:str = None, aud:list = None) -> str:
         issuer = get_first_self_trust_anchor(iss)
         return create_jws(
             self.entity_statement_as_dict(iss, aud),
@@ -328,7 +330,10 @@ class FederationEntityAssignedProfile(TimeStampedModel):
 
     @property
     def trust_mark(self):
-        return {"id": self.profile.profile_id, "trust_mark": self.trust_mark_as_jws}
+        return {
+            "id": self.profile.profile_id,
+            "trust_mark": self.trust_mark_as_jws
+        }
 
     def __str__(self):
         return f"{self.profile} [{self.descendant}]"
