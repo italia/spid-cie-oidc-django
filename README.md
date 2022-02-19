@@ -1,4 +1,4 @@
-# SPID/CIE OIDC Federation SDK
+# SPID/CIE OIDC Federation SDKs
 
 ![CI build](https://github.com/peppelinux/spid-cie-oidc-django/workflows/spid_cie_oidc/badge.svg)
 ![Python version](https://img.shields.io/badge/license-Apache%202-blue.svg)
@@ -16,7 +16,7 @@ each of these can be installed separately within a django project, these are:
 - __spid_cie_oidc.relying_party__: OIDC Relying Party and test suite for OIDC Providers.
 - __spid_cie_oidc.provider__: OIDC Provider and test suite for OIDC Relying Parties.
 
-The Technical specifications of this SDKs are available here:
+The Technical specifications of these SDKs are available here:
 
 1. [__OIDC Federation Entity/Authority/Intermediary__](docs/technical_specifications/ENTITY.md)
 2. [__OIDC Federation 1.0 onboarding service DEMO__](docs/technical_specifications/ONBOARDING.md)
@@ -33,6 +33,7 @@ The app is installed using a common python package manager, such as poetry or pi
 and can be used, inherited, and integrated into other projects.
 
 A project is a service configuration that integrates one or more applications.
+In this repository we have three example project for demo purpose.
 
 - [Features](#features)
 * [Setup](#setup)
