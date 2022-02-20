@@ -44,13 +44,14 @@ def fetch(request):
 
 
 def entity_list(request):
-    if request.GET.get("is_leaf").lower() == "true":
+    is_leaf = request.GET.get("is_leaf", "").lower()
+    if is_leaf == "true":
         _q = {
             "profile__profile_category__in": (
                 "openid_relying_party", "openid_provider"
             )
         }
-    elif request.GET.get("is_leaf").lower() == "false":
+    elif is_leaf == "false":
         _q = {"profile__profile_category": "federation_entity"}
     else:
         _q = {}

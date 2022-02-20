@@ -1,5 +1,6 @@
-# SPID/CIE OIDC Federation SDK
+# SPID/CIE OIDC Federation SDKs
 
+![CI build](https://github.com/peppelinux/spid-cie-oidc-django/workflows/spid_cie_oidc/badge.svg)
 ![Python version](https://img.shields.io/badge/license-Apache%202-blue.svg)
 ![py-versions](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9-blue.svg)
 
@@ -7,9 +8,7 @@
 
 SPID/CIE OIDC Federation is a suite of Django applications designed to
 make it easy to build an [Openid Connect Federation](https://openid.net/specs/openid-connect-federation-1_0.html), 
-each of these can be installed separately within a django project.
-
-spid_cie_oidc is a Python Package that contains five Django applications:
+each of these can be installed separately within a django project, these are:
 
 - __spid_cie_oidc.accounts__: customizable app that extended the Django User model.
 - __spid_cie_oidc.entity__: OIDC Federation django app, with models and API that implements OIDC Federation 1.0 Entity Statements, metadata discovery, Trust Chain, Trust Marks and Metadata policy.
@@ -17,7 +16,26 @@ spid_cie_oidc is a Python Package that contains five Django applications:
 - __spid_cie_oidc.relying_party__: OIDC Relying Party and test suite for OIDC Providers.
 - __spid_cie_oidc.provider__: OIDC Provider and test suite for OIDC Relying Parties.
 
-# Contents
+The Technical specifications of these SDKs are available here:
+
+1. [__OIDC Federation Entity/Authority/Intermediary__](docs/technical_specifications/ENTITY.md)
+2. [__OIDC Federation 1.0 onboarding service DEMO__](docs/technical_specifications/ONBOARDING.md)
+3. [__Openid Connect Provider__](docs/technical_specifications/PROVIDER.md)
+4. [__Openid Connect Relying Party__](docs/technical_specifications/RELYING_PARTY.md)
+
+## Contents
+
+We have all the Django apps available in the folder `spid_cie_oidc/`.
+The examples projects are instead in the folder `examples/`.
+
+There is a substantial difference between an app and a project.
+The app is installed using a common python package manager, such as poetry or pip,
+and can be used, inherited, and integrated into other projects.
+
+A project is a service configuration that integrates one or more applications.
+In this repository we have three example project for demo purpose.
+
+### Summary
 
 - [Features](#features)
 * [Setup](#setup)
@@ -25,65 +43,18 @@ spid_cie_oidc is a Python Package that contains five Django applications:
       * [Install as Django application](#install-as-django-application)
       * [Setup the example project for demo purpose](#setup-the-example-project-for-demo-purpose)
 * [Usage](#usage)
-    * [Endpoints](#endpoints)
-      * [.well-known/openid-federation](#well-knownopenid-federation)
-      * [/fetch](#fetch)
-      * [/list](#list)
-* [Hints](#hints)
 * [Contribute](#contribute)
-    * [as end user](#as-end-user)
-    * [as developer](#as-developer)
+    * [Contribute as end user](#contribute-as-end-user)
+    * [Contribute as developer](#contribute-as-developer)
+    * [Hints](#hints)
 * [License and Authors](#license-and-authors)
-* [Note](#note)
+* [Implementations notes](#implementation-notes)
 
 
-# Features
-
-1. __OIDC Federation 1.0 Authority/Intermediary__
-    
-    Endpoints:
-    - entity configuration (.well-known/openid-federation)
-    - fetch
-    - listing
-    - evaluate endpoints
-    - trust mark status
-
-2. __OIDC Federation 1.0 onboarding panel__:
-
-    - [frontend] not yet in roadmap, [help needed](https://github.com/peppelinux/spid-cie-oidc/issues/1)
-    - [backend] Automatic checks on new registered entities (descendants):
-        - entity configuration:
-            - reachability
-            - signature validation
-            - best practices checks following AgID and IPZS OIDC Fed guidelines.
-        - RP authz check following AgID and IPZS OIDC Fed guidelines.
-        - trust marks forgery
-
-3. __Openid Connect Provider__. Identity Provider with additional test suite.
-    
-    Endpoints:
-    - entity configuration (.well-known/openid-federation)
-    - authorization
-    - token
-    - introspection
-    - token revocation
-    - userinfo endpoint
-
-4. __Openid Connect Relying Party__. Relying Party with additional test suite.
-    
-    Endpoints:
-    - entity configuration (.well-known/openid-federation)
-    - authorization
-    - auth code redirect
-    - logout
-
-# Setup
-
-This is a Django Framework project built on top of [IdentityPython](https://idpy.org/) 
-[oidcmsg](https://github.com/IdentityPython/JWTConnect-Python-OidcMsg) and
-[cryptojwt](https://github.com/IdentityPython/JWTConnect-Python-CryptoJWT).
+## Setup
 
 The Database storage engine can be one of which supported by Django, the example project comes with sqlite3.
+
 
 #### Dependencies
 ````
@@ -136,7 +107,7 @@ cp $project_name/settingslocal.py.example $project_name/settingslocal.py
 ./manage.py createsuperuser
 ````
 
-# Usage
+## Usage
 
 The demo propose a small federation composed by the following entities:
 
@@ -158,56 +129,15 @@ Then enter in the single applications projects (__federation_authority/__ or __r
 Point your web browser to `http://localhost:8000/admin` to enter in the management interface.
 
 
-###  Endpoints
-
-#### .well-known/openid-federation
-Where the Entity Configuration can be downloaded. `?format=json` will release a json for debug purpose.
-A prefix can be configured in global settings file with parameter `OIDC_PREFIX`.
-
-Available for trust anchors, providers and relying parties.
-
-Demo examples are:
-
- - `http://127.0.0.1:8000/.well-known/openid-federation?format=json`
- - `http://127.0.0.1:8000/.well-known/openid-federation`
-
-#### /fetch
-
-Available for trust anchors and intermediates.
-Releases an Entity Statement related to a subject (descendant).
-
-Demo examples are:
-
- - `http://127.0.0.1:8000/fetch/?sub=http://127.0.0.1:8001/&format=json`
- - `http://127.0.0.1:8000/fetch/?sub=http://127.0.0.1:8001/`
-
-#### /list
-
-Available for trust anchors and intermediates.
-Lists all the descendant entities.
-
- - `http://127.0.0.1:8000/list/`
- - `http://127.0.0.1:8000/list/?is_leaf=false`
- - `http://127.0.0.1:8000/list/?is_leaf=true`
-
-# Hints
-
-Backup your demo data
-
-````
-# backup your data (upgrade example data), -e excludes.
-./manage.py dumpdata -e spid_cie_oidc_accounts -e admin -e auth -e contenttypes -e sessions > dumps/example.json
-````
-
-# Contribute
+## Contribute
 
 Your contribution is welcome, no question is useless and no answer is obvious, we need you.
 
-#### as end user
+#### Contribute as end user
 
 Please open an issue if you've discoveerd a bug or if you want to ask some features.
 
-#### as developer
+#### Contribute as developer
 
 Please open your Pull Requests on the __dev__ branch. 
 Please consider the following branches:
@@ -216,19 +146,35 @@ Please consider the following branches:
  - __dev__: where we push our code during development.
  - __other-custom-name__: where a new feature/contribution/bugfix will be handled, revisioned and then merged to dev branch.
 
+#### Hints
+
+Backup your demo data
+
+````
+# backup your data (upgrade example data), -e excludes.
+./manage.py dumpdata -e spid_cie_oidc_accounts -e admin -e auth -e contenttypes -e sessions > dumps/example.json
+````
+
 In this project we adopt [Semver](https://semver.org/lang/it/) and
 [Conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) specifications.
 
-# License and Authors
+## License and Authors
 
 This software is released under the Apache 2 License by:
 
 - Giuseppe De Marco <giuseppe.demarco@teamdigitale.governo.it>.
 
-# Note
+## Implementation notes
+
+All the operation related to JWT signature and encryption, and part of OIDC messages operations, 
+are built on top of [IdentityPython](https://idpy.org/):
+
+- [oidcmsg](https://github.com/IdentityPython/JWTConnect-Python-OidcMsg)
+- [cryptojwt](https://github.com/IdentityPython/JWTConnect-Python-CryptoJWT)
 
 This project proposes an implementation of the italian OIDC Federation profile with
 __automatic_client_registration__ and the adoption of the trust marks as mandatory.
 
 If you're looking for a fully compliant implementation of OIDC Federation 1.0,
-with explicit client registration, please look at idpy's [fedservice](https://github.com/rohe/fedservice).
+with a full support of explicit client registration, please look at idpy's
+[fedservice](https://github.com/rohe/fedservice).
