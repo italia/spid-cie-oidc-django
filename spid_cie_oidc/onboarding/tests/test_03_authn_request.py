@@ -6,7 +6,11 @@ from spid_cie_oidc.onboarding.validators.authn_requests import (
     AuthenticationRequestCie, AuthenticationRequestSpid, validate_message)
 
 from .authn_request_settings import (
-    AUTHN_REQUEST_CIE, AUTHN_REQUEST_SPID, AUTHN_REQUEST_SPID_NO_ACR_VALUES,
+    AUTHN_REQUEST_CIE, AUTHN_REQUEST_CIE_NO_ACR_VALUES,
+    AUTHN_REQUEST_CIE_NO_CORRECT_ACR_VALUES,
+    AUTHN_REQUEST_CIE_NO_CORRECT_PROMPT, AUTHN_REQUEST_CIE_NO_CORRECT_SCOPE,
+    AUTHN_REQUEST_CIE_NO_PROMPT, AUTHN_REQUEST_CIE_NO_SCOPE,
+    AUTHN_REQUEST_SPID, AUTHN_REQUEST_SPID_NO_ACR_VALUES,
     AUTHN_REQUEST_SPID_NO_CLIENT_ID, AUTHN_REQUEST_SPID_NO_CODE_CHALLENGE,
     AUTHN_REQUEST_SPID_NO_CODE_CHALLENGE_METHOD,
     AUTHN_REQUEST_SPID_NO_CORRECT_ACR_VALUES,
@@ -133,3 +137,32 @@ class AuthRequestTest(TestCase):
         AuthenticationRequestCie(**AUTHN_REQUEST_CIE)
         validate_message(AUTHN_REQUEST_CIE, AuthenticationRequestCie.get_claims())
         
+    def test_validate_cie_no_acr_values(self):
+        with self.assertRaises(ValidationError):
+            AuthenticationRequestSpid(**AUTHN_REQUEST_CIE_NO_ACR_VALUES) 
+            validate_message(AUTHN_REQUEST_CIE_NO_ACR_VALUES, AuthenticationRequestSpid.get_claims())
+
+    def test_validate_cie_no_correct_acr_values(self):
+        with self.assertRaises(ValidationError):
+            AuthenticationRequestSpid(**AUTHN_REQUEST_CIE_NO_CORRECT_ACR_VALUES) 
+            validate_message(AUTHN_REQUEST_CIE_NO_CORRECT_ACR_VALUES, AuthenticationRequestSpid.get_claims())
+
+    def test_validate_cie_no_prompt(self):
+        with self.assertRaises(ValidationError):
+            AuthenticationRequestSpid(**AUTHN_REQUEST_CIE_NO_PROMPT) 
+            validate_message(AUTHN_REQUEST_CIE_NO_PROMPT, AuthenticationRequestSpid.get_claims())
+
+    def test_validate_cie_no_correct_prompt(self):
+        with self.assertRaises(ValidationError):
+            AuthenticationRequestSpid(**AUTHN_REQUEST_CIE_NO_CORRECT_PROMPT) 
+            validate_message(AUTHN_REQUEST_CIE_NO_CORRECT_PROMPT, AuthenticationRequestSpid.get_claims())
+
+    def test_validate_cie_no_scope(self):
+        with self.assertRaises(ValidationError):
+            AuthenticationRequestSpid(**AUTHN_REQUEST_CIE_NO_SCOPE) 
+            validate_message(AUTHN_REQUEST_CIE_NO_SCOPE, AuthenticationRequestSpid.get_claims())
+
+    def test_validate_cie_no_correct_scope(self):
+        with self.assertRaises(ValidationError):
+            AuthenticationRequestSpid(**AUTHN_REQUEST_CIE_NO_CORRECT_SCOPE) 
+            validate_message(AUTHN_REQUEST_CIE_NO_CORRECT_SCOPE, AuthenticationRequestSpid.get_claims())

@@ -26,11 +26,6 @@ AUTHN_REQUEST_SPID = {
     "ui_locales": ["codice1", "codice2", "codice3"]
 }
 
-AUTHN_REQUEST_CIE = deepcopy(AUTHN_REQUEST_SPID)
-AUTHN_REQUEST_CIE["scope"] = ["openid", "offline_access", "email", "profile"]
-AUTHN_REQUEST_CIE["prompt"] = "consent login"
-AUTHN_REQUEST_CIE["acr_values"] = ["CIE_L2", "CIE_L1"]
-
 AUTHN_REQUEST_SPID_NO_CLIENT_ID = deepcopy(AUTHN_REQUEST_SPID)
 AUTHN_REQUEST_SPID_NO_CLIENT_ID.pop("client_id")
 
@@ -91,3 +86,27 @@ AUTHN_REQUEST_SPID_NO_CORRECT_STATE["state"] = "toosmall"
 
 AUTHN_REQUEST_SPID_NO_CORRECT_UI_LOCALES = deepcopy(AUTHN_REQUEST_SPID)
 AUTHN_REQUEST_SPID_NO_CORRECT_UI_LOCALES["ui_locales"] = "nocorrect"
+
+
+AUTHN_REQUEST_CIE = deepcopy(AUTHN_REQUEST_SPID)
+AUTHN_REQUEST_CIE["scope"] = ["openid", "offline_access", "email", "profile"]
+AUTHN_REQUEST_CIE["prompt"] = "consent login"
+AUTHN_REQUEST_CIE["acr_values"] = ["CIE_L2", "CIE_L1"]
+
+AUTHN_REQUEST_CIE_NO_ACR_VALUES = deepcopy(AUTHN_REQUEST_CIE)
+AUTHN_REQUEST_CIE_NO_ACR_VALUES.pop("acr_values")
+
+AUTHN_REQUEST_CIE_NO_CORRECT_ACR_VALUES = deepcopy(AUTHN_REQUEST_CIE)
+AUTHN_REQUEST_CIE_NO_CORRECT_ACR_VALUES["acr_values"] = "CIE_L3"
+
+AUTHN_REQUEST_CIE_NO_PROMPT = deepcopy(AUTHN_REQUEST_CIE)
+AUTHN_REQUEST_CIE_NO_PROMPT.pop("prompt")
+
+AUTHN_REQUEST_CIE_NO_CORRECT_PROMPT = deepcopy(AUTHN_REQUEST_CIE)
+AUTHN_REQUEST_CIE_NO_CORRECT_PROMPT["prompt"] = "verify"
+
+AUTHN_REQUEST_CIE_NO_SCOPE = deepcopy(AUTHN_REQUEST_CIE)
+AUTHN_REQUEST_CIE_NO_SCOPE.pop("scope")
+
+AUTHN_REQUEST_CIE_NO_CORRECT_SCOPE = deepcopy(AUTHN_REQUEST_CIE)
+AUTHN_REQUEST_CIE_NO_CORRECT_SCOPE["scope"] = "openid"
