@@ -35,7 +35,7 @@ jobs:
         python -m pip install -r requirements-dev.txt
   
     - name: Install Django Bootstrap Italia template
-      run: pip install bootstrap_italia_template
+      run: pip install design-django-theme
     
     - name: Install spid-cie-oidc
       run: |
