@@ -103,6 +103,7 @@ def onboarding_registration (request):
 def onboarding_entities (request):
     entity_list = [
         {"name_organization": "name organization 1", "url_entity": "https://organization1.it"}, 
+        {"name_organization": "name organization 2", "url_entity": "https://organization2.it"},
         {"name_organization": "name organization 2", "url_entity": "https://organization2.it"}
     ]
     p = Paginator(entity_list, 1)

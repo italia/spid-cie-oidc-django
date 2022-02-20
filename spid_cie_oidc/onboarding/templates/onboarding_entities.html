@@ -1,6 +1,7 @@
 <!-- Extends default Bootstrap Unical Italia template -->
 {% extends 'base.html' %}
 {% load i18n %}
+{% load static %}
 
 {% block container %}
 
@@ -30,7 +31,7 @@
       {% if entities.has_previous %}
       <li class="page-item">
         <a class="page-link" href="?page={{entities.previous_page_number}}" tabindex="-1" aria-hidden="true">
-          <svg class="icon icon-primary"><use href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-left"></use></svg>
+          <svg class="icon icon-primary"><use href="{% static 'svg/sprite.svg' %}#it-chevron-left"></use></svg>
           <span class="sr-only">{% trans "previous page" %}</span>
         </a>
       </li>
@@ -51,7 +52,7 @@
       <li class="page-item">
         <a class="page-link" href="?page={{entities.next_page_number}}">
           <span class="sr-only">{% trans "next page" %}</span>
-          <svg class="icon icon-primary"><use href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-right"></use></svg>
+          <svg class="icon icon-primary"><use href="{% static 'svg/sprite.svg' %}#it-chevron-right"></use></svg>
         </a>
       </li>
       {% endif %}
