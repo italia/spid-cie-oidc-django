@@ -12,6 +12,7 @@ each of these can be installed separately within a django project, these are:
 
 - __spid_cie_oidc.accounts__: customizable app that extended the Django User model.
 - __spid_cie_oidc.entity__: OIDC Federation django app, with models and API that implements OIDC Federation 1.0 Entity Statements, metadata discovery, Trust Chain, Trust Marks and Metadata policy.
+- __spid_cie_oidc.authority__: OIDC Federation API and models for Trust Anchors and Intermediaries.
 - __spid_cie_oidc.onboarding__: OIDC Federation OnBoarding demo application.
 - __spid_cie_oidc.relying_party__: OIDC Relying Party and test suite for OIDC Providers.
 - __spid_cie_oidc.provider__: OIDC Provider and test suite for OIDC Relying Parties.

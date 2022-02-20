@@ -19,7 +19,8 @@ from django.urls import path, re_path
 from django.views.static import serve
 
 from spid_cie_oidc.entity.urls import urlpatterns as entity_urlpatterns
-from spid_cie_oidc.onboarding.urls import urlpatterns as ta_urlpatterns
+from spid_cie_oidc.authority.urls import urlpatterns as ta_urlpatterns
+from spid_cie_oidc.onboarding.urls import urlpatterns as onb_urlpatterns
 
 admin.site.site_header = "OIDC Federation Entity Administration"
 admin.site.site_title = "OIDC Federation"
@@ -34,6 +35,8 @@ urlpatterns = [
 
 urlpatterns.extend(entity_urlpatterns)
 urlpatterns.extend(ta_urlpatterns)
+urlpatterns.extend(onb_urlpatterns)
+
 
 if 'spid_cie_oidc.relying_party' in settings.INSTALLED_APPS:
     from spid_cie_oidc.relying_party.urls import urlpatterns as rp_urlpatterns

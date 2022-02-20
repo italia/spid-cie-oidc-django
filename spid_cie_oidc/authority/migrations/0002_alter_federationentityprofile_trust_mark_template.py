@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('spid_cie_oidc_onboarding', '0001_initial'),
+        ('spid_cie_oidc_authority', '0001_initial'),
     ]
 
     operations = [

@@ -3,7 +3,7 @@
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
-import spid_cie_oidc.onboarding.models
+import spid_cie_oidc.authority.models
 
 
 class Migration(migrations.Migration):
@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
                 (
                     "uid",
                     models.CharField(
-                        default=spid_cie_oidc.onboarding.models.FederationDescendant.def_uid,
+                        default=spid_cie_oidc.authority.models.FederationDescendant.def_uid,
                         help_text="an unique code that identifies this entry. For italian public service it may be the IPA code.",
                         max_length=1024,
                         unique=True,
@@ -53,7 +53,7 @@ class Migration(migrations.Migration):
                         max_length=255,
                         unique=True,
                         validators=[
-                            spid_cie_oidc.onboarding.models.FederationDescendant.validate_entity_configuration
+                            spid_cie_oidc.authority.models.FederationDescendant.validate_entity_configuration
                         ],
                     ),
                 ),
@@ -204,7 +204,7 @@ class Migration(migrations.Migration):
                     "descendant",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        to="spid_cie_oidc_onboarding.federationdescendant",
+                        to="spid_cie_oidc_authority.federationdescendant",
                     ),
                 ),
                 (
@@ -218,7 +218,7 @@ class Migration(migrations.Migration):
                     "profile",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        to="spid_cie_oidc_onboarding.federationentityprofile",
+                        to="spid_cie_oidc_authority.federationentityprofile",
                     ),
                 ),
             ],
@@ -245,7 +245,7 @@ class Migration(migrations.Migration):
                     "descendant",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        to="spid_cie_oidc_onboarding.federationdescendant",
+                        to="spid_cie_oidc_authority.federationdescendant",
                     ),
                 ),
                 (
@@ -298,7 +298,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         help_text="Entity for which this contac is related",
                         on_delete=django.db.models.deletion.CASCADE,
-                        to="spid_cie_oidc_onboarding.federationdescendant",
+                        to="spid_cie_oidc_authority.federationdescendant",
                     ),
                 ),
             ],
