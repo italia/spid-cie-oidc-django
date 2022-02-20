@@ -22,7 +22,7 @@ class OnboardingRegistrationForm(forms.Form):
             'required' : _('Enter the url of the page where the SPID/CIE button is available')}
     )
 
-    public_jwks = forms.CharField(
+    public_jwks = forms.JSONField(
         label=_("public jwks of the entities"),
         error_messages={
             'required' : _('Enter the public jwks of the entities')}

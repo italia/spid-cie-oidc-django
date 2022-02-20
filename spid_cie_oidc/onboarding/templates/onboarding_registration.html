@@ -11,20 +11,24 @@
    <form method="post" action="">
       {% csrf_token %}
       {% for form_field in form %}
-
       <div class="form-row">
          <div class="col-12 form-group my-3">
-            <input type="{{ form_field.field.widget.input_type }}" class="form-control"
-               id="id_{{ form_field.html_name }}" name="{{ form_field.name }}">
             <label for="id_{{ form_field.html_name }}">
                <span class="form-label-content">
                   {{ form_field.label }}
                </span>
             </label>
+            {% if form_field.field.widget.input_type%} 
+               <input type="{{ form_field.field.widget.input_type }}" class="form-control"
+                  id="id_{{ form_field.html_name }}" name="{{ form_field.name }}">
+            {% else%}
+               <textarea id="id_{{ form_field.html_name }}" name="{{ form_field.name }}"></textarea>
+            {% endif %}
          </div>
          <span for="id_{{ form_field.html_name }}">{{ form_field.errors }}</span>
       </div>
       {% endfor %}
+      
       <input type="submit" name="confirm" class="btn btn-lg btn-success btn-block"
          value="{% trans 'Submit' %}" />
    </form>
