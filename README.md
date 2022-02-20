@@ -130,6 +130,11 @@ source env/bin/activate
 cd examples
 ````
 
+Install Django Bootstrap italia template
+````
+pip install design-django-theme
+````
+
 Then enter in the single applications projects (__federation_authority/__ or __relying_party/__ or __provider/__):
 ````
 # run the web server
