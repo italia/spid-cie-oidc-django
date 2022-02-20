@@ -11,7 +11,7 @@ print(AuthenticationRequestSpid.schema_json(indent=2))
 ````
 ./manage.py shell
 ````
-Import an authn request exemple
+Import an authn request example
 ````
 from spid_cie_oidc.onboarding.tests.authn_request_settings import AUTHN_REQUEST_SPID
 ````
