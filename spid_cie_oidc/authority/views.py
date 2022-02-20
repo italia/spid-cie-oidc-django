@@ -2,7 +2,6 @@ from django.http import Http404
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.shortcuts import render
-from django.core.paginator import Paginator
 
 
 from spid_cie_oidc.authority.models import (
