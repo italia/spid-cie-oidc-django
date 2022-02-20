@@ -29,11 +29,11 @@ We have all the Django apps available in the folder `spid_cie_oidc/`.
 The examples projects are instead in the folder `examples/`.
 
 There is a substantial difference between an app and a project.
-The app is installed using a common python package manager, such as poetry or pip,
+The app is installed using a common python package manager, such as _poetry_ or _pip_,
 and can be used, inherited, and integrated into other projects.
 
 A project is a service configuration that integrates one or more applications.
-In this repository we have three example project for demo purpose.
+In this repository we have three example projects for demo purpose.
 
 ### Summary
 
@@ -66,7 +66,7 @@ sudo pip install virtualenv
 Activate the environment. It's optional and up to you if you want to install 
 in a separate env or system wide
 ````
-virtualenv -p python3 --copies env
+virtualenv -p python3 env
 source env/bin/activate
 ````
 
@@ -81,7 +81,7 @@ pip install spid-cie-oidc
 #### Setup the example project for demo purpose
 
 ````
-git clone https://github.com/peppelinux/spid-cie-oidc
+git clone https://github.com/peppelinux/spid-cie-oidc-django
 cd spid-cie-oidc
 pip install -e .
 ````
@@ -91,7 +91,7 @@ In `examples/` folder you have three demostrations projects:
  - relying_party
  - provider
 
-for each of the them you have to create the db and load the example data , as follows:
+for each of the them you have to create the db and load the example data, as follows:
 
 ````
 cd examples/$project_name
@@ -114,6 +114,14 @@ The demo propose a small federation composed by the following entities:
  - Federation Authority, acts as trust anchor and onboarding system. It's available at `http://localhost:8000`
  - OpenID Relying Party, available at `http://localhost:8001`
  - OpenID Provider, available at `http://localhost:8002`
+
+
+### Docker compose
+
+> TODO: Not available untile v0.6.0 release
+
+
+### Django projects
 
 Activate the environment
 ````
