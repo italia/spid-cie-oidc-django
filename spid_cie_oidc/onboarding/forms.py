@@ -15,7 +15,7 @@ class OnboardingRegistrationForm(forms.Form):
         error_messages={'required' : _('Enter your url of the entity')}
     )
 
-    url_available = forms.URLField(
+    authn_buttons_page_url = forms.URLField(
         initial='http://',
         label=_("url of the page where the SPID/CIE button is available"),
         error_messages={
