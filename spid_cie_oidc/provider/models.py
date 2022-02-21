@@ -13,12 +13,12 @@ class OidcSession(TimeStampedModel):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE,
                              blank=False, null=False)
     client_id = models.URLField(blank=True, null=True)
-    
+
     authz_request = models.CharField(max_length=2048, blank=False, null=False)
 
     sub = models.CharField(max_length=254, blank=True, null=True)
     userinfo_claims = models.JSONField(blank=True, null=True)
-    
+
     revoked = models.BooleanField(default=False)
 
     class Meta:

@@ -1,6 +1,22 @@
+from django.conf import settings
+from django.core.exceptions import ValidationError
 from spid_cie_oidc.entity.statements import (
     get_entity_configurations,
     EntityConfiguration,
+)
+
+from spid_cie_oidc.entity import settings as entity_settings
+from spid_cie_oidc.entity.exceptions import (
+    MissingAuthorityHintsClaim,
+    NotDescendant
+)
+from . import settings as local_settings
+
+OIDCFED_FEDERATION_TRUST_ANCHORS = getattr(
+    settings, "OIDCFED_FEDERATION_TRUST_ANCHORS", local_settings.OIDCFED_FEDERATION_TRUST_ANCHORS
+)
+HTTPC_PARAMS = getattr(
+    settings, "HTTPC_PARAMS", entity_settings.HTTPC_PARAMS
 )
 
 

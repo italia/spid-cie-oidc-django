@@ -2,7 +2,6 @@ from copy import deepcopy
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
 from django.db import models
 
 # from django.db.models.signals import post_save
@@ -16,9 +15,7 @@ from spid_cie_oidc.entity.models import (
     PublicJwk,
 )
 
-from spid_cie_oidc.entity.exceptions import MissingAuthorityHintsClaim, NotDescendant
 from spid_cie_oidc.entity.jwtse import create_jws
-from spid_cie_oidc.entity.trust_chain import HTTPC_PARAMS
 from spid_cie_oidc.entity.utils import iat_now
 from spid_cie_oidc.entity.utils import exp_from_now
 from typing import Union

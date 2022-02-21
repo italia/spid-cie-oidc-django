@@ -236,7 +236,7 @@ class EntityConfiguration:
                 f"Exception: {e}"
             )
             is_valid = False
-        
+
         if is_valid:
             target = self.verified_by_superiors
             ec.verified_descendant_statements[self.sub] = payload
