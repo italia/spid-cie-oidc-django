@@ -5,18 +5,19 @@ from spid_cie_oidc.entity.jwtse import verify_jws
 from spid_cie_oidc.entity.models import *
 from spid_cie_oidc.entity.trust_chain import trust_chain_builder
 from spid_cie_oidc.entity.statements import EntityConfiguration, get_entity_configurations
-from spid_cie_oidc.onboarding.models import *
-
 from spid_cie_oidc.entity.tests.settings import *
-from spid_cie_oidc.onboarding.tests.settings import *
-from spid_cie_oidc.onboarding.tests.mocked_responses import *
+
+from spid_cie_oidc.authority.models import *
+from spid_cie_oidc.authority.tests.mocked_responses import *
+from spid_cie_oidc.authority.tests.settings import *
+
 
 from unittest.mock import patch
 
 import datetime
 
 
-class OnBoardingTest(TestCase):
+class TATest(TestCase):
 
     def setUp(self):
         self.ta_conf = FederationEntityConfiguration.objects.create(**ta_conf_data)
@@ -65,17 +66,16 @@ class OnBoardingTest(TestCase):
         self.assertTrue(res.json())
         self.assertEqual(res.status_code, 200)
 
-
     @override_settings(HTTP_CLIENT_SYNC=True)
     @patch("requests.get", return_value=EntityResponseNoIntermediate())
     def test_trust_chain_valid_no_intermediaries(self, mocked):
 
         self.ta_conf.constraints = {"max_path_length": 0}
         self.ta_conf.save()
-        
+
         jwt = get_entity_configurations(self.ta_conf.sub)
         trust_anchor_ec = EntityConfiguration(jwt[0])
-        
+
         trust_chain = trust_chain_builder(
             subject = rp_onboarding_data['sub'],
             trust_anchor = trust_anchor_ec,
@@ -125,13 +125,13 @@ class OnBoardingTest(TestCase):
         self.rp_conf.authority_hints = [intermediary_conf['sub']]
         self.rp_conf.save()
         return trust_anchor_ec
-        
+
     @override_settings(HTTP_CLIENT_SYNC=True)
     @patch("requests.get", return_value=EntityResponseWithIntermediate())
     def test_trust_chain_valid_with_intermediaries(self, mocked):
-        
+
         trust_anchor_ec = self._create_federation_with_intermediary()
-        
+
         trust_chain = trust_chain_builder(
             subject = self.rp.sub,
             trust_anchor = trust_anchor_ec,
