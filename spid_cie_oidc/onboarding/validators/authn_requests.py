@@ -2,7 +2,7 @@
 from enum import Enum
 from typing import List, Literal, Optional
 
-from pydantic import BaseModel, HttpUrl, conlist, constr
+from pydantic import BaseModel, HttpUrl, conlist, constr, validator
 
 # TODO: Schema of claims is not genrated
 
@@ -98,18 +98,19 @@ class AuthenticationRequest(BaseModel):
     # TODO: to be improved
     ui_locales: Optional[List[str]]
 
-
-def validate_message(msg:dict, cl:dict) -> None:
-    claims = msg['claims']
-    for k_claim,v_claim in claims.items():
-        claims_items = cl.get(k_claim, None)
-        if not claims_items:
-            continue
-        claims_items(**v_claim)
-        for k_item, v_item in v_claim.items():
-            if v_item is not None:
-                for k_type, v_type in TYPES.items():
-                    v_type(**v_item)
+    @validator('claims')
+    def validate_message(cls, claims):
+        for k_claim,v_claim in claims.items():
+            cl = cls.get_claims()
+            claims_items = cl.get(k_claim, None)
+            if not claims_items:
+                continue
+            claims_items(**v_claim)
+            for k_item, v_item in v_claim.items():
+                if v_item is not None:
+                    for k_type, v_type in TYPES.items():
+                        v_type(**v_item)
+        return claims
 
 
 class AuthenticationRequestSpid(AuthenticationRequest):
