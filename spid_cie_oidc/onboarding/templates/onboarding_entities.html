@@ -21,16 +21,26 @@
                     <thead>
                       <tr>
                         <th scope="col">#</th>
-                        <th scope="col">{% trans "name organization" %}</th>
+                        <th scope="col">{% trans "organization name" %}</th>
                         <th scope="col">{% trans "url entity" %}</th>
+                        <th scope="col">{% trans "status" %}</th>
                       </tr>
                     </thead>
                     <tbody>
                       {% for entity in entities %}
                       <tr>
                         <th scope="row">{{ forloop.counter }}</th>
-                        <td>{{ entity.name_organization }}</td>
+                        <td>{{ entity.organization_name }}</td>
                         <td>{{ entity.url_entity }}</td>
+                        {% if entity.status == 'processing' %}
+                          <td class="complementary-2-color-b1">{{ entity.status }}</td>
+                        {% elif entity.status == 'failed' %}
+                          <td class="text-danger">{{ entity.status }}</td>
+                        {% elif entity.status == 'onboarded' %}
+                          <td class="analogue-2-color-b2">{{ entity.status }}</td>
+                        {% else %}
+                          <td class="text-secondary">{{ entity.status }}</td>
+                        {% endif %}
                       </tr>
                       {% endfor %}
                     </tbody>
