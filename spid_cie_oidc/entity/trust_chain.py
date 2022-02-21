@@ -149,8 +149,7 @@ class TrustChainBuilder:
         logger.info(f"Starting a Walk into Metadata Discovery for {self.subject}")
         self.tree_of_trust[0] = [self.subject_configuration]
 
-        # ecs_history = []
-
+        ecs_history = []
         while (len(self.tree_of_trust) - 2) < self.max_path_len:
             last_path_n = list(self.tree_of_trust.keys())[-1]
             last_ecs = self.tree_of_trust[last_path_n]
@@ -159,11 +158,13 @@ class TrustChainBuilder:
             for last_ec in last_ecs:
 
                 # TODO: Metadata discovery loop prevention
-                # if last_ec.sub in ecs_history:
-                # logger.warning(
-                # f"Metadata discovery loop detection for {last_ec.sub}. "
-                # f"Already present in {ecs_history}"
-                # )
+                if last_ec.sub in ecs_history:
+                    logger.warning(
+                        f"Metadata discovery loop detection for {last_ec.sub}. "
+                        f"Already present in {ecs_history}. "
+                        "Discovery blocked for this path."
+                    )
+                    continue
 
                 try:
                     superiors = last_ec.get_superiors(
@@ -175,7 +176,7 @@ class TrustChainBuilder:
                     )
                     vbv = list(validated_by.values())
                     sup_ecs.extend(vbv)
-                    # ecs_history.extend([i.sub for i in vbv])
+                    ecs_history.append(last_ec)
                 except Exception as e:
                     logger.exception(
                         f"Metadata discovery exception for {last_ec.sub}: {e}"
@@ -192,8 +193,8 @@ class TrustChainBuilder:
             and self.tree_of_trust[last_path][0].is_valid
         ):
             self.is_valid = True
+            self.apply_metadata_policy()
 
-        self.apply_metadata_policy()
         return self.is_valid
 
     def get_trust_anchor_configuration(self) -> None:
