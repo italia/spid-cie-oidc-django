@@ -1,7 +1,7 @@
 from copy import deepcopy
 
 AUTHN_RESPONSE_SPID = {
-    "code":"usDwMnEzJPpG5oaV8x3j&",
+    "code": "usDwMnEzJPpG5oaV8x3j&",
     "state": "fyZiOL9Lf2CeKuNT2JzxiLRDink0uPcd&",
 }
 
@@ -10,8 +10,8 @@ AUTHN_RESPONSE_CIE["iss"] = "https://idserver.servizicie.interno.gov.it"
 
 AUTHN_ERROR_RESPONSE = {
     "error_description": "request%20malformata&",
-    "code":"usDwMnEzJPpG5oaV8x3j&",
-    "state": "fyZiOL9Lf2CeKuNT2JzxiLRDink0uPcd&"
+    "code": "usDwMnEzJPpG5oaV8x3j&",
+    "state": "fyZiOL9Lf2CeKuNT2JzxiLRDink0uPcd&",
 }
 
 AUTHN_ERROR_RESPONSE_SPID = deepcopy(AUTHN_ERROR_RESPONSE)

@@ -3,11 +3,10 @@ from django.contrib.auth import get_user_model
 from django.utils.translation import gettext as _
 
 
-class OnBoardingRegistration (models.Model):
+class OnBoardingRegistration(models.Model):
 
     organization_name = models.CharField(
-        max_length=254,
-        help_text=_("Organization Name. ")
+        max_length=254, help_text=_("Organization Name. ")
     )
 
     url_entity = models.URLField(

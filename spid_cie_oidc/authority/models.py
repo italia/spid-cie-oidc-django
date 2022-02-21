@@ -63,23 +63,19 @@ class FederationEntityProfile(TimeStampedModel):
     It optionally defines trust marks templates
     """
 
-    name = models.CharField(
-        max_length=33,
-        help_text=_("Profile name. ")
-    )
+    name = models.CharField(max_length=33, help_text=_("Profile name. "))
     profile_category = models.CharField(
         max_length=64,
         help_text=_("Profile id. It SHOULD be a URL but feel free to put whatever"),
-        choices=[(i, i) for i in ENTITY_TYPES]
+        choices=[(i, i) for i in ENTITY_TYPES],
     )
     profile_id = models.CharField(
         max_length=1024,
         help_text=_("Profile id. It SHOULD be a URL but feel free to put whatever"),
-        unique=True
+        unique=True,
     )
     trust_mark_template = models.JSONField(
-        help_text=_("trust marks template for this profile"),
-        default=dict
+        help_text=_("trust marks template for this profile"), default=dict
     )
 
     class Meta:
@@ -219,7 +215,7 @@ class FederationDescendant(TimeStampedModel):
             for i in FederationEntityAssignedProfile.objects.filter(descendant=self)
         ]
 
-    def entity_statement_as_dict(self, iss:str = None, aud:list = None) -> dict:
+    def entity_statement_as_dict(self, iss: str = None, aud: list = None) -> dict:
         jwks = [
             i.jwk.jwk for i in FederationDescendantJwk.objects.filter(descendant=self)
         ]
@@ -228,15 +224,14 @@ class FederationDescendant(TimeStampedModel):
             return {}
 
         policies = {
-            k: local_settings.FEDERATION_DEFAULT_POLICY[k]
-            for k in self.entity_profiles
+            k: local_settings.FEDERATION_DEFAULT_POLICY[k] for k in self.entity_profiles
         }
 
         # apply custom policies if defined
         policies.update(self.metadata_policy)
 
         data = {
-            "exp": exp_from_now(minutes = FEDERATION_DEFAULT_EXP),
+            "exp": exp_from_now(minutes=FEDERATION_DEFAULT_EXP),
             "iat": iat_now(),
             "iss": get_first_self_trust_anchor(iss).sub,
             "sub": self.sub,
@@ -244,7 +239,7 @@ class FederationDescendant(TimeStampedModel):
             "metadata_policy": policies,
         }
         if aud:
-            data['aud'] = [aud] if isinstance(aud, str) else aud
+            data["aud"] = [aud] if isinstance(aud, str) else aud
 
         # add contacts
         contacts = FederationDescendantContact.objects.filter(entity=self).values_list(
@@ -269,10 +264,10 @@ class FederationDescendant(TimeStampedModel):
 
         return data
 
-    def entity_statement_as_json(self, iss:str = None, aud:list = None) -> str:
+    def entity_statement_as_json(self, iss: str = None, aud: list = None) -> str:
         return json.dumps(self.entity_statement_as_dict(iss, aud))
 
-    def entity_statement_as_jws(self, iss:str = None, aud:list = None) -> str:
+    def entity_statement_as_jws(self, iss: str = None, aud: list = None) -> str:
         issuer = get_first_self_trust_anchor(iss)
         return create_jws(
             self.entity_statement_as_dict(iss, aud),
@@ -329,10 +324,7 @@ class FederationEntityAssignedProfile(TimeStampedModel):
 
     @property
     def trust_mark(self):
-        return {
-            "id": self.profile.profile_id,
-            "trust_mark": self.trust_mark_as_jws
-        }
+        return {"id": self.profile.profile_id, "trust_mark": self.trust_mark_as_jws}
 
     def __str__(self):
         return f"{self.profile} [{self.descendant}]"

@@ -39,7 +39,7 @@ class ClaimsTypeStringValue(BaseModel):
 
 
 class ClaimsTypeStringValues(BaseModel):
-    values: Optional[conlist(str, max_items = 2, min_items = 2)]
+    values: Optional[conlist(str, max_items=2, min_items=2)]
 
 
 class ClaimsType(str, Enum):
@@ -70,37 +70,32 @@ class IdToken(UserInfo):
 
 
 TYPES = {
-    'essential': ClaimsTypeEssential,
-    'value': ClaimsTypeStringValue,
-    'values': ClaimsTypeStringValues,
+    "essential": ClaimsTypeEssential,
+    "value": ClaimsTypeStringValue,
+    "values": ClaimsTypeStringValues,
 }
 
-CLAIMS_SPID = {
-    'userinfo': UserInfo
-}
+CLAIMS_SPID = {"userinfo": UserInfo}
 
-CLAIMS_CIE = {
-    'userinfo': UserInfo,
-    'id_token': IdToken
-}
+CLAIMS_CIE = {"userinfo": UserInfo, "id_token": IdToken}
 
 
 class AuthenticationRequest(BaseModel):
     client_id: HttpUrl
-    response_type: Literal['code']
+    response_type: Literal["code"]
     scope: List[str]
     code_challenge: str
-    code_challenge_method: Literal['S256']
-    nonce: constr(min_length = 32)
+    code_challenge_method: Literal["S256"]
+    nonce: constr(min_length=32)
     redirect_uri: HttpUrl
-    claims : Optional[dict]
-    state: constr(min_length = 32)
+    claims: Optional[dict]
+    state: constr(min_length=32)
     # TODO: to be improved
     ui_locales: Optional[List[str]]
 
-    @validator('claims')
+    @validator("claims")
     def validate_claims(cls, claims):
-        for k_claim,v_claim in claims.items():
+        for k_claim, v_claim in claims.items():
             cl = cls.get_claims()
             claims_items = cl.get(k_claim, None)
             if not claims_items:
@@ -112,17 +107,16 @@ class AuthenticationRequest(BaseModel):
                         v_type(**v_item)
         return claims
 
-
-    @validator('scope')
+    @validator("scope")
     def validate_scope(cls, scope):
         if "openid" not in scope:
-            raise ValueError('\'scope\' attribute must contain \'openid\'')
+            raise ValueError("'scope' attribute must contain 'openid'")
+
 
 class AuthenticationRequestSpid(AuthenticationRequest):
     scope: List[ScopeSpid]
-    prompt: Literal['consent', 'consent login', 'verify']
+    prompt: Literal["consent", "consent login", "verify"]
     acr_values: List[AcrValuesSpid]
-
 
     def get_claims() -> dict:
         return CLAIMS_SPID
@@ -130,7 +124,7 @@ class AuthenticationRequestSpid(AuthenticationRequest):
 
 class AuthenticationRequestCie(AuthenticationRequest):
     scope: List[ScopeCie]
-    prompt: Literal['consent', 'consent login']
+    prompt: Literal["consent", "consent login"]
     acr_values: List[AcrValuesCie]
 
     def get_claims() -> dict:

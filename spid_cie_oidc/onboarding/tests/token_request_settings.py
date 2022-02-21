@@ -3,7 +3,7 @@ from copy import deepcopy
 TOKEN_REQUEST = {
     "client_id": "https://rp.cie.it",
     "client_assertion": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiw...",
-    "client_assertion_type": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
+    "client_assertion_type": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
 }
 
 TOKEN_AUTHN_CODE_REQUEST = deepcopy(TOKEN_REQUEST)

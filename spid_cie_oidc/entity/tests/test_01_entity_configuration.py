@@ -31,9 +31,7 @@ class EntityConfigurationTest(TestCase):
                 FederationEntityConfiguration,
             )
         )
-        self.assertTrue(
-            isinstance(self.ta_conf, FederationEntityConfiguration)
-        )
+        self.assertTrue(isinstance(self.ta_conf, FederationEntityConfiguration))
         self.assertFalse(self.ta_conf.is_leaf)
 
         for i in (
@@ -55,5 +53,3 @@ class EntityConfigurationTest(TestCase):
         c = Client()
         res = c.get(wk_url)
         verify_jws(res.content.decode(), self.ta_conf.jwks[0])
-        
-    

@@ -1,4 +1,3 @@
-
 from typing import Literal
 
 from pydantic import BaseModel, HttpUrl
@@ -7,7 +6,9 @@ from pydantic import BaseModel, HttpUrl
 class TokenRequest(BaseModel):
     client_id: HttpUrl
     client_assertion: str
-    client_assertion_type: Literal['urn:ietf:params:oauth:client-assertion-type:jwt-bearer']
+    client_assertion_type: Literal[
+        "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
+    ]
 
 
 class TokenAuthnCodeRequest(TokenRequest):
@@ -15,9 +16,9 @@ class TokenAuthnCodeRequest(TokenRequest):
     code: str
     # TODO: is 43*128unreserved, where unreserved = ALPHA / DIGIT / "-" / "." / "_" / "~"
     code_verifier: str
-    grant_type: Literal['authorization_code']
+    grant_type: Literal["authorization_code"]
 
 
 class TokenRefreshRequest(TokenRequest):
-    grant_type: Literal['refresh_token']
+    grant_type: Literal["refresh_token"]
     refresh_token: str

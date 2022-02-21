@@ -63,6 +63,4 @@ class FederationEntityAssignedProfileAdmin(admin.ModelAdmin):
     raw_id_fields = ("descendant", "profile", "issuer")
     list_filter = ("created", "modified")
     search_fields = ("descendant__sub", "descendant__name", "profile")
-    readonly_fields = (
-        "trust_mark_as_json", "trust_mark", "created", "modified"
-    )
+    readonly_fields = ("trust_mark_as_json", "trust_mark", "created", "modified")

@@ -226,9 +226,7 @@ class FederationEntityConfiguration(TimeStampedModel):
         if self.authority_hints:
             conf["authority_hints"] = self.authority_hints
         elif self.is_leaf:
-            _msg = (
-                f"Entity {self.sub} is a leaf and requires authority_hints valued"
-            )
+            _msg = f"Entity {self.sub} is a leaf and requires authority_hints valued"
             logger.error(_msg)
 
         return conf
@@ -243,7 +241,7 @@ class FederationEntityConfiguration(TimeStampedModel):
             self.entity_configuration_as_dict,
             self.jwks[0],
             alg=self.default_signature_alg,
-            **kwargs
+            **kwargs,
         )
 
     def __str__(self):

@@ -24,7 +24,7 @@ def jwks_from_jwks_uri(jwks_uri: str, httpc_params: dict = {}) -> list:
 
 def get_jwks(jwt_payload: dict, httpc_params: dict = {}):
     return (
-        jwt_payload.get("jwks", {}).get('keys', [])
+        jwt_payload.get("jwks", {}).get("keys", [])
         # TODO: we must only support signed_jwks_uri
         # or jwks_from_jwks_uri(jwks_uri, httpc_params)
     )
@@ -134,8 +134,10 @@ class EntityConfiguration:
         raise NotImplementedError()
 
     def get_superiors(
-        self, authority_hints: list = [], max_authority_hints: int = 0,
-        superiors_hints: list = []
+        self,
+        authority_hints: list = [],
+        max_authority_hints: int = 0,
+        superiors_hints: list = [],
     ) -> dict:
         """
         get superiors entity configurations
@@ -198,13 +200,11 @@ class EntityConfiguration:
         payload = unpad_jwt_payload(jwt)
 
         if header.get("kid") not in self.kids:
-            raise UnknownKid(
-                f"{self.header.get('kid')} not found in {self.jwks}"
-            )
+            raise UnknownKid(f"{self.header.get('kid')} not found in {self.jwks}")
         # verify signature
         payload = verify_jws(jwt, self.jwks[self.kids.index(header["kid"])])
 
-        self.verified_descendant_statements[payload['sub']] = payload
+        self.verified_descendant_statements[payload["sub"]] = payload
         return self.verified_descendant_statements
 
     def validate_by_superior_statement(self, jwt: str, ec):
