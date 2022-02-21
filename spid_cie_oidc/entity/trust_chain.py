@@ -139,7 +139,7 @@ class TrustChainBuilder:
     def set_exp(self):
         exps = [i.payload["exp"] for i in self.trust_path]
         if exps:
-            self.exp = min(*exps)
+            self.exp = min(exps)
 
     def discovery(self) -> bool:
         """

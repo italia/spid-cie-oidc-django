@@ -135,4 +135,23 @@ class TATest(TestCase):
             self.assertTrue(ec.is_valid)
 
         self.assertTrue(len(trust_chain.trust_path) == 3)
-        self.assertTrue((len(trust_chain.trust_path) - 2) == trust_chain.max_path_len)
+        self.assertTrue(
+            (len(trust_chain.trust_path) - 2) == trust_chain.max_path_len
+        )
+
+    @override_settings(HTTP_CLIENT_SYNC=True)
+    @patch("requests.get", return_value=EntityResponseWithIntermediateManyHints())
+    def test_trust_chain_valid_with_intermediaries_many_authhints(self, mocked):
+        
+        trust_anchor_ec = self._create_federation_with_intermediary()
+
+        self.rp_conf.authority_hints = [
+            'http://intermediary-test', "http://that-faulty"
+        ]
+        self.rp_conf.save()
+        
+        trust_chain = trust_chain_builder(
+            subject=self.rp.sub,
+            trust_anchor=trust_anchor_ec,
+            metadata_type="openid_relying_party",
+        )
