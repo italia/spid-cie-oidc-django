@@ -1,7 +1,6 @@
 from typing import Literal
 
-from pydantic import BaseModel, constr
-from spid_cie_oidc.onboarding.tests.settings import ISS
+from pydantic import BaseModel, HttpUrl, constr
 
 
 class AuthenticationResponse(BaseModel):
@@ -11,7 +10,7 @@ class AuthenticationResponse(BaseModel):
 
 
 class AuthenticationResponseCie(AuthenticationResponse):
-    iss: ISS
+    iss: HttpUrl
 
 
 class AuthenticationErrorResponse(BaseModel):
@@ -22,4 +21,4 @@ class AuthenticationErrorResponse(BaseModel):
 
 
 class AuthenticationErrorResponseCie(AuthenticationErrorResponse):
-    iss: ISS
+    iss: HttpUrl

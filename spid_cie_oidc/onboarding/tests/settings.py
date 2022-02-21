@@ -1,5 +1,3 @@
-
-from typing import Literal
 from spid_cie_oidc.entity.jwks import create_jwk
 
 rp_onboarding_data = dict(
@@ -87,5 +85,3 @@ RP_METADATA = {
         "subject_type": "pairwise",
     }
 }
-
-ISS = Literal['https://idserver.servizicie.interno.gov.it']
