@@ -83,6 +83,7 @@ class AuthRequestTest(TestCase):
     def test_validate_spid_no_correct_response_type(self):
         with self.assertRaises(ValidationError):
             AuthenticationRequestSpid(**AUTHN_REQUEST_SPID_NO_CORRECT_RESPONSE_TYPE) 
+
     def test_validate_spid_no_scope(self):
         with self.assertRaises(ValidationError):
             AuthenticationRequestSpid(**AUTHN_REQUEST_SPID_NO_SCOPE) 
