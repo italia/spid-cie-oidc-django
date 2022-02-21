@@ -5,7 +5,7 @@ from pydantic import BaseModel, HttpUrl, constr
 
 class TokenRequest(BaseModel):
     client_id: HttpUrl
-    client_assertion: constr(regex=r'^[^.]+\.[^.]+\.[^.]+$')
+    client_assertion: constr(regex=r"^[a-zA-Z\_\-0-9]+\.[a-zA-Z\_\-0-9]+\.[a-zA-Z\_\-0-9]+")
     client_assertion_type: Literal[
         "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
     ]
