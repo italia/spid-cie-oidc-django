@@ -1,4 +1,4 @@
-# How to export the token authen code request schema for SPID
+# How to export the token authn code request schema for SPID
 
 ````
 ./manage.py shell
@@ -6,12 +6,12 @@ from spid_cie_oidc.onboarding.validators.token_requests import TokenAuthnCodeReq
 print(TokenAuthnCodeRequest.schema_json(indent=2))
 ````
 
-# How to validate a token authen code request for SPID
+# How to validate a token authn code request for SPID
 
 ````
 ./manage.py shell
 ````
-Import a token authen code request example
+Import a token authn code request example
 ````
 from spid_cie_oidc.onboarding.tests.token_request_settings import TOKEN_AUTHN_CODE_REQUEST
 ````
