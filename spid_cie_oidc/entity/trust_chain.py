@@ -11,7 +11,7 @@ from .statements import (
     get_entity_configurations,
     EntityConfiguration,
 )
-from .utils import datetime_from_exp
+from .utils import datetime_from_timestamp
 
 
 HTTPC_PARAMS = getattr(settings, "HTTPC_PARAMS", settings_local.HTTPC_PARAMS)
