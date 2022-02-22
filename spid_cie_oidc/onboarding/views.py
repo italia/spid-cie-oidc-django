@@ -1,4 +1,5 @@
 import imp
+import json
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -23,7 +24,7 @@ def onboarding_registration(request):
             form_dict = {**form.cleaned_data}
             OnBoardingRegistration.objects.create(**form_dict)
             messages.success(request, _('Registration successfully'))
-            return redirect('oidc_onboarding_landing')
+            return redirect('oidc_onboarding_entities')
     return render(request, 'onboarding_registration.html', context)
 
 

@@ -11,12 +11,6 @@ class OnboardingRegistrationForm(forms.Form):
     )
 
     url_entity = forms.URLField(
-        initial='',
-        label=_("organization Name"),
-        error_messages={"required": _("Enter your organization name")},
-    )
-
-    url_entity = forms.URLField(
         initial="",
         label=_("url of the entity"),
         error_messages={"required": _("Enter your url of the entity")},
