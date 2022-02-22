@@ -4,11 +4,10 @@ from django.utils.translation import gettext as _
 from spid_cie_oidc.entity.validators import validate_public_jwks
 
 
-class OnBoardingRegistration (models.Model):
+class OnBoardingRegistration(models.Model):
 
     organization_name = models.CharField(
-        max_length=254,
-        help_text=_("Organization Name. ")
+        max_length=254, help_text=_("Organization Name. ")
     )
 
     url_entity = models.URLField(

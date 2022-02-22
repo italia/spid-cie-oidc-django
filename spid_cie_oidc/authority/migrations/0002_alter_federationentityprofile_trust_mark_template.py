@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('spid_cie_oidc_authority', '0001_initial'),
+        ("spid_cie_oidc_authority", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='federationentityprofile',
-            name='trust_mark_template',
-            field=models.JSONField(default=dict, help_text='trust marks template for this profile'),
+            model_name="federationentityprofile",
+            name="trust_mark_template",
+            field=models.JSONField(
+                default=dict, help_text="trust marks template for this profile"
+            ),
         ),
     ]

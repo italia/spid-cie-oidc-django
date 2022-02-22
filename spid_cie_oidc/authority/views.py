@@ -1,20 +1,18 @@
 from django.http import Http404
 from django.http import HttpResponse
 from django.http import JsonResponse
-from django.shortcuts import render
 
 
 from spid_cie_oidc.authority.models import (
     FederationDescendant,
     FederationEntityAssignedProfile,
     get_first_self_trust_anchor,
-    
 )
 
 
 def fetch(request):
-    if request.GET.get('iss'):
-        iss = get_first_self_trust_anchor(sub = request.GET['iss'])
+    if request.GET.get("iss"):
+        iss = get_first_self_trust_anchor(sub=request.GET["iss"])
     else:
         iss = get_first_self_trust_anchor()
 
@@ -24,8 +22,7 @@ def fetch(request):
             return JsonResponse(conf.entity_configuration_as_dict, safe=False)
         else:
             return HttpResponse(
-                conf.entity_configuration_as_jws,
-                content_type="application/jose"
+                conf.entity_configuration_as_jws, content_type="application/jose"
             )
 
     sub = FederationDescendant.objects.filter(
@@ -36,12 +33,12 @@ def fetch(request):
 
     if request.GET.get("format") == "json":
         return JsonResponse(
-            sub.entity_statement_as_dict(iss.sub, request.GET.get('aud')
-        ), safe=False)
+            sub.entity_statement_as_dict(iss.sub, request.GET.get("aud")), safe=False
+        )
     else:
         return HttpResponse(
-            sub.entity_statement_as_jws(iss.sub, request.GET.get('aud')),
-            content_type="application/jose"
+            sub.entity_statement_as_jws(iss.sub, request.GET.get("aud")),
+            content_type="application/jose",
         )
 
 
@@ -49,9 +46,7 @@ def entity_list(request):
     is_leaf = request.GET.get("is_leaf", "").lower()
     if is_leaf == "true":
         _q = {
-            "profile__profile_category__in": (
-                "openid_relying_party", "openid_provider"
-            )
+            "profile__profile_category__in": ("openid_relying_party", "openid_provider")
         }
     elif is_leaf == "false":
         _q = {"profile__profile_category": "federation_entity"}
@@ -81,9 +76,7 @@ def resolve_entity_statement(request):
     # else:
     # iss = get_first_self_trust_anchor()
 
-    entity = FederationDescendant.objects.filter(
-        sub=request.GET["sub"], is_active=True
-    )
+    entity = FederationDescendant.objects.filter(sub=request.GET["sub"], is_active=True)
 
     # filter by type
     if request.GET.get("type"):

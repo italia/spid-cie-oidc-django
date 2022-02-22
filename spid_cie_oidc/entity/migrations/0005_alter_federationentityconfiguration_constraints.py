@@ -6,13 +6,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('spid_cie_oidc_entity', '0004_alter_federationentityconfiguration_authority_hints_and_more'),
+        (
+            "spid_cie_oidc_entity",
+            "0004_alter_federationentityconfiguration_authority_hints_and_more",
+        ),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='federationentityconfiguration',
-            name='constraints',
-            field=models.JSONField(blank=True, default=dict, help_text='\n{\n  "naming_constraints": {\n    "permitted": [\n      "https://.example.com"\n    ],\n    "excluded": [\n      "https://east.example.com"\n    ]\n  },\n  "max_path_length": 2\n}\n'),
+            model_name="federationentityconfiguration",
+            name="constraints",
+            field=models.JSONField(
+                blank=True,
+                default=dict,
+                help_text='\n{\n  "naming_constraints": {\n    "permitted": [\n      "https://.example.com"\n    ],\n    "excluded": [\n      "https://east.example.com"\n    ]\n  },\n  "max_path_length": 2\n}\n',
+            ),
         ),
     ]

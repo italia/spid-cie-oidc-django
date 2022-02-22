@@ -15,7 +15,8 @@ INSTALL_REQUIRES = [
     "pydantic>=1.8.2",
     "pytz>=2021.3",
     "aiohttp",
-    "requests"
+    "requests",
+    "pydantic"
 ]
 
 with open(os.path.join(os.path.dirname(__file__), 'README.md')) as readme:

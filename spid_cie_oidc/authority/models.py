@@ -2,7 +2,6 @@ from copy import deepcopy
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
 from django.db import models
 
 # from django.db.models.signals import post_save
@@ -16,18 +15,13 @@ from spid_cie_oidc.entity.models import (
     PublicJwk,
 )
 
-from spid_cie_oidc.entity.exceptions import MissingAuthorityHintsClaim, NotDescendant
-from spid_cie_oidc.entity.statements import (
-    get_entity_configurations,
-    EntityConfiguration,
-)
 from spid_cie_oidc.entity.jwtse import create_jws
-from spid_cie_oidc.entity.trust_chain import HTTPC_PARAMS
 from spid_cie_oidc.entity.utils import iat_now
 from spid_cie_oidc.entity.utils import exp_from_now
 from typing import Union
 
 from . import settings as local_settings
+from . validators import validate_entity_configuration
 
 import json
 import logging
@@ -63,23 +57,19 @@ class FederationEntityProfile(TimeStampedModel):
     It optionally defines trust marks templates
     """
 
-    name = models.CharField(
-        max_length=33,
-        help_text=_("Profile name. ")
-    )
+    name = models.CharField(max_length=33, help_text=_("Profile name. "))
     profile_category = models.CharField(
         max_length=64,
         help_text=_("Profile id. It SHOULD be a URL but feel free to put whatever"),
-        choices=[(i, i) for i in ENTITY_TYPES]
+        choices=[(i, i) for i in ENTITY_TYPES],
     )
     profile_id = models.CharField(
         max_length=1024,
         help_text=_("Profile id. It SHOULD be a URL but feel free to put whatever"),
-        unique=True
+        unique=True,
     )
     trust_mark_template = models.JSONField(
-        help_text=_("trust marks template for this profile"),
-        default=dict
+        help_text=_("trust marks template for this profile"), default=dict
     )
 
     class Meta:
@@ -98,38 +88,6 @@ class FederationDescendant(TimeStampedModel):
     """
     Federation OnBoarding entries.
     """
-
-    def validate_entity_configuration(value):
-        """
-        value is the sub url
-        """
-        try:
-            jwt = get_entity_configurations(value)[0]
-        except Exception as e:
-            raise ValidationError(
-                f"Failed to fetch Entity Configuration for {value}: {e}"
-            )
-        ec = EntityConfiguration(jwt, httpc_params=HTTPC_PARAMS)
-        ec.validate_by_itself()
-
-        authority_hints = ec.payload.get("authority_hints", [])
-        if not authority_hints:
-            raise MissingAuthorityHintsClaim(
-                "authority_hints must be present "
-                "in a descendant entity configuration"
-            )
-
-        proper_descendant = False
-        for i in authority_hints:
-            if i in settings.OIDCFED_FEDERATION_TRUST_ANCHORS:
-                proper_descendant = True
-                break
-        if not proper_descendant:
-            raise NotDescendant(
-                "This participant MUST have one of "
-                f"{', '.join(settings.OIDCFED_FEDERATION_TRUST_ANCHORS)} in "
-                f"its authority_hints claim. It has: {authority_hints}"
-            )
 
     def def_uid():
         return f"autouid-{uuid.uuid4()}"
@@ -219,7 +177,7 @@ class FederationDescendant(TimeStampedModel):
             for i in FederationEntityAssignedProfile.objects.filter(descendant=self)
         ]
 
-    def entity_statement_as_dict(self, iss:str = None, aud:list = None) -> dict:
+    def entity_statement_as_dict(self, iss: str = None, aud: list = None) -> dict:
         jwks = [
             i.jwk.jwk for i in FederationDescendantJwk.objects.filter(descendant=self)
         ]
@@ -228,15 +186,14 @@ class FederationDescendant(TimeStampedModel):
             return {}
 
         policies = {
-            k: local_settings.FEDERATION_DEFAULT_POLICY[k]
-            for k in self.entity_profiles
+            k: local_settings.FEDERATION_DEFAULT_POLICY[k] for k in self.entity_profiles
         }
 
         # apply custom policies if defined
         policies.update(self.metadata_policy)
 
         data = {
-            "exp": exp_from_now(minutes = FEDERATION_DEFAULT_EXP),
+            "exp": exp_from_now(minutes=FEDERATION_DEFAULT_EXP),
             "iat": iat_now(),
             "iss": get_first_self_trust_anchor(iss).sub,
             "sub": self.sub,
@@ -244,7 +201,7 @@ class FederationDescendant(TimeStampedModel):
             "metadata_policy": policies,
         }
         if aud:
-            data['aud'] = [aud] if isinstance(aud, str) else aud
+            data["aud"] = [aud] if isinstance(aud, str) else aud
 
         # add contacts
         contacts = FederationDescendantContact.objects.filter(entity=self).values_list(
@@ -269,10 +226,10 @@ class FederationDescendant(TimeStampedModel):
 
         return data
 
-    def entity_statement_as_json(self, iss:str = None, aud:list = None) -> str:
+    def entity_statement_as_json(self, iss: str = None, aud: list = None) -> str:
         return json.dumps(self.entity_statement_as_dict(iss, aud))
 
-    def entity_statement_as_jws(self, iss:str = None, aud:list = None) -> str:
+    def entity_statement_as_jws(self, iss: str = None, aud: list = None) -> str:
         issuer = get_first_self_trust_anchor(iss)
         return create_jws(
             self.entity_statement_as_dict(iss, aud),
@@ -329,10 +286,7 @@ class FederationEntityAssignedProfile(TimeStampedModel):
 
     @property
     def trust_mark(self):
-        return {
-            "id": self.profile.profile_id,
-            "trust_mark": self.trust_mark_as_jws
-        }
+        return {"id": self.profile.profile_id, "trust_mark": self.trust_mark_as_jws}
 
     def __str__(self):
         return f"{self.profile} [{self.descendant}]"

@@ -53,7 +53,7 @@ class Migration(migrations.Migration):
                         max_length=255,
                         unique=True,
                         validators=[
-                            spid_cie_oidc.authority.models.FederationDescendant.validate_entity_configuration
+                            spid_cie_oidc.authority.validators.validate_entity_configuration
                         ],
                     ),
                 ),

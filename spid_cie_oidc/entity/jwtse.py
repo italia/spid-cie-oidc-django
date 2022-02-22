@@ -44,7 +44,7 @@ def unpad_jwt_payload(jwt: str) -> dict:
     return unpad_jwt_element(jwt, position=1)
 
 
-def encrypt_dict(plain_dict:dict, jwk_dict:dict) -> str:
+def encrypt_dict(plain_dict: dict, jwk_dict: dict) -> str:
     logger.debug(f"Encrypting dict as JWE: " f"{plain_dict}")
     _key = key_from_jwk_dict(jwk_dict)
     _rsa = JWE_RSA(
@@ -58,7 +58,7 @@ def encrypt_dict(plain_dict:dict, jwk_dict:dict) -> str:
     return jwe
 
 
-def decrypt_jwe(jwe:str, jwk_dict:dict) -> dict:
+def decrypt_jwe(jwe: str, jwk_dict: dict) -> dict:
     # get header
     try:
         jwe_header = unpad_jwt_head(jwe)
@@ -84,9 +84,7 @@ def decrypt_jwe(jwe:str, jwk_dict:dict) -> dict:
     return msg_dict
 
 
-def create_jws(
-    payload: dict, jwk_dict: dict, alg: str = "RS256", **kwargs
-) -> str:
+def create_jws(payload: dict, jwk_dict: dict, alg: str = "RS256", **kwargs) -> str:
 
     _key = key_from_jwk_dict(jwk_dict)
     _signer = JWS(payload, alg=alg, **kwargs)
@@ -104,9 +102,7 @@ def verify_jws(jws: str, pub_jwk: dict, **kwargs) -> str:
 
     _alg = _head["alg"]
     if _alg not in SIGNING_ALG_VALUES_SUPPORTED or not _alg:
-        raise UnsupportedAlgorithm(
-            f"{_alg} has beed disabled for security reason"
-        )
+        raise UnsupportedAlgorithm(f"{_alg} has beed disabled for security reason")
 
     verifier = JWS(alg=_head["alg"], **kwargs)
     msg = verifier.verify_compact(jws, [_key])

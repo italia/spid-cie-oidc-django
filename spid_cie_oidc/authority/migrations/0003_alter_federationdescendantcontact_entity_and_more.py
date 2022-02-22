@@ -7,28 +7,44 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('spid_cie_oidc_authority', '0002_alter_federationentityprofile_trust_mark_template'),
+        (
+            "spid_cie_oidc_authority",
+            "0002_alter_federationentityprofile_trust_mark_template",
+        ),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='federationdescendantcontact',
-            name='entity',
-            field=models.ForeignKey(help_text='Entity for which this contac is related', on_delete=django.db.models.deletion.CASCADE, to='spid_cie_oidc_authority.federationdescendant'),
+            model_name="federationdescendantcontact",
+            name="entity",
+            field=models.ForeignKey(
+                help_text="Entity for which this contac is related",
+                on_delete=django.db.models.deletion.CASCADE,
+                to="spid_cie_oidc_authority.federationdescendant",
+            ),
         ),
         migrations.AlterField(
-            model_name='federationdescendantjwk',
-            name='descendant',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='spid_cie_oidc_authority.federationdescendant'),
+            model_name="federationdescendantjwk",
+            name="descendant",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="spid_cie_oidc_authority.federationdescendant",
+            ),
         ),
         migrations.AlterField(
-            model_name='federationentityassignedprofile',
-            name='descendant',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='spid_cie_oidc_authority.federationdescendant'),
+            model_name="federationentityassignedprofile",
+            name="descendant",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="spid_cie_oidc_authority.federationdescendant",
+            ),
         ),
         migrations.AlterField(
-            model_name='federationentityassignedprofile',
-            name='profile',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='spid_cie_oidc_authority.federationentityprofile'),
+            model_name="federationentityassignedprofile",
+            name="profile",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="spid_cie_oidc_authority.federationentityprofile",
+            ),
         ),
     ]

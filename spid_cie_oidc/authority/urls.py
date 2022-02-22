@@ -16,10 +16,7 @@ Including another URLconf
 from django.conf import settings
 from django.urls import path
 
-from .views import (
-    fetch, 
-    entity_list
-)
+from .views import fetch, entity_list
 
 _PREF = getattr(settings, "OIDC_PREFIX", "")
 

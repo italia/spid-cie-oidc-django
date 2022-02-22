@@ -11,7 +11,7 @@ from .statements import (
     get_entity_configurations,
     EntityConfiguration,
 )
-from . utils import datetime_from_exp
+from .utils import datetime_from_exp
 
 
 HTTPC_PARAMS = getattr(settings, "HTTPC_PARAMS", settings_local.HTTPC_PARAMS)
@@ -39,7 +39,7 @@ class TrustChainBuilder:
         max_authority_hints: int = 10,
         subject_configuration: EntityConfiguration = None,
         required_trust_marks: list = [],
-        metadata_type = 'openid_provider',
+        metadata_type="openid_provider",
         # TODO - prefetch cache?
         # pre_fetched_entity_configurations = {},
         # pre_fetched_statements = {},
@@ -57,11 +57,8 @@ class TrustChainBuilder:
         self.required_trust_marks = required_trust_marks
         self.is_valid = False
 
-        # TODO: to be removed? deprecation
-        # self.statements_collection = OrderedDict()
-
         self.tree_of_trust = OrderedDict()
-        self.trust_path = [] # list of valid subjects up to trust anchor
+        self.trust_path = []  # list of valid subjects up to trust anchor
 
         self.max_authority_hints = max_authority_hints
 
@@ -69,15 +66,15 @@ class TrustChainBuilder:
         self.max_path_len = 0
 
         self.metadata_type = metadata_type
-        self.final_metadata:dict = {}
+        self.final_metadata: dict = {}
 
         self.exp = 0
-        
+
     def apply_metadata_policy(self) -> dict:
         """
-            filters the trust path from subject to trust anchor
-            apply the metadata policies along the path and 
-            returns the final metadata
+        filters the trust path from subject to trust anchor
+        apply the metadata policies along the path and
+        returns the final metadata
         """
         # find the path of trust
         if not self.trust_path:
@@ -96,7 +93,7 @@ class TrustChainBuilder:
         path_found = False
         for ec in last_path:
             for sup_ec in ec.verified_by_superiors.values():
-                while (len(self.trust_path) - 2 < self.max_path_len):
+                while len(self.trust_path) - 2 < self.max_path_len:
                     if sup_ec.sub == self.trust_anchor_configuration.sub:
                         self.trust_path.append(sup_ec)
                         path_found = True
@@ -114,15 +111,24 @@ class TrustChainBuilder:
 
         # once I filtered a concrete and unique trust path I can apply the metadata policy
         if path_found:
-            logger.info(
-                f"Found a trust path: {self.trust_path}"
+            logger.info(f"Found a trust path: {self.trust_path}")
+            self.final_metadata = self.subject_configuration.payload.get("metadata", {}).get(
+                self.metadata_type
             )
-            self.final_metadata = self.subject_configuration.payload['metadata'][self.metadata_type]
+            if not self.final_metadata:
+                logger.error(
+                    f"Missing {self.metadata_type} in "
+                    f"{self.subject_configuration.payload['metadata']}"
+                )
+                return
+            
             for i in range(len(self.trust_path))[::-1]:
                 self.trust_path[i - 1].sub
-                _pol = self.trust_path[i].verified_descendant_statements.get(
-                    'metadata_policy', {}
-                ).get(self.metadata_type, {})
+                _pol = (
+                    self.trust_path[i]
+                    .verified_descendant_statements.get("metadata_policy", {})
+                    .get(self.metadata_type, {})
+                )
                 self.final_metadata = apply_policy(self.final_metadata, _pol)
 
         # set exp
@@ -133,12 +139,12 @@ class TrustChainBuilder:
     def exp_datetime(self):
         if self.exp:
             return datetime_from_exp(self.exp)
-    
+
     def set_exp(self):
-        exps = [i.payload['exp'] for i in self.trust_path]
+        exps = [i.payload["exp"] for i in self.trust_path]
         if exps:
-            self.exp = min(*exps)
-    
+            self.exp = min(exps)
+
     def discovery(self) -> bool:
         """
         return a chain of verified statements
@@ -147,8 +153,7 @@ class TrustChainBuilder:
         logger.info(f"Starting a Walk into Metadata Discovery for {self.subject}")
         self.tree_of_trust[0] = [self.subject_configuration]
 
-        # ecs_history = []
-
+        ecs_history = []
         while (len(self.tree_of_trust) - 2) < self.max_path_len:
             last_path_n = list(self.tree_of_trust.keys())[-1]
             last_ecs = self.tree_of_trust[last_path_n]
@@ -156,24 +161,26 @@ class TrustChainBuilder:
             sup_ecs = []
             for last_ec in last_ecs:
 
-                # TODO: Metadata discovery loop prevention
-                # if last_ec.sub in ecs_history:
-                # logger.warning(
-                # f"Metadata discovery loop detection for {last_ec.sub}. "
-                # f"Already present in {ecs_history}"
-                # )
+                # Metadata discovery loop prevention
+                if last_ec.sub in ecs_history:
+                    logger.warning(
+                        f"Metadata discovery loop detection for {last_ec.sub}. "
+                        f"Already present in {ecs_history}. "
+                        "Discovery blocked for this path."
+                    )
+                    continue
 
                 try:
                     superiors = last_ec.get_superiors(
-                        max_authority_hints = self.max_authority_hints,
-                        superiors_hints = [self.trust_anchor_configuration]
+                        max_authority_hints=self.max_authority_hints,
+                        superiors_hints=[self.trust_anchor_configuration],
                     )
                     validated_by = last_ec.validate_by_superiors(
                         superiors_entity_configurations=superiors.values()
                     )
                     vbv = list(validated_by.values())
                     sup_ecs.extend(vbv)
-                    # ecs_history.extend([i.sub for i in vbv])
+                    ecs_history.append(last_ec)
                 except Exception as e:
                     logger.exception(
                         f"Metadata discovery exception for {last_ec.sub}: {e}"
@@ -185,10 +192,13 @@ class TrustChainBuilder:
                 break
 
         last_path = list(self.tree_of_trust.keys())[-1]
-        if self.tree_of_trust[0][0].is_valid and self.tree_of_trust[last_path][0].is_valid:
+        if (
+            self.tree_of_trust[0][0].is_valid
+            and self.tree_of_trust[last_path][0].is_valid
+        ):
             self.is_valid = True
+            self.apply_metadata_policy()
 
-        self.apply_metadata_policy()
         return self.is_valid
 
     def get_trust_anchor_configuration(self) -> None:
@@ -206,10 +216,12 @@ class TrustChainBuilder:
         try:
             self.trust_anchor_configuration.validate_by_itself()
         except Exception as e:
-            logger.error(
+            _msg = (
                 f"Trust Anchor Entity Configuration failed for {self.trust_anchor}. "
                 f"{e}"
             )
+            logger.error(_msg)
+            raise Exception(_msg)
 
         if self.trust_anchor_configuration.payload.get("constraints", {}).get(
             "max_path_length"
@@ -246,9 +258,9 @@ class TrustChainBuilder:
 def trust_chain_builder(
     subject: str,
     trust_anchor: EntityConfiguration,
-    httpc_params: dict = {},
+    httpc_params: dict = HTTPC_PARAMS,
     required_trust_marks: list = [],
-    metadata_type: str = 'openid_provider',
+    metadata_type: str = "openid_provider",
 ) -> TrustChainBuilder:
     """
     Minimal Provider Discovery endpoint request processing
@@ -262,8 +274,8 @@ def trust_chain_builder(
         subject,
         trust_anchor=trust_anchor,
         required_trust_marks=required_trust_marks,
-        httpc_params=HTTPC_PARAMS,
-        metadata_type = metadata_type
+        httpc_params=httpc_params,
+        metadata_type=metadata_type,
     )
     tc.start()
 
