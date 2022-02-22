@@ -50,6 +50,7 @@ TOKEN_REFRESH_REQUEST_NO_GRANT_TYPE.pop("grant_type")
 TOKEN_REFRESH_REQUEST_NO_CORRECT_GRANT_TYPE = deepcopy(TOKEN_REFRESH_REQUEST)
 TOKEN_REFRESH_REQUEST_NO_CORRECT_GRANT_TYPE["grant_type"] = "authorization_code"
 
+# TODO: we need factory function to get fresh now
 IAT = iat_now()
 EXP = exp_from_now()
 
