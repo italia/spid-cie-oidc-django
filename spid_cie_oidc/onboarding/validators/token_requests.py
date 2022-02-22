@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import List, Literal
 
 from pydantic import BaseModel, HttpUrl, constr
 
@@ -22,3 +22,20 @@ class TokenAuthnCodeRequest(TokenRequest):
 class TokenRefreshRequest(TokenRequest):
     grant_type: Literal["refresh_token"]
     refresh_token: str
+
+
+class JwtClientAssertionStructure(BaseModel):
+    iss: HttpUrl
+    sub: HttpUrl
+    aud: HttpUrl
+    iat: int
+    exp: int
+    jti: str
+
+
+class JwtClientAssertionStructureSpid(JwtClientAssertionStructure):
+    aud: HttpUrl
+
+
+class JwtClientAssertionStructureCie(JwtClientAssertionStructure):
+    aud: List[HttpUrl]
