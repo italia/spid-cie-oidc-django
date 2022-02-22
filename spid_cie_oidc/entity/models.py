@@ -2,6 +2,7 @@ from cryptojwt.jwk.jwk import key_from_jwk_dict
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import gettext as _
 
 from spid_cie_oidc.entity.abstract_models import TimeStampedModel
@@ -296,7 +297,8 @@ class FetchedEntityStatement(TimeStampedModel):
     iat = models.DateTimeField()
 
     statement = models.JSONField(
-        blank=False, null=False, help_text=_("Entity statement"), default=dict
+        blank=False, null=False,
+        help_text=_("Entity statement"), default=dict
     )
 
     class Meta:
@@ -315,14 +317,14 @@ class TrustChain(TimeStampedModel):
     sub = models.URLField(
         max_length=255,
         blank=False,
-        help_text=_("URL that identifies this Entity in the Federation. "),
+        help_text=_("URL that identifies this Entity in the Federation. ")
     )
     type = models.CharField(
         max_length=33,
         blank=True,
         default="openid_provider",
         choices=[(i, i) for i in ENTITY_TYPES],
-        help_text=_("OpenID Connect Federation entity type"),
+        help_text=_("OpenID Connect Federation entity type")
     )
     exp = models.DateTimeField()
     iat = models.DateTimeField()
@@ -331,39 +333,47 @@ class TrustChain(TimeStampedModel):
         help_text=_(
             "A list of entity statements collected during the metadata discovery"
         ),
-        default=list,
+        default=list
     )
-    resultant_metadata = models.JSONField(
-        blank=False,
-        null=False,
+    metadata = models.JSONField(
+        blank=True,
+        null=True,
         help_text=_(
             "The final metadata applied with the metadata policy built over the chain"
         ),
-        default=dict,
+        default=dict
     )
     parties_involved = models.JSONField(
         blank=True,
         help_text=_("subjects involved in the metadata discovery"),
-        default=list,
+        default=list
     )
     status = models.CharField(
         max_length=33,
         default=False,
         help_text=_("Status of this trust chain, on each update."),
-        choices=[(i, i) for i in ENTITY_STATUS.keys()],
+        choices=[(i, i) for i in ENTITY_STATUS.keys()]
     )
-    status_log = models.JSONField(
+    log = models.TextField(
         blank=True,
         help_text=_("status log"),
-        default=dict,
+        default=""
+    )
+    processing_start = models.DateTimeField(
+        help_text=_(
+            "When the metadata discovery started for this Trust Chain. "
+            "It should prevent concurrent processing for the same sub/type."
+        ),
+        default=timezone.localtime
     )
     is_active = models.BooleanField(
         default=True,
         help_text=_(
-            "If you need to disable the trust to this subject, deacticate this"
-        ),
+            "If you need to disable the trust to this subject, uncheck this"
+        )
     )
 
+    
     class Meta:
         verbose_name = "Trust Chain"
         verbose_name_plural = "Trust Chains"
