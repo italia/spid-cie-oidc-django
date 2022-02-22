@@ -258,7 +258,7 @@ class TrustChainBuilder:
 def trust_chain_builder(
     subject: str,
     trust_anchor: EntityConfiguration,
-    httpc_params: dict = {},
+    httpc_params: dict = HTTPC_PARAMS,
     required_trust_marks: list = [],
     metadata_type: str = "openid_provider",
 ) -> TrustChainBuilder:
@@ -274,7 +274,7 @@ def trust_chain_builder(
         subject,
         trust_anchor=trust_anchor,
         required_trust_marks=required_trust_marks,
-        httpc_params=HTTPC_PARAMS,
+        httpc_params=httpc_params,
         metadata_type=metadata_type,
     )
     tc.start()
