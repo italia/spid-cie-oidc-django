@@ -82,3 +82,29 @@ Then verify
 from spid_cie_oidc.entity.jwtse  import verify_jws
 verify_jws(jws, jwk)
 ````
+
+# How to obtain head from a jws
+
+Enter in your project shell
+
+````
+./manage.py shell
+````
+Create a jws as described above, then
+````
+from spid_cie_oidc.entity.jwtse import unpad_jwt_head
+unpad_jwt_head(jws)
+````
+
+# How to obtain payload from a jws
+
+Enter in your project shell
+
+````
+./manage.py shell
+````
+Create a jws as described above, then
+````
+from spid_cie_oidc.entity.jwtse import unpad_jwt_payload
+unpad_jwt_payload(jws)
+````
