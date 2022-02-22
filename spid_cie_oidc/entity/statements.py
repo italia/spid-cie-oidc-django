@@ -65,6 +65,15 @@ def get_entity_configurations(subjects: list, httpc_params: dict = {}):
     return get_http_url(urls, httpc_params)
 
 
+class TrustMark:
+    
+    def __init__(self, jwt: str, httpc_params: dict = {}):
+        self.jwt = jwt
+        self.header = unpad_jwt_head(jwt)
+        self.payload = unpad_jwt_payload(jwt)
+        self.sub = self.payload["sub"]
+
+
 class EntityConfiguration:
     """
     The self issued/signed statement of a federation entity
@@ -122,7 +131,7 @@ class EntityConfiguration:
         self.is_valid = True
         return True
 
-    def get_valid_trust_marks(self) -> bool:
+    def validate_by_allowed_trust_marks(self) -> bool:
         """
         validate the entity configuration ony if marked by a well known
         trust mark, issued by a trusted issuer
@@ -130,6 +139,28 @@ class EntityConfiguration:
         # if not self.filter_by_allowed_trust_marks:
         # return True
         # TODO
+        if not self.filter_by_allowed_trust_marks:
+            return True
+
+        if not self.payload.get('trust_marks'):
+            return False
+
+        trust_marks = []
+        is_valid = False
+        for tm in self.payload['trust_marks']:
+            if tm.get('id', None) not in self.filter_by_allowed_trust_marks:
+                continue
+            try:
+                trust_mark = TrustMark(tm)
+            except Exception as e:
+                logger.warning(
+                    f"Trust Mark decoding failed on [{tm}]"
+                )
+                continue
+            else:
+                trust_marks.append(trust_mark)
+
+        breakpoint()
         raise NotImplementedError()
 
     def get_superiors(

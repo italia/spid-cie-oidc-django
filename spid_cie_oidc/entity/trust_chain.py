@@ -29,6 +29,10 @@ class TrustChainBuilder:
 
     max_intermediaries means how many hops are allowed to the trust anchor
     max_authority_hints means how much authority_hints to follow on each hop
+
+    required_trust_marks means all the trsut marks needed to start a metadata discovery
+     at least one of the required trust marks is needed to start a metadata discovery
+     if this param if absent the filter won't be considered.
     """
 
     def __init__(
@@ -237,12 +241,17 @@ class TrustChainBuilder:
             jwt = get_entity_configurations(
                 self.subject, httpc_params=self.httpc_params
             )
-            self.subject_configuration = EntityConfiguration(jwt[0])
+            self.subject_configuration = EntityConfiguration(
+                jwt[0],
+                trust_anchors_entity_confs = [self.trust_anchor_configuration]
+            )
             self.subject_configuration.validate_by_itself()
 
             # TODO
-            # TODO: self.subject_configuration.get_valid_trust_marks()
-            # valid trust marks to be compared to self.required_trust_marks
+            if self.required_trust_marks:
+                sc = self.subject_configuration
+                sc.filter_by_allowed_trust_marks = self.required_trust_marks
+                sc.validate_by_allowed_trust_marks()
 
     def start(self):
         try:
