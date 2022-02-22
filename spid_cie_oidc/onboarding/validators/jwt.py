@@ -15,12 +15,14 @@ except:
     MAX_ACCEPTED_TIMEDIFF = 5
 
 
-class JwtClientAssertionStructure(BaseModel):
+class JwtStructure(BaseModel):
     iss: HttpUrl
     sub: HttpUrl
     iat: int
     exp: int
     jti: str
+    # TODO: migliorare: array di url con almeno uno
+    aud: List[HttpUrl]
 
     @validator("exp")
     def validate_exp(cls, exp):
@@ -36,9 +38,16 @@ class JwtClientAssertionStructure(BaseModel):
             raise ValueError(f'iat MUST be in the last {MAX_ACCEPTED_TIMEDIFF} minutes')
 
 
-class JwtClientAssertionStructureSpid(JwtClientAssertionStructure):
-    aud: HttpUrl
+class IdTokenJwt(JwtStructure):
+    # TODO: implementare
+    pass
 
 
-class JwtClientAssertionStructureCie(JwtClientAssertionStructure):
-    aud: List[HttpUrl]
+class AccessTokenJwt(JwtStructure):
+    # TODO: implementare
+    pass
+
+
+class RefreshTokenJwt(JwtStructure):
+    # TODO: implementare
+    pass
