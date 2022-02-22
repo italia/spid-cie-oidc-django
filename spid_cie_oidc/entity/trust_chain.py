@@ -57,9 +57,6 @@ class TrustChainBuilder:
         self.required_trust_marks = required_trust_marks
         self.is_valid = False
 
-        # TODO: to be removed? deprecation
-        # self.statements_collection = OrderedDict()
-
         self.tree_of_trust = OrderedDict()
         self.trust_path = []  # list of valid subjects up to trust anchor
 
@@ -115,9 +112,16 @@ class TrustChainBuilder:
         # once I filtered a concrete and unique trust path I can apply the metadata policy
         if path_found:
             logger.info(f"Found a trust path: {self.trust_path}")
-            self.final_metadata = self.subject_configuration.payload["metadata"][
+            self.final_metadata = self.subject_configuration.payload.get("metadata", {}).get(
                 self.metadata_type
-            ]
+            )
+            if not self.final_metadata:
+                logger.error(
+                    f"Missing {self.metadata_type} in "
+                    f"{self.subject_configuration.payload['metadata']}"
+                )
+                return
+            
             for i in range(len(self.trust_path))[::-1]:
                 self.trust_path[i - 1].sub
                 _pol = (
@@ -157,7 +161,7 @@ class TrustChainBuilder:
             sup_ecs = []
             for last_ec in last_ecs:
 
-                # TODO: Metadata discovery loop prevention
+                # Metadata discovery loop prevention
                 if last_ec.sub in ecs_history:
                     logger.warning(
                         f"Metadata discovery loop detection for {last_ec.sub}. "
@@ -212,10 +216,12 @@ class TrustChainBuilder:
         try:
             self.trust_anchor_configuration.validate_by_itself()
         except Exception as e:
-            logger.error(
+            _msg = (
                 f"Trust Anchor Entity Configuration failed for {self.trust_anchor}. "
                 f"{e}"
             )
+            logger.error(_msg)
+            raise Exception(_msg)
 
         if self.trust_anchor_configuration.payload.get("constraints", {}).get(
             "max_path_length"
