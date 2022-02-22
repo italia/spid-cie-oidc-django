@@ -168,8 +168,14 @@ class EntityConfiguration:
 
         jwts = get_entity_configurations(authority_hints, self.httpc_params)
         for jwt in jwts:
-            ec = self.__class__(jwt, httpc_params=self.httpc_params)
-
+            try:
+                ec = self.__class__(jwt, httpc_params=self.httpc_params)
+            except Exception as e:
+                logger.warning(
+                    f"Get statement superiors falied for {jwt}: {e}"
+                )
+                continue
+            
             if ec.validate_by_itself():
                 target = self.verified_superiors
             else:

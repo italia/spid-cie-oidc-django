@@ -12,10 +12,9 @@ from spid_cie_oidc.entity.exceptions import (
     MissingAuthorityHintsClaim,
     NotDescendant
 )
-from . import settings as local_settings
 
-  
-logger = logging.getLogger(__name__)    
+
+logger = logging.getLogger(__name__)
 HTTPC_PARAMS = getattr(
     settings, "HTTPC_PARAMS", entity_settings.HTTPC_PARAMS
 )

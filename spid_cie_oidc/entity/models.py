@@ -373,7 +373,6 @@ class TrustChain(TimeStampedModel):
         )
     )
 
-    
     class Meta:
         verbose_name = "Trust Chain"
         verbose_name_plural = "Trust Chains"

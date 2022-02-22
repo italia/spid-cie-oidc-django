@@ -121,7 +121,7 @@ class TrustChainBuilder:
                     f"{self.subject_configuration.payload['metadata']}"
                 )
                 return
-            
+
             for i in range(len(self.trust_path))[::-1]:
                 self.trust_path[i - 1].sub
                 _pol = (

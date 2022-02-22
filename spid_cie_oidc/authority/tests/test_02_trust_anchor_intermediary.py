@@ -155,3 +155,11 @@ class TATest(TestCase):
             trust_anchor=trust_anchor_ec,
             metadata_type="openid_relying_party",
         )
+
+        for ec in trust_chain.trust_path:
+            self.assertTrue(ec.is_valid)
+
+        self.assertTrue(len(trust_chain.trust_path) == 3)
+        self.assertTrue(
+            (len(trust_chain.trust_path) - 2) == trust_chain.max_path_len
+        )
