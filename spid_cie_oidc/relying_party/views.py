@@ -296,3 +296,6 @@ def oidc_rpinitiated_logout(request):
         auth_token.logged_out = timezone.localtime()
         auth_token.save()
         return HttpResponseRedirect(url)
+
+def oidc_rp_landing(request):
+    return render(request, "rp_landing.html") 

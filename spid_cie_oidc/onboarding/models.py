@@ -52,7 +52,12 @@ class OnBoardingRegistration(TimeStampedModel):
     class Meta:
         verbose_name = "OnBoarding Registration"
         verbose_name_plural = "OnBoarding Registrations"
-        ordering = ['created']
+        ordering = ['-created']
+    
+    def clean(self) -> None:
+        super().clean()
+        breakpoint()
+        pass
 
     def __str__(self):
         return f"{self.organization_name} {self.url_entity}"
