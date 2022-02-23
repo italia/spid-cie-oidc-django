@@ -2,7 +2,7 @@ import logging
 
 from django.test import TestCase
 from pydantic import ValidationError
-from spid_cie_oidc.onboarding.validators.authn_requests import (
+from spid_cie_oidc.onboarding.schemas.authn_requests import (
     AuthenticationRequestCie, AuthenticationRequestSpid)
 
 from .authn_request_settings import (

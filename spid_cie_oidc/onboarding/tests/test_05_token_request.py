@@ -2,8 +2,8 @@ import logging
 
 from django.test import TestCase
 from pydantic import ValidationError
-from spid_cie_oidc.onboarding.validators.jwt import JwtStructure
-from spid_cie_oidc.onboarding.validators.token_requests import (
+from spid_cie_oidc.onboarding.schemas.jwt import JwtStructure
+from spid_cie_oidc.onboarding.schemas.token_requests import (
     TokenAuthnCodeRequest, TokenRefreshRequest)
 
 from .token_request_settings import (

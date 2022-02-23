@@ -10,7 +10,7 @@ from spid_cie_oidc.onboarding.tests.token_response_settings import (
     TOKEN_REFRESH_RESPONSE_NO_REFRESH_TOKEN, TOKEN_RESPONSE,
     TOKEN_RESPONSE_NO_ACCESS_TOKEN, TOKEN_RESPONSE_NO_CORRECT_ACCESS_TOKEN,
     TOKEN_RESPONSE_NO_CORRECT_TOKEN_TYPE, TOKEN_RESPONSE_NO_TOKEN_TYPE)
-from spid_cie_oidc.onboarding.validators.token_response import (
+from spid_cie_oidc.onboarding.schemas.token_response import (
     TokenErrorResponse, TokenRefreshResponse, TokenResponse)
 
 logger = logging.getLogger(__name__)
