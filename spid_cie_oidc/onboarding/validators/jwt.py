@@ -51,3 +51,13 @@ class AccessTokenJwt(JwtStructure):
 class RefreshTokenJwt(JwtStructure):
     # TODO: implementare
     pass
+
+
+class UserInfoResponseJwtHeader(BaseModel):
+    # TODO: implementare
+    pass
+
+
+class UserInfoResponseJwtPayload(JwtStructure):
+    # TODO: implementare
+    pass
