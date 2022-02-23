@@ -27,7 +27,7 @@ class OnboardingTest(TestCase):
         self.assertFormError(res, 'form', 'public_jwks', 'Enter the public jwks of the entities')
         self.assertEqual(res.status_code, 200)
         self.data["organization_name"] = "test name"
-        self.data["url_entity"] = "https://test.it"
+        self.data["url_entity"] = "http://127.0.0.1:8000/oidc/rp/"
         self.data["authn_buttons_page_url"] = "https://authnurl.com"
         self.data["public_jwks"] = {"key":"ciao"}
         res = c.post(url, self.data)
