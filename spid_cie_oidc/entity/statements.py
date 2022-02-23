@@ -71,7 +71,13 @@ class TrustMark:
         self.jwt = jwt
         self.header = unpad_jwt_head(jwt)
         self.payload = unpad_jwt_payload(jwt)
+
+        self.id = self.payload["id"]
         self.sub = self.payload["sub"]
+        self.iss = self.payload["iss"]
+
+    def __repr__(self) -> str:
+        return f"{self.id} to {self.sub} issued by {self.iss}"
 
 
 class EntityConfiguration:
@@ -84,7 +90,7 @@ class EntityConfiguration:
         jwt: str,
         httpc_params: dict = {},
         filter_by_allowed_trust_marks: list = [],
-        trust_anchors_entity_confs: dict = [],
+        trust_anchor_entity_conf = None,
         trust_mark_issuers_entity_confs: dict = [],
     ):
         self.jwt = jwt
@@ -101,7 +107,7 @@ class EntityConfiguration:
         self.httpc_params = httpc_params
 
         self.filter_by_allowed_trust_marks = filter_by_allowed_trust_marks
-        self.trust_anchors_entity_confs = trust_anchors_entity_confs
+        self.trust_anchor_entity_conf = trust_anchor_entity_conf
         self.trust_mark_issuers_entity_confs = trust_mark_issuers_entity_confs
 
         # a dict with sup_sub : superior entity configuration
@@ -136,9 +142,6 @@ class EntityConfiguration:
         validate the entity configuration ony if marked by a well known
         trust mark, issued by a trusted issuer
         """
-        # if not self.filter_by_allowed_trust_marks:
-        # return True
-        # TODO
         if not self.filter_by_allowed_trust_marks:
             return True
 
@@ -151,7 +154,12 @@ class EntityConfiguration:
             if tm.get('id', None) not in self.filter_by_allowed_trust_marks:
                 continue
             try:
-                trust_mark = TrustMark(tm)
+                trust_mark = TrustMark(tm['trust_mark'])
+            except KeyError:
+                logger.warning(
+                    f"Trust Mark decoding failed on [{tm}]. "
+                    "Missing 'trust_mark' claim in it"
+                )
             except Exception as e:
                 logger.warning(
                     f"Trust Mark decoding failed on [{tm}]"
@@ -160,6 +168,41 @@ class EntityConfiguration:
             else:
                 trust_marks.append(trust_mark)
 
+        required_issuer_ecs = []
+        for trust_mark in trust_marks:
+            if trust_mark.iss not in [
+                i.payload.get('iss', None)
+                for i in self.trust_mark_issuers_entity_confs
+            ]:
+                required_issuer_ecs.append(trust_mark.iss)
+
+        # exclude trust marks issued by not allowed issuers
+        if self.trust_anchor_entity_conf
+        # se false -> prendi il jwt della TA e validalo
+        # controlla che ci siano trust_marks_issuers
+        # escludi tutti i trusk mark di iss non definiti in trust_marks_issuers
+           ...
+
+        if required_issuer_ec:
+            # fetch the issuer entity configuration and validate it
+            iecs = get_entity_configurations(
+                [required_issuer_ecs], self.httpc_params
+            )
+            for jwt in iecs:
+                try:
+                    ec = self.__class__(jwt, httpc_params=self.httpc_params)
+                    ec.validate_by_itself()
+                except Exception as e:
+                    logger.warning(
+                        "Trust Marks issuer Entity Configuration "
+                        f"failed for {jwt}: {e}"
+                    )
+                    continue
+                self.trust_mark_issuers_entity_confs.append(ec)
+
+        
+        
+                
         breakpoint()
         raise NotImplementedError()
 
