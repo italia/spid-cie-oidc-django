@@ -2,7 +2,7 @@
 
 ````
 ./manage.py shell
-from spid_cie_oidc.onboarding.validators.introspection_request import IntrospectionRequest
+from spid_cie_oidc.onboarding.schemas.introspection_request import IntrospectionRequest
 print(IntrospectionRequest.schema_json(indent=2))
 ````
 
@@ -17,6 +17,6 @@ from spid_cie_oidc.onboarding.tests.introspection_request_settings import INTROS
 ````
 Then to validate
 ````
-from spid_cie_oidc.onboarding.validators.introspection_request import IntrospectionRequest
+from spid_cie_oidc.onboarding.schemas.introspection_request import IntrospectionRequest
 IntrospectionRequest(**INTROSPECTION_REQUEST)
 ````

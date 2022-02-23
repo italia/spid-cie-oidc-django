@@ -2,7 +2,7 @@
 
 ````
 ./manage.py shell
-from spid_cie_oidc.onboarding.validators.token_requests import TokenAuthnCodeRequest
+from spid_cie_oidc.onboarding.schemas.token_requests import TokenAuthnCodeRequest
 print(TokenAuthnCodeRequest.schema_json(indent=2))
 ````
 
@@ -17,7 +17,7 @@ from spid_cie_oidc.onboarding.tests.token_request_settings import TOKEN_AUTHN_CO
 ````
 Then to validate
 ````
-from spid_cie_oidc.onboarding.validators.token_requests import TokenAuthnCodeRequest
+from spid_cie_oidc.onboarding.schemas.token_requests import TokenAuthnCodeRequest
 TokenAuthnCodeRequest(**TOKEN_AUTHN_CODE_REQUEST)
 ````
 
@@ -25,7 +25,7 @@ TokenAuthnCodeRequest(**TOKEN_AUTHN_CODE_REQUEST)
 
 ````
 ./manage.py shell
-from spid_cie_oidc.onboarding.validators.token_requests import TokenRefreshRequest
+from spid_cie_oidc.onboarding.schemas.token_requests import TokenRefreshRequest
 print(TokenRefreshRequest.schema_json(indent=2))
 ````
 
@@ -40,7 +40,7 @@ from spid_cie_oidc.onboarding.tests.token_request_settings import TOKEN_REFRESH_
 ````
 Then to validate
 ````
-from spid_cie_oidc.onboarding.validators.token_requests import TokenRefreshRequest
+from spid_cie_oidc.onboarding.schemas.token_requests import TokenRefreshRequest
 TokenRefreshRequest(**TOKEN_REFRESH_REQUEST)
 ````
 
@@ -48,7 +48,7 @@ TokenRefreshRequest(**TOKEN_REFRESH_REQUEST)
 
 ````
 ./manage.py shell
-from spid_cie_oidc.onboarding.validators.token_requests import JwtClientAssertionStructureSpid
+from spid_cie_oidc.onboarding.schemas.token_requests import JwtClientAssertionStructureSpid
 print(JwtClientAssertionStructureSpid.schema_json(indent=2))
 ````
 
@@ -64,6 +64,6 @@ from spid_cie_oidc.onboarding.tests.token_request_settings import JWT_CLIENT_ASS
 ````
 Then to validate
 ````
-from spid_cie_oidc.onboarding.validators.token_requests import JwtClientAssertionStructureSpid
+from spid_cie_oidc.onboarding.schemas.token_requests import JwtClientAssertionStructureSpid
 JwtClientAssertionStructureSpid(**JWT_CLIENT_ASSERTION_SPID)
 ````
