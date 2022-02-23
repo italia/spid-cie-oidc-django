@@ -13,7 +13,7 @@ DEBUG = True
 # the path corresponding the admin backend, default if not defined: admin/
 # CHANGE THIS VALUE
 ADMIN_PATH = 'admin/'
-OIDCFED_FEDERATION_TRUST_ANCHORS = ["http://127.0.0.1:8000"]
+OIDCFED_FEDERATION_TRUST_ANCHORS = ["http://127.0.0.1:8000/"]
 
 # required for onboarding checks
 FEDERATION_DEFAULT_METADATA_POLICY = {
