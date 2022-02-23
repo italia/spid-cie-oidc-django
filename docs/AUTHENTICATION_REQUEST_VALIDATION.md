@@ -2,7 +2,7 @@
 
 ````
 ./manage.py shell
-from spid_cie_oidc.onboarding.validators.authn_requests import AuthenticationRequestSpid
+from spid_cie_oidc.onboarding.schemas.authn_requests import AuthenticationRequestSpid
 print(AuthenticationRequestSpid.schema_json(indent=2))
 ````
 
@@ -17,7 +17,7 @@ from spid_cie_oidc.onboarding.tests.authn_request_settings import AUTHN_REQUEST_
 ````
 Then to validate
 ````
-from spid_cie_oidc.onboarding.validators.authn_requests import AuthenticationRequestSpid
+from spid_cie_oidc.onboarding.schemas.authn_requests import AuthenticationRequestSpid
 AuthenticationRequestSpid(**AUTHN_REQUEST_SPID)
 ````
 
