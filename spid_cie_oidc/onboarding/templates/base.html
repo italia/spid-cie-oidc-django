@@ -33,7 +33,6 @@ https://www.spid.gov.it/
 
 <!-- Logo in Header -->
 {% block header_center_logo %}
-<!-- <img class="icon" src="{% static 'images/logo.png' %}" /> -->
 {% endblock header_center_logo %}
 
 <!-- Organization name in Header -->
@@ -46,12 +45,31 @@ https://www.spid.gov.it/
     {% trans "OIDC Federation onboarding system" %}
 {% endblock header_center_org_subname %}
 
-{% block main_menu %}
-{% endblock main_menu %}
+
+{% block menu_links %}
+
+<li class="nav-item ">
+    <a class="nav-link {% if request.resolver_match.view_name == 'oidc_onboarding_landing' %}active{% endif %}" 
+    href="{% url 'oidc_onboarding_landing' %}">
+        <span>{% trans 'Home' %}</span>
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.view_name == 'oidc_onboarding_entities' %}active{% endif %}" 
+    href="{% url 'oidc_onboarding_entities' %}">
+        <span>{% trans 'Entities onboardred' %}</span>
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.view_name == 'oidc_onboarding_registration' %}active{% endif %}" 
+    href="{% url 'oidc_onboarding_registration' %}">
+        <span>{% trans 'Register your entity' %}</span>
+    </a>
+</li>
+{% endblock menu_links %}
 
 <!-- Logo in Footer -->
 {% block footer_logo %}
-<!-- <img class="icon" src="{% static 'images/logo_white.png' %}" /> -->
 {% endblock footer_logo %}
 
 <!-- Organization name in Footer -->
