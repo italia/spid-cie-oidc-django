@@ -2,7 +2,6 @@ from copy import deepcopy
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
 from django.db import models
 
 # from django.db.models.signals import post_save
@@ -16,18 +15,13 @@ from spid_cie_oidc.entity.models import (
     PublicJwk,
 )
 
-from spid_cie_oidc.entity.exceptions import MissingAuthorityHintsClaim, NotDescendant
-from spid_cie_oidc.entity.statements import (
-    get_entity_configurations,
-    EntityConfiguration,
-)
 from spid_cie_oidc.entity.jwtse import create_jws
-from spid_cie_oidc.entity.trust_chain import HTTPC_PARAMS
 from spid_cie_oidc.entity.utils import iat_now
 from spid_cie_oidc.entity.utils import exp_from_now
 from typing import Union
 
 from . import settings as local_settings
+from . validators import validate_entity_configuration
 
 import json
 import logging
@@ -94,38 +88,6 @@ class FederationDescendant(TimeStampedModel):
     """
     Federation OnBoarding entries.
     """
-
-    def validate_entity_configuration(value):
-        """
-        value is the sub url
-        """
-        try:
-            jwt = get_entity_configurations(value)[0]
-        except Exception as e:
-            raise ValidationError(
-                f"Failed to fetch Entity Configuration for {value}: {e}"
-            )
-        ec = EntityConfiguration(jwt, httpc_params=HTTPC_PARAMS)
-        ec.validate_by_itself()
-
-        authority_hints = ec.payload.get("authority_hints", [])
-        if not authority_hints:
-            raise MissingAuthorityHintsClaim(
-                "authority_hints must be present "
-                "in a descendant entity configuration"
-            )
-
-        proper_descendant = False
-        for i in authority_hints:
-            if i in settings.OIDCFED_FEDERATION_TRUST_ANCHORS:
-                proper_descendant = True
-                break
-        if not proper_descendant:
-            raise NotDescendant(
-                "This participant MUST have one of "
-                f"{', '.join(settings.OIDCFED_FEDERATION_TRUST_ANCHORS)} in "
-                f"its authority_hints claim. It has: {authority_hints}"
-            )
 
     def def_uid():
         return f"autouid-{uuid.uuid4()}"

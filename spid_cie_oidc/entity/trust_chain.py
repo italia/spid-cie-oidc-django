@@ -57,9 +57,6 @@ class TrustChainBuilder:
         self.required_trust_marks = required_trust_marks
         self.is_valid = False
 
-        # TODO: to be removed? deprecation
-        # self.statements_collection = OrderedDict()
-
         self.tree_of_trust = OrderedDict()
         self.trust_path = []  # list of valid subjects up to trust anchor
 
@@ -115,9 +112,16 @@ class TrustChainBuilder:
         # once I filtered a concrete and unique trust path I can apply the metadata policy
         if path_found:
             logger.info(f"Found a trust path: {self.trust_path}")
-            self.final_metadata = self.subject_configuration.payload["metadata"][
+            self.final_metadata = self.subject_configuration.payload.get("metadata", {}).get(
                 self.metadata_type
-            ]
+            )
+            if not self.final_metadata:
+                logger.error(
+                    f"Missing {self.metadata_type} in "
+                    f"{self.subject_configuration.payload['metadata']}"
+                )
+                return
+
             for i in range(len(self.trust_path))[::-1]:
                 self.trust_path[i - 1].sub
                 _pol = (
@@ -139,7 +143,7 @@ class TrustChainBuilder:
     def set_exp(self):
         exps = [i.payload["exp"] for i in self.trust_path]
         if exps:
-            self.exp = min(*exps)
+            self.exp = min(exps)
 
     def discovery(self) -> bool:
         """
@@ -149,8 +153,7 @@ class TrustChainBuilder:
         logger.info(f"Starting a Walk into Metadata Discovery for {self.subject}")
         self.tree_of_trust[0] = [self.subject_configuration]
 
-        # ecs_history = []
-
+        ecs_history = []
         while (len(self.tree_of_trust) - 2) < self.max_path_len:
             last_path_n = list(self.tree_of_trust.keys())[-1]
             last_ecs = self.tree_of_trust[last_path_n]
@@ -158,12 +161,14 @@ class TrustChainBuilder:
             sup_ecs = []
             for last_ec in last_ecs:
 
-                # TODO: Metadata discovery loop prevention
-                # if last_ec.sub in ecs_history:
-                # logger.warning(
-                # f"Metadata discovery loop detection for {last_ec.sub}. "
-                # f"Already present in {ecs_history}"
-                # )
+                # Metadata discovery loop prevention
+                if last_ec.sub in ecs_history:
+                    logger.warning(
+                        f"Metadata discovery loop detection for {last_ec.sub}. "
+                        f"Already present in {ecs_history}. "
+                        "Discovery blocked for this path."
+                    )
+                    continue
 
                 try:
                     superiors = last_ec.get_superiors(
@@ -175,7 +180,7 @@ class TrustChainBuilder:
                     )
                     vbv = list(validated_by.values())
                     sup_ecs.extend(vbv)
-                    # ecs_history.extend([i.sub for i in vbv])
+                    ecs_history.append(last_ec)
                 except Exception as e:
                     logger.exception(
                         f"Metadata discovery exception for {last_ec.sub}: {e}"
@@ -192,8 +197,8 @@ class TrustChainBuilder:
             and self.tree_of_trust[last_path][0].is_valid
         ):
             self.is_valid = True
+            self.apply_metadata_policy()
 
-        self.apply_metadata_policy()
         return self.is_valid
 
     def get_trust_anchor_configuration(self) -> None:
@@ -211,10 +216,12 @@ class TrustChainBuilder:
         try:
             self.trust_anchor_configuration.validate_by_itself()
         except Exception as e:
-            logger.error(
+            _msg = (
                 f"Trust Anchor Entity Configuration failed for {self.trust_anchor}. "
                 f"{e}"
             )
+            logger.error(_msg)
+            raise Exception(_msg)
 
         if self.trust_anchor_configuration.payload.get("constraints", {}).get(
             "max_path_length"
@@ -251,7 +258,7 @@ class TrustChainBuilder:
 def trust_chain_builder(
     subject: str,
     trust_anchor: EntityConfiguration,
-    httpc_params: dict = {},
+    httpc_params: dict = HTTPC_PARAMS,
     required_trust_marks: list = [],
     metadata_type: str = "openid_provider",
 ) -> TrustChainBuilder:
@@ -267,7 +274,7 @@ def trust_chain_builder(
         subject,
         trust_anchor=trust_anchor,
         required_trust_marks=required_trust_marks,
-        httpc_params=HTTPC_PARAMS,
+        httpc_params=httpc_params,
         metadata_type=metadata_type,
     )
     tc.start()
