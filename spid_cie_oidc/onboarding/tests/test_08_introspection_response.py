@@ -16,7 +16,7 @@ from spid_cie_oidc.onboarding.tests.introspection_response_settings import (
     INTROSPECTION_RESPONSE_NO_CORRECT_ISS,
     INTROSPECTION_RESPONSE_NO_CORRECT_SCOPE,
     INTROSPECTION_RESPONSE_NO_CORRECT_SUB)
-from spid_cie_oidc.onboarding.validators.introspection_response import (
+from spid_cie_oidc.onboarding.schemas.introspection_response import (
     IntrospectionErrorResponse, IntrospectionErrorResponseCie,
     IntrospectionErrorResponseSpid, IntrospectionResponse)
 

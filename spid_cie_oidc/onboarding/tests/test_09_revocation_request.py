@@ -8,7 +8,7 @@ from spid_cie_oidc.onboarding.tests.revocation_request_settings import (
     REVOCATION_REQUEST_NO_CORRECT_CLIENT_ASSERTION_TYPE,
     REVOCATION_REQUEST_NO_CORRECT_CLIENT_ID,
     REVOCATION_REQUEST_NO_CORRECT_TOKEN, REVOCATION_REQUEST_NO_TOKEN)
-from spid_cie_oidc.onboarding.validators.revocation_request import RevocationRequest
+from spid_cie_oidc.onboarding.schemas.revocation_request import RevocationRequest
 
 
 class RevocationRequestTest(TestCase):

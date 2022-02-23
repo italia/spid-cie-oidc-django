@@ -10,7 +10,7 @@ from spid_cie_oidc.onboarding.tests.introspection_request_settings import (
     INTROSPECTION_REQUEST_NO_CORRECT_CLIENT_ASSERTION_TYPE,
     INTROSPECTION_REQUEST_NO_CORRECT_CLIENT_ID,
     INTROSPECTION_REQUEST_NO_CORRECT_TOKEN, INTROSPECTION_REQUEST_NO_TOKEN)
-from spid_cie_oidc.onboarding.validators.introspection_request import IntrospectionRequest
+from spid_cie_oidc.onboarding.schemas.introspection_request import IntrospectionRequest
 
 
 class IntrospectionRequestTest(TestCase):

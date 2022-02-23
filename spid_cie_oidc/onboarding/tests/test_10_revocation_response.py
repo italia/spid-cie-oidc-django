@@ -5,7 +5,7 @@ from spid_cie_oidc.onboarding.tests.revocation_response_settings import (
     REVOCATION_RESPONSE_CIE_NO_CORRECT_ERROR_DESCRIPTION,
     REVOCATION_RESPONSE_CIE_NO_ERROR,
     REVOCATION_RESPONSE_CIE_NO_ERROR_DESCRIPTION)
-from spid_cie_oidc.onboarding.validators.revocation_response import RevocationErrorResponseCie
+from spid_cie_oidc.onboarding.schemas.revocation_response import RevocationErrorResponseCie
 
 
 class RevocationResponseTest(TestCase):
