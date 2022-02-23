@@ -115,6 +115,8 @@ class EntityResponseWithIntermediate(EntityResponse):
         if self.result.status_code != 200:
             raise HttpError(f"Something went wrong with Http Request: {res.__dict__}")
 
+        logger.info("-------------------------------------------------")
+        logger.info("")
         return self.result_as_jws()
 
 
