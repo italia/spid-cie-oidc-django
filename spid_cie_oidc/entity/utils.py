@@ -12,5 +12,5 @@ def exp_from_now(minutes: int = 33) -> int:
     return int((_now + datetime.timedelta(minutes=minutes)).timestamp())
 
 
-def datetime_from_exp(value) -> datetime.datetime:
+def datetime_from_timestamp(value) -> datetime.datetime:
     return make_aware(datetime.datetime.fromtimestamp(value))

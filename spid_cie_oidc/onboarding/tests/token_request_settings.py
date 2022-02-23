@@ -1,5 +1,7 @@
 from copy import deepcopy
 
+from spid_cie_oidc.entity.utils import *
+
 TOKEN_REQUEST = {
     "client_id": "https://rp.cie.it",
     "client_assertion": "head.payload.verifysignature",
@@ -47,3 +49,53 @@ TOKEN_REFRESH_REQUEST_NO_GRANT_TYPE.pop("grant_type")
 
 TOKEN_REFRESH_REQUEST_NO_CORRECT_GRANT_TYPE = deepcopy(TOKEN_REFRESH_REQUEST)
 TOKEN_REFRESH_REQUEST_NO_CORRECT_GRANT_TYPE["grant_type"] = "authorization_code"
+
+# TODO: we need factory function to get fresh now
+IAT = iat_now()
+EXP = exp_from_now()
+
+JWT_CLIENT_ASSERTION = {
+    "iss": "https://rp.cie.it",
+    "sub": "https://rp.cie.it",
+    "iat": IAT,
+    "exp": EXP,
+    "aud": ["https://rp.spid.agid.gov.it/auth"],
+    "jti": "a72d5df0-2415-4c7c-a44f-3988b354040b",
+}
+
+
+JWT_CLIENT_ASSERTION_NO_ISS = deepcopy(JWT_CLIENT_ASSERTION)
+JWT_CLIENT_ASSERTION_NO_ISS.pop("iss")
+
+JWT_CLIENT_ASSERTION_NO_CORRECT_ISS = deepcopy(JWT_CLIENT_ASSERTION)
+JWT_CLIENT_ASSERTION_NO_CORRECT_ISS["iss"] = "https://idserve.i"
+
+JWT_CLIENT_ASSERTION_NO_SUB = deepcopy(JWT_CLIENT_ASSERTION)
+JWT_CLIENT_ASSERTION_NO_SUB.pop("sub")
+
+JWT_CLIENT_ASSERTION_NO_CORRECT_SUB = deepcopy(JWT_CLIENT_ASSERTION)
+JWT_CLIENT_ASSERTION_NO_CORRECT_SUB["sub"] = "https://idserver"
+
+JWT_CLIENT_ASSERTION_NO_IAT = deepcopy(JWT_CLIENT_ASSERTION)
+JWT_CLIENT_ASSERTION_NO_IAT.pop("iat")
+
+JWT_CLIENT_ASSERTION_NO_CORRECT_IAT = deepcopy(JWT_CLIENT_ASSERTION)
+JWT_CLIENT_ASSERTION_NO_CORRECT_IAT["iat"] = str(IAT + 400)
+
+JWT_CLIENT_ASSERTION_NO_EXP = deepcopy(JWT_CLIENT_ASSERTION)
+JWT_CLIENT_ASSERTION_NO_EXP.pop("exp")
+
+JWT_CLIENT_ASSERTION_NO_CORRECT_EXP = deepcopy(JWT_CLIENT_ASSERTION)
+JWT_CLIENT_ASSERTION_NO_CORRECT_EXP["exp"] = 1000
+
+JWT_CLIENT_ASSERTION_NO_JTI = deepcopy(JWT_CLIENT_ASSERTION)
+JWT_CLIENT_ASSERTION_NO_JTI.pop("jti")
+
+JWT_CLIENT_ASSERTION_NO_CORRECT_JTI = deepcopy(JWT_CLIENT_ASSERTION)
+JWT_CLIENT_ASSERTION_NO_CORRECT_JTI["jti"] = []
+
+JWT_CLIENT_ASSERTION_NO_AUD = deepcopy(JWT_CLIENT_ASSERTION)
+JWT_CLIENT_ASSERTION_NO_AUD.pop("aud")
+
+JWT_CLIENT_ASSERTION_NO_CORRECT_AUD = deepcopy(JWT_CLIENT_ASSERTION)
+JWT_CLIENT_ASSERTION_NO_CORRECT_AUD["aud"] = "https://rp.spid.agid.gov.it/auth"
