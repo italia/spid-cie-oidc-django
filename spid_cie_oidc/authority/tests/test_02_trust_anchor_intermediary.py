@@ -115,7 +115,7 @@ class TATest(TestCase):
 
     @override_settings(HTTP_CLIENT_SYNC=True)
     @patch("requests.get", return_value=EntityResponseWithIntermediate())
-    def test_trust_chain_valid_with_intermediaries(self, mocked):
+    def test_trust_chain_valid_with_intermediary(self, mocked):
 
         trust_anchor_ec = self._create_federation_with_intermediary()
 
