@@ -59,7 +59,7 @@ JWT_CLIENT_ASSERTION = {
     "sub": "https://rp.cie.it",
     "iat": IAT,
     "exp": EXP,
-    "aud": ["https://rp.cie.it"],
+    "aud": ["https://rp.spid.agid.gov.it/auth"],
     "jti": "a72d5df0-2415-4c7c-a44f-3988b354040b",
 }
 
@@ -98,4 +98,4 @@ JWT_CLIENT_ASSERTION_NO_AUD = deepcopy(JWT_CLIENT_ASSERTION)
 JWT_CLIENT_ASSERTION_NO_AUD.pop("aud")
 
 JWT_CLIENT_ASSERTION_NO_CORRECT_AUD = deepcopy(JWT_CLIENT_ASSERTION)
-JWT_CLIENT_ASSERTION_NO_CORRECT_AUD["aud"] = "https://rp.cie.it"
+JWT_CLIENT_ASSERTION_NO_CORRECT_AUD["aud"] = "https://rp.spid.agid.gov.it/auth"
