@@ -48,7 +48,7 @@ class OnboardingTest(TestCase):
         self.assertFormError(res, 'form', 'public_jwks', 'Enter the public jwks of the entities')
         self.assertEqual(res.status_code, 200)
         self.data["organization_name"] = "test name"
-        self.data["url_entity"] = "http://rp-test/oidc/rp"
+        self.data["url_entity"] = "http://rp-test/oidc/rp/"
         self.data["authn_buttons_page_url"] = "https://authnurl.com"
         self.data["public_jwks"] = {"key":"ciao"}
         res = c.post(url, self.data)
@@ -57,7 +57,6 @@ class OnboardingTest(TestCase):
         jwk = serialize_rsa_key(new_rsa_key().pub_key)
         self.data["public_jwks"] = json.dumps(jwk)
         res = c.post(url, self.data)
-        print(res.content.decode())
         self.assertEqual(res.status_code, 302)
         res = c.get(res.url)
         self.assertEqual(res.status_code, 200)
