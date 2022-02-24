@@ -150,7 +150,9 @@ class TrustChainBuilder:
         return a chain of verified statements
         from the lower up to the trust anchor
         """
-        logger.info(f"Starting a Walk into Metadata Discovery for {self.subject}")
+        logger.info(
+            f"Starting a Walk into Metadata Discovery for {self.subject}"
+        )
         self.tree_of_trust[0] = [self.subject_configuration]
 
         ecs_history = []
