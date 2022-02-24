@@ -28,7 +28,7 @@ from spid_cie_oidc.onboarding.schemas.authn_requests import AuthenticationReques
 AuthenticationRequestSpid(**AUTHN_REQUEST_SPID)
 ````
 
-# How to export the authen successful response schema for SPID
+# How to export the authnsuccessful response schema for SPID
 
 ````
 ./manage.py shell
@@ -51,7 +51,7 @@ from spid_cie_oidc.onboarding.schemas.authn_response import AuthenticationRespon
 AuthenticationResponse(**AUTHN_RESPONSE_SPID)
 ````
 
-# How to export the authen error response schema for SPID
+# How to export the authnerror response schema for SPID
 
 ````
 ./manage.py shell
