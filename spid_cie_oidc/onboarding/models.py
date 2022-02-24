@@ -56,7 +56,6 @@ class OnBoardingRegistration(TimeStampedModel):
     
     def clean(self) -> None:
         super().clean()
-        breakpoint()
         pass
 
     def __str__(self):
