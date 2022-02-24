@@ -20,7 +20,7 @@ print(RevocationRequest.schema_json(indent=2))
 ````
 ./manage.py shell
 ````
-Import an authn request example
+Import a revocation request example
 ````
 from spid_cie_oidc.onboarding.tests.revocation_request_settings import REVOCATION_REQUEST
 ````

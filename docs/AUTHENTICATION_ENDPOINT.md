@@ -41,7 +41,7 @@ print(AuthenticationResponse.schema_json(indent=2))
 ````
 ./manage.py shell
 ````
-Import an authn request example
+Import an authn successful response example
 ````
 from spid_cie_oidc.onboarding.tests.authn_responses_settings import AUTHN_RESPONSE_SPID
 ````
@@ -64,7 +64,7 @@ print(AuthenticationErrorResponse.schema_json(indent=2))
 ````
 ./manage.py shell
 ````
-Import an authn request example
+Import an authn error response example
 ````
 from spid_cie_oidc.onboarding.tests.authn_responses_settings import AUTHN_ERROR_RESPONSE_SPID
 ````

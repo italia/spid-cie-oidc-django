@@ -19,7 +19,7 @@ print(IntrospectionRequest.schema_json(indent=2))
 ````
 ./manage.py shell
 ````
-Import an authn request example
+Import an introspection request example
 ````
 from spid_cie_oidc.onboarding.tests.introspection_request_settings import INTROSPECTION_REQUEST
 ````
@@ -42,7 +42,7 @@ print(IntrospectionResponse.schema_json(indent=2))
 ````
 ./manage.py shell
 ````
-Import an authn request example
+Import an introspection response example
 ````
 from spid_cie_oidc.onboarding.tests.introspection_response_settings import INTROSPECTION_RESPONSE
 ````
@@ -65,7 +65,7 @@ print(IntrospectionErrorResponseSpid.schema_json(indent=2))
 ````
 ./manage.py shell
 ````
-Import an authn request example
+Import an introspection error response example
 ````
 from spid_cie_oidc.onboarding.tests.introspection_response_settings import INTROSPECTION_ERROR_RESPONSE
 ````

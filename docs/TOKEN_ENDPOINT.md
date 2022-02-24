@@ -71,7 +71,7 @@ print(TokenResponse.schema_json(indent=2))
 ````
 ./manage.py shell
 ````
-Import an authn request example
+Import a token authn code response example
 ````
 from spid_cie_oidc.onboarding.tests.token_response_settings import TOKEN_RESPONSE
 ````
@@ -94,7 +94,7 @@ print(TokenRefreshResponse.schema_json(indent=2))
 ````
 ./manage.py shell
 ````
-Import an authn request example
+Import a token refresh response example
 ````
 from spid_cie_oidc.onboarding.tests.token_response_settings import TOKEN_REFRESH_RESPONSE
 ````
@@ -117,7 +117,7 @@ print(TokenErrorResponse.schema_json(indent=2))
 ````
 ./manage.py shell
 ````
-Import an authn request example
+Import a token error response example
 ````
 from spid_cie_oidc.onboarding.tests.token_response_settings import TOKEN_ERROR_RESPONSE
 ````
