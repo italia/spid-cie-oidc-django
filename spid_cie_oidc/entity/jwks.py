@@ -55,6 +55,7 @@ def serialize_rsa_key(rsa_key, kind="public", hash_func="SHA-256"):
         or
         cryptography.hazmat.backends.openssl.rsa._RSAPrivateKey
     """
+    data = {}
     if isinstance(rsa_key, cryptography.hazmat.backends.openssl.rsa._RSAPublicKey):
         data = {"pub_key": rsa_key}
     elif isinstance(rsa_key, cryptography.hazmat.backends.openssl.rsa._RSAPrivateKey):

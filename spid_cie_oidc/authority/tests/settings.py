@@ -61,7 +61,7 @@ TRUST_MARK_PAYLOAD = {
 RP_PROFILE = {
     "name": "SPID Public SP",
     "profile_category": "openid_relying_party",
-    "profile_id": "https://www.spid.gov.it/openid-federation/agreement/sp-public/",
+    "profile_id": "https://www.spid.gov.it/certification/rp",
     "trust_mark_template": TRUST_MARK_PAYLOAD,
 }
 

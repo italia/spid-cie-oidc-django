@@ -1,4 +1,4 @@
-from .exceptions import UnknownKid, MissingJwksClaim
+from .exceptions import UnknownKid, MissingJwksClaim, MissingTrustMark
 from .http_client import http_get
 from .jwtse import verify_jws, unpad_jwt_head, unpad_jwt_payload
 
@@ -65,6 +65,69 @@ def get_entity_configurations(subjects: list, httpc_params: dict = {}):
     return get_http_url(urls, httpc_params)
 
 
+class TrustMark:
+
+    def __init__(self, jwt: str, httpc_params: dict = {}):
+        self.jwt = jwt
+        self.header = unpad_jwt_head(jwt)
+        self.payload = unpad_jwt_payload(jwt)
+
+        self.id = self.payload["id"]
+        self.sub = self.payload["sub"]
+        self.iss = self.payload["iss"]
+
+        self.is_valid = False
+
+        self.issuer_entity_configuration = None
+        self.httpc_params = httpc_params
+
+    def validate_by(self, ec) -> bool:
+        # TODO: pydantic entity configuration validation here
+
+        if self.header.get("kid") not in ec.kids:
+            raise UnknownKid(
+                f"Trust Mark validation failed: "
+                f"{self.header.get('kid')} not found in {ec.jwks}"
+            )
+        # verify signature
+        payload = verify_jws(self.jwt, ec.jwks[ec.kids.index(self.header["kid"])])
+        self.is_valid = True
+        return payload
+
+    def validate_by_its_issuer(self) -> bool:
+        if not self.issuer_entity_configuration:
+            self.issuer_entity_configuration = get_entity_configurations(
+                self.iss, self.httpc_params
+            )
+        
+        if not self.issuer_entity_configuration.validate_by_itself():
+            self.is_valid = False
+            logger.warning(
+                f"Issuer {self.iss} of trust mark {self.id} is not valid."
+            )
+            return False
+
+        if header.get("kid") not in self.issuer_entity_configuration.kids:
+            raise UnknownKid(
+                f"Trust Mark validation failed by its Issuer: "
+                f"{self.header.get('kid')} not found in "
+                f"{self.issuer_entity_configuration.jwks}"
+            )
+        # verify signature
+        payload = verify_jws(
+            self.jwt,
+            self.issuer_entity_configuration.jwks[
+                self.issuer_entity_configuration.kids.index(header["kid"])
+            ]
+        )
+        self.is_valid = True
+        return payload
+
+
+    def __repr__(self) -> str:
+        return f"{self.id} to {self.sub} issued by {self.iss}"
+
+
 class EntityConfiguration:
     """
     The self issued/signed statement of a federation entity
@@ -75,7 +138,7 @@ class EntityConfiguration:
         jwt: str,
         httpc_params: dict = {},
         filter_by_allowed_trust_marks: list = [],
-        trust_anchors_entity_confs: dict = [],
+        trust_anchor_entity_conf = None,
         trust_mark_issuers_entity_confs: dict = [],
     ):
         self.jwt = jwt
@@ -92,7 +155,7 @@ class EntityConfiguration:
         self.httpc_params = httpc_params
 
         self.filter_by_allowed_trust_marks = filter_by_allowed_trust_marks
-        self.trust_anchors_entity_confs = trust_anchors_entity_confs
+        self.trust_anchor_entity_conf = trust_anchor_entity_conf
         self.trust_mark_issuers_entity_confs = trust_mark_issuers_entity_confs
 
         # a dict with sup_sub : superior entity configuration
@@ -122,15 +185,109 @@ class EntityConfiguration:
         self.is_valid = True
         return True
 
-    def get_valid_trust_marks(self) -> bool:
+    def validate_by_allowed_trust_marks(self) -> bool:
         """
         validate the entity configuration ony if marked by a well known
         trust mark, issued by a trusted issuer
         """
-        # if not self.filter_by_allowed_trust_marks:
-        # return True
-        # TODO
-        raise NotImplementedError()
+
+        if not self.trust_anchor_entity_conf:
+            raise TrustAnchorNeeded(
+                f"To validate the trust marks the "
+                "Trust Anchor Entity Configuration "
+                "is needed."
+            )
+
+        if not self.filter_by_allowed_trust_marks:
+            return True
+
+        if not self.payload.get('trust_marks'):
+            logger.warning(
+                f"{self.sub} doesn't have the trust marks claim "
+                "in its Entity Configuration"
+            )
+            return False
+
+        trust_marks = []
+        is_valid = False
+        for tm in self.payload['trust_marks']:
+
+            if tm.get('id', None) not in self.filter_by_allowed_trust_marks:
+                continue
+
+            try:
+                trust_mark = TrustMark(tm['trust_mark'])
+            except KeyError:
+                logger.warning(
+                    f"Trust Mark decoding failed on [{tm}]. "
+                    "Missing 'trust_mark' claim in it"
+                )
+            except Exception as e:
+                logger.warning(
+                    f"Trust Mark decoding failed on [{tm}]"
+                )
+                continue
+            else:
+                trust_marks.append(trust_mark)
+
+        if not trust_marks:
+            raise MissingTrustMark(
+                f"Required Trust marks are missing."
+            )
+
+        trust_mark_issuers_by_id = self.trust_anchor_entity_conf.payload.get(
+            'trust_mark_issuers', {}
+        )
+        
+        # TODO : cache of issuers -> it would be better to have a proxy function
+        #
+        # required_issuer_ecs = []
+        # for trust_mark in trust_marks:
+            # if trust_mark.iss not in [
+                # i.payload.get('iss', None)
+                # for i in self.trust_mark_issuers_entity_confs
+            # ]:                
+                # required_issuer_ecs.append(trust_mark.iss)
+        # TODO: snippet for CACHE
+        # if required_issuer_ec:
+            # ## fetch the issuer entity configuration and validate it
+            # iecs = get_entity_configurations(
+                # [required_issuer_ecs], self.httpc_params
+            # )
+            # for jwt in iecs:
+                # try:
+                    # ec = self.__class__(jwt, httpc_params=self.httpc_params)
+                    # ec.validate_by_itself()
+                # except Exception as e:
+                    # logger.warning(
+                        # "Trust Marks issuer Entity Configuration "
+                        # f"failed for {jwt}: {e}"
+                    # )
+                    # continue
+                # self.trust_mark_issuers_entity_confs.append(ec)
+
+        for trust_mark in trust_marks:
+            id_issuers = trust_mark_issuers_by_id.get(trust_mark.id, None)
+            if id_issuers and trust_mark.iss not in id_issuers:
+                is_valid = False
+            elif id_issuers and trust_mark.iss in id_issuers:
+                is_valid = trust_mark.validate_by_its_issuer()
+            elif not id_issuers:
+                is_valid = trust_mark.validate_by(self.trust_anchor_entity_conf)
+
+            if not trust_mark.is_valid:
+                is_valid = False
+
+            if is_valid:
+                logger.info(
+                    f"Trust Mark {trust_mark} is valid"
+                )
+            else:
+                logger.warning(
+                    f"Trust Mark {trust_mark} is not valid"
+                )
+                
+        return is_valid
 
     def get_superiors(
         self,
@@ -172,7 +329,7 @@ class EntityConfiguration:
                 ec = self.__class__(jwt, httpc_params=self.httpc_params)
             except Exception as e:
                 logger.warning(
-                    f"Get statement superiors falied for {jwt}: {e}"
+                    f"Get Entity Configuration for {jwt}: {e}"
                 )
                 continue
             
@@ -265,7 +422,7 @@ class EntityConfiguration:
         """
         for ec in superiors_entity_configurations:
             if ec.sub in ec.verified_by_superiors:
-                # already featched and cached
+                # already fetched and cached
                 continue
 
             try:
