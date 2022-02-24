@@ -23,3 +23,19 @@ class MissingAuthorityHintsClaim(ValidationError):
 
 class NotDescendant(ValidationError):
     pass
+
+
+class TrustAnchorNeeded(ValidationError):
+    pass
+
+
+class MetadataDiscoveryException(ValidationError):
+    pass
+
+
+class MissingTrustMark(ValidationError):
+    pass
+
+
+class InvalidRequiredTrustMark(ValidationError):
+    pass

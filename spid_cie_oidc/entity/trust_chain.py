@@ -7,6 +7,10 @@ from typing import Union
 from spid_cie_oidc.entity.policy import apply_policy
 
 from . import settings as settings_local
+from . exceptions import (
+    InvalidRequiredTrustMark,
+    MetadataDiscoveryException
+)
 from .statements import (
     get_entity_configurations,
     EntityConfiguration,
@@ -185,7 +189,7 @@ class TrustChainBuilder:
                     vbv = list(validated_by.values())
                     sup_ecs.extend(vbv)
                     ecs_history.append(last_ec)
-                except Exception as e:
+                except MetadataDiscoveryException as e:
                     logger.exception(
                         f"Metadata discovery exception for {last_ec.sub}: {e}"
                     )
@@ -243,7 +247,7 @@ class TrustChainBuilder:
             )
             self.subject_configuration = EntityConfiguration(
                 jwt[0],
-                trust_anchors_entity_confs = [self.trust_anchor_configuration]
+                trust_anchor_entity_conf = self.trust_anchor_configuration
             )
             self.subject_configuration.validate_by_itself()
 
@@ -258,7 +262,10 @@ class TrustChainBuilder:
                     # trust_mark_issuers_entity_confs
                 # ]
                 
-                sc.validate_by_allowed_trust_marks()
+                if not sc.validate_by_allowed_trust_marks():
+                    raise InvalidRequiredTrustMark(
+                        "The required Trust Marks are not valid"
+                    )
 
     def start(self):
         try:

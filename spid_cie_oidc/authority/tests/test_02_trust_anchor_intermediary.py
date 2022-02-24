@@ -173,11 +173,11 @@ class TATest(TestCase):
         
         trust_anchor_ec = self._create_federation_with_intermediary()
 
+        # the RP exposes a trust marks in its entity configuration
         self.rp_conf.trust_marks = [
-            {
-             'id': 'https://www.spid.gov.it/openid-federation/agreement/sp-public/',
-             'trust_mark': 'eyJhbGciOiJSUzI1NiIsImtpZCI6ImpJZmowYUVuWWlYbExmWXpzTXFrMGdrVzdzWWlEeE8yT0FqaV9aZEtSTXcifQ.eyJpc3MiOiJodHRwOi8vaW50ZXJtZWRpYXJ5LXRlc3QiLCJzdWIiOiJodHRwOi8vcnAtdGVzdC9vaWRjL3JwIiwiaWF0IjoxNjQ1NTI4MjI3LCJpZCI6Imh0dHBzOi8vd3d3LnNwaWQuZ292Lml0L2NlcnRpZmljYXRpb24vcnAiLCJtYXJrIjoiaHR0cHM6Ly93d3cuYWdpZC5nb3YuaXQvdGhlbWVzL2N1c3RvbS9hZ2lkL2xvZ28uc3ZnIiwicmVmIjoiaHR0cHM6Ly9kb2NzLml0YWxpYS5pdC9pdGFsaWEvc3BpZC9zcGlkLXJlZ29sZS10ZWNuaWNoZS1vaWRjL2l0L3N0YWJpbGUvaW5kZXguaHRtbCJ9.miO_eNo3biCkbF9Xllb461_sCPj9OyuJuKcs6_N4KG1ses0eBpFzfQQgF1_XYpNC4xJhgUDDUH2q4XBKBzFupRdVI4dDSRSsXG1ZXyzgB3ZFe01PBLz3BPFLODfmrTwA0lhfcZt951dG02glOowRBFXgfQgmxz3ACyvUApesm1ddqK4eA8CY_GISAnzlmnz5P2cAoYW9T_Se83iHjZ5MqbbhZgkq8vha6CT2NJ0CPOAZTo2JMkaO61eZLrxrZkAKmHdXsWFvtViiTGmWyHHWwFX8_qDGljnHtGddqB5bX7aARIuA_yw_hwTPhOT3cMqlvXxMm6Owrlx99gHFJ_qc-g'
-            }
+            FederationEntityAssignedProfile.objects.filter(
+                descendant=self.rp
+            ).first().trust_mark
         ]
         self.rp_conf.save()
         
@@ -186,7 +186,7 @@ class TATest(TestCase):
             trust_anchor=trust_anchor_ec,
             metadata_type="openid_relying_party",
             required_trust_marks = [
-                'https://www.spid.gov.it/openid-federation/agreement/sp-public/'
+                'https://www.spid.gov.it/certification/rp'
             ]
         )
 
