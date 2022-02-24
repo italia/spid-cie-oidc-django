@@ -5,7 +5,7 @@ In spid_cie_oidc.onboarding.schemas there are functions to generate the json sch
 With the same functions is possible to validate request and response.
 
 
-# How to export the request schema for SPID
+# How to export the authn request schema for SPID
 
 ````
 ./manage.py shell
@@ -28,7 +28,7 @@ from spid_cie_oidc.onboarding.schemas.authn_requests import AuthenticationReques
 AuthenticationRequestSpid(**AUTHN_REQUEST_SPID)
 ````
 
-# How to export the authnsuccessful response schema for SPID
+# How to export the authn successful response schema for SPID
 
 ````
 ./manage.py shell
