@@ -1,7 +1,6 @@
 
 from copy import deepcopy
 
-from spid_cie_oidc.entity.utils import *
 
 INTROSPECTION_RESPONSE = {
     "active": True,

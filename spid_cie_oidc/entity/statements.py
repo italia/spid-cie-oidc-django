@@ -1,4 +1,9 @@
-from .exceptions import UnknownKid, MissingJwksClaim, MissingTrustMark
+from .exceptions import (
+    UnknownKid,
+    MissingJwksClaim,
+    MissingTrustMark,
+    TrustAnchorNeeded
+)
 from .http_client import http_get
 from .jwtse import verify_jws, unpad_jwt_head, unpad_jwt_payload
 
@@ -99,7 +104,7 @@ class TrustMark:
             self.issuer_entity_configuration = get_entity_configurations(
                 self.iss, self.httpc_params
             )
-        
+
         if not self.issuer_entity_configuration.validate_by_itself():
             self.is_valid = False
             logger.warning(
@@ -107,7 +112,7 @@ class TrustMark:
             )
             return False
 
-        if header.get("kid") not in self.issuer_entity_configuration.kids:
+        if self.header.get("kid") not in self.issuer_entity_configuration.kids:
             raise UnknownKid(
                 f"Trust Mark validation failed by its Issuer: "
                 f"{self.header.get('kid')} not found in "
@@ -117,12 +122,11 @@ class TrustMark:
         payload = verify_jws(
             self.jwt,
             self.issuer_entity_configuration.jwks[
-                self.issuer_entity_configuration.kids.index(header["kid"])
+                self.issuer_entity_configuration.kids.index(self.header["kid"])
             ]
         )
         self.is_valid = True
         return payload
-
 
     def __repr__(self) -> str:
         return f"{self.id} to {self.sub} issued by {self.iss}"
@@ -193,7 +197,7 @@ class EntityConfiguration:
 
         if not self.trust_anchor_entity_conf:
             raise TrustAnchorNeeded(
-                f"To validate the trust marks the "
+                "To validate the trust marks the "
                 "Trust Anchor Entity Configuration "
                 "is needed."
             )
@@ -222,7 +226,7 @@ class EntityConfiguration:
                     f"Trust Mark decoding failed on [{tm}]. "
                     "Missing 'trust_mark' claim in it"
                 )
-            except Exception as e:
+            except Exception:
                 logger.warning(
                     f"Trust Mark decoding failed on [{tm}]"
                 )
@@ -232,39 +236,39 @@ class EntityConfiguration:
 
         if not trust_marks:
             raise MissingTrustMark(
-                f"Required Trust marks are missing."
+                "Required Trust marks are missing."
             )
 
         trust_mark_issuers_by_id = self.trust_anchor_entity_conf.payload.get(
             'trust_mark_issuers', {}
         )
-        
+
         # TODO : cache of issuers -> it would be better to have a proxy function
         #
         # required_issuer_ecs = []
         # for trust_mark in trust_marks:
-            # if trust_mark.iss not in [
-                # i.payload.get('iss', None)
-                # for i in self.trust_mark_issuers_entity_confs
-            # ]:                
-                # required_issuer_ecs.append(trust_mark.iss)
+        # if trust_mark.iss not in [
+        # i.payload.get('iss', None)
+        # for i in self.trust_mark_issuers_entity_confs
+        # ]:
+        # required_issuer_ecs.append(trust_mark.iss)
         # TODO: snippet for CACHE
         # if required_issuer_ec:
-            # ## fetch the issuer entity configuration and validate it
-            # iecs = get_entity_configurations(
-                # [required_issuer_ecs], self.httpc_params
-            # )
-            # for jwt in iecs:
-                # try:
-                    # ec = self.__class__(jwt, httpc_params=self.httpc_params)
-                    # ec.validate_by_itself()
-                # except Exception as e:
-                    # logger.warning(
-                        # "Trust Marks issuer Entity Configuration "
-                        # f"failed for {jwt}: {e}"
-                    # )
-                    # continue
-                # self.trust_mark_issuers_entity_confs.append(ec)
+        # ## fetch the issuer entity configuration and validate it
+        # iecs = get_entity_configurations(
+        # [required_issuer_ecs], self.httpc_params
+        # )
+        # for jwt in iecs:
+        # try:
+        # ec = self.__class__(jwt, httpc_params=self.httpc_params)
+        # ec.validate_by_itself()
+        # except Exception as e:
+        # logger.warning(
+        # "Trust Marks issuer Entity Configuration "
+        # f"failed for {jwt}: {e}"
+        # )
+        # continue
+        # self.trust_mark_issuers_entity_confs.append(ec)
 
         for trust_mark in trust_marks:
             id_issuers = trust_mark_issuers_by_id.get(trust_mark.id, None)
@@ -286,7 +290,7 @@ class EntityConfiguration:
                 logger.warning(
                     f"Trust Mark {trust_mark} is not valid"
                 )
-                
+
         return is_valid
 
     def get_superiors(
@@ -332,7 +336,7 @@ class EntityConfiguration:
                     f"Get Entity Configuration for {jwt}: {e}"
                 )
                 continue
-            
+
             if ec.validate_by_itself():
                 target = self.verified_superiors
             else:

@@ -9,7 +9,8 @@ from spid_cie_oidc.entity.policy import apply_policy
 from . import settings as settings_local
 from . exceptions import (
     InvalidRequiredTrustMark,
-    MetadataDiscoveryException
+    MetadataDiscoveryException,
+    TrustAnchorNeeded
 )
 from .statements import (
     get_entity_configurations,
@@ -261,9 +262,9 @@ class TrustChainBuilder:
                 # TODO: create a proxy function that gets tm issuers ec from
                 # a previously populated cache
                 # sc.trust_mark_issuers_entity_confs = [
-                    # trust_mark_issuers_entity_confs
+                # trust_mark_issuers_entity_confs
                 # ]
-                
+
                 if not sc.validate_by_allowed_trust_marks():
                     raise InvalidRequiredTrustMark(
                         "The required Trust Marks are not valid"

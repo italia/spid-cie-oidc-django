@@ -223,7 +223,7 @@ class FederationEntityConfiguration(TimeStampedModel):
 
         if self.trust_marks:
             conf["trust_marks"] = self.trust_marks
-        
+
         if self.constraints:
             conf["constraints"] = self.constraints
 
