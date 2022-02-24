@@ -2,6 +2,8 @@ from django.test import TestCase, Client
 from django.urls import reverse
 import json
 
+from spid_cie_oidc.authority.tests.settings import *
+from spid_cie_oidc.entity.models import *
 from spid_cie_oidc.onboarding.urls import *
 from spid_cie_oidc.entity.validators import validate_public_jwks
 from spid_cie_oidc.entity.jwks import serialize_rsa_key
@@ -11,6 +13,8 @@ from spid_cie_oidc.entity.jwks import new_rsa_key
 class OnboardingTest(TestCase):
 
     def setUp(self):
+
+        self.rp_conf = FederationEntityConfiguration.objects.create(**rp_conf)
         self.data = {"organization_name" : "","url_entity" : "",
             "authn_buttons_page_url" : "","public_jwks" : ""
         }
