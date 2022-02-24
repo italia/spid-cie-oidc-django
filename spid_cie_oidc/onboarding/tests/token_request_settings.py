@@ -1,6 +1,6 @@
 from copy import deepcopy
 
-from spid_cie_oidc.entity.utils import *
+from spid_cie_oidc.entity.utils import exp_from_now, iat_now
 
 TOKEN_REQUEST = {
     "client_id": "https://rp.cie.it",

@@ -106,7 +106,6 @@ class EntityResponseWithIntermediate(EntityResponse):
             self.result = self.client.get(
                 url, data={"sub": ta_conf_data["sub"]}
             )
-
         elif self.req_counter > 5:
             raise NotImplementedError(
                 "The mocked resposes seems to be not aligned with the correct flow"
@@ -121,6 +120,7 @@ class EntityResponseWithIntermediate(EntityResponse):
 
 
 class EntityResponseWithIntermediateManyHints(EntityResponse):
+
     @property
     def content(self):
         if self.req_counter == 0:
@@ -144,16 +144,18 @@ class EntityResponseWithIntermediateManyHints(EntityResponse):
             )
         elif self.req_counter == 5:
             url = reverse("oidcfed_fetch")
-            self.result = self.client.get(url, data={"sub": intermediary_conf["sub"]})
+            self.result = self.client.get(
+                url, data={"sub": intermediary_conf["sub"]}
+            )
         elif self.req_counter == 6:
             url = reverse("entity_configuration")
-            self.result = self.client.get(url, data={"sub": ta_conf_data["sub"]})
-
+            self.result = self.client.get(
+                url, data={"sub": ta_conf_data["sub"]}
+            )
         elif self.req_counter > 6:
             raise NotImplementedError(
                 "The mocked resposes seems to be not aligned with the correct flow"
             )
-
         if self.result.status_code != 200:
             raise HttpError(
                 f"Something went wrong with Http Request: {res.__dict__}"

@@ -6,6 +6,7 @@ from spid_cie_oidc.authority.tests.settings import *
 from spid_cie_oidc.entity.models import *
 from spid_cie_oidc.onboarding.urls import *
 from spid_cie_oidc.entity.validators import validate_public_jwks
+
 from spid_cie_oidc.entity.jwks import serialize_rsa_key
 from spid_cie_oidc.entity.jwks import new_rsa_key
 

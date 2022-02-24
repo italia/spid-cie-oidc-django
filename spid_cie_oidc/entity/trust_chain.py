@@ -7,6 +7,11 @@ from typing import Union
 from spid_cie_oidc.entity.policy import apply_policy
 
 from . import settings as settings_local
+from . exceptions import (
+    InvalidRequiredTrustMark,
+    MetadataDiscoveryException,
+    TrustAnchorNeeded
+)
 from .statements import (
     get_entity_configurations,
     EntityConfiguration,
@@ -29,6 +34,10 @@ class TrustChainBuilder:
 
     max_intermediaries means how many hops are allowed to the trust anchor
     max_authority_hints means how much authority_hints to follow on each hop
+
+    required_trust_marks means all the trsut marks needed to start a metadata discovery
+     at least one of the required trust marks is needed to start a metadata discovery
+     if this param if absent the filter won't be considered.
     """
 
     def __init__(
@@ -150,7 +159,9 @@ class TrustChainBuilder:
         return a chain of verified statements
         from the lower up to the trust anchor
         """
-        logger.info(f"Starting a Walk into Metadata Discovery for {self.subject}")
+        logger.info(
+            f"Starting a Walk into Metadata Discovery for {self.subject}"
+        )
         self.tree_of_trust[0] = [self.subject_configuration]
 
         ecs_history = []
@@ -181,7 +192,7 @@ class TrustChainBuilder:
                     vbv = list(validated_by.values())
                     sup_ecs.extend(vbv)
                     ecs_history.append(last_ec)
-                except Exception as e:
+                except MetadataDiscoveryException as e:
                     logger.exception(
                         f"Metadata discovery exception for {last_ec.sub}: {e}"
                     )
@@ -237,12 +248,27 @@ class TrustChainBuilder:
             jwt = get_entity_configurations(
                 self.subject, httpc_params=self.httpc_params
             )
-            self.subject_configuration = EntityConfiguration(jwt[0])
+            self.subject_configuration = EntityConfiguration(
+                jwt[0],
+                trust_anchor_entity_conf = self.trust_anchor_configuration
+            )
             self.subject_configuration.validate_by_itself()
 
-            # TODO
-            # TODO: self.subject_configuration.get_valid_trust_marks()
-            # valid trust marks to be compared to self.required_trust_marks
+            # Trust Mark filter
+            if self.required_trust_marks:
+                sc = self.subject_configuration
+                sc.filter_by_allowed_trust_marks = self.required_trust_marks
+
+                # TODO: create a proxy function that gets tm issuers ec from
+                # a previously populated cache
+                # sc.trust_mark_issuers_entity_confs = [
+                # trust_mark_issuers_entity_confs
+                # ]
+
+                if not sc.validate_by_allowed_trust_marks():
+                    raise InvalidRequiredTrustMark(
+                        "The required Trust Marks are not valid"
+                    )
 
     def start(self):
         try:

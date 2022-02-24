@@ -4,6 +4,7 @@ from spid_cie_oidc.entity.validators import validate_public_jwks
 from spid_cie_oidc.authority.validators import validate_entity_configuration
 from .validators import unique_entity_url
 
+
 class OnboardingRegistrationForm(forms.Form):
 
     organization_name = forms.CharField(
