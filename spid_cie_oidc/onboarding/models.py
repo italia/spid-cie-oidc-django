@@ -53,7 +53,6 @@ class OnBoardingRegistration(TimeStampedModel):
         verbose_name = "OnBoarding Registration"
         verbose_name_plural = "OnBoarding Registrations"
         ordering = ['-created']
-        
 
     def __str__(self):
         return f"{self.organization_name} {self.url_entity}"

@@ -1,5 +1,3 @@
-from pickletools import read_int4
-from aiohttp import request
 from django.test import TestCase, Client, override_settings
 from django.urls import reverse
 import json
