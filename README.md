@@ -8,7 +8,7 @@
 
 SPID/CIE OIDC Federation is a suite of Django applications designed to
 make it easy to build an [Openid Connect Federation](https://openid.net/specs/openid-connect-federation-1_0.html), 
-each of these can be installed separately within a django project, these are:
+each of these can be installed separately within a django project:
 
 - __spid_cie_oidc.accounts__: customizable app that extended the Django User model.
 - __spid_cie_oidc.entity__: OIDC Federation django app, with models and API that implements OIDC Federation 1.0 Entity Statements, metadata discovery, Trust Chain, Trust Marks and Metadata policy.
@@ -20,14 +20,15 @@ each of these can be installed separately within a django project, these are:
 The Technical specifications of these SDKs are available here:
 
 1. [__OIDC Federation Entity/Authority/Intermediary__](docs/technical_specifications/ENTITY.md)
-2. [__OIDC Federation 1.0 onboarding service DEMO__](docs/technical_specifications/ONBOARDING.md)
-3. [__Openid Connect Provider__](docs/technical_specifications/PROVIDER.md)
-4. [__Openid Connect Relying Party__](docs/technical_specifications/RELYING_PARTY.md)
+2. [__OIDC Federation Authority/Intermediary__](docs/technical_specifications/AUTHORITY.md)
+3. [__OIDC Federation 1.0 onboarding service DEMO__](docs/technical_specifications/ONBOARDING.md)
+4. [__Openid Connect Provider__](docs/technical_specifications/PROVIDER.md)
+5. [__Openid Connect Relying Party__](docs/technical_specifications/RELYING_PARTY.md)
 
 ## Contents
 
-We have all the Django apps available in the folder `spid_cie_oidc/`.
-The examples projects are instead in the folder `examples/`.
+All the Django apps are available in the folder `spid_cie_oidc/`.
+The examples projects are available in the folder `examples/`.
 
 There is a substantial difference between an app and a project.
 The app is installed using a common python package manager, such as _poetry_ or _pip_,
@@ -50,6 +51,26 @@ In this repository we have three example projects for demo purpose.
     * [Hints](#hints)
 * [License and Authors](#license-and-authors)
 * [Implementations notes](#implementation-notes)
+
+
+## Features
+
+- SPID and CIE OpenID Connect Provider
+- SPID and CIE OpenID Connect Relying Party
+- OIDC Federation onboarding demo service
+- OIDC Federation 1.0
+  - Trust Anchor
+  - Intermediary
+  - automatic client registration
+  - trust marks
+  - trust chain storage and discovery
+  - Entity statement resolve endpoint
+  - Fetch statement endpoing
+  - List entities endpoint
+  - Federation CLI
+- Multitenancy, a single service can configure many entities like RPs, OP, Trust Anchors and intermediaries
+- gettext compliant (i18n)
+- Bootstrap Italia Design templates
 
 
 ## Setup
@@ -85,21 +106,25 @@ pip install spid-cie-oidc
 git clone https://github.com/peppelinux/spid-cie-oidc-django
 cd spid-cie-oidc
 pip install -e .
+
+# Install Django Bootstrap italia template
+pip install design-django-theme
 ````
 
 In `examples/` folder you have three demostrations projects:
+
  - federation_authority
  - relying_party
  - provider
 
-for each of the them you have to create the db and load the example data, as follows:
+for project you have to create the db and load the example data, as follows:
 
 ````
 cd examples/$project_name
 cp $project_name/settingslocal.py.example $project_name/settingslocal.py
 
 # then customize (optional) $project_name/settingslocal.py
-# add OIDCFED_FEDERATION_TRSUT_ANCHORS = ["http://127.0.0.1:8000"]
+# add OIDCFED_FEDERATION_TRUST_ANCHORS = ["http://127.0.0.1:8000"]
 
 ./manage.py migrate
 
@@ -108,7 +133,16 @@ cp $project_name/settingslocal.py.example $project_name/settingslocal.py
 
 # create a super user
 ./manage.py createsuperuser
+
+# run the web server
+./manage.py runserver
 ````
+Point your web browser to `http://localhost:8000/admin` to enter in the management interface.
+
+
+### Docker compose
+
+> TODO: Not available until v0.6.0 release
 
 ## Usage
 
@@ -117,32 +151,6 @@ The demo propose a small federation composed by the following entities:
  - Federation Authority, acts as trust anchor and onboarding system. It's available at `http://localhost:8000`
  - OpenID Relying Party, available at `http://localhost:8001`
  - OpenID Provider, available at `http://localhost:8002`
-
-
-### Docker compose
-
-> TODO: Not available untile v0.6.0 release
-
-
-### Django projects
-
-Activate the environment
-````
-source env/bin/activate
-cd examples
-````
-
-Install Django Bootstrap italia template
-````
-pip install design-django-theme
-````
-
-Then enter in the single applications projects (__federation_authority/__ or __relying_party/__ or __provider/__):
-````
-# run the web server
-./manage.py runserver
-````
-Point your web browser to `http://localhost:8000/admin` to enter in the management interface.
 
 
 ## Contribute
