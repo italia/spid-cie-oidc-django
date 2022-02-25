@@ -4,7 +4,13 @@ from django.urls import reverse
 from spid_cie_oidc.entity.exceptions import InvalidRequiredTrustMark
 from spid_cie_oidc.entity.jwtse import verify_jws
 from spid_cie_oidc.entity.models import *
-from spid_cie_oidc.entity.trust_chain import trust_chain_builder
+
+from spid_cie_oidc.entity.trust_chain_operations import (
+    dumps_statements_from_trust_chain_to_db,
+    get_or_create_trust_chain,
+    trust_chain_builder
+)
+    
 from spid_cie_oidc.entity.statements import (
     EntityConfiguration,
     get_entity_configurations,
@@ -141,6 +147,16 @@ class TrustChainTest(TestCase):
             (len(trust_chain.trust_path) - 2) == trust_chain.max_path_len
         )
 
+        dumps = dumps_statements_from_trust_chain_to_db(trust_chain)
+
+        self.assertTrue(
+            isinstance(dumps, list) and len(dumps) == 5
+        )
+
+        self.assertTrue(
+            'sub' in dumps[0].get_entity_configuration_as_obj().payload
+        )
+        
         stored_trust_chain = TrustChain.objects.create(
             sub = trust_chain.subject,
             type = trust_chain.metadata_type,
@@ -149,9 +165,12 @@ class TrustChainTest(TestCase):
             metadata = trust_chain.final_metadata,
             parties_involved = [i.sub for i in trust_chain.trust_path],
             status = 'valid',
+            trust_anchor = FetchedEntityStatement.objects.get(
+                sub = trust_anchor_ec.sub, iss = trust_anchor_ec.sub
+            ),
             is_active = True
         )
-
+        
     @override_settings(HTTP_CLIENT_SYNC=True)
     @patch("requests.get", return_value=EntityResponseWithIntermediateManyHints())
     def test_trust_chain_valid_with_intermediaries_many_authhints(self, mocked):
@@ -224,4 +243,17 @@ class TrustChainTest(TestCase):
                 ]
             )
 
-    
+    @override_settings(HTTP_CLIENT_SYNC=True)
+    @patch("requests.get", return_value=EntityResponseNoIntermediate())
+    def test_trust_chain_valid_helpers(self, mocked):
+
+        gctc = get_or_create_trust_chain(
+            subject = rp_conf["sub"],
+            trust_anchor = self.ta_conf.sub,
+            # TODO
+            #required_trust_marks: list = [],
+            metadata_type = "openid_relying_party"
+        )
+
+        self.assertFalse(gctc.is_expired)
+        self.assertTrue(gctc.is_valid)

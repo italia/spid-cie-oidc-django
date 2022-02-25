@@ -1,3 +1,4 @@
+import aiohttp
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -15,7 +16,19 @@ DEBUG = True
 ADMIN_PATH = 'admin/'
 OIDCFED_FEDERATION_TRUST_ANCHORS = ["http://127.0.0.1:8000/"]
 
-# required for onboarding checks
+# required for onboarding checks and also for all the leafs
+FEDERATION_TRUST_ANCHOR = "http://127.0.0.1:8000/"
+
+OIDCFED_IDENTITY_PROVIDERS = [
+    "http://127.0.0.1:8000/oidc/op/"
+]
+
+HTTPC_PARAMS = {
+    "connection": {"ssl": True},
+    "session": {"timeout": aiohttp.ClientTimeout(total=4)},
+}
+
+
 FEDERATION_DEFAULT_METADATA_POLICY = {
     "openid_relying_party": {
       # TODO: to be customized for each entities, not somethinf to default!
@@ -70,7 +83,6 @@ FEDERATION_DEFAULT_METADATA_POLICY = {
   
 }
 
-
 ALLOWED_HOSTS = ['*']
 AUTH_USER_MODEL = 'spid_cie_oidc_accounts.User'
 
@@ -86,9 +98,7 @@ INSTALLED_APPS = [
     'spid_cie_oidc.entity',
     'spid_cie_oidc.onboarding',
     'spid_cie_oidc.relying_party',
-    'spid_cie_oidc.authority',
-    # 'bootstrap'
-    'bootstrap_italia_template',
+    'spid_cie_oidc.provider'
 ]
 
 DATABASES = {

@@ -176,6 +176,9 @@ class EntityConfiguration:
         self.verified_descendant_statements = {}
         self.failed_descendant_statements = {}
 
+        # a dict with the RAW JWT of valid entity statements for each descendant subject
+        self.verified_descendant_statements_as_jwt = {}
+
         self.is_valid = False
 
     def validate_by_itself(self) -> bool:
@@ -377,6 +380,7 @@ class EntityConfiguration:
         payload = verify_jws(jwt, self.jwks[self.kids.index(header["kid"])])
 
         self.verified_descendant_statements[payload["sub"]] = payload
+        self.verified_descendant_statements_as_jwt[payload["sub"]] = jwt
         return self.verified_descendant_statements
 
     def validate_by_superior_statement(self, jwt: str, ec):
@@ -444,11 +448,9 @@ class EntityConfiguration:
                 continue
 
             else:
-                logger.info(
-                    f"Getting entity statements from {fetch_api_url}  for "
-                    f"{self.sub}"
-                )
-                jwts = get_entity_statements([fetch_api_url], self.httpc_params)
+                _url = f"{fetch_api_url}?sub={self.sub}"
+                logger.info(f"Getting entity statements from {_url}")
+                jwts = get_entity_statements([_url], self.httpc_params)
                 jwt = jwts[0]
                 self.validate_by_superior_statement(jwt, ec)
 

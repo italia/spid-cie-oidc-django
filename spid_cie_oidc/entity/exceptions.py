@@ -39,3 +39,7 @@ class MissingTrustMark(ValidationError):
 
 class InvalidRequiredTrustMark(ValidationError):
     pass
+
+
+class InvalidTrustchain(ValidationError):
+    pass
