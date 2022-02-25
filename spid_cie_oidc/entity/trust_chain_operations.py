@@ -150,14 +150,14 @@ def get_or_create_trust_chain(
                 statement = ta_conf.payload,
                 jwt = ta_conf.jwt
             )
-
+            fetched_trust_anchor = fetched_trust_anchor.first()
     else:
         fetched_trust_anchor = fetched_trust_anchor.first()
         ta_conf = fetched_trust_anchor.get_entity_configuration_as_obj()
 
     tc = TrustChain.objects.filter(
         sub = subject,
-        trust_anchor__sub = fetched_trust_anchor.sub
+        trust_anchor__sub = trust_anchor
     ).first()
 
     if not tc or not tc.is_active or tc.is_expired:
@@ -177,7 +177,7 @@ def get_or_create_trust_chain(
         tc = TrustChain.objects.filter(
             sub = subject,
             type = metadata_type,
-            trust_anchor__sub = fetched_trust_anchor.sub
+            trust_anchor__sub = trust_anchor
         )
 
         data = dict(
@@ -188,7 +188,6 @@ def get_or_create_trust_chain(
             status = 'valid',
             is_active = True
         )
-        
         if tc:
             tc.update(**data)
         else:
