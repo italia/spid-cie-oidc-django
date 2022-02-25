@@ -1,6 +1,7 @@
 from django.test import TestCase, Client, override_settings
 from django.urls import reverse
 
+from spid_cie_oidc.entity.exceptions import InvalidRequiredTrustMark
 from spid_cie_oidc.entity.jwtse import verify_jws
 from spid_cie_oidc.entity.models import *
 from spid_cie_oidc.entity.trust_chain import trust_chain_builder
@@ -122,8 +123,9 @@ class TATest(TestCase):
         trust_chain = trust_chain_builder(
             subject=self.rp.sub,
             trust_anchor=trust_anchor_ec,
-            metadata_type="openid_relying_party",
+            metadata_type="openid_relying_party"
         )
+        
         self.assertTrue(trust_chain)
         self.assertTrue(trust_chain.final_metadata)
 
@@ -133,7 +135,7 @@ class TATest(TestCase):
 
         for ec in trust_chain.trust_path:
             self.assertTrue(ec.is_valid)
-
+        
         self.assertTrue(len(trust_chain.trust_path) == 3)
         self.assertTrue(
             (len(trust_chain.trust_path) - 2) == trust_chain.max_path_len
@@ -163,3 +165,51 @@ class TATest(TestCase):
         self.assertTrue(
             (len(trust_chain.trust_path) - 2) == trust_chain.max_path_len
         )
+
+    @override_settings(HTTP_CLIENT_SYNC=True)
+    @patch("requests.get", return_value=EntityResponseWithIntermediate())
+    def test_trust_chain_valid_with_intermediaries_and_trust_mark_filter(self, mocked):
+        
+        trust_anchor_ec = self._create_federation_with_intermediary()
+
+        # the RP exposes a trust marks in its entity configuration
+        self.rp_conf.trust_marks = [
+            FederationEntityAssignedProfile.objects.filter(
+                descendant=self.rp
+            ).first().trust_mark
+        ]
+        self.rp_conf.save()
+        
+        trust_chain = trust_chain_builder(
+            subject=self.rp.sub,
+            trust_anchor=trust_anchor_ec,
+            metadata_type="openid_relying_party",
+            required_trust_marks = [
+                'https://www.spid.gov.it/certification/rp'
+            ]
+        )
+
+        for ec in trust_chain.trust_path:
+            self.assertTrue(ec.is_valid)
+
+        self.assertTrue(len(trust_chain.trust_path) == 3)
+        self.assertTrue(
+            (len(trust_chain.trust_path) - 2) == trust_chain.max_path_len
+        )
+
+    @override_settings(HTTP_CLIENT_SYNC=True)
+    @patch("requests.get", return_value=EntityResponseWithIntermediate())
+    def test_trust_chain_with_missing_trust_mark(self, mocked):
+        
+        trust_anchor_ec = self._create_federation_with_intermediary()
+
+        with self.assertRaises(InvalidRequiredTrustMark):
+            trust_chain = trust_chain_builder(
+                subject=self.rp.sub,
+                trust_anchor=trust_anchor_ec,
+                metadata_type="openid_relying_party",
+                required_trust_marks = [
+                    'https://www.spid.gov.it/certification/rp'
+                ]
+            )
+    

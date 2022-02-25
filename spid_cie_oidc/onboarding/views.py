@@ -1,5 +1,3 @@
-import imp
-import json
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -28,7 +26,7 @@ def onboarding_registration(request):
     return render(request, 'onboarding_registration.html', context)
 
 
-def onboarding_entities (request):
+def onboarding_entities(request):
     entity_list = OnBoardingRegistration.objects.all()
     p = Paginator(entity_list, 10)
     page = request.GET.get('page')
