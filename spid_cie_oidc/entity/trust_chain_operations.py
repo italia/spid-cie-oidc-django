@@ -84,17 +84,22 @@ def get_or_create_trust_chain(
     trust_anchor:str,
     httpc_params: dict = HTTPC_PARAMS,
     required_trust_marks: list = [],
-    metadata_type:str = "openid_provider"
+    metadata_type:str = "openid_provider",
+    force:bool = False
 ) -> TrustChain:
 
-    fetched_trust_anchor = FetchedEntityStatement.objects.filter(
-        sub = trust_anchor, iss = trust_anchor
-    ).first()
+    if not force:
+        fetched_trust_anchor = FetchedEntityStatement.objects.filter(
+            sub = trust_anchor, iss = trust_anchor
+        ).first()
+    else:
+        fetched_trust_anchor = None
 
-    if not fetched_trust_anchor or fetched_trust_anchor.is_expired():
+    if not fetched_trust_anchor or fetched_trust_anchor.is_expired:
         jwts = get_entity_configurations(
             [trust_anchor], httpc_params = httpc_params
         )
+        
         ta_conf = EntityConfiguration(jwts[0], httpc_params=httpc_params)
         # trust to the anchor should be absolute!
         # ta_conf.validate_by_itself()
