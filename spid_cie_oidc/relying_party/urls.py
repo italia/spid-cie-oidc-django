@@ -1,6 +1,7 @@
 from django.urls import path
 
 from .views import (
+    oidc_rp_landing,
     oidc_rpinitiated_logout,
     SpidCieOidcRpBeginView,
     SpidCieOidcRpCallbackEchoAttributes,
@@ -25,6 +26,8 @@ urlpatterns += (
         name="spid_cie_rp_echo_attributes",
     ),
 )
+
 urlpatterns += (
+    path("oidc/rp/landing", oidc_rp_landing, name="spid_cie_rp_landing"),
     path("oidc/rp/logout", oidc_rpinitiated_logout, name="spid_cie_rpinitiated_logout"),
 )

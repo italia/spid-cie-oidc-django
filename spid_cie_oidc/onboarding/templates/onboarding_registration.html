@@ -15,13 +15,12 @@
                      <div class="row h-100">
                         <div class="col-12 pl-lg-4">
                            <h3 class="text-left">
-                              {% trans "Onboarding your entity" %}
+                              {% trans "Onboard your entity" %}
                            </h3>
                            
                            <p class="card-title">
                               {% lorem 1 %}
                            </p>
-                           {{ form_values.organization_name}}
                            <form method="post" action="">
                               {% csrf_token %}
                               {% for form_field in form %}
@@ -38,7 +37,7 @@
                                        name="{{ form_field.name }}" value="{{form_field.value}}">
                                     {% else%}
                                     <textarea id="id_{{ form_field.html_name }}"
-                                       name="{{ form_field.name }}">{{form_field.field.value}}</textarea>
+                                       name="{{ form_field.name }}">{{ form.public_jwks.value}}</textarea>
                                     {% endif %}
                                  </div>
                                  <span for="id_{{ form_field.html_name }}">{{ form_field.errors }}</span>

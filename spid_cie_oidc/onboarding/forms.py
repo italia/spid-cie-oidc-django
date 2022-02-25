@@ -1,6 +1,8 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from spid_cie_oidc.entity.validators import validate_public_jwks
+from spid_cie_oidc.authority.validators import validate_entity_configuration
+from .validators import unique_entity_url
 
 
 class OnboardingRegistrationForm(forms.Form):
@@ -15,6 +17,7 @@ class OnboardingRegistrationForm(forms.Form):
         initial="",
         label=_("url of the entity"),
         error_messages={"required": _("Enter your url of the entity")},
+        validators= [validate_entity_configuration, unique_entity_url]
     )
 
     authn_buttons_page_url = forms.URLField(
@@ -28,6 +31,7 @@ class OnboardingRegistrationForm(forms.Form):
     )
 
     public_jwks = forms.JSONField(
+        initial = dict,
         label=_("public jwks of the entities"),
         error_messages={"required": _("Enter the public jwks of the entities")},
         validators = [validate_public_jwks]

@@ -20,7 +20,7 @@ HTTPC_PARAMS = getattr(
 )
 try:
     OIDCFED_FEDERATION_TRUST_ANCHORS = getattr(
-        settings, "OIDCFED_FEDERATION_TRUST_ANCHORS", entity_settings.OIDCFED_FEDERATION_TRUST_ANCHORS
+        settings, "OIDCFED_FEDERATION_TRUST_ANCHORS"
     )
 except AttributeError:
     OIDCFED_FEDERATION_TRUST_ANCHORS = []
@@ -48,7 +48,6 @@ def validate_entity_configuration(value):
             "authority_hints must be present "
             "in a descendant entity configuration"
         )
-
     proper_descendant = False
     for i in authority_hints:
         if i in OIDCFED_FEDERATION_TRUST_ANCHORS:
@@ -57,6 +56,6 @@ def validate_entity_configuration(value):
     if not proper_descendant:
         raise NotDescendant(
             "This participant MUST have one of "
-            f"{', '.join(OIDCFED_FEDERATION_TRUST_ANCHORS)} in "
+            f"{', '.join(OIDCFED_FEDERATION_TRUST_ANCHORS) or []} in "
             f"its authority_hints claim. It has: {authority_hints}"
         )
