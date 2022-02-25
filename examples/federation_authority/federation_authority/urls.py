@@ -60,4 +60,19 @@ if 'spid_cie_oidc.relying_party' in settings.INSTALLED_APPS:
             ),
         ]
     )
-    
+
+if 'spid_cie_oidc.provider' in settings.INSTALLED_APPS:
+    # from spid_cie_oidc.provider.urls import urlpatterns as op_urlpatterns
+    # urlpatterns.extend(op_urlpatterns)
+
+    from spid_cie_oidc.entity.views import entity_configuration
+
+    urlpatterns.extend(
+        [
+            path(
+                f"oidc/op/.well-known/openid-federation",
+                entity_configuration,
+                name="op_entity_configuration",
+            ),
+        ]
+    )

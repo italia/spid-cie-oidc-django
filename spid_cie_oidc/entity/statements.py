@@ -448,11 +448,9 @@ class EntityConfiguration:
                 continue
 
             else:
-                logger.info(
-                    f"Getting entity statements from {fetch_api_url}  for "
-                    f"{self.sub}"
-                )
-                jwts = get_entity_statements([fetch_api_url], self.httpc_params)
+                _url = f"{fetch_api_url}?sub={self.sub}"
+                logger.info(f"Getting entity statements from {_url}")
+                jwts = get_entity_statements([_url], self.httpc_params)
                 jwt = jwts[0]
                 self.validate_by_superior_statement(jwt, ec)
 
