@@ -53,8 +53,8 @@ class Command(BaseCommand):
                 if tc.is_valid:
                     res.append(tc)
 
-                print(
-                    tc.metadata
+                logger.info(
+                    f"Final Metadata for {tc.sub}:\n\n{tc.metadata}"
                 )
 
             except Exception as e:
