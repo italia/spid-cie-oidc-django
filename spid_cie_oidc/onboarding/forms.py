@@ -2,6 +2,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 from spid_cie_oidc.entity.validators import validate_public_jwks
 
+
 class OnboardingRegistrationForm(forms.Form):
 
     organization_name = forms.CharField(

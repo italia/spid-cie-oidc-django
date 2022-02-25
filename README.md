@@ -97,7 +97,9 @@ for each of the them you have to create the db and load the example data, as fol
 ````
 cd examples/$project_name
 cp $project_name/settingslocal.py.example $project_name/settingslocal.py
+
 # then customize (optional) $project_name/settingslocal.py
+# add OIDCFED_FEDERATION_TRSUT_ANCHORS = ["http://127.0.0.1:8000"]
 
 ./manage.py migrate
 

@@ -221,6 +221,9 @@ class FederationEntityConfiguration(TimeStampedModel):
         if self.trust_marks_issuers:
             conf["trust_marks_issuers"] = self.trust_marks_issuers
 
+        if self.trust_marks:
+            conf["trust_marks"] = self.trust_marks
+
         if self.constraints:
             conf["constraints"] = self.constraints
 
@@ -327,7 +330,7 @@ class TrustChain(TimeStampedModel):
         help_text=_("OpenID Connect Federation entity type")
     )
     exp = models.DateTimeField()
-    iat = models.DateTimeField()
+    iat = models.DateTimeField(auto_now_add=True)
     chain = models.JSONField(
         blank=True,
         help_text=_(
@@ -352,7 +355,7 @@ class TrustChain(TimeStampedModel):
         max_length=33,
         default=False,
         help_text=_("Status of this trust chain, on each update."),
-        choices=[(i, i) for i in ENTITY_STATUS.keys()]
+        choices=[(i, i) for i in list(ENTITY_STATUS.keys())]
     )
     log = models.TextField(
         blank=True,
@@ -377,6 +380,10 @@ class TrustChain(TimeStampedModel):
         verbose_name = "Trust Chain"
         verbose_name_plural = "Trust Chains"
         unique_together = ("sub", "type")
+
+    @property
+    def subject(self):
+        return self.sub
 
     @property
     def is_valid(self):
