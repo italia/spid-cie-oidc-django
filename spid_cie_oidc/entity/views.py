@@ -11,6 +11,7 @@ def entity_configuration(request):
     OIDC Federation Entity Configuration at
     .well-known/openid-federation
     """
+    breakpoint()
     _sub = request.build_absolute_uri().split(OIDCFED_FEDERATION_WELLKNOWN_URL)[0]
     conf = FederationEntityConfiguration.objects.filter(
         # TODO: check for reverse proxy and forwarders ...
