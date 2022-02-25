@@ -1,3 +1,4 @@
+import datetime
 import logging
 
 from collections import OrderedDict
@@ -145,11 +146,11 @@ class TrustChainBuilder:
         return self.final_metadata
 
     @property
-    def exp_datetime(self):
+    def exp_datetime(self) -> datetime.datetime:
         if self.exp:
             return datetime_from_timestamp(self.exp)
 
-    def set_exp(self):
+    def set_exp(self) -> int:
         exps = [i.payload["exp"] for i in self.trust_path]
         if exps:
             self.exp = min(exps)
@@ -269,6 +270,19 @@ class TrustChainBuilder:
                     raise InvalidRequiredTrustMark(
                         "The required Trust Marks are not valid"
                     )
+
+    def serialize(self):
+        res = []
+        for stat in self.trust_path:
+            res.append(stat.payload)
+            if stat.verified_descendant_statements:
+                res.append(
+                    [
+                        dict(i)
+                        for i in stat.verified_descendant_statements.values()
+                    ]
+                )
+        return res
 
     def start(self):
         try:

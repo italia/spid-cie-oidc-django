@@ -149,6 +149,7 @@ class EntityConfiguration:
         self.header = unpad_jwt_head(jwt)
         self.payload = unpad_jwt_payload(jwt)
         self.sub = self.payload["sub"]
+        self.iss = self.payload["iss"]
         self.jwks = get_jwks(self.payload, httpc_params)
         if not self.jwks[0]:
             _msg = f"Missing jwks in the statement for {self.sub}"
