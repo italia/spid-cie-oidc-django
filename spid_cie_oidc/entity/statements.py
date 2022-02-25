@@ -178,7 +178,7 @@ class EntityConfiguration:
 
         # a dict with the RAW JWT of valid entity statements for each descendant subject
         self.verified_descendant_statements_as_jwt = {}
-        
+
         self.is_valid = False
 
     def validate_by_itself(self) -> bool:

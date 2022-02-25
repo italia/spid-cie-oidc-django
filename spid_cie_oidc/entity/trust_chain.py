@@ -2,7 +2,6 @@ import datetime
 import logging
 
 from collections import OrderedDict
-from django.conf import settings
 from typing import Union
 
 from spid_cie_oidc.entity.policy import apply_policy
@@ -12,7 +11,6 @@ from . exceptions import (
     MetadataDiscoveryException,
     TrustAnchorNeeded
 )
-from . settings import *
 
 from .statements import (
     get_entity_configurations,

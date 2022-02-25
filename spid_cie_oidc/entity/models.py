@@ -1,5 +1,4 @@
 from cryptojwt.jwk.jwk import key_from_jwk_dict
-from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
@@ -303,7 +302,7 @@ class FetchedEntityStatement(TimeStampedModel):
         help_text=_("Entity statement"), default=dict
     )
     jwt = models.CharField(max_length=2048)
-    
+
     class Meta:
         verbose_name = "Fetched Entity Statement"
         verbose_name_plural = "Fetched Entity Statement"
@@ -316,7 +315,7 @@ class FetchedEntityStatement(TimeStampedModel):
         return (
             self.exp <= timezone.localtime()
         )
-    
+
     def __str__(self):
         return f"{self.sub} issued by {self.iss}"
 
