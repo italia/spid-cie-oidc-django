@@ -40,8 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'spid_cie_oidc.entity',
-    'spid_cie_oidc.relying_party',
     'bootstrap_italia_template',
+    'spid_cie_oidc.relying_party',
 ]
 
 MIDDLEWARE = [
