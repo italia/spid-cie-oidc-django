@@ -1,7 +1,7 @@
 from cryptojwt.jwk.jwk import key_from_jwk_dict
-from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import gettext as _
 
 from spid_cie_oidc.entity.abstract_models import TimeStampedModel
@@ -13,19 +13,20 @@ from spid_cie_oidc.entity.jwks import (
 )
 from spid_cie_oidc.entity.jwtse import create_jws
 from spid_cie_oidc.entity.validators import validate_public_jwks
-from spid_cie_oidc.entity.utils import exp_from_now, iat_now
-
+from spid_cie_oidc.entity.settings import FEDERATION_DEFAULT_EXP
+from spid_cie_oidc.entity.statements import EntityConfiguration
+from spid_cie_oidc.entity.utils import (
+    exp_from_now,
+    iat_now
+)
 
 import json
 import logging
-import spid_cie_oidc.entity.settings as local_settings
 import uuid
 
 
 ENTITY_TYPE_LEAFS = ["openid_relying_party", "openid_provider", "oauth_resource"]
-
 ENTITY_TYPES = ["federation_entity"] + ENTITY_TYPE_LEAFS
-
 ENTITY_STATUS = {
     "unreachable": False,
     "valid": True,
@@ -34,9 +35,7 @@ ENTITY_STATUS = {
     "unknown": None,
     "expired": None,
 }
-FEDERATION_DEFAULT_EXP = getattr(
-    settings, "FEDERATION_DEFAULT_EXP", local_settings.FEDERATION_DEFAULT_EXP
-)
+
 logger = logging.getLogger(__name__)
 
 
@@ -96,7 +95,7 @@ class FederationEntityConfiguration(TimeStampedModel):
     jwks = models.JSONField(
         blank=False,
         null=False,
-        help_text=_("a list of public keys"),
+        help_text=_("a list of private keys"),
         default=_create_jwks,
     )
     trust_marks = models.JSONField(
@@ -220,15 +219,16 @@ class FederationEntityConfiguration(TimeStampedModel):
         if self.trust_marks_issuers:
             conf["trust_marks_issuers"] = self.trust_marks_issuers
 
+        if self.trust_marks:
+            conf["trust_marks"] = self.trust_marks
+
         if self.constraints:
             conf["constraints"] = self.constraints
 
         if self.authority_hints:
             conf["authority_hints"] = self.authority_hints
         elif self.is_leaf:
-            _msg = (
-                f"Entity {self.sub} is a leaf and requires authority_hints valued"
-            )
+            _msg = f"Entity {self.sub} is a leaf and requires authority_hints valued"
             logger.error(_msg)
 
         return conf
@@ -243,7 +243,7 @@ class FederationEntityConfiguration(TimeStampedModel):
             self.entity_configuration_as_dict,
             self.jwks[0],
             alg=self.default_signature_alg,
-            **kwargs
+            **kwargs,
         )
 
     def __str__(self):
@@ -298,12 +298,23 @@ class FetchedEntityStatement(TimeStampedModel):
     iat = models.DateTimeField()
 
     statement = models.JSONField(
-        blank=False, null=False, help_text=_("Entity statement"), default=dict
+        blank=False, null=False,
+        help_text=_("Entity statement"), default=dict
     )
+    jwt = models.CharField(max_length=2048)
 
     class Meta:
         verbose_name = "Fetched Entity Statement"
         verbose_name_plural = "Fetched Entity Statement"
+
+    def get_entity_configuration_as_obj(self):
+        return EntityConfiguration(self.jwt)
+
+    @property
+    def is_expired(self):
+        return (
+            self.exp <= timezone.localtime()
+        )
 
     def __str__(self):
         return f"{self.sub} issued by {self.iss}"
@@ -317,59 +328,79 @@ class TrustChain(TimeStampedModel):
     sub = models.URLField(
         max_length=255,
         blank=False,
-        help_text=_("URL that identifies this Entity in the Federation. "),
+        help_text=_("URL that identifies this Entity in the Federation. ")
+    )
+    trust_anchor = models.ForeignKey(
+        FetchedEntityStatement, on_delete=models.CASCADE
     )
     type = models.CharField(
         max_length=33,
         blank=True,
         default="openid_provider",
         choices=[(i, i) for i in ENTITY_TYPES],
-        help_text=_("OpenID Connect Federation entity type"),
+        help_text=_("OpenID Connect Federation entity type")
     )
     exp = models.DateTimeField()
-    iat = models.DateTimeField()
+    iat = models.DateTimeField(auto_now_add=True)
     chain = models.JSONField(
         blank=True,
         help_text=_(
             "A list of entity statements collected during the metadata discovery"
         ),
-        default=list,
+        default=list
     )
-    resultant_metadata = models.JSONField(
-        blank=False,
-        null=False,
+    metadata = models.JSONField(
+        blank=True,
+        null=True,
         help_text=_(
             "The final metadata applied with the metadata policy built over the chain"
         ),
-        default=dict,
+        default=dict
     )
     parties_involved = models.JSONField(
         blank=True,
         help_text=_("subjects involved in the metadata discovery"),
-        default=list,
+        default=list
     )
     status = models.CharField(
         max_length=33,
         default=False,
         help_text=_("Status of this trust chain, on each update."),
-        choices=[(i, i) for i in ENTITY_STATUS.keys()],
+        choices=[(i, i) for i in list(ENTITY_STATUS.keys())]
     )
-    status_log = models.JSONField(
+    log = models.TextField(
         blank=True,
         help_text=_("status log"),
-        default=dict,
+        default=""
+    )
+    processing_start = models.DateTimeField(
+        help_text=_(
+            "When the metadata discovery started for this Trust Chain. "
+            "It should prevent concurrent processing for the same sub/type."
+        ),
+        default=timezone.localtime
     )
     is_active = models.BooleanField(
         default=True,
         help_text=_(
-            "If you need to disable the trust to this subject, deacticate this"
-        ),
+            "If you need to disable the trust to this subject, uncheck this"
+        )
     )
 
     class Meta:
         verbose_name = "Trust Chain"
         verbose_name_plural = "Trust Chains"
-        unique_together = ("sub", "type")
+        unique_together = ("sub", "type", "trust_anchor")
+
+    @property
+    def subject(self):
+        return self.sub
+
+    @property
+    def is_expired(self):
+        return (
+            self.exp <= timezone.localtime()
+        )
 
     @property
     def is_valid(self):

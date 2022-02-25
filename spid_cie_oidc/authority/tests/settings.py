@@ -1,16 +1,16 @@
 from spid_cie_oidc.entity.jwks import create_jwk
+from spid_cie_oidc.entity.jwks import new_rsa_key, serialize_rsa_key
 
 rp_onboarding_data = dict(
-    name = "RP Test",
-    sub = "http://rp-test/oidc/rp",
-    type = "openid_relying_party",
-    
-    metadata_policy = {"openid_relying_party": {"scopes": {"value": ["openid"]}}},
-    is_active=True
+    name="RP Test",
+    sub="http://rp-test/oidc/rp",
+    type="openid_relying_party",
+    metadata_policy={"openid_relying_party": {"scopes": {"value": ["openid"]}}},
+    is_active=True,
 )
 
 rp_conf = {
-    "sub": rp_onboarding_data['sub'],
+    "sub": rp_onboarding_data["sub"],
     "metadata": {
         "openid_relying_party": {
             "application_type": "web",
@@ -20,11 +20,14 @@ rp_conf = {
             "grant_types": ["refresh_token", "authorization_code"],
             "redirect_uris": ["https://rp.example.it/spid/callback"],
             "response_types": ["code"],
-            "subject_type": "pairwise"
+            "subject_type": "pairwise",
+            "jwks" : [
+                serialize_rsa_key(new_rsa_key().pub_key)
+            ]
         }
     },
     "authority_hints": ["http://testserver/"],
-    "is_active" : True
+    "is_active": True,
 }
 
 intermediary_conf = {
@@ -39,15 +42,14 @@ intermediary_conf = {
     },
     "trust_marks": [create_jwk()],
     "authority_hints": ["http://testserver/"],
-    "is_active" : True
+    "is_active": True,
 }
 intermediary_onboarding_data = dict(
-    name = "intermediary-test",
-    sub = "http://intermediary-test",
-    type = "federation_entity",
-    
+    name="intermediary-test",
+    sub="http://intermediary-test",
+    type="federation_entity",
     # metadata_policy = {"openid_relying_party": {"scopes": {"value": ["openid"]}}},
-    is_active=True
+    is_active=True,
 )
 
 
@@ -57,14 +59,14 @@ TRUST_MARK_PAYLOAD = {
     "iat": 1579621160,
     "id": "https://www.spid.gov.it/certification/rp",
     "mark": "https://www.agid.gov.it/themes/custom/agid/logo.svg",
-    "ref": "https://docs.italia.it/italia/spid/spid-regole-tecniche-oidc/it/stabile/index.html"
+    "ref": "https://docs.italia.it/italia/spid/spid-regole-tecniche-oidc/it/stabile/index.html",
 }
 
 RP_PROFILE = {
     "name": "SPID Public SP",
     "profile_category": "openid_relying_party",
-    "profile_id": "https://www.spid.gov.it/openid-federation/agreement/sp-public/",
-    "trust_mark_template": TRUST_MARK_PAYLOAD
+    "profile_id": "https://www.spid.gov.it/certification/rp",
+    "trust_mark_template": TRUST_MARK_PAYLOAD,
 }
 
 RP_METADATA = {

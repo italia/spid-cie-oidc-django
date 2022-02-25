@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
+   sodipodi:docname="oidcfed-middleware.svg">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.7"
+     inkscape:cx="61.606416"
+     inkscape:cy="665.63616"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="997"
+     inkscape:window-x="0"
+     inkscape:window-y="28"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Livello 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="opacity:0.98999999;fill:none;fill-opacity:1;stroke:#1c71da;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect815"
+       width="92.604164"
+       height="25.702381"
+       x="0.90713316"
+       y="0.36428794" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:0.69999999;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="37.948776"
+       y="16.995226"
+       id="text821"><tspan
+         sodipodi:role="line"
+         id="tspan819"
+         x="37.948776"
+         y="16.995226"
+         style="stroke-width:0.26458332">RP</tspan></text>
+    <rect
+       y="86.830635"
+       x="11.023701"
+       height="21.83638"
+       width="73.473656"
+       id="rect823"
+       style="opacity:0.98999999;fill:none;fill-opacity:1;stroke:#1c71da;stroke-width:0.8210209;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <text
+       id="text827"
+       y="97.565552"
+       x="25.74428"
+       style="font-style:normal;font-weight:normal;font-size:8.68913746px;line-height:0.69999999;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.21722843"
+       xml:space="preserve"
+       transform="scale(0.96637778,1.034792)"><tspan
+         style="stroke-width:0.21722843"
+         y="97.565552"
+         x="25.74428"
+         id="tspan825"
+         sodipodi:role="line">REV. PROXY</tspan></text>
+    <rect
+       style="opacity:0.98999999;fill:none;fill-opacity:1;stroke:#1c71da;stroke-width:0.8210209;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect829"
+       width="73.473656"
+       height="21.83638"
+       x="11.023701"
+       y="149.7706" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:8.68913746px;line-height:0.69999999;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.21722843"
+       x="41.819199"
+       y="158.38928"
+       id="text833"
+       transform="scale(0.96637778,1.034792)"><tspan
+         sodipodi:role="line"
+         id="tspan831"
+         x="41.819199"
+         y="158.38928"
+         style="stroke-width:0.21722843">OP</tspan></text>
+    <rect
+       style="opacity:0.98999999;fill:none;fill-opacity:1;stroke:#1c71da;stroke-width:0.8210209;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect835"
+       width="73.473656"
+       height="21.83638"
+       x="103.81071"
+       y="86.830635" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:8.68913746px;line-height:0.69999999;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.21722843"
+       x="117.41515"
+       y="97.565552"
+       id="text839"
+       transform="scale(0.96637778,1.034792)"><tspan
+         sodipodi:role="line"
+         id="tspan837"
+         x="117.41515"
+         y="97.565552"
+         style="stroke-width:0.21722843">OIDC FED MS</tspan></text>
+    <rect
+       y="149.85892"
+       x="103.47335"
+       height="31.935627"
+       width="73.30864"
+       id="rect841"
+       style="opacity:0.98999999;fill:none;fill-opacity:1;stroke:#1c71da;stroke-width:0.99177545;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <text
+       id="text845"
+       y="157.08594"
+       x="126.53885"
+       style="font-style:normal;font-weight:normal;font-size:8.68913746px;line-height:0.69999999;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.21722843"
+       xml:space="preserve"
+       transform="scale(0.96637778,1.034792)"><tspan
+         style="stroke-width:0.21722843"
+         y="157.08594"
+         x="126.53885"
+         id="tspan843"
+         sodipodi:role="line">STORAGE</tspan><tspan
+         style="stroke-width:0.21722843"
+         y="163.16833"
+         x="126.53885"
+         sodipodi:role="line"
+         id="tspan849" /><tspan
+         style="stroke-width:0.21722843"
+         y="169.25073"
+         x="126.53885"
+         sodipodi:role="line"
+         id="tspan847">RP JSON</tspan></text>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 47.293557,26.066669 0.398789,60.763966"
+       id="path851"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#rect815"
+       inkscape:connection-end="#rect823" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.21722843px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 84.497356,97.219658 H 103.81071"
+       id="path853"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#rect823"
+       inkscape:connection-end="#rect835" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.21722843px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 140.47693,108.66702 -0.25404,41.1919"
+       id="path855"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#rect835"
+       inkscape:connection-end="#rect841" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.21722843px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 47.760529,108.66702 V 149.7706"
+       id="path857"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#rect823"
+       inkscape:connection-end="#rect829" />
+    <rect
+       y="40.683369"
+       x="-0.42677617"
+       height="150.07854"
+       width="209.79877"
+       id="rect836"
+       style="opacity:0.98999999;fill:none;fill-opacity:1;stroke:#1c71da;stroke-width:1.00507176;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <text
+       transform="scale(0.96637778,1.034792)"
+       id="text840"
+       y="47.08556"
+       x="143.62065"
+       style="font-style:normal;font-weight:normal;font-size:8.68913746px;line-height:0.69999999;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.21722843"
+       xml:space="preserve"><tspan
+         style="stroke-width:0.21722843"
+         y="47.08556"
+         x="143.62065"
+         id="tspan838"
+         sodipodi:role="line">ORG PERIMETER</tspan></text>
+  </g>
+</svg>

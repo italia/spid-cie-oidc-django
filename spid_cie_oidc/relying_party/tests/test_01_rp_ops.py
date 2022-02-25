@@ -1,8 +1,8 @@
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from .models import OidcAuthenticationToken
-from .utils import html_json_preview
+from spid_cie_oidc.relying_party.models import OidcAuthenticationToken
+from spid_cie_oidc.relying_party.utils import html_json_preview
 
 
 class OidcRpTest(TestCase):

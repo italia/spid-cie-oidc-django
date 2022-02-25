@@ -12,6 +12,7 @@ each of these can be installed separately within a django project, these are:
 
 - __spid_cie_oidc.accounts__: customizable app that extended the Django User model.
 - __spid_cie_oidc.entity__: OIDC Federation django app, with models and API that implements OIDC Federation 1.0 Entity Statements, metadata discovery, Trust Chain, Trust Marks and Metadata policy.
+- __spid_cie_oidc.authority__: OIDC Federation API and models for Trust Anchors and Intermediaries.
 - __spid_cie_oidc.onboarding__: OIDC Federation OnBoarding demo application.
 - __spid_cie_oidc.relying_party__: OIDC Relying Party and test suite for OIDC Providers.
 - __spid_cie_oidc.provider__: OIDC Provider and test suite for OIDC Relying Parties.
@@ -29,11 +30,11 @@ We have all the Django apps available in the folder `spid_cie_oidc/`.
 The examples projects are instead in the folder `examples/`.
 
 There is a substantial difference between an app and a project.
-The app is installed using a common python package manager, such as poetry or pip,
+The app is installed using a common python package manager, such as _poetry_ or _pip_,
 and can be used, inherited, and integrated into other projects.
 
 A project is a service configuration that integrates one or more applications.
-In this repository we have three example project for demo purpose.
+In this repository we have three example projects for demo purpose.
 
 ### Summary
 
@@ -66,7 +67,7 @@ sudo pip install virtualenv
 Activate the environment. It's optional and up to you if you want to install 
 in a separate env or system wide
 ````
-virtualenv -p python3 --copies env
+virtualenv -p python3 env
 source env/bin/activate
 ````
 
@@ -81,7 +82,7 @@ pip install spid-cie-oidc
 #### Setup the example project for demo purpose
 
 ````
-git clone https://github.com/peppelinux/spid-cie-oidc
+git clone https://github.com/peppelinux/spid-cie-oidc-django
 cd spid-cie-oidc
 pip install -e .
 ````
@@ -91,12 +92,14 @@ In `examples/` folder you have three demostrations projects:
  - relying_party
  - provider
 
-for each of the them you have to create the db and load the example data , as follows:
+for each of the them you have to create the db and load the example data, as follows:
 
 ````
 cd examples/$project_name
 cp $project_name/settingslocal.py.example $project_name/settingslocal.py
+
 # then customize (optional) $project_name/settingslocal.py
+# add OIDCFED_FEDERATION_TRSUT_ANCHORS = ["http://127.0.0.1:8000"]
 
 ./manage.py migrate
 
@@ -115,10 +118,23 @@ The demo propose a small federation composed by the following entities:
  - OpenID Relying Party, available at `http://localhost:8001`
  - OpenID Provider, available at `http://localhost:8002`
 
+
+### Docker compose
+
+> TODO: Not available untile v0.6.0 release
+
+
+### Django projects
+
 Activate the environment
 ````
 source env/bin/activate
 cd examples
+````
+
+Install Django Bootstrap italia template
+````
+pip install design-django-theme
 ````
 
 Then enter in the single applications projects (__federation_authority/__ or __relying_party/__ or __provider/__):

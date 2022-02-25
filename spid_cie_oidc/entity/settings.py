@@ -1,4 +1,7 @@
+from django.conf import settings
+
 import aiohttp
+
 
 DEFAULT_JWE_ENC = "A256CBC-HS512"
 ENCRYPTION_ENC_SUPPORTED = [
@@ -32,7 +35,6 @@ OIDCFED_ALLOWED_TRUST_MARKS = []
 OIDCFED_FILTER_BY_TRUST_MARKS = True
 
 # the metadata discovery will only processes the first MAXIMUM_AUTHORITY_HINTS
-OIDCFED_MAXIMUM_AUTHORITY_HINTS = 2
 OIDCFED_MAX_PATH_LEN = 1
 
 # old, for requests
@@ -42,9 +44,25 @@ OIDCFED_MAX_PATH_LEN = 1
 # }
 
 # for aiohttp
-HTTPC_PARAMS = {
-    "connection": {"ssl": True},
-    "session": {"timeout": aiohttp.ClientTimeout(total=4)},
-}
+HTTPC_PARAMS = getattr(
+    settings,
+    "HTTPC_PARAMS",
+    {
+        "connection": {"ssl": True},
+        "session": {"timeout": aiohttp.ClientTimeout(total=4)},
+    }
+)
 
-FEDERATION_DEFAULT_EXP = 2880
+# in minutes
+MAX_ACCEPTED_TIMEDIFF = 5
+
+
+OIDCFED_MAXIMUM_AUTHORITY_HINTS = getattr(
+    settings,
+    "OIDCFED_MAXIMUM_AUTHORITY_HINTS",
+    2,
+)
+
+FEDERATION_DEFAULT_EXP = getattr(
+    settings, "FEDERATION_DEFAULT_EXP", 2880
+)

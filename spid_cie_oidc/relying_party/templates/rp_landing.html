@@ -1,0 +1,70 @@
+<!-- Extends default Bootstrap Unical Italia template -->
+{% extends 'rp_base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block container %}
+<div>
+    <div class="container pt-2 p-3">
+
+        <div class="row d-lg-flex">
+            <div class="col-12">
+                <div class="card-wrapper card-space">
+                    <div class="card card-bg no-after">
+                        <div class="card-body pl-lg-0">
+                            <div class="row h-100">
+                                <div class="col-12 col-lg-6 pl-lg-4">
+                                    <h3 class="text-left">
+                                        {% trans "Welcome" %}
+                                    </h3>
+                                    <p class="card-title">
+                                        {% lorem 1 %}
+                                    </p>
+                                    <div class="row mt-3">
+                                        <div class="col">
+                                            <span
+                                                class="badge badge-grey-unical square-corners mb-3 mr-2 ml-0 pr-10 p-2 mw-100">
+                                                <a href="#" class="italia-it-button italia-it-button-size-m button-spid"
+                                                    spid-idp-button="#spid-idp-button-medium-get" aria-expanded="false">
+                                                    <span class="italia-it-button-icon"><img
+                                                            src="{% static 'svg/spid-ico-circle-bb.svg' %}"
+                                                            alt=""></span>
+                                                    <span class="italia-it-button-text">{% trans "Entra con SPID" %}</span>
+                                                </a>
+                                                <div id="spid-idp-button-medium-get"
+                                                    class="spid-idp-button spid-idp-button-tip spid-idp-button-relative"
+                                                    style="display: none; left: 56.5px; top: 46.05px;">
+                                                    <ul id="spid-idp-list-medium-root-get" class="spid-idp-button-menu"
+                                                        aria-labelledby="spid-idp">
+                                                        <li class="spid-idp-button-link" data-idp="intesaid"><a
+                                                                href="#">
+                                                                <span class="spid-sr-only">Openid Provider</span>
+                                                            </a></li>
+                                                    </ul>
+                                                </div>
+
+                                            </span>
+                                            <span
+                                                class="badge badge-grey-unical square-corners mb-3 mr-2 ml-0 pr-10 p-2 mw-100"
+                                                style="font-size: 100%">
+                                                <a href="#" class="italia-it-button italia-it-button-size-m button-cie">
+                                                    <span class="italia-it-button-icon"><img
+                                                            src="{% static 'svg/cie-ico-circle-bb.svg' %}"
+                                                            alt=""></span>
+                                                    <span class="italia-it-button-text">{% trans "Entra con CIE" %}</span>
+                                                </a>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'js/spid-sp-access-button.js' %}"></script>
+    <script src="{% static 'js/spid_button.js' %}"></script>
+
+{% endblock container %}
