@@ -1,4 +1,5 @@
 from spid_cie_oidc.entity.jwks import create_jwk
+from spid_cie_oidc.entity.jwks import new_rsa_key, serialize_rsa_key
 
 rp_onboarding_data = dict(
     name="RP Test",
@@ -20,6 +21,9 @@ rp_conf = {
             "redirect_uris": ["https://rp.example.it/spid/callback"],
             "response_types": ["code"],
             "subject_type": "pairwise",
+            "jwks" : [
+                serialize_rsa_key(new_rsa_key().pub_key)
+            ]
         }
     },
     "authority_hints": ["http://testserver/"],

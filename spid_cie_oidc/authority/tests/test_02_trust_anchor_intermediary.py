@@ -21,7 +21,7 @@ from unittest.mock import patch
 import datetime
 
 
-class TATest(TestCase):
+class TrustChainTest(TestCase):
     def setUp(self):
         self.ta_conf = FederationEntityConfiguration.objects.create(**ta_conf_data)
         self.rp_conf = FederationEntityConfiguration.objects.create(**rp_conf)
@@ -141,6 +141,17 @@ class TATest(TestCase):
             (len(trust_chain.trust_path) - 2) == trust_chain.max_path_len
         )
 
+        stored_trust_chain = TrustChain.objects.create(
+            sub = trust_chain.subject,
+            type = trust_chain.metadata_type,
+            exp = trust_chain.exp_datetime,
+            chain = trust_chain.serialize(),
+            metadata = trust_chain.final_metadata,
+            parties_involved = [i.sub for i in trust_chain.trust_path],
+            status = 'valid',
+            is_active = True
+        )
+
     @override_settings(HTTP_CLIENT_SYNC=True)
     @patch("requests.get", return_value=EntityResponseWithIntermediateManyHints())
     def test_trust_chain_valid_with_intermediaries_many_authhints(self, mocked):
@@ -212,4 +223,5 @@ class TATest(TestCase):
                     'https://www.spid.gov.it/certification/rp'
                 ]
             )
+
     
