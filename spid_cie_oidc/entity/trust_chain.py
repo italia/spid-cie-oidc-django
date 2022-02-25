@@ -2,17 +2,16 @@ import datetime
 import logging
 
 from collections import OrderedDict
-from django.conf import settings
 from typing import Union
 
 from spid_cie_oidc.entity.policy import apply_policy
 
-from . import settings as settings_local
 from . exceptions import (
     InvalidRequiredTrustMark,
     MetadataDiscoveryException,
     TrustAnchorNeeded
 )
+
 from .statements import (
     get_entity_configurations,
     EntityConfiguration,
@@ -20,12 +19,6 @@ from .statements import (
 from .utils import datetime_from_timestamp
 
 
-HTTPC_PARAMS = getattr(settings, "HTTPC_PARAMS", settings_local.HTTPC_PARAMS)
-OIDCFED_MAXIMUM_AUTHORITY_HINTS = getattr(
-    settings,
-    "OIDCFED_MAXIMUM_AUTHORITY_HINTS",
-    settings_local.OIDCFED_MAXIMUM_AUTHORITY_HINTS,
-)
 logger = logging.getLogger(__name__)
 
 
@@ -293,37 +286,3 @@ class TrustChainBuilder:
             self.is_valid = False
             logger.error(f"{e}")
             raise e
-
-
-def trust_chain_builder(
-    subject: str,
-    trust_anchor: EntityConfiguration,
-    httpc_params: dict = HTTPC_PARAMS,
-    required_trust_marks: list = [],
-    metadata_type: str = "openid_provider",
-) -> TrustChainBuilder:
-    """
-    Minimal Provider Discovery endpoint request processing
-
-    metadata_type MUST be one of
-        openid_provider
-        openid_relying_party
-        oauth_resource
-    """
-    tc = TrustChainBuilder(
-        subject,
-        trust_anchor=trust_anchor,
-        required_trust_marks=required_trust_marks,
-        httpc_params=httpc_params,
-        metadata_type=metadata_type,
-    )
-    tc.start()
-
-    if not tc.is_valid:
-        logger.error(
-            "The tree of trust cannot be validated for "
-            f"{tc.subject}: {tc.tree_of_trust}"
-        )
-        return False
-    else:
-        return tc

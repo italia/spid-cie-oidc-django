@@ -6,10 +6,11 @@
 
 {% block extra_head %}
     {{ block.super }}  
+    <link type="text/css" rel="stylesheet" href="/static/css/access-button.css">
 {% endblock extra_head %}
 
 {% block page_title %}
-{% trans "OIDC Federation onboarding system" %}
+{% trans "OIDC Federation Relying Party" %}
 {% endblock page_title %}
 
 <!-- URL link top left -->
@@ -19,12 +20,12 @@ https://www.spid.gov.it/
 
 <!-- Name top left -->
 {% block header_slim_org_name %}
-    {% trans "OIDC Federation onboarding system" %}
+    {% trans "OIDC Federation Relying Party" %}
 {% endblock header_slim_org_name %}
 
 <!-- Mobile slim_org_name -->
 {% block header_slim_mobile_org_name %}
-    {% trans "OIDC Federation onboarding system" %}
+    {% trans "OIDC Federation Relying Party" %}
 {% endblock header_slim_mobile_org_name %}
 
 <!-- Make empty areas -->
@@ -35,38 +36,17 @@ https://www.spid.gov.it/
 {% block header_center_logo %}
 {% endblock header_center_logo %}
 
+
 <!-- Organization name in Header -->
 {% block header_center_org_name %}
-    {% trans "OIDC Federation onboarding system" %}
+    {% trans "OIDC Federation Relying Party" %}
 {% endblock header_center_org_name %}
+
+{% block main_menu %}{% endblock main_menu %}
 
 <!-- Organization description in Header -->
 {% block header_center_org_subname %}
-    {% trans "OIDC Federation onboarding system" %}
 {% endblock header_center_org_subname %}
-
-
-{% block menu_links %}
-
-<li class="nav-item ">
-    <a class="nav-link {% if request.resolver_match.view_name == 'oidc_onboarding_landing' %}active{% endif %}" 
-    href="{% url 'oidc_onboarding_landing' %}">
-        <span>{% trans 'Home' %}</span>
-    </a>
-</li>
-<li class="nav-item">
-    <a class="nav-link {% if request.resolver_match.view_name == 'oidc_onboarding_entities' %}active{% endif %}" 
-    href="{% url 'oidc_onboarding_entities' %}">
-        <span>{% trans 'Entities onboarded' %}</span>
-    </a>
-</li>
-<li class="nav-item">
-    <a class="nav-link {% if request.resolver_match.view_name == 'oidc_onboarding_registration' %}active{% endif %}" 
-    href="{% url 'oidc_onboarding_registration' %}">
-        <span>{% trans 'Register your entity' %}</span>
-    </a>
-</li>
-{% endblock menu_links %}
 
 <!-- Logo in Footer -->
 {% block footer_logo %}
@@ -74,12 +54,12 @@ https://www.spid.gov.it/
 
 <!-- Organization name in Footer -->
 {% block footer_org_name %}
-    {% trans "OIDC Federation onboarding system" %}
+    {% trans "OIDC Federation Relying Party" %}
 {% endblock footer_org_name %}
 
 <!-- Organization name in Footer -->
 {% block footer_org_subname %}
-    {% trans "OIDC Federation onboarding system" %}
+    {% trans "OIDC Federation Relying Party" %}
 {% endblock footer_org_subname %}
 
 {% block extra_scripts %}
