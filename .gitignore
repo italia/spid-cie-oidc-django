@@ -27,6 +27,7 @@ share/python-wheels/
 *.egg
 MANIFEST
 examples/*/static/
+spid_cie_oidc/relying_party/static
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
