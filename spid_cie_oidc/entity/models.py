@@ -95,7 +95,7 @@ class FederationEntityConfiguration(TimeStampedModel):
     jwks = models.JSONField(
         blank=False,
         null=False,
-        help_text=_("a list of public keys"),
+        help_text=_("a list of private keys"),
         default=_create_jwks,
     )
     trust_marks = models.JSONField(
