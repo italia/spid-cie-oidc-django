@@ -14,19 +14,20 @@ from spid_cie_oidc.entity.jwks import (
 )
 from spid_cie_oidc.entity.jwtse import create_jws
 from spid_cie_oidc.entity.validators import validate_public_jwks
-from spid_cie_oidc.entity.utils import exp_from_now, iat_now
-
+from spid_cie_oidc.entity.settings import FEDERATION_DEFAULT_EXP
+from spid_cie_oidc.entity.statements import EntityConfiguration
+from spid_cie_oidc.entity.utils import (
+    exp_from_now,
+    iat_now
+)
 
 import json
 import logging
-import spid_cie_oidc.entity.settings as local_settings
 import uuid
 
 
 ENTITY_TYPE_LEAFS = ["openid_relying_party", "openid_provider", "oauth_resource"]
-
 ENTITY_TYPES = ["federation_entity"] + ENTITY_TYPE_LEAFS
-
 ENTITY_STATUS = {
     "unreachable": False,
     "valid": True,
@@ -35,9 +36,7 @@ ENTITY_STATUS = {
     "unknown": None,
     "expired": None,
 }
-FEDERATION_DEFAULT_EXP = getattr(
-    settings, "FEDERATION_DEFAULT_EXP", local_settings.FEDERATION_DEFAULT_EXP
-)
+
 logger = logging.getLogger(__name__)
 
 
@@ -303,11 +302,21 @@ class FetchedEntityStatement(TimeStampedModel):
         blank=False, null=False,
         help_text=_("Entity statement"), default=dict
     )
-
+    jwt = models.CharField(max_length=2048)
+    
     class Meta:
         verbose_name = "Fetched Entity Statement"
         verbose_name_plural = "Fetched Entity Statement"
 
+    def get_entity_configuration_as_obj(self):
+        return EntityConfiguration(self.jwt)
+
+    @property
+    def is_expired(self):
+        return (
+            self.exp <= timezone.localtime()
+        )
+    
     def __str__(self):
         return f"{self.sub} issued by {self.iss}"
 
@@ -321,6 +330,9 @@ class TrustChain(TimeStampedModel):
         max_length=255,
         blank=False,
         help_text=_("URL that identifies this Entity in the Federation. ")
+    )
+    trust_anchor = models.ForeignKey(
+        FetchedEntityStatement, on_delete=models.CASCADE
     )
     type = models.CharField(
         max_length=33,
@@ -379,11 +391,17 @@ class TrustChain(TimeStampedModel):
     class Meta:
         verbose_name = "Trust Chain"
         verbose_name_plural = "Trust Chains"
-        unique_together = ("sub", "type")
+        unique_together = ("sub", "type", "trust_anchor")
 
     @property
     def subject(self):
         return self.sub
+
+    @property
+    def is_expired(self):
+        return (
+            self.exp <= timezone.localtime()
+        )
 
     @property
     def is_valid(self):
