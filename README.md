@@ -42,7 +42,7 @@ In this repository we have three example projects for demo purpose.
 - [Features](#features)
 * [Setup](#setup)
     * [Install as Django application](#install-as-django-application)
-    * [Setup the example project for demo purpose](#setup-the-example-project-for-demo-purpose)
+    * [Configure the example projects](#configure-the-example-projects)
     * [Docker compose](#docker-compose)
 * [Usage](#usage)
 * [Contribute](#contribute)
