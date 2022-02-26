@@ -41,9 +41,10 @@ In this repository we have three example projects for demo purpose.
 
 - [Features](#features)
 * [Setup](#setup)
-    * [Dependencies](#dependencies)
-      * [Install as Django application](#install-as-django-application)
-      * [Setup the example project for demo purpose](#setup-the-example-project-for-demo-purpose)
+    * [Install as Django application](#install-as-django-application)
+    * [Setup the example project for demo purpose](#setup-the-example-project-for-demo-purpose)
+        * [Dependencies](#dependencies)
+    * [Docker compose](#docker-compose)
 * [Usage](#usage)
 * [Contribute](#contribute)
     * [Contribute as end user](#contribute-as-end-user)
@@ -78,6 +79,16 @@ In this repository we have three example projects for demo purpose.
 The Database storage engine can be one of which supported by Django, the example project comes with sqlite3.
 
 
+#### Install as Django application
+Install __spid-cie-oidc__ as python package and use it in your django project
+````
+pip install spid-cie-oidc
+
+# then include `spid_cie_oidc.{app_name}` in your project settings.INSTALLED_APPS
+````
+
+#### Configure the example projects
+
 #### Dependencies
 ````
 apt install python3-dev python3-pip git
@@ -92,16 +103,7 @@ virtualenv -p python3 env
 source env/bin/activate
 ````
 
-#### Install as Django application
-Install __spid-cie-oidc__ as python package and use it in your django project
-````
-pip install spid-cie-oidc
-
-# then include `spid_cie_oidc.{app_name}` in your project settings.INSTALLED_APPS
-````
-
-#### Setup the example project for demo purpose
-
+Setup the example projects
 ````
 git clone https://github.com/peppelinux/spid-cie-oidc-django
 cd spid-cie-oidc
@@ -140,7 +142,7 @@ cp $project_name/settingslocal.py.example $project_name/settingslocal.py
 Point your web browser to `http://localhost:8000/admin` to enter in the management interface.
 
 
-### Docker compose
+## Docker compose
 
 > TODO: Not available until v0.6.0 release
 
