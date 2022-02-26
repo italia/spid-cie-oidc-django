@@ -25,7 +25,7 @@ class FederationDescendantJwkAdminInline(admin.StackedInline):
 
 @admin.register(FederationDescendant)
 class FederationDescendantAdmin(admin.ModelAdmin):
-    list_display = ("sub", "name", "status", "is_active", "created")
+    list_display = ("sub", "name", "type", "status", "is_active", "created")
     list_filter = ("type", "created", "modified", "is_active")
     search_fields = ("sub",)
     readonly_fields = (

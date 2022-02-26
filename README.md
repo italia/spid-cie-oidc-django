@@ -33,7 +33,7 @@ The Technical specifications of these SDKs are available here:
 
 1. [__OIDC Federation Entity__](docs/technical_specifications/ENTITY.md)
 2. [__OIDC Federation Authority/Intermediary__](docs/technical_specifications/AUTHORITY.md)
-3. [__OIDC Federation 1.0 onboarding service DEMO__](docs/technical_specifications/ONBOARDING.md)
+3. [__OIDC Federation Onboarding service DEMO__](docs/technical_specifications/ONBOARDING.md)
 4. [__Openid Connect Provider__](docs/technical_specifications/PROVIDER.md)
 5. [__Openid Connect Relying Party__](docs/technical_specifications/RELYING_PARTY.md)
 
@@ -120,7 +120,7 @@ In `examples/` folder you have three demostrations projects:
  - relying_party
  - provider
 
-for project you have to create the db and load the example data, as follows:
+for each project you have to create the db and load the example data, as follows:
 
 ````
 cd examples/$project_name
@@ -188,6 +188,10 @@ In this project we adopt [Semver](https://semver.org/lang/it/) and
 This software is released under the Apache 2 License by:
 
 - Giuseppe De Marco <giuseppe.demarco@teamdigitale.governo.it>.
+
+In this project we use the 
+[metadata policy code](https://github.com/peppelinux/spid-cie-oidc-django/blob/main/spid_cie_oidc/entity/policy.py)
+written by Roland Hedberg and licensed under the same Apache 2 license.
 
 ## Implementation notes
 
