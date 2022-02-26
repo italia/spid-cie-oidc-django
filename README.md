@@ -120,7 +120,7 @@ In `examples/` folder you have three demostrations projects:
  - relying_party
  - provider
 
-for project you have to create the db and load the example data, as follows:
+for each project you have to create the db and load the example data, as follows:
 
 ````
 cd examples/$project_name
