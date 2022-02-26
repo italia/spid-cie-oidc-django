@@ -172,7 +172,7 @@ Please consider the following branches:
 
 #### Hints
 
-Backup your demo data
+Backup and share your demo data
 
 ````
 # backup your data (upgrade example data), -e excludes.
