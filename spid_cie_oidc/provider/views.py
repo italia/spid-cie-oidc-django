@@ -8,18 +8,19 @@ from spid_cie_oidc.entity.tests.settings import *
 from spid_cie_oidc.onboarding.schemas.authn_requests import \
     AuthenticationRequestSpid
 
+
 def authn_request(request):
-    breakpoint()
     req = request.GET.get('request', None)
     try:
         payload = unpad_jwt_payload(req)
         header = unpad_jwt_head(req)
-        breakpoint()
         rp_trust_chain = TrustChain.objects.filter(type = "openid_relying_party", sub= payload['iss']).first()
         
         if not rp_trust_chain.is_valid:
             # response error ???
-            pass
+            error_description = ""
+            error = ""
+            return redirect_error_response(payload, error, error_description)
         
         if not rp_trust_chain.is_active:
             # gli rispondo con error response con access_denied??????
@@ -35,7 +36,6 @@ def authn_request(request):
         jwk = find_jwk(header, jwks)
         if not jwk:
             # torno una response error con unauthorized_client????
-            breakpoint()
             error_description = ""
             error = ""
             return redirect_error_response(payload, error, error_description)
@@ -43,18 +43,16 @@ def authn_request(request):
         try:
             verify_jws(request.GET["request"], jwk)
             try:
-                AuthenticationRequestSpid(payload)
+                AuthenticationRequestSpid(**payload)
                 return render(request, "login_rp.html")
                 # return reneder (template logging page) e gli passo anche il dict della request
             except ValidationError as exc:
-                breakpoint()
                 #invalid_request
                 error_description = ""
                 error = ""
                 return redirect_error_response(payload, error, error_description)
         except Exception as exc:
             #torno una response error con unauthorized_client
-            breakpoint()
             error_description = ""
             error = ""
             return redirect_error_response(payload, error, error_description)
