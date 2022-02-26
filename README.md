@@ -17,14 +17,6 @@ each of these can be installed separately within a django project:
 - __spid_cie_oidc.relying_party__: OIDC Relying Party and test suite for OIDC Providers.
 - __spid_cie_oidc.provider__: OIDC Provider and test suite for OIDC Relying Parties.
 
-The Technical specifications of these SDKs are available here:
-
-1. [__OIDC Federation Entity__](docs/technical_specifications/ENTITY.md)
-2. [__OIDC Federation Authority/Intermediary__](docs/technical_specifications/AUTHORITY.md)
-3. [__OIDC Federation 1.0 onboarding service DEMO__](docs/technical_specifications/ONBOARDING.md)
-4. [__Openid Connect Provider__](docs/technical_specifications/PROVIDER.md)
-5. [__Openid Connect Relying Party__](docs/technical_specifications/RELYING_PARTY.md)
-
 ## Contents
 
 All the Django apps are available in the folder `spid_cie_oidc/`.
@@ -37,9 +29,17 @@ and can be used, inherited, and integrated into other projects.
 A project is a service configuration that integrates one or more applications.
 In this repository we have three example projects for demo purpose.
 
+The Technical specifications of these SDKs are available here:
+
+1. [__OIDC Federation Entity__](docs/technical_specifications/ENTITY.md)
+2. [__OIDC Federation Authority/Intermediary__](docs/technical_specifications/AUTHORITY.md)
+3. [__OIDC Federation 1.0 onboarding service DEMO__](docs/technical_specifications/ONBOARDING.md)
+4. [__Openid Connect Provider__](docs/technical_specifications/PROVIDER.md)
+5. [__Openid Connect Relying Party__](docs/technical_specifications/RELYING_PARTY.md)
+
 ### Summary
 
-- [Features](#features)
+* [Features](#features)
 * [Setup](#setup)
     * [Install as Django application](#install-as-django-application)
     * [Configure the example projects](#configure-the-example-projects)
