@@ -13,7 +13,6 @@ from django.conf import settings
 from . settings import * 
 
 
-
 logger = logging.getLogger(__name__)
 
 

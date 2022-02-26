@@ -7,7 +7,7 @@ from spid_cie_oidc.authority.models import (
     FederationEntityAssignedProfile,
     get_first_self_trust_anchor,
 )
-from spid_cie_oidc.entity.jwtse import create_jws
+from spid_cie_oidc.entity.jwtse import create_jws, unpad_jwt_payload
 from spid_cie_oidc.entity.models import TrustChain
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
@@ -126,3 +126,24 @@ def resolve_entity_statement(request):
             content_type="application/jose",
         )
     
+
+def trust_mark_status(request):
+
+    if request.GET.get('sub', "") and request.GET.get('id', ""):
+        sub = request.GET["sub"]
+        _id = request.GET["id"]
+
+    elif request.GET.get('trust_mark', ""):
+        payload = unpad_jwt_payload(request.GET['trust_mark'])
+        sub = payload.get('sub', "")
+        _id = payload.get('id', "")
+
+    res = FederationEntityAssignedProfile.objects.filter(
+        descendant__sub = sub,
+        profile__profile_id = _id,
+        descendant__is_active = True
+    )
+    if res:
+        return JsonResponse({"active": True})
+    else:
+        return JsonResponse({"active": False})
