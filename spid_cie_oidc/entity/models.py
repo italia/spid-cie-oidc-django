@@ -364,7 +364,7 @@ class TrustChain(TimeStampedModel):
     )
     status = models.CharField(
         max_length=33,
-        default=False,
+        default="unreachable",
         help_text=_("Status of this trust chain, on each update."),
         choices=[(i, i) for i in list(ENTITY_STATUS.keys())]
     )
