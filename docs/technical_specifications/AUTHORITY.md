@@ -7,7 +7,7 @@ and below it must have other entities for which it provides an onboarding mechan
 
 All the endpoints are configured in the `urls.py` file of the project folder.
 
-#### fetch
+#### Fetch
 
 All entities that are expected to publish entity statements about other entities MUST expose a Fetch endpoint.
 
@@ -21,7 +21,7 @@ Example of FETCH request
 - `http://127.0.0.1:8000/fetch/?sub=http://127.0.0.1:8000/oidc/rp/`
 - `http://127.0.0.1:8000/fetch/?sub=http://127.0.0.1:8001/&format=json`
 
-#### listing
+#### Listing
 
 As described in the official specification
 [here](https://openid.net/specs/openid-connect-federation-1_0.html#rfc.section.7.3.1).
@@ -33,9 +33,12 @@ Lists all the descendant entities.
  - `http://127.0.0.1:8000/list/?is_leaf=false`
  - `http://127.0.0.1:8000/list/?is_leaf=true`
 
-#### resolve entity statement
+#### Resolve entity statement
 
-WiP
+An entity MAY use the resolve endpoint to fetch resolved metadata and trust marks for an entity as seen/trusted by the resolver. 
+
+- `http://127.0.0.1:8000/resolve/?sub=http://127.0.0.1:8000/oidc/op/&anchor=http://127.0.0.1:8000/&format=json`
+- `http://127.0.0.1:8000/resolve/?sub=http://127.0.0.1:8000/oidc/op/&anchor=http://127.0.0.1:8000/`
 
 #### trust mark status
 

@@ -19,7 +19,7 @@ each of these can be installed separately within a django project:
 
 The Technical specifications of these SDKs are available here:
 
-1. [__OIDC Federation Entity/Authority/Intermediary__](docs/technical_specifications/ENTITY.md)
+1. [__OIDC Federation Authority/Intermediary__](docs/technical_specifications/ENTITY.md)
 2. [__OIDC Federation Authority/Intermediary__](docs/technical_specifications/AUTHORITY.md)
 3. [__OIDC Federation 1.0 onboarding service DEMO__](docs/technical_specifications/ONBOARDING.md)
 4. [__Openid Connect Provider__](docs/technical_specifications/PROVIDER.md)

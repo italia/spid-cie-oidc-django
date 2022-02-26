@@ -257,3 +257,27 @@ class TrustChainTest(TestCase):
 
         self.assertFalse(gctc.is_expired)
         self.assertTrue(gctc.is_valid)
+
+    @override_settings(HTTP_CLIENT_SYNC=True)
+    @patch("requests.get", return_value=EntityResponseNoIntermediate())
+    def test_resolve_endpoint(self, mocked):
+        gctc = get_or_create_trust_chain(
+            subject = rp_conf["sub"],
+            trust_anchor = self.ta_conf.sub,
+            # TODO
+            #required_trust_marks: list = [],
+            metadata_type = "openid_relying_party"
+        )
+        
+        url = reverse("oidcfed_resolve")
+
+        c = Client()
+        res = c.get(
+            url,
+            data={
+                "sub": self.rp.sub,
+                "anchor": self.ta_conf.sub
+            }
+        )
+        self.assertTrue(res.status_code == 200)
+        verify_jws(res.content.decode(), self.ta_conf.jwks[0])

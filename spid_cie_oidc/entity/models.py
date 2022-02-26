@@ -403,6 +403,14 @@ class TrustChain(TimeStampedModel):
         )
 
     @property
+    def iat_as_timestamp(self):
+        return int(self.iat.timestamp())
+
+    @property
+    def exp_as_timestamp(self):
+        return int(self.exp.timestamp())
+
+    @property
     def is_valid(self):
         return self.is_active and ENTITY_STATUS[self.status]
 
