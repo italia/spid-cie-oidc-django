@@ -77,7 +77,6 @@ In this repository we have three example projects for demo purpose.
 ## Setup
 
 The Database storage engine can be one of which supported by Django, the example project comes with sqlite3.
-
 We can install this SDK in two ways:
 
  - django application in a preexisting Django project
