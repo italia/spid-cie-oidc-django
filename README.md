@@ -106,7 +106,7 @@ virtualenv -p python3 env
 source env/bin/activate
 ````
 
-##### Setup the example projects
+Setup the example projects
 ````
 git clone https://github.com/peppelinux/spid-cie-oidc-django
 cd spid-cie-oidc
