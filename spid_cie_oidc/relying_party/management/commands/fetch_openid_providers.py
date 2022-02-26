@@ -24,7 +24,7 @@ class Command(BaseCommand):
             )
         )
         parser.add_argument(
-            '-f', "--force",  action="store_true", required=True,
+            '-f', "--force",  action="store_true", required=False,
             help=_(
                 "Don't use already cached statements and chains"
             )

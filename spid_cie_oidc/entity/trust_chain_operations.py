@@ -1,5 +1,7 @@
 import logging
 
+from typing import Union
+
 from . exceptions import InvalidTrustchain
 from . models import FetchedEntityStatement, TrustChain
 from . statements import EntityConfiguration, get_entity_configurations
@@ -16,7 +18,7 @@ def trust_chain_builder(
     httpc_params: dict = HTTPC_PARAMS,
     required_trust_marks: list = [],
     metadata_type: str = "openid_provider",
-) -> TrustChainBuilder:
+) -> Union[TrustChainBuilder, bool]:
     """
     Minimal Provider Discovery endpoint request processing
 
@@ -169,7 +171,7 @@ def get_or_create_trust_chain(
             required_trust_marks = required_trust_marks,
             metadata_type=metadata_type
         )
-        if not trust_chain.is_valid:
+        if not trust_chain or not trust_chain.is_valid:
             raise InvalidTrustchain(
                 f"Trust chain for subject {subject} and "
                 f"trust_anchor {trust_anchor} is not valid"
@@ -198,6 +200,7 @@ def get_or_create_trust_chain(
 
         if tc:
             tc.update(**data)
+            tc = tc.first()
         else:
             tc = TrustChain.objects.create(
                 sub = subject,

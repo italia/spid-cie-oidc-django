@@ -53,13 +53,15 @@ def entity_list(request):
         }
     elif is_leaf == "false":
         _q = {"profile__profile_category": "federation_entity"}
+    elif request.GET.get("type", "").lower():
+        _q = {"profile__profile_category": request.GET["type"]}
     else:
         _q = {}
 
     entries = FederationEntityAssignedProfile.objects.filter(**_q).values_list(
         "descendant__sub", flat=True
     )
-    return JsonResponse(list(entries), safe=False)
+    return JsonResponse(list(set(entries)), safe=False)
 
 
 def resolve_entity_statement(request):

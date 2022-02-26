@@ -415,10 +415,12 @@ class EntityConfiguration:
             target = self.verified_by_superiors
             ec.verified_descendant_statements[self.sub] = payload
             target[payload["iss"]] = ec
+            self.is_valid = True
             return self.verified_by_superiors.get(ec.sub)
         else:
             target = self.failed_superiors
             ec.failed_descendant_statements[self.sub] = payload
+            self.is_valid = False
 
     def validate_by_superiors(
         self,
