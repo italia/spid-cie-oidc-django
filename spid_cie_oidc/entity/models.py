@@ -357,6 +357,11 @@ class TrustChain(TimeStampedModel):
         ),
         default=dict
     )
+    trust_marks = models.JSONField(
+        blank=True,
+        help_text=_("verified trust marks"),
+        default=list
+    )
     parties_involved = models.JSONField(
         blank=True,
         help_text=_("subjects involved in the metadata discovery"),
