@@ -5,49 +5,51 @@
 
 {% block container %}
 <div>
-   <div class="container pt-2 p-3">
+   <div class="container p-3">
 
 <div class="row d-lg-flex">
     <div class="col-12">
         <div class="card-wrapper card-space">
             <div class="card card-bg no-after">
-                <div class="card-body pl-lg-0">
+                <div class="card-body">
                     <div class="row h-100">
                         <div class="col-12 col-lg-6">
 
                             <div class="img-responsive-wrapper d-none d-lg-block h-100">
                                 <div class="img-responsive img-responsive-panoramic h-100">
                                     <figure class="img-wrapper">
-                                        <a class="d-none d-lg-block h-100" href="/portale/contents/news/view/i-supereroi-della-scienza-il-volo-di-superman-spiegato-con-le-leggi-della-fisica">
-                                            <img alt="superman" class="h-100" src="{% static 'images/SPID-e-CIE-696x383.jpg' %}" title="superman"></a>
+                                        <img alt="superman" class="h-100" src="{% static 'images/SPID-e-CIE-696x383.jpg' %}" title="spid-cie">
                                     </figure>
                                 </div>
                             </div>
                         </div>
                         <div class="col-12 col-lg-6 pl-lg-4">
-                              <h3 class="text-left">
-                                 {% trans "Welcome" %}
-                              </h3>
 
-
-                              <p class="card-title">
-                                 {% trans "The SPID/CIE onboarding demostration system wants to exemplify what information is required to register and test a leaf entity within the OIDC Federation." %}
-                              </p>
-                        
-                              <p class="card-title">
-                                {% blocktrans %}  
-                                    In this demonstration consider that you are registering your RP or OP to a Federation Authority.
-                                {% endblocktrans %}
-                              </p>
+                                <div class="row m-2">
+                                  <h3 class="text-left">
+                                     {% trans "Welcome" %}
+                                  </h3>
+    
+    
+                                  <p class="card-title">
+                                     {% trans "The SPID/CIE onboarding demostration system wants to exemplify what information is required to register and test a leaf entity within the OIDC Federation." %}
+                                  </p>
+                            
+                                  <p class="card-title">
+                                    {% blocktrans %}  
+                                        In this demonstration consider that you are registering your RP or OP to a Federation Authority.
+                                    {% endblocktrans %}
+                                  </p>
+                                </div>
 
                                 <div class="row mt-3">
                                     <div class="col">
-                                        <span class="badge badge-grey-unical square-corners mb-3 mr-2 ml-0 pr-10 p-2 mw-100" style="font-size: 100%">
+                                        <span class="badge" style="font-size: 100%">
                                             <a href="{% url 'oidc_onboarding_entities' %}" class="btn btn-secondary btn-block">
                                                 {% trans "Show accredited entities" %}
                                             </a>
                                         </span>
-                                        <span class="badge badge-grey-unical square-corners mb-3 mr-2 ml-0 pr-10 p-2 mw-100" style="font-size: 100%">
+                                        <span class="badge mb-3 mr-2 ml-0 pr-10 p-2 mw-100" style="font-size: 100%">
                                             <a href="{% url 'oidc_onboarding_registration' %}" class="btn btn-primary btn-block">
                                                 {% trans "Register your entity" %}
                                             </a>

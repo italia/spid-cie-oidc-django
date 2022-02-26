@@ -10,21 +10,9 @@ from cryptojwt.jwk.jwk import key_from_jwk_dict
 from cryptojwt.jws.jws import JWS
 from django.conf import settings
 
-from . import settings as local_settings
+from . settings import * 
 
-DEFAULT_JWS_ALG = getattr(settings, "DEFAULT_JWS_ALG", local_settings.DEFAULT_JWS_ALG)
-DEFAULT_JWE_ALG = getattr(settings, "DEFAULT_JWE_ALG", local_settings.DEFAULT_JWE_ALG)
-DEFAULT_JWE_ENC = getattr(settings, "DEFAULT_JWE_ENC", local_settings.DEFAULT_JWE_ENC)
-SIGNING_ALG_VALUES_SUPPORTED = getattr(
-    settings,
-    "SIGNING_ALG_VALUES_SUPPORTED",
-    local_settings.SIGNING_ALG_VALUES_SUPPORTED,
-)
-ENCRYPTION_ALG_VALUES_SUPPORTED = getattr(
-    settings,
-    "ENCRYPTION_ALG_VALUES_SUPPORTED",
-    local_settings.ENCRYPTION_ALG_VALUES_SUPPORTED,
-)
+
 
 logger = logging.getLogger(__name__)
 
