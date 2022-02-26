@@ -43,3 +43,7 @@ class InvalidRequiredTrustMark(ValidationError):
 
 class InvalidTrustchain(ValidationError):
     pass
+
+
+class InvalidEntityConfiguration(ValidationError):
+    pass

@@ -5,6 +5,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.utils.translation import gettext as _
 
+from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
 
 
@@ -38,13 +39,13 @@ class Command(BaseCommand):
 
         res = []
         for op_sub in settings.OIDCFED_IDENTITY_PROVIDERS:
-
+            logger.info(f"Fetching Entity Configuration for {op_sub}")
             try:
                 tc = get_or_create_trust_chain(
                     subject = op_sub,
                     trust_anchor = settings.FEDERATION_TRUST_ANCHOR,
                     metadata_type = 'openid_provider',
-                    httpc_params = settings.HTTPC_PARAMS,
+                    httpc_params = HTTPC_PARAMS,
                     required_trust_marks = getattr(
                         settings, 'OIDCFED_REQUIRED_TRUST_MARKS', []
                     ),
@@ -58,7 +59,9 @@ class Command(BaseCommand):
                 )
 
             except Exception as e:
-                logger.exception(
+                logger.error(
                     f"Failed to download {op_sub} due to: {e}"
                 )
-        
+                continue
+
+        logger.info(f"Found {res}")

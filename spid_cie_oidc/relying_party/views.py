@@ -6,12 +6,19 @@ from django.contrib.auth import login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
-from django.http import HttpResponseBadRequest, HttpResponseRedirect
+from django.http import HttpResponseBadRequest, HttpResponseRedirect, Http404
 from django.views import View
 from django.shortcuts import render
 from django.utils import timezone
 from django.utils.module_loading import import_string
 from django.utils.translation import gettext as _
+
+from spid_cie_oidc.entity.models import (
+    FederationEntityConfiguration,
+    TrustChain
+)
+from spid_cie_oidc.entity.statements import get_http_url
+from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 
 from . import OAuth2BaseView
 from .exceptions import MisconfiguredClientIssuer
@@ -23,7 +30,7 @@ from .utils import (
     http_redirect_uri_to_dict,
     random_string,
 )
-
+from . settings import RP_PKCE_CONF
 
 logger = logging.getLogger(__name__)
 
@@ -33,74 +40,107 @@ class SpidCieOidcRpBeginView(View):
     returns a Http Redirect
     """
 
-    def get_federation_trust(self, request):
+    def get_jwks_from_jwks_uri(
+        self,
+        jwks_uri:str
+    ) -> dict:
         """
-        OIDC Federation Metadata discovery for a given sub/issuer_id
+            get jwks
         """
-        # TODO
-        available_issuers = {}
-        available_issuers_len = len(available_issuers)
+        try:
+            jwks_dict = get_http_url([jwks_uri], httpc_params=HTTPC_PARAMS).json()
+        except Exceptions as e:
+            logger.error(f"Failed to download jwks from {jwks_uri}: {e}")
+            return {}
+        return jwks_dict
 
-        # todo: validate it upoun a schema
-        sub = request.GET.get("sub")
+    def get_oidc_op(self, request) -> TrustChain:
+        """
+        get available trust to a specific OP
+        """
+        if not request.GET.get("provider", None):
+            return HttpResponseBadRequest(
+                f"Missing provider url. "
+                "Please try '?provider=https://provider-subject/'"
+            )
+        
+        tc = TrustChain.objects.filter(
+            sub = request.GET["provider"],
+            trust_anchor__sub = settings.FEDERATION_TRUST_ANCHOR,
+        ).first()
 
-        if not sub:
-            if available_issuers_len > 1:
-                # TODO - a provider selection page here!
-                raise NotImplementedError()
+        if not tc.is_active:
+            logger.warning(
+                f"{tc} found but DISABLED at {tc.modified}"
+            )
+            return None
+        elif tc.is_expired:
+            logger.warning(
+                f"{tc} found but expired at {tc.exp}"
+            )
+            # TODO
+            raise NotImplementedError(
+                "We should try to renew the trust chain"
+            )
+        return tc
 
-            elif available_issuers_len == 1:
-                issuer_id = list(available_issuers.keys())[0]
-            else:
-                raise MisconfiguredClientIssuer("No available issuers found")
-        return issuer_id, available_issuers[issuer_id]["issuer"]
-
+        
     def get(self, request, *args, **kwargs):
         """
-        https://tools.ietf.org/html/rfc6749#section-4.1.1
-
-        https://login.agid.gov.it/.well-known/openid-configuration
-        http://localhost:8888/oidc/spid/begin?issuer_id=agid_login_local
+            http://localhost:8001/oidc/rp/begin?provider=http://127.0.0.1:8002/
         """
-        issuer_id, issuer_fqdn = self.get_oidc_rp_issuer(request)
-        client_conf = settings.JWTCONN_RP_CLIENTS[issuer_id]
+        tc = self.get_oidc_op(request)
+        provider_metadata = tc.metadata
+        if not provider_metadata:
+            raise Http404("provider metadata not found.")
+        issuer_id = tc.sub
+        issuer_fqdn = tc.sub
+        entity_conf = FederationEntityConfiguration.objects.filter(
+            entity_type = "openid_relying_party",
+            # TODO: RPs multitenancy?
+            # sub = request.build_absolute_uri()
+        ).first()
+        if not entity_conf:
+            raise Http404("Missing configuration.")
 
-        try:
-            provider_conf = self.provider_discovery(client_conf)
-        except Exception as e:  # pragma: no cover
-            _msg = f"Failed to get provider discovery from {issuer_fqdn}"
-            logger.error(f"{_msg}: {e}")
-            return HttpResponseBadRequest(_(_msg))
+        client_conf = entity_conf.metadata['openid_relying_party']
 
-        try:
-            jwks_dict, jwks = self.get_jwks_from_jwks_uri(
-                provider_conf["jwks_uri"], verify=client_conf["httpc_params"]["verify"]
+        if not (
+            provider_metadata.get("jwks_uri", None) or
+            provider_metadata.get("jwks", None)
+        ):
+            raise Http403("Invalid provider Metadata")
+
+        if provider_metadata.get("jwks", None):
+            jwks_dict = provider_metadata["jwks"]
+        else:
+            jwks_dict = self.get_jwks_from_jwks_uri(
+                provider_metadata["jwks_uri"]
             )
-        except Exception as e:  # pragma: no cover
+        if not jwks_dict:
             _msg = f"Failed to get jwks from {issuer_fqdn}"
             logger.error(f"{_msg}: {e}")
             return HttpResponseBadRequest(_(_msg))
 
-        client_prefs = client_conf["client_preferences"]
-        authz_endpoint = provider_conf["authorization_endpoint"]
+        
+        authz_endpoint = provider_metadata["authorization_endpoint"]
         authz_data = dict(
-            scope=" ".join(client_prefs["scope"]),
-            redirect_uri=client_conf["redirect_uris"][0],
-            response_type=client_prefs["response_types"][0],
+            scope=request.GET.get("scope", "openid"),
+            redirect_uri=request.GET.get(
+                "redirect_uri", client_conf["redirect_uris"][0]
+            ),
+            response_type=client_conf["response_types"][0],
             nonce=random_string(24),
             state=random_string(32),
             client_id=client_conf["client_id"],
             endpoint=authz_endpoint,
         )
 
-        # TODO: generalized addons loader
-        has_pkce = client_conf.get("add_ons", {}).get("pkce")
-        if has_pkce:
-            pkce_func = import_string(has_pkce["function"])
-            pkce_values = pkce_func(**has_pkce["kwargs"])
-            authz_data.update(pkce_values)
+        # PKCE
+        pkce_func = import_string(RP_PKCE_CONF["function"])
+        pkce_values = pkce_func(**RP_PKCE_CONF["kwargs"])
+        authz_data.update(pkce_values)
 
-        # create request in db
         authz_entry = dict(
             client_id=client_conf["client_id"],
             state=authz_data["state"],
@@ -109,7 +149,7 @@ class SpidCieOidcRpBeginView(View):
             issuer_id=issuer_id,
             data=json.dumps(authz_data),
             provider_jwks=json.dumps(jwks_dict),
-            provider_configuration=json.dumps(provider_conf),
+            provider_configuration=json.dumps(provider_metadata),
         )
         OidcAuthentication.objects.create(**authz_entry)
 
