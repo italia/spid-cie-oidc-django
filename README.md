@@ -92,7 +92,7 @@ pip install spid-cie-oidc
 
 #### Configure the example projects
 
-##### Dependencies
+Install enviroment and dependencies
 ````
 apt install python3-dev python3-pip git
 python3 -m pip install --upgrade pip
