@@ -71,6 +71,8 @@ class TrustChainBuilder:
         self.metadata_type = metadata_type
         self.final_metadata: dict = {}
 
+        self.verified_trust_marks = []
+        
         self.exp = 0
 
     def apply_metadata_policy(self) -> dict:
@@ -258,12 +260,13 @@ class TrustChainBuilder:
                 # sc.trust_mark_issuers_entity_confs = [
                 # trust_mark_issuers_entity_confs
                 # ]
-
                 if not sc.validate_by_allowed_trust_marks():
                     raise InvalidRequiredTrustMark(
                         "The required Trust Marks are not valid"
                     )
-
+                else:
+                    self.verified_trust_marks.extend(sc.verified_trust_marks)
+                
     def serialize(self):
         res = []
         for stat in self.trust_path:

@@ -10,10 +10,10 @@ from spid_cie_oidc.entity.trust_chain_operations import (
     get_or_create_trust_chain,
     trust_chain_builder
 )
-    
 from spid_cie_oidc.entity.statements import (
     EntityConfiguration,
     get_entity_configurations,
+    TrustMark
 )
 from spid_cie_oidc.entity.tests.settings import *
 
@@ -221,6 +221,14 @@ class TrustChainTest(TestCase):
 
         for ec in trust_chain.trust_path:
             self.assertTrue(ec.is_valid)
+
+        self.assertTrue(trust_chain.verified_trust_marks)
+        self.assertTrue(
+            isinstance(
+                trust_chain.verified_trust_marks[0],
+                TrustMark
+            )
+        )
 
         self.assertTrue(len(trust_chain.trust_path) == 3)
         self.assertTrue(
