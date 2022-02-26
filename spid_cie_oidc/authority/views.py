@@ -2,12 +2,13 @@ from django.http import Http404
 from django.http import HttpResponse
 from django.http import JsonResponse
 
-
 from spid_cie_oidc.authority.models import (
     FederationDescendant,
     FederationEntityAssignedProfile,
     get_first_self_trust_anchor,
 )
+from spid_cie_oidc.entity.jwtse import create_jws
+from spid_cie_oidc.entity.models import TrustChain
 
 
 def fetch(request):
@@ -64,21 +65,45 @@ def resolve_entity_statement(request):
     resolves the final metadata of its descendants
     """
     if not all(
-        request.GET.get("sub"),
-        request.GET.get("anchor"),
+        (
+            request.GET.get("sub", None),
+            request.GET.get("anchor", None)
+        )
     ):
         raise Http404("sub and anchor parameters are REQUIRED.")
 
-    # TODO: resolve also other entities in a federation
-    # TODO: release a metadata on top of a resolved trust chain
-    # if request.GET.get('iss'):
-    # iss = get_first_self_trust_anchor(sub = request.GET['iss'])
-    # else:
-    # iss = get_first_self_trust_anchor()
+    if request.GET.get('iss'):
+        iss = get_first_self_trust_anchor(sub = request.GET['iss'])
+    else:
+        iss = get_first_self_trust_anchor()
 
-    entity = FederationDescendant.objects.filter(sub=request.GET["sub"], is_active=True)
+    _q = dict(
+        sub=request.GET["sub"],
+        trust_anchor__sub=request.GET["anchor"],
+        is_active=True
+    )
+    if request.GET.get("type", None):
+        _q['type'] = request.GET["type"]
 
-    # filter by type
-    if request.GET.get("type"):
-        entity.metadata_policy.get(request.GET["type"])
-        # metadata =
+    entity = TrustChain.objects.filter(**_q).first()
+    if not entity:
+        raise Http404("entity not found.")
+
+    res = {
+      "iss": iss.sub,
+      "sub": request.GET["sub"],
+      "aud": [],
+      "iat": entity.iat_as_timestamp,
+      "exp": entity.exp_as_timestamp,
+      "trust_marks": [],
+      "metadata": entity.metadata
+    }
+
+    if request.GET.get("format") == "json":
+        return JsonResponse(res, safe=False)
+    else:
+        return HttpResponse(
+            create_jws(res, iss.jwks[0]),
+            content_type="application/jose",
+        )
+    

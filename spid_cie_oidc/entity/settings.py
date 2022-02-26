@@ -3,7 +3,6 @@ from django.conf import settings
 import aiohttp
 
 
-DEFAULT_JWE_ENC = "A256CBC-HS512"
 ENCRYPTION_ENC_SUPPORTED = [
     "A128CBC-HS256",
     "A192CBC-HS384",
@@ -13,20 +12,28 @@ ENCRYPTION_ENC_SUPPORTED = [
     "A256GCM",
 ]
 
-DEFAULT_JWS_ALG = "RS256"
-SIGNING_ALG_VALUES_SUPPORTED = ["RS256", "RS384", "RS512", "ES256", "ES384", "ES512"]
-
-DEFAULT_JWE_ALG = "RSA-OAEP"
-ENCRYPTION_ALG_VALUES_SUPPORTED = [
-    "RSA-OAEP",
-    "RSA-OAEP-256",
-    "ECDH-ES",
-    "ECDH-ES+A128KW",
-    "ECDH-ES+A192KW",
-    "ECDH-ES+A256KW",
-]
-
 DEFAULT_HASH_FUNC = "SHA-256"
+
+DEFAULT_JWS_ALG = getattr(settings, "DEFAULT_JWS_ALG", "RS256")
+DEFAULT_JWE_ALG = getattr(settings, "DEFAULT_JWE_ALG", "RSA-OAEP")
+DEFAULT_JWE_ENC = getattr(settings, "DEFAULT_JWE_ENC", "A256CBC-HS512")
+SIGNING_ALG_VALUES_SUPPORTED = getattr(
+    settings,
+    "SIGNING_ALG_VALUES_SUPPORTED",
+    ["RS256", "RS384", "RS512", "ES256", "ES384", "ES512"],
+)
+ENCRYPTION_ALG_VALUES_SUPPORTED = getattr(
+    settings,
+    "ENCRYPTION_ALG_VALUES_SUPPORTED",
+    [
+        "RSA-OAEP",
+        "RSA-OAEP-256",
+        "ECDH-ES",
+        "ECDH-ES+A128KW",
+        "ECDH-ES+A192KW",
+        "ECDH-ES+A256KW",
+    ]
+)
 
 # This is required in general project settings
 # OIDCFED_FEDERATION_TRUST_ANCHORS = [https://..., ]
