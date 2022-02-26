@@ -78,6 +78,10 @@ In this repository we have three example projects for demo purpose.
 
 The Database storage engine can be one of which supported by Django, the example project comes with sqlite3.
 
+We can install this SDK in two ways:
+
+ - django application in a preexisting Django project
+ - demo projects for example purpose
 
 #### Install as Django application
 Install __spid-cie-oidc__ as python package and use it in your django project
@@ -89,7 +93,7 @@ pip install spid-cie-oidc
 
 #### Configure the example projects
 
-#### Dependencies
+##### Dependencies
 ````
 apt install python3-dev python3-pip git
 python3 -m pip install --upgrade pip
@@ -103,7 +107,7 @@ virtualenv -p python3 env
 source env/bin/activate
 ````
 
-Setup the example projects
+##### Setup the example projects
 ````
 git clone https://github.com/peppelinux/spid-cie-oidc-django
 cd spid-cie-oidc
@@ -172,10 +176,8 @@ Please consider the following branches:
  - __dev__: where we push our code during development.
  - __other-custom-name__: where a new feature/contribution/bugfix will be handled, revisioned and then merged to dev branch.
 
-#### Hints
 
 Backup and share your demo data
-
 ````
 # backup your data (upgrade example data), -e excludes.
 ./manage.py dumpdata -e spid_cie_oidc_accounts -e admin -e auth -e contenttypes -e sessions > dumps/example.json
