@@ -39,7 +39,7 @@ class TrustChainTest(TestCase):
             jwk=self.rp_conf.public_jwks[0], kid=self.rp_conf.public_jwks[0]["kid"]
         )
         FederationDescendantJwk.objects.create(descendant=self.rp, jwk=self.rp_jwk)
-        FederationEntityAssignedProfile.objects.create(
+        self.rp_assigned_profile = FederationEntityAssignedProfile.objects.create(
             descendant=self.rp, profile=self.rp_profile, issuer=self.ta_conf
         )
 
@@ -289,3 +289,45 @@ class TrustChainTest(TestCase):
         )
         self.assertTrue(res.status_code == 200)
         verify_jws(res.content.decode(), self.ta_conf.jwks[0])
+
+
+    def test_trust_mark_status_endpoint(self):
+        url = reverse("oidcfed_trust_mark_status")
+
+        c = Client()
+        res = c.get(
+            url,
+            data={
+                "id": self.rp_assigned_profile.profile.profile_id,
+                "sub": self.rp_assigned_profile.descendant.sub
+            }
+        )
+        self.assertTrue(res.status_code == 200)
+        self.assertTrue(res.json() == {"active":True})
+        
+        res = c.get(
+            url,
+            data={
+                "trust_mark": self.rp_assigned_profile.trust_mark['trust_mark'],
+            }
+        )
+        self.assertTrue(res.status_code == 200)
+        self.assertTrue(res.json() == {"active":True})
+
+        res = c.get(
+            url,
+            data={
+                "trust_mark": self.rp_assigned_profile.trust_mark['trust_mark'][1:],
+            }
+        )
+        self.assertTrue(res.status_code == 200)
+        self.assertTrue(res.json() == {"active":False})
+
+        res = c.get(
+            url,
+            data={
+                "id": self.rp_assigned_profile.profile.profile_id,
+            }
+        )
+        self.assertTrue(res.status_code == 200)
+        self.assertTrue(res.json() == {"active":False})
