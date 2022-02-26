@@ -189,6 +189,10 @@ This software is released under the Apache 2 License by:
 
 - Giuseppe De Marco <giuseppe.demarco@teamdigitale.governo.it>.
 
+In this project we use the 
+[metadata policy code](https://github.com/peppelinux/spid-cie-oidc-django/blob/main/spid_cie_oidc/entity/policy.py)
+written by Roland Hedberg and licensed under the same Apache 2 license.
+
 ## Implementation notes
 
 All the operation related to JWT signature and encryption, and part of OIDC messages operations, 
