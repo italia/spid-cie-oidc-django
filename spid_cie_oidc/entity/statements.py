@@ -179,6 +179,7 @@ class EntityConfiguration:
         # a dict with the RAW JWT of valid entity statements for each descendant subject
         self.verified_descendant_statements_as_jwt = {}
 
+        self.verified_trust_marks = []
         self.is_valid = False
 
     def validate_by_itself(self) -> bool:
@@ -290,6 +291,7 @@ class EntityConfiguration:
                 logger.info(
                     f"Trust Mark {trust_mark} is valid"
                 )
+                self.verified_trust_marks.append(trust_mark)
             else:
                 logger.warning(
                     f"Trust Mark {trust_mark} is not valid"

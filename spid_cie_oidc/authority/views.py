@@ -9,6 +9,8 @@ from spid_cie_oidc.authority.models import (
 )
 from spid_cie_oidc.entity.jwtse import create_jws
 from spid_cie_oidc.entity.models import TrustChain
+from spid_cie_oidc.entity.settings import HTTPC_PARAMS
+from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
 
 
 def fetch(request):
@@ -63,6 +65,10 @@ def entity_list(request):
 def resolve_entity_statement(request):
     """
     resolves the final metadata of its descendants
+
+    In this implementation we only returns a preexisting
+    Metadata if it's valid
+    we avoid any possibility to trigger a new Metadata discovery if
     """
     if not all(
         (
@@ -79,20 +85,31 @@ def resolve_entity_statement(request):
 
     _q = dict(
         sub=request.GET["sub"],
-        trust_anchor__sub=request.GET["anchor"],
-        is_active=True
+        trust_anchor__sub=request.GET["anchor"]
     )
     if request.GET.get("type", None):
         _q['type'] = request.GET["type"]
 
     entity = TrustChain.objects.filter(**_q).first()
+    if entity and not entity.is_active:
+        raise Http404("entity not found.")
+    else:
+        get_or_create_trust_chain(
+            httpc_params = HTTPC_PARAMS,
+            # TODO
+            # required_trust_marks = [],
+            subject = _q['sub'],
+            trust_anchor = _q['trust_anchor__sub']
+        )
+        entity = TrustChain.objects.filter(**_q).first()
+
     if not entity:
         raise Http404("entity not found.")
 
     res = {
       "iss": iss.sub,
       "sub": request.GET["sub"],
-      "aud": [],
+      # "aud": [],
       "iat": entity.iat_as_timestamp,
       "exp": entity.exp_as_timestamp,
       "trust_marks": [],
