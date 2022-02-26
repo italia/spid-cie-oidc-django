@@ -41,9 +41,10 @@ In this repository we have three example projects for demo purpose.
 
 - [Features](#features)
 * [Setup](#setup)
-    * [Dependencies](#dependencies)
-      * [Install as Django application](#install-as-django-application)
-      * [Setup the example project for demo purpose](#setup-the-example-project-for-demo-purpose)
+    * [Install as Django application](#install-as-django-application)
+    * [Setup the example project for demo purpose](#setup-the-example-project-for-demo-purpose)
+        * [Dependencies](#dependencies)
+    * [Docker compose](#docker-compose)
 * [Usage](#usage)
 * [Contribute](#contribute)
     * [Contribute as end user](#contribute-as-end-user)
@@ -76,9 +77,22 @@ In this repository we have three example projects for demo purpose.
 ## Setup
 
 The Database storage engine can be one of which supported by Django, the example project comes with sqlite3.
+We can install this SDK in two ways:
 
+ - django application in a preexisting Django project
+ - demo projects for example purpose
 
-#### Dependencies
+#### Install as Django application
+Install __spid-cie-oidc__ as python package and use it in your django project
+````
+pip install spid-cie-oidc
+
+# then include `spid_cie_oidc.{app_name}` in your project settings.INSTALLED_APPS
+````
+
+#### Configure the example projects
+
+Install enviroment and dependencies
 ````
 apt install python3-dev python3-pip git
 python3 -m pip install --upgrade pip
@@ -92,16 +106,7 @@ virtualenv -p python3 env
 source env/bin/activate
 ````
 
-#### Install as Django application
-Install __spid-cie-oidc__ as python package and use it in your django project
-````
-pip install spid-cie-oidc
-
-# then include `spid_cie_oidc.{app_name}` in your project settings.INSTALLED_APPS
-````
-
-#### Setup the example project for demo purpose
-
+Setup the example projects
 ````
 git clone https://github.com/peppelinux/spid-cie-oidc-django
 cd spid-cie-oidc
@@ -140,7 +145,7 @@ cp $project_name/settingslocal.py.example $project_name/settingslocal.py
 Point your web browser to `http://localhost:8000/admin` to enter in the management interface.
 
 
-### Docker compose
+## Docker compose
 
 > TODO: Not available until v0.6.0 release
 
@@ -170,10 +175,8 @@ Please consider the following branches:
  - __dev__: where we push our code during development.
  - __other-custom-name__: where a new feature/contribution/bugfix will be handled, revisioned and then merged to dev branch.
 
-#### Hints
 
 Backup and share your demo data
-
 ````
 # backup your data (upgrade example data), -e excludes.
 ./manage.py dumpdata -e spid_cie_oidc_accounts -e admin -e auth -e contenttypes -e sessions > dumps/example.json
