@@ -1,4 +1,4 @@
-from django.http import Http403
+from django.http import HttpResponseForbidden
 from django.views import View
 from django.shortcuts import redirect, render
 from django.utils.translation import gettext as _
@@ -56,7 +56,7 @@ class OpBase:
             logger.warning(
                 f"Disabled client {trust_chain.sub} requests an authorization."
             )
-            raise Http403()
+            raise HttpResponseForbidden()
 
         elif not trust_chain or not rp_trust_chain.is_valid:
             trust_chain = get_or_create_trust_chain(
@@ -72,7 +72,7 @@ class OpBase:
                 logger.warning(
                     f"Failed trust chain validation for {payload['iss']}"
                 )
-                raise Http403()
+                raise HttpResponseForbidden()
 
         jwks = rp_trust_chain.metadata['jwks']
         jwk = self.find_jwk(header, jwks)
@@ -81,7 +81,7 @@ class OpBase:
                 f"Invalid jwk for {payload['iss']}. "
                 f"{header['kid']} not found in {jwks}"
             )
-            raise Http403()
+            raise HttpResponseForbidden()
 
         try:
             verify_jws(req, jwk)
@@ -90,7 +90,7 @@ class OpBase:
                 "Authz request object signature validation failed "
                 f"for {payload['iss']}: {e} "
             )
-            raise Http403()
+            raise HttpResponseForbidden()
 
         return payload
 
@@ -124,7 +124,7 @@ class AuthzRequestView(OpBase, View):
                 "Authz request object validation failed "
                 f"for {authz_req['iss']}: {e} "
             )
-            raise Http403()
+            raise HttpResponseForbidden()
 
         # stores the authz request in a hidden field in the form
         context = {
@@ -189,7 +189,7 @@ class ConsentPageView(View):
 
     def get(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            raise Http403()
+            raise HttpResponseForbidden()
 
         # TODO: create a form with the consent submission
         # stores the authz request in a hidden field in the form
@@ -200,14 +200,14 @@ class ConsentPageView(View):
 
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            raise Http403()
+            raise HttpResponseForbidden()
 
         # TODO: create a form with the consent submission
         # stores the authz request in a hidden field in the form
         form = ConsentPageForm(request.POST)
         if not form.is_valid():
             # user doesn't give his consent, redirect to an error page
-            raise Http403()
+            raise HttpResponseForbidden()
 
         context = {"form": form}
         return render(request, self.template, context)
