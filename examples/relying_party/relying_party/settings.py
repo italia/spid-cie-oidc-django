@@ -180,6 +180,6 @@ LOGGING = {
 
 FEDERATION_TRUST_ANCHOR = "http://127.0.0.1:8000/"
 OIDCFED_IDENTITY_PROVIDERS = [
-    "http://127.0.0.1:8000/oidc/op",
+    "http://127.0.0.1:8000/oidc/op/",
     "http://127.0.0.1:8002/"
 ]

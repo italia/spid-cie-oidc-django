@@ -11,7 +11,20 @@ As inherited from [__spid_cie_oidc.entity__](docs/tecnhical_specifications/ENTIT
 
 ### authorization
 
-WiP
+This endpoint is the starting point for OIDC SPID/CIE authentication.
+
+the webpath is customizable in the `urls.py` file and by default it's
+configured [here](https://github.com/peppelinux/spid-cie-oidc-django/blob/main/spid_cie_oidc/relying_party/urls.py#L13) 
+and correspond to `spid_cie_oidc.relying_party.views.SpidCieOidcRpBeginView`.
+
+The request is of type GET and supports the following parameters:
+
+- __provider__, REQUIRED. To be enhanced with an http url corresponding to a subject id of a SPID/CIE OIDC Provider.
+- __redirect_uri__, OPTIONAL. Selects one of the redirect_uri available in RP's metadata.
+- __scope__, OPTIONAL. Selects one or more of the scopes, default is `openid`.
+- __consent__, OPTIONAL. Sets SPID or CIE extended consent values.
+
+
 
 ### auth code redirect
 

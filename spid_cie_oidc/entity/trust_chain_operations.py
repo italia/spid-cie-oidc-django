@@ -122,8 +122,7 @@ def get_or_create_trust_chain(
     fetched_trust_anchor = FetchedEntityStatement.objects.filter(
         sub = trust_anchor, iss = trust_anchor
     )
-
-    if not fetched_trust_anchor or fetched_trust_anchor.first().is_expired:
+    if not fetched_trust_anchor or fetched_trust_anchor.first().is_expired or force:
         
         jwts = get_entity_configurations(
             [trust_anchor], httpc_params = httpc_params
@@ -137,7 +136,7 @@ def get_or_create_trust_chain(
             jwt = ta_conf.jwt
         )
         
-        if not fetched_trust_anchor and not force:
+        if not fetched_trust_anchor:
             # trust to the anchor should be absolute trusted!
             # ta_conf.validate_by_itself()      
             fetched_trust_anchor = FetchedEntityStatement.objects.create(
@@ -164,7 +163,7 @@ def get_or_create_trust_chain(
 
     ).first()
 
-    if not tc or not tc.is_active or tc.is_expired:
+    if force or not tc or tc.is_expired:
         trust_chain = trust_chain_builder(
             subject=subject,
             trust_anchor=ta_conf,

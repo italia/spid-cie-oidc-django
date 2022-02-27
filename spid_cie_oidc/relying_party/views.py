@@ -1,6 +1,7 @@
 import json
 import logging
 
+from copy import deepcopy
 from django.conf import settings
 from django.contrib.auth import login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
@@ -17,6 +18,7 @@ from spid_cie_oidc.entity.models import (
     FederationEntityConfiguration,
     TrustChain
 )
+from spid_cie_oidc.entity.jwtse import create_jws
 from spid_cie_oidc.entity.statements import get_http_url
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 
@@ -69,11 +71,15 @@ class SpidCieOidcRpBeginView(View):
             trust_anchor__sub = settings.FEDERATION_TRUST_ANCHOR,
         ).first()
 
-        if not tc.is_active:
+        if not tc:
+            logger.info(
+                f'Trust Chain not found for {request.GET["provider"]}'
+            )
+        elif not tc.is_active:
             logger.warning(
                 f"{tc} found but DISABLED at {tc.modified}"
             )
-            return None
+            raise Http404("provider metadata not found.")
         elif tc.is_expired:
             logger.warning(
                 f"{tc} found but expired at {tc.exp}"
@@ -84,17 +90,18 @@ class SpidCieOidcRpBeginView(View):
             )
         return tc
 
-        
+
     def get(self, request, *args, **kwargs):
         """
             http://localhost:8001/oidc/rp/begin?provider=http://127.0.0.1:8002/
         """
         tc = self.get_oidc_op(request)
+        if not tc:
+            raise Http404("Trust Chain is unavailable.")
         provider_metadata = tc.metadata
         if not provider_metadata:
             raise Http404("provider metadata not found.")
-        issuer_id = tc.sub
-        issuer_fqdn = tc.sub
+
         entity_conf = FederationEntityConfiguration.objects.filter(
             entity_type = "openid_relying_party",
             # TODO: RPs multitenancy?
@@ -121,20 +128,31 @@ class SpidCieOidcRpBeginView(View):
             _msg = f"Failed to get jwks from {issuer_fqdn}"
             logger.error(f"{_msg}: {e}")
             return HttpResponseBadRequest(_(_msg))
-
         
         authz_endpoint = provider_metadata["authorization_endpoint"]
+
+        redirect_uri = request.GET.get(
+            "redirect_uri", client_conf["redirect_uris"][0]
+        )
+        if redirect_uri not in client_conf["redirect_uris"]:
+            redirect_uri = client_conf["redirect_uris"][0]
+        
         authz_data = dict(
-            scope=request.GET.get("scope", "openid"),
-            redirect_uri=request.GET.get(
-                "redirect_uri", client_conf["redirect_uris"][0]
-            ),
+            scope=[i for i in request.GET.get("scope", ["openid"])],
+            redirect_uri=redirect_uri,
             response_type=client_conf["response_types"][0],
             nonce=random_string(24),
             state=random_string(32),
             client_id=client_conf["client_id"],
             endpoint=authz_endpoint,
         )
+        if request.GET.get('consent', None):
+            authz_data["consent"] = request.GET["consent"]
+        if "offline_access" in authz_data["scope"]:
+            if authz_data.get("consent", None):
+                authz_data["consent"].append("prompt")
+            else:
+                authz_data["consent"] = "prompt"
 
         # PKCE
         pkce_func = import_string(RP_PKCE_CONF["function"])
@@ -145,15 +163,27 @@ class SpidCieOidcRpBeginView(View):
             client_id=client_conf["client_id"],
             state=authz_data["state"],
             endpoint=authz_endpoint,
-            issuer=issuer_fqdn,
-            issuer_id=issuer_id,
+            issuer=tc.sub,
+            issuer_id=tc.sub,
             data=json.dumps(authz_data),
             provider_jwks=json.dumps(jwks_dict),
             provider_configuration=json.dumps(provider_metadata),
         )
+
+        # TODO: Prune the old or unbounded authz ...
         OidcAuthentication.objects.create(**authz_entry)
 
         authz_data.pop("code_verifier")
+        # add the signed request object
+        authz_data_obj = deepcopy(authz_data)
+        authz_data_obj["iss"] = client_conf['client_id']
+        authz_data_obj["sub"] = client_conf['client_id']
+        authz_data_obj["aud"] = []
+        request_obj = create_jws(
+            authz_data_obj, entity_conf.jwks[0]
+        )
+        authz_data["request"] = request_obj
+        
         uri_path = http_dict_to_redirect_uri_path(authz_data)
         url = "?".join((authz_endpoint, uri_path))
         data = http_redirect_uri_to_dict(url)
