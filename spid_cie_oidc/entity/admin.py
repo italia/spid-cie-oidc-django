@@ -64,11 +64,9 @@ class TrustChainAdmin(admin.ModelAdmin):
         "modified",
         "parties_involved",
         "metadata",
-        "type",
         "status",
         "log",
         "chain",
-        "exp",
         "iat",
     )
 
