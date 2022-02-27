@@ -207,6 +207,7 @@ class ConsentPageView(View):
         form = ConsentPageForm(request.POST)
         if not form.is_valid():
             # user doesn't give his consent, redirect to an error page
+            # TODO: remember to logout the user first!
             raise HttpResponseForbidden()
 
         context = {"form": form}
