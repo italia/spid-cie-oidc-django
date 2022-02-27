@@ -29,7 +29,7 @@ class Command(BaseCommand):
             )
         )
         parser.add_argument(
-            '-f', "--force",  action="store_true", required=False,
+            '-f', "--force", action="store_true", required=False,
             help=_(
                 "Don't use already cached statements and chains"
             )
@@ -81,7 +81,7 @@ class Command(BaseCommand):
             try:
                 tc = get_or_create_trust_chain(
                     subject = rp_sub,
-                    trust_anchor = settings.FEDERATION_TRUST_ANCHOR,
+                    trust_anchor = settings.OIDCFED_FEDERATION_TRUST_ANCHOR,
                     metadata_type = 'openid_relying_party',
                     httpc_params = settings.HTTPC_PARAMS,
                     required_trust_marks = getattr(
@@ -100,4 +100,3 @@ class Command(BaseCommand):
                 logger.exception(
                     f"Failed to download {rp_sub} due to: {e}"
                 )
-        
