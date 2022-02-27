@@ -21,7 +21,6 @@ from django.views.static import serve
 from spid_cie_oidc.entity.urls import urlpatterns as entity_urlpatterns
 from spid_cie_oidc.authority.urls import urlpatterns as ta_urlpatterns
 from spid_cie_oidc.onboarding.urls import urlpatterns as onb_urlpatterns
-from spid_cie_oidc.provider.urls import urlpatterns as prov_urlpatterns
 
 admin.site.site_header = "OIDC Federation Entity Administration"
 admin.site.site_title = "OIDC Federation"
@@ -40,7 +39,6 @@ urlpatterns = [
 ]
 
 urlpatterns.extend(entity_urlpatterns)
-urlpatterns.extend(prov_urlpatterns)
 urlpatterns.extend(ta_urlpatterns)
 urlpatterns.extend(onb_urlpatterns)
 
