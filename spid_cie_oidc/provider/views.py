@@ -13,6 +13,10 @@ from spid_cie_oidc.onboarding.schemas.authn_requests import AuthenticationReques
 
 from . forms import *
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class OpBase:
     """
