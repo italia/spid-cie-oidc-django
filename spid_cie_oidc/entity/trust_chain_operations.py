@@ -89,7 +89,7 @@ def dumps_statements_from_trust_chain_to_db(
                     statement = payload,
                     jwt = jwt
                 )
-                
+
                 desc_fes = FetchedEntityStatement.objects.filter(
                     sub = payload['sub'],
                     iss = payload['iss']
@@ -103,7 +103,7 @@ def dumps_statements_from_trust_chain_to_db(
                         iss = payload['iss'],
                         **_data
                     )
-                
+
                 entity_statements.append(desc_fes)
 
     return entity_statements
@@ -118,12 +118,11 @@ def get_or_create_trust_chain(
     force:bool = False
 ) -> TrustChain:
 
-
     fetched_trust_anchor = FetchedEntityStatement.objects.filter(
         sub = trust_anchor, iss = trust_anchor
     )
     if not fetched_trust_anchor or fetched_trust_anchor.first().is_expired or force:
-        
+
         jwts = get_entity_configurations(
             [trust_anchor], httpc_params = httpc_params
         )
@@ -135,10 +134,10 @@ def get_or_create_trust_chain(
             statement = ta_conf.payload,
             jwt = ta_conf.jwt
         )
-        
+
         if not fetched_trust_anchor:
             # trust to the anchor should be absolute trusted!
-            # ta_conf.validate_by_itself()      
+            # ta_conf.validate_by_itself()
             fetched_trust_anchor = FetchedEntityStatement.objects.create(
                 sub = ta_conf.sub,
                 iss = ta_conf.iss,
@@ -175,7 +174,7 @@ def get_or_create_trust_chain(
                 f"Trust chain for subject {subject} and "
                 f"trust_anchor {trust_anchor} is not valid"
             )
-        res = dumps_statements_from_trust_chain_to_db(trust_chain)
+        dumps_statements_from_trust_chain_to_db(trust_chain)
 
         tc = TrustChain.objects.filter(
             sub = subject,

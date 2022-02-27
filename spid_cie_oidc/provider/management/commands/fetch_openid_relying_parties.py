@@ -29,7 +29,7 @@ class Command(BaseCommand):
             )
         )
         parser.add_argument(
-            '-f', "--force",  action="store_true", required=False,
+            '-f', "--force", action="store_true", required=False,
             help=_(
                 "Don't use already cached statements and chains"
             )
@@ -100,4 +100,3 @@ class Command(BaseCommand):
                 logger.exception(
                     f"Failed to download {rp_sub} due to: {e}"
                 )
-        

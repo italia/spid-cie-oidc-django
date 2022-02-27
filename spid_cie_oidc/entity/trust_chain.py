@@ -73,7 +73,7 @@ class TrustChainBuilder:
         self.final_metadata: dict = {}
 
         self.verified_trust_marks = []
-        
+
         self.exp = 0
 
     def apply_metadata_policy(self) -> dict:
@@ -272,7 +272,7 @@ class TrustChainBuilder:
                     )
                 else:
                     self.verified_trust_marks.extend(sc.verified_trust_marks)
-                
+
     def serialize(self):
         res = []
         for stat in self.trust_path:

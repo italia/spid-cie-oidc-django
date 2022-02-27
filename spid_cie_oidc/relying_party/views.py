@@ -23,7 +23,6 @@ from spid_cie_oidc.entity.statements import get_http_url
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 
 from . import OAuth2BaseView
-from .exceptions import MisconfiguredClientIssuer
 from .oauth2 import *
 from .oidc import *
 from .models import OidcAuthentication
@@ -71,7 +70,7 @@ class SpidCieOidcRpBeginView(View):
             return HttpResponseBadRequest(
                 f"Unallowed Trust Anchor"
             )
-        
+
         tc = TrustChain.objects.filter(
             sub = request.GET["provider"],
             trust_anchor__sub = trust_anchor,
@@ -95,7 +94,6 @@ class SpidCieOidcRpBeginView(View):
                 "We should try to renew the trust chain"
             )
         return tc
-
 
     def get(self, request, *args, **kwargs):
         """
@@ -134,7 +132,7 @@ class SpidCieOidcRpBeginView(View):
             _msg = f"Failed to get jwks from {issuer_fqdn}"
             logger.error(f"{_msg}: {e}")
             return HttpResponseBadRequest(_(_msg))
-        
+
         authz_endpoint = provider_metadata["authorization_endpoint"]
 
         redirect_uri = request.GET.get(
@@ -142,7 +140,7 @@ class SpidCieOidcRpBeginView(View):
         )
         if redirect_uri not in client_conf["redirect_uris"]:
             redirect_uri = client_conf["redirect_uris"][0]
-        
+
         authz_data = dict(
             scope=[i for i in request.GET.get("scope", ["openid"])],
             redirect_uri=redirect_uri,
@@ -189,7 +187,7 @@ class SpidCieOidcRpBeginView(View):
             authz_data_obj, entity_conf.jwks[0]
         )
         authz_data["request"] = request_obj
-        
+
         uri_path = http_dict_to_redirect_uri_path(authz_data)
         url = "?".join((authz_endpoint, uri_path))
         data = http_redirect_uri_to_dict(url)

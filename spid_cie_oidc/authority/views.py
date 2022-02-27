@@ -127,18 +127,18 @@ def resolve_entity_statement(request):
             create_jws(res, iss.jwks[0]),
             content_type="application/jose",
         )
-    
+
 
 def trust_mark_status(request):
     failed_data = {"active": False}
-    
+
     if request.GET.get('sub', "") and request.GET.get('id', ""):
         sub = request.GET["sub"]
         _id = request.GET["id"]
 
     elif request.GET.get('trust_mark', ""):
         try:
-            header = unpad_jwt_head(request.GET['trust_mark'])
+            unpad_jwt_head(request.GET['trust_mark'])
             payload = unpad_jwt_payload(request.GET['trust_mark'])
             sub = payload.get('sub', "")
             _id = payload.get('id', "")

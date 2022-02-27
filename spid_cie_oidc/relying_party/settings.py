@@ -24,7 +24,6 @@ RP_ATTR_MAP = {
 }
 
 
-
 RP_PKCE_CONF = getattr(
     settings,
     "RP_PKCE_CONF",
@@ -32,4 +31,4 @@ RP_PKCE_CONF = getattr(
         "function": "spid_cie_oidc.relying_party.utils.get_pkce",
         "kwargs": {"code_challenge_length": 64, "code_challenge_method": "S256"},
     }
-)    
+)

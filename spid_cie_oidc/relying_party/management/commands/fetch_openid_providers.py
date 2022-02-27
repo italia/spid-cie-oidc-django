@@ -1,4 +1,3 @@
-import json
 import logging
 
 from django.conf import settings
@@ -25,7 +24,7 @@ class Command(BaseCommand):
             )
         )
         parser.add_argument(
-            '-f', "--force",  action="store_true", required=False,
+            '-f', "--force", action="store_true", required=False,
             help=_(
                 "Don't use already cached statements and chains"
             )
