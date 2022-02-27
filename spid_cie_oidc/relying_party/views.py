@@ -65,10 +65,16 @@ class SpidCieOidcRpBeginView(View):
                 f"Missing provider url. "
                 "Please try '?provider=https://provider-subject/'"
             )
+
+        trust_anchor = request.GET.get("trust_anchor", settings.OIDCFED_FEDERATION_TRUST_ANCHOR)
+        if trust_anchor not in settings.OIDCFED_FEDERATION_TRUST_ANCHORS:
+            return HttpResponseBadRequest(
+                f"Unallowed Trust Anchor"
+            )
         
         tc = TrustChain.objects.filter(
             sub = request.GET["provider"],
-            trust_anchor__sub = settings.FEDERATION_TRUST_ANCHOR,
+            trust_anchor__sub = trust_anchor,
         ).first()
 
         if not tc:
