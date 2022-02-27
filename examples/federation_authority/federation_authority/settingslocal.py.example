@@ -142,6 +142,13 @@ ADMINS = [('name surname', 'user1@DOMAIN'),
           ('name surnale', 'user2@DOMAIN'),]
 
 OIDCFED_FEDERATION_TRUST_ANCHORS = ["http://127.0.0.1:8000/"]
+
+# for RP only
+OIDCFED_IDENTITY_PROVIDERS = [
+    "http://127.0.0.1:8000/oidc/op/",
+    "http://127.0.0.1:8002/"
+]
+
 OIDCFED_FEDERATION_TRUST_MARKS_PROFILES = {
     "openid_relying_party__public": {},
     "openid_relying_party__private": {},
