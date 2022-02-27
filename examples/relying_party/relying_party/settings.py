@@ -125,4 +125,61 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-FEDERATION_TRUST_ANCHOR = "http://localhost:8000"
+# LOGGING
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'default': {
+            # exact format is not important, this is the minimum information
+            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+        },
+        'detailed': {
+            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s [%(pathname)s %(funcName)s:%(lineno)s]'
+        },
+    },
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
+    'handlers': {
+        'mail_admins': {
+            'formatter': 'detailed',
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler'
+        },
+        'console': {
+            'formatter': 'default',
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+        # "daily": {
+          # "class": "logging.handlers.TimedRotatingFileHandler",
+          # "level": "INFO",
+          # "formatter": "default",
+          # "filename": f"{BASE_DIR}/logs/relig.log",
+          # "when": "midnight",
+          # "backupCount": 96
+        # }
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'spid_cie_oidc': {
+            'handlers': ['console', 'mail_admins'], # "daily"],
+            'level': 'INFO',
+            'propagate': False,
+        }
+    }
+}
+
+OIDCFED_FEDERATION_TRUST_ANCHOR = "http://127.0.0.1:8000/"
+OIDCFED_IDENTITY_PROVIDERS = [
+    "http://127.0.0.1:8000/oidc/op/",
+    "http://127.0.0.1:8002/"
+]
