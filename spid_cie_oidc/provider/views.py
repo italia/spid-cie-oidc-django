@@ -105,6 +105,12 @@ class AuthzRequestView(OpBase, View):
     """
     template = "op_user_login.html"
 
+    def validate_authz(self, payload: dict):
+        AuthenticationRequestSpid(**payload)
+
+    def get_login_form(self):
+        return AuthLoginForm
+
     def get(self, request, *args, **kwargs):
         """
             authz request object is received here
@@ -119,10 +125,12 @@ class AuthzRequestView(OpBase, View):
             return HttpResponse(
                 _("Authorization Request not found.")
             )
+
+        # yes, again. We MUST.
         authz_req = self.validate_authz_request_object(req)
 
         try:
-            AuthenticationRequestSpid(**payload)
+            self.validate_authz(payload)
         except ValidationError:
             logger.error(
                 "Authz request object validation failed "
@@ -132,7 +140,7 @@ class AuthzRequestView(OpBase, View):
 
         # stores the authz request in a hidden field in the form
         context = {
-            "form": AuthLoginForm(authz_request_object=req)
+            "form": self.get_login_form(authz_request_object=req)
         }
         return render(request, self.template, context)
 
@@ -140,9 +148,9 @@ class AuthzRequestView(OpBase, View):
         """
             When the User prompts his credentials
         """
-        form = AuthLoginForm(request.POST)
+        form = self.get_login_form(request.POST)
         if not form.is_valid():
-            return render(request, "login_rp.html", {'form': form})
+            return render(request, self.template, {'form': form})
 
         self.validate_authz_request_object(req)
 
@@ -191,6 +199,9 @@ class ConsentPageView(View):
     # create a redirect with auth code, scope, state and iss in it
     template = "op_user_consent.html"
 
+    def get_consent_form(self):
+        return ConsentPageForm
+
     def get(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             raise HttpResponseForbidden()
@@ -198,7 +209,7 @@ class ConsentPageView(View):
         # TODO: create a form with the consent submission
         # stores the authz request in a hidden field in the form
         context = {
-            # "form": ConsentPageForm()
+            "form": self.get_consent_form()()
         }
         return render(request, self.template, context)
 
@@ -208,7 +219,7 @@ class ConsentPageView(View):
 
         # TODO: create a form with the consent submission
         # stores the authz request in a hidden field in the form
-        form = ConsentPageForm(request.POST)
+        form = self.get_consent_form(request.POST)
         if not form.is_valid():
             # user doesn't give his consent, redirect to an error page
             # TODO: remember to logout the user first!
