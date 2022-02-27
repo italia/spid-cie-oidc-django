@@ -6,6 +6,11 @@
 
 > ⚠️ __This project is a WiP, please wait for the first stable release v0.6.0.__
 
+OpenID Connect 1.0 is a simple identity layer on top of the OAuth 2.0 protocol.
+It enables Clients to verify the identity of the End-User based on the authentication
+performed by an Authorization Server, as well as to obtain basic profile information
+about the End-User in an interoperable and REST-like manner.
+
 SPID/CIE OIDC Federation is a suite of Django applications designed to
 make it easy to build an [Openid Connect Federation](https://openid.net/specs/openid-connect-federation-1_0.html), 
 each of these can be installed separately within a django project:
