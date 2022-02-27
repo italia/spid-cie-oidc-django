@@ -6,7 +6,6 @@ from spid_cie_oidc.entity.jwtse import create_jws
 from spid_cie_oidc.entity.models import FetchedEntityStatement, TrustChain
 from spid_cie_oidc.entity.tests.settings import *
 from spid_cie_oidc.provider.settings import *
-from spid_cie_oidc.provider.views import authn_request
 
 
 class AuthnRequestTest(TestCase):
