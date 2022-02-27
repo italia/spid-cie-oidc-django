@@ -48,6 +48,8 @@ def is_leaf(statement_metadata):
 class FederationEntityConfiguration(TimeStampedModel):
     """
     Federation Authority configuration.
+
+    # TODO: validate metadata upon type field
     """
 
     def validate_entity_metadata(value):
@@ -113,6 +115,13 @@ class FederationEntityConfiguration(TimeStampedModel):
             '"https://sgd.aa.it/onboarding": ["https://sgd.aa.it", ]}'
         ),
         default=dict,
+    )
+    entity_type = models.CharField(
+        max_length=33,
+        blank=True,
+        default="openid_relying_party",
+        choices=[(i, i) for i in ENTITY_TYPES],
+        help_text=_("OpenID Connect Federation entity type")
     )
     metadata = models.JSONField(
         blank=False,
@@ -356,6 +365,11 @@ class TrustChain(TimeStampedModel):
             "The final metadata applied with the metadata policy built over the chain"
         ),
         default=dict
+    )
+    trust_marks = models.JSONField(
+        blank=True,
+        help_text=_("verified trust marks"),
+        default=list
     )
     parties_involved = models.JSONField(
         blank=True,

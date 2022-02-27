@@ -1,4 +1,3 @@
-
 from django.shortcuts import redirect, render
 from pydantic import ValidationError
 from spid_cie_oidc.entity.jwtse import (unpad_jwt_head, unpad_jwt_payload,
@@ -117,4 +116,4 @@ def user_login(request):
 
 # @login_required
 #  def user_content():
- 
+
