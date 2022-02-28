@@ -1,19 +1,20 @@
-from django.http import HttpResponseForbidden
-from django.views import View
+import logging
+
+from django.conf import settings
+from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import redirect, render
 from django.utils.translation import gettext as _
+from django.views import View
 from pydantic import ValidationError
-from spid_cie_oidc.entity.jwtse import (
-    unpad_jwt_head, unpad_jwt_payload,
-    verify_jws
-)
+from spid_cie_oidc.entity.jwtse import (unpad_jwt_head, unpad_jwt_payload,
+                                        verify_jws)
 from spid_cie_oidc.entity.models import TrustChain
 from spid_cie_oidc.entity.tests.settings import *
+from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
 from spid_cie_oidc.onboarding.schemas.authn_requests import AuthenticationRequestSpid
 
-from . forms import *
-
-import logging
+from .forms import *
+from .settings import HTTPC_PARAMS
 
 logger = logging.getLogger(__name__)
 
@@ -40,31 +41,31 @@ class OpBase:
 
     def validate_authz_request_object(self, req):
         try:
-            payload = unpad_jwt_payload(req)
+            self.payload = unpad_jwt_payload(req)
             header = unpad_jwt_head(req)
         except Exception as e:
             logger.error(
-                f"Error in Authz request object {dict(request.GET)}: {e}"
+                f"Error in Authz request object {dict(req.GET)}: {e}"
             )
             # TODO: render an error template here
             return HttpResponse(
                 _("Authorization Request is not valid.")
             )
 
-        trust_chain = TrustChain.objects.filter(
+        rp_trust_chain = TrustChain.objects.filter(
             type = "openid_relying_party",
-            sub = payload['iss']
+            sub = self.payload['iss']
         ).first()
 
-        if trust_chain and not trust_chain.is_active:
+        if rp_trust_chain and not rp_trust_chain.is_active:
             logger.warning(
-                f"Disabled client {trust_chain.sub} requests an authorization."
+                f"Disabled client {rp_trust_chain.sub} requests an authorization."
             )
             raise HttpResponseForbidden()
 
-        elif not trust_chain or not rp_trust_chain.is_valid:
-            trust_chain = get_or_create_trust_chain(
-                subject = payload['iss'],
+        elif not rp_trust_chain or not rp_trust_chain.is_valid:
+            rp_trust_chain = get_or_create_trust_chain(
+                subject = self.payload['iss'],
                 trust_anchor = settings.OIDCFED_FEDERATION_TRUST_ANCHOR,
                 metadata_type = 'openid_relying_party',
                 httpc_params = HTTPC_PARAMS,
@@ -72,9 +73,9 @@ class OpBase:
                     settings, 'OIDCFED_REQUIRED_TRUST_MARKS', []
                 )
             )
-            if not tc.is_valid:
+            if not rp_trust_chain.is_valid:
                 logger.warning(
-                    f"Failed trust chain validation for {payload['iss']}"
+                    f"Failed trust chain validation for {self.payload['iss']}"
                 )
                 raise HttpResponseForbidden()
 
@@ -82,7 +83,7 @@ class OpBase:
         jwk = self.find_jwk(header, jwks)
         if not jwk:
             logger.error(
-                f"Invalid jwk for {payload['iss']}. "
+                f"Invalid jwk for {self.payload['iss']}. "
                 f"{header['kid']} not found in {jwks}"
             )
             raise HttpResponseForbidden()
@@ -92,17 +93,18 @@ class OpBase:
         except Exception as e:
             logger.error(
                 "Authz request object signature validation failed "
-                f"for {payload['iss']}: {e} "
+                f"for {self.payload['iss']}: {e} "
             )
             raise HttpResponseForbidden()
 
-        return payload
+        return self.payload
 
 
 class AuthzRequestView(OpBase, View):
     """View which processes the actual Authz request and
     returns a Http Redirect
     """
+    breakpoint()
     template = "op_user_login.html"
 
     def validate_authz(self, payload: dict):
@@ -130,8 +132,8 @@ class AuthzRequestView(OpBase, View):
         authz_req = self.validate_authz_request_object(req)
 
         try:
-            self.validate_authz(payload)
-        except ValidationError:
+            self.validate_authz(self.payload)
+        except ValidationError as e:
             logger.error(
                 "Authz request object validation failed "
                 f"for {authz_req['iss']}: {e} "
@@ -152,7 +154,7 @@ class AuthzRequestView(OpBase, View):
         if not form.is_valid():
             return render(request, self.template, {'form': form})
 
-        self.validate_authz_request_object(req)
+        self.validate_authz_request_object(request)
 
         # autenticate the user
 
@@ -169,10 +171,13 @@ class AuthzRequestView(OpBase, View):
 
         # store the User session
         # redirect the user to a consent page
-
-        redirect_uri = payload['redirect_uri']
-        state = payload['state']
-        response = build_error_response(error, error_description, state)
+        breakpoint()
+        redirect_uri = self.payload['redirect_uri']
+        state = self.payload['state']
+        # TODO: implement
+        error = "error"
+        error_description = "error_description"
+        response = self.build_error_response(error, error_description, state)
         return redirect(redirect_uri, **response)
 
         # check
