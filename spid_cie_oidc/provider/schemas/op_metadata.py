@@ -92,7 +92,7 @@ class AcrValuesSupportedCie(str, Enum):
     cie_l3 = "CIE_L3"
 
 
-class SigningAlgValuesSupported(str, Enum):
+class SigningAlgValuesSupportedCie(str, Enum):
     es256 = "ES256"
     es384 = "ES384"
     es512 = "ES512"
@@ -100,6 +100,18 @@ class SigningAlgValuesSupported(str, Enum):
     ps384 = "PS384"
     ps512 = "PS512"
 
+class SigningAlgValuesSupportedSpid(str, Enum):
+    es256 = "ES256"
+    es384 = "ES384"
+    es512 = "ES512"
+    ps256 = "PS256"
+    ps384 = "PS384"
+    ps512 = "PS512"
+    hs384 = "HS384"
+    hs512 = "HS512"
+    rs256 = "RS256"
+    rs384 = "RS384"
+    rs512 = "RS512"
 
 class EncryptionAlgValuesSupported(str, Enum):
     rsa_oaep = "RSA-OAEP"
@@ -144,13 +156,10 @@ class OPMetadata(BaseModel):
     userinfo_endpoint: HttpUrl
     introspection_endpoint: HttpUrl
     revocation_endpoint: HttpUrl
-    id_token_signing_alg_values_supported: List[SigningAlgValuesSupported]
     id_token_encryption_alg_values_supported: List[EncryptionAlgValuesSupported]
     id_token_encryption_enc_values_supported: List[EncryptionEncValuesSupported]
-    userinfo_signing_alg_values_supported: List[SigningAlgValuesSupported]
     userinfo_encryption_alg_values_supported: List[EncryptionAlgValuesSupported]
     userinfo_encryption_enc_values_supported: List[EncryptionEncValuesSupported]
-    request_object_signing_alg_values_supported: List[SigningAlgValuesSupported]
     request_object_encryption_alg_values_supported: List[EncryptionAlgValuesSupported]
     request_object_encryption_enc_values_supported: List[EncryptionEncValuesSupported]
     token_endpoint_auth_methods_supported = ["private_key_jwt"]
@@ -170,6 +179,9 @@ class OPMetadataCie(OPMetadata):
     claims_parameter_supported = True
     tls_client_certificate_bound_access_tokens = True
     authorization_response_iss_parameter_supported = True
+    id_token_signing_alg_values_supported: List[SigningAlgValuesSupportedCie]
+    userinfo_signing_alg_values_supported: List[SigningAlgValuesSupportedCie]
+    request_object_signing_alg_values_supported: List[SigningAlgValuesSupportedCie]
 
     @validator("jwks_uri")
     def validate_jwks_uri(cls, jwks_uri, values):
@@ -188,6 +200,9 @@ class OPMetadataSpid(OPMetadata):
     # TODO: Could be specified in multiple languages
     op_uri: str
     acr_values_supported: List[AcrValuesSupportedSpid]
+    id_token_signing_alg_values_supported: List[SigningAlgValuesSupportedSpid]
+    userinfo_signing_alg_values_supported: List[SigningAlgValuesSupportedSpid]
+    request_object_signing_alg_values_supported: List[SigningAlgValuesSupportedSpid]
 
     @validator("jwks_uri")
     def validate_jwks_uri(cls, jwks_uri, values):

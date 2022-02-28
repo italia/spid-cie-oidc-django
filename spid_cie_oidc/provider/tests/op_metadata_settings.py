@@ -10,7 +10,6 @@ OP_METADATA = {
     "jwks_uri": "https://registry.cie.gov.it/.well-known/jwks.json",
     "subject_types_supported":["pairwise"],
     "id_token_encryption_alg_values_supported": ["RSA-OAEP"],
-    "userinfo_signing_alg_values_supported": ["ES256"],
     "request_object_encryption_enc_values_supported": ["A256CBC-HS512"],
     "token_endpoint_auth_methods_supported": ["private_key_jwt"],
     "userinfo_encryption_alg_values_supported": ["RSA-OAEP"],
@@ -50,6 +49,7 @@ OP_METADATA_CIE["claims_supported"] = [
 OP_METADATA_CIE["claims_parameter_supported"] =  True
 OP_METADATA_CIE["tls_client_certificate_bound_access_tokens"] =  True
 OP_METADATA_CIE["authorization_response_iss_parameter_supported"] =  True
+OP_METADATA_CIE["userinfo_signing_alg_values_supported"] = ["ES256"]
 
 
 OP_METADATA_CIE_JWKS_AND_JWKS_URI = deepcopy(OP_METADATA_CIE)
@@ -80,6 +80,7 @@ OP_METADATA_CIE_JWKS_URI_NO_CORRECT["jwks_uri"] = "https://registry.cie.gov.it/.
 OP_METADATA_SPID = deepcopy(OP_METADATA)
 OP_METADATA_SPID["op_name"] = "Agenzia per l’Italia Digitale"
 OP_METADATA_SPID["op_uri"] = "https://www.agid.gov.it"
+OP_METADATA_SPID["userinfo_signing_alg_values_supported"] = ["RS384"]
 OP_METADATA_SPID["acr_values_supported"] = ["https://www.spid.gov.it/SpidL1",
                                             "https://www.spid.gov.it/SpidL2",
                                             "https://www.spid.gov.it/SpidL3"
