@@ -1,66 +1,11 @@
 from enum import Enum
-from typing import List, Literal, Optional
+from typing import List, Optional
 
 from pydantic import BaseModel, HttpUrl, validator
 
+from .jwks import JwksCie, JwksSpid
+
 JWKS_URI_CIE = "https://registry.cie.gov.it/.well-known/jwks.json"
-
-
-class Jwk(BaseModel):
-    kty: Literal["EC", "RSA"]
-    # TODO: verify if is optional
-    alg: Optional[Literal[
-        "RS256", "RS384", "RS512", "ES256", "ES384", "ES512", "PS256", "PS384", "PS512"]]
-    use: Literal["sig", "enc"]
-    n: Optional[str] # Base64urlUInt-encoded
-    e: Optional[str] # Base64urlUInt-encoded
-
-    @validator("n")
-    def validate_n(cls, n_value, values):
-        cls.check_value_for_rsa(n_value, "n", values)
-
-    @validator("e")
-    def validate_e(cls, e_value, values):
-        cls.check_value_for_rsa(e_value, "e", values)
-
-    def check_value_for_rsa(value, name, values):
-        if "EC" == values.get("kty") and value:
-            raise ValueError(f"{name} must be present only for kty = RSA")
-
-    def check_value_for_ec(value, name, values):
-        if "RSA" == values.get("kty") and value:
-            raise ValueError(f"{name} must be present only for kty = EC")
-
-
-class JwkSpid(Jwk):
-    kid = "RFC7638"
-
-
-class JwkCie(Jwk):
-    kid: str # Base64url-encoded thumbprint string
-    x: str # Base64url-encoded
-    y: str # Base64url-encoded
-    crv: Literal["P-256", "P-384", "P-521"]
-
-    @validator("x")
-    def validate_x(cls, x_value, values):
-        cls.check_value_for_ec(x_value, "x", values)
-
-    @validator("y")
-    def validate_y(cls, y_value, values):
-        cls.check_value_for_ec(y_value, "y", values)
-
-    @validator("crv")
-    def validate_crv(cls, crv_value, values):
-        cls.check_value_for_ec(crv_value, "crv", values)
-
-
-class JwksCie(BaseModel):
-    keys : List[JwkCie]
-
-
-class JwksSpid(BaseModel):
-    keys : List[JwkSpid]
 
 
 class ScopeSupported(str, Enum):
@@ -92,26 +37,18 @@ class AcrValuesSupportedCie(str, Enum):
     cie_l3 = "CIE_L3"
 
 
-class SigningAlgValuesSupportedCie(str, Enum):
+class SigningAlgValuesSupported(str, Enum):
     es256 = "ES256"
     es384 = "ES384"
     es512 = "ES512"
-    ps256 = "PS256"
-    ps384 = "PS384"
-    ps512 = "PS512"
-
-class SigningAlgValuesSupportedSpid(str, Enum):
-    es256 = "ES256"
-    es384 = "ES384"
-    es512 = "ES512"
-    ps256 = "PS256"
-    ps384 = "PS384"
-    ps512 = "PS512"
-    hs384 = "HS384"
-    hs512 = "HS512"
     rs256 = "RS256"
     rs384 = "RS384"
     rs512 = "RS512"
+    # TODO: to be confirmed
+    # ps256 = "PS256"
+    # ps384 = "PS384"
+    # ps512 = "PS512"
+
 
 class EncryptionAlgValuesSupported(str, Enum):
     rsa_oaep = "RSA-OAEP"
@@ -128,7 +65,7 @@ class EncryptionEncValuesSupported(str, Enum):
     a256cbc_hs512 = "A256CBC-HS512"
     a128gcm = "A128GCM"
     a192gcm = "A192GCM"
-    a256gsm = "A256GSM"
+    a256gcm = "A256GCM"
 
 
 class ClaimsSupported(str, Enum):
@@ -162,6 +99,9 @@ class OPMetadata(BaseModel):
     userinfo_encryption_enc_values_supported: List[EncryptionEncValuesSupported]
     request_object_encryption_alg_values_supported: List[EncryptionAlgValuesSupported]
     request_object_encryption_enc_values_supported: List[EncryptionEncValuesSupported]
+    id_token_signing_alg_values_supported: List[SigningAlgValuesSupported]
+    userinfo_signing_alg_values_supported: List[SigningAlgValuesSupported]
+    request_object_signing_alg_values_supported: List[SigningAlgValuesSupported]
     token_endpoint_auth_methods_supported = ["private_key_jwt"]
     subject_types_supported = ["pairwise"]
     request_parameter_supported = True
@@ -179,9 +119,6 @@ class OPMetadataCie(OPMetadata):
     claims_parameter_supported = True
     tls_client_certificate_bound_access_tokens = True
     authorization_response_iss_parameter_supported = True
-    id_token_signing_alg_values_supported: List[SigningAlgValuesSupportedCie]
-    userinfo_signing_alg_values_supported: List[SigningAlgValuesSupportedCie]
-    request_object_signing_alg_values_supported: List[SigningAlgValuesSupportedCie]
 
     @validator("jwks_uri")
     def validate_jwks_uri(cls, jwks_uri, values):
@@ -200,9 +137,6 @@ class OPMetadataSpid(OPMetadata):
     # TODO: Could be specified in multiple languages
     op_uri: str
     acr_values_supported: List[AcrValuesSupportedSpid]
-    id_token_signing_alg_values_supported: List[SigningAlgValuesSupportedSpid]
-    userinfo_signing_alg_values_supported: List[SigningAlgValuesSupportedSpid]
-    request_object_signing_alg_values_supported: List[SigningAlgValuesSupportedSpid]
 
     @validator("jwks_uri")
     def validate_jwks_uri(cls, jwks_uri, values):

@@ -1,5 +1,8 @@
 from copy import deepcopy
 
+from spid_cie_oidc.provider.tests.jwks_settings import (
+    JWKS, JWKS_WITH_N_AND_EC_NO_CORRECT)
+
 OP_METADATA = {
     "issuer": "https://idserver.servizicie.interno.gov.it/op/",
     "authorization_endpoint": "https://idserver.servizicie.interno.gov.it/op/auth",
@@ -18,7 +21,7 @@ OP_METADATA = {
     "request_object_encryption_alg_values_supported": ["RSA-OAEP"],
     "request_object_signing_alg_values_supported": ["ES256"],
     "userinfo_encryption_enc_values_supported": ["A256CBC-HS512"],
-   "request_parameter_supported": True,
+    "request_parameter_supported": True,
     "subject_types_supported":["pairwise"],
     "token_endpoint_auth_methods_supported":["private_key_jwt"],
 }
@@ -53,26 +56,7 @@ OP_METADATA_CIE["userinfo_signing_alg_values_supported"] = ["ES256"]
 
 
 OP_METADATA_CIE_JWKS_AND_JWKS_URI = deepcopy(OP_METADATA_CIE)
-OP_METADATA_CIE_JWKS_AND_JWKS_URI["jwks"] = {
-        "keys": [
-            { 
-                "kty": "EC",
-                "kid": "NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs",
-                "use": "sig",
-                "crv": "P-256",
-                "x": "2jM2df3IjB9VYQ0yz373-6EEot_1TBuTRaRYafMi5K0",
-                "y": "h6Zlz6XReK0L-iu4ZgxlozJEXgTGUFuuDl7o8b_8JnM",
-            },
-            { 
-                "kty": "EC",
-                "kid": "EF71iSaosbC5C4tC6Syq1Gm647M",
-                "use": "enc",
-                "crv": "P-256",
-                "x": "QI31cvWP4GwnWIi-Z0IYHauQ4nPCk8Vf1BHoPazGqEc",
-                "y": "DBwf8t9-abpXGtTDlZ8njjxAb33kOMrOqiGsd9oRxr0"
-            }
-        ]
-    }
+OP_METADATA_CIE_JWKS_AND_JWKS_URI["jwks"] = JWKS
 
 OP_METADATA_CIE_JWKS_URI_NO_CORRECT = deepcopy(OP_METADATA_CIE)
 OP_METADATA_CIE_JWKS_URI_NO_CORRECT["jwks_uri"] = "https://registry.cie.gov.it/.well-known/"
@@ -87,48 +71,10 @@ OP_METADATA_SPID["acr_values_supported"] = ["https://www.spid.gov.it/SpidL1",
                                         ]
 
 OP_METADATA_SPID_JWKS_AND_JWKS_URI = deepcopy(OP_METADATA_SPID)
-OP_METADATA_SPID_JWKS_AND_JWKS_URI["jwks"] ={
-    "keys": [            
-        {
-            "kty": "EC",
-            "kid": "sig-ec256-0",
-            "use": "sig",
-            "crv": "P-256",
-            "x": "2jM2df3IjB9VYQ0yz373-6EEot_1TBuTRaRYafMi5K0",
-            "y": "h6Zlz6XReK0L-iu4ZgxlozJEXgTGUFuuDl7o8b_8JnM"
-        },
-        {
-            "kty": "EC","kid": "enc-ec256-0",
-            "use": "enc",
-            "crv": "P-256",
-            "x": "QI31cvWP4GwnWIi-Z0IYHauQ4nPCk8Vf1BHoPazGqEc",
-            "y": "DBwf8t9-abpXGtTDlZ8njjxAb33kOMrOqiGsd9oRxr0"
-        }
-    ]
-}
-
+OP_METADATA_SPID_JWKS_AND_JWKS_URI["jwks"] = JWKS
 
 OP_METADATA_SPID_JWKS_NO_JWKS_URI = deepcopy(OP_METADATA_SPID_JWKS_AND_JWKS_URI)
 OP_METADATA_SPID_JWKS_NO_JWKS_URI.pop("jwks_uri")
 
 OP_METADATA_SPID_JWKS_EC_NO_CORRECT = deepcopy(OP_METADATA_SPID_JWKS_NO_JWKS_URI)
-OP_METADATA_SPID_JWKS_EC_NO_CORRECT["jwks"] ={
-    "keys": [            
-        {
-            "kty": "EC",
-            "kid": "sig-ec256-0",
-            "use": "sig",
-            "crv": "P-256",
-            "x": "2jM2df3IjB9VYQ0yz373-6EEot_1TBuTRaRYafMi5K0",
-            "y": "h6Zlz6XReK0L-iu4ZgxlozJEXgTGUFuuDl7o8b_8JnM",
-            "n": "iu4ZgxlozJEXgTGUFuuDl7o8b_8JnMswwddaQjhFkKk"
-        },
-        {
-            "kty": "EC","kid": "enc-ec256-0",
-            "use": "enc",
-            "crv": "P-256",
-            "x": "QI31cvWP4GwnWIi-Z0IYHauQ4nPCk8Vf1BHoPazGqEc",
-            "y": "DBwf8t9-abpXGtTDlZ8njjxAb33kOMrOqiGsd9oRxr0"
-        }
-    ]
-}
+OP_METADATA_SPID_JWKS_EC_NO_CORRECT["jwks"] = JWKS_WITH_N_AND_EC_NO_CORRECT
