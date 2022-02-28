@@ -73,3 +73,61 @@ OP_METADATA_CIE_JWKS_AND_JWKS_URI["jwks"] = {
             }
         ]
     }
+
+OP_METADATA_CIE_JWKS_URI_NO_CORRECT = deepcopy(OP_METADATA_CIE)
+OP_METADATA_CIE_JWKS_URI_NO_CORRECT["jwks_uri"] = "https://registry.cie.gov.it/.well-known/"
+
+OP_METADATA_SPID = deepcopy(OP_METADATA)
+OP_METADATA_SPID["op_name"] = "Agenzia per l’Italia Digitale"
+OP_METADATA_SPID["op_uri"] = "https://www.agid.gov.it"
+OP_METADATA_SPID["acr_values_supported"] = ["https://www.spid.gov.it/SpidL1",
+                                            "https://www.spid.gov.it/SpidL2",
+                                            "https://www.spid.gov.it/SpidL3"
+                                        ]
+
+OP_METADATA_SPID_JWKS_AND_JWKS_URI = deepcopy(OP_METADATA_SPID)
+OP_METADATA_SPID_JWKS_AND_JWKS_URI["jwks"] ={
+    "keys": [            
+        {
+            "kty": "EC",
+            "kid": "sig-ec256-0",
+            "use": "sig",
+            "crv": "P-256",
+            "x": "2jM2df3IjB9VYQ0yz373-6EEot_1TBuTRaRYafMi5K0",
+            "y": "h6Zlz6XReK0L-iu4ZgxlozJEXgTGUFuuDl7o8b_8JnM"
+        },
+        {
+            "kty": "EC","kid": "enc-ec256-0",
+            "use": "enc",
+            "crv": "P-256",
+            "x": "QI31cvWP4GwnWIi-Z0IYHauQ4nPCk8Vf1BHoPazGqEc",
+            "y": "DBwf8t9-abpXGtTDlZ8njjxAb33kOMrOqiGsd9oRxr0"
+        }
+    ]
+}
+
+
+OP_METADATA_SPID_JWKS_NO_JWKS_URI = deepcopy(OP_METADATA_SPID_JWKS_AND_JWKS_URI)
+OP_METADATA_SPID_JWKS_NO_JWKS_URI.pop("jwks_uri")
+
+OP_METADATA_SPID_JWKS_EC_NO_CORRECT = deepcopy(OP_METADATA_SPID_JWKS_NO_JWKS_URI)
+OP_METADATA_SPID_JWKS_EC_NO_CORRECT["jwks"] ={
+    "keys": [            
+        {
+            "kty": "EC",
+            "kid": "sig-ec256-0",
+            "use": "sig",
+            "crv": "P-256",
+            "x": "2jM2df3IjB9VYQ0yz373-6EEot_1TBuTRaRYafMi5K0",
+            "y": "h6Zlz6XReK0L-iu4ZgxlozJEXgTGUFuuDl7o8b_8JnM",
+            "n": "iu4ZgxlozJEXgTGUFuuDl7o8b_8JnMswwddaQjhFkKk"
+        },
+        {
+            "kty": "EC","kid": "enc-ec256-0",
+            "use": "enc",
+            "crv": "P-256",
+            "x": "QI31cvWP4GwnWIi-Z0IYHauQ4nPCk8Vf1BHoPazGqEc",
+            "y": "DBwf8t9-abpXGtTDlZ8njjxAb33kOMrOqiGsd9oRxr0"
+        }
+    ]
+}

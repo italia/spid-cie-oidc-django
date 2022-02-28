@@ -38,9 +38,9 @@ class JwkSpid(Jwk):
 
 class JwkCie(Jwk):
     kid: str # Base64url-encoded thumbprint string
-    x: Optional[str] # Base64url-encoded
-    y: Optional[str] # Base64url-encoded
-    crv: Optional[Literal["P-256", "P-384", "P-521"]]
+    x: str # Base64url-encoded
+    y: str # Base64url-encoded
+    crv: Literal["P-256", "P-384", "P-521"]
 
     @validator("x")
     def validate_x(cls, x_value, values):
@@ -76,7 +76,7 @@ class ResponseModesSupported(str, Enum):
 
 
 class GrantTypeSupported(str, Enum):
-    refresh_token = "refresh_token"
+    refresh_token = "refresh_token" # nosec - B105
     authorization_code = "authorization_code"
 
 
@@ -160,7 +160,7 @@ class OPMetadata(BaseModel):
 
 class OPMetadataCie(OPMetadata):
     jwks: Optional[JwksCie]
-    jwks_uri: HttpUrl
+    jwks_uri: Optional[HttpUrl]
     scopes_supported: List[ScopeSupported]
     response_types_supported = ["code"]
     response_modes_supported: List[ResponseModesSupported]
@@ -174,7 +174,7 @@ class OPMetadataCie(OPMetadata):
     @validator("jwks_uri")
     def validate_jwks_uri(cls, jwks_uri, values):
         if (jwks_uri != JWKS_URI_CIE):
-            raise ValueError('jwks no correct')
+            raise ValueError('jwks_uri no correct')
         jwks = values.get("jwks")
         if (jwks_uri and jwks):
             raise ValueError('jwks MUST NOT indicate')
@@ -182,7 +182,7 @@ class OPMetadataCie(OPMetadata):
 
 class OPMetadataSpid(OPMetadata):
     jwks: Optional[JwksSpid]
-    jwks_uri: HttpUrl
+    jwks_uri: Optional[HttpUrl]
     # TODO: Could be specified in multiple languages
     op_name: str
     # TODO: Could be specified in multiple languages
