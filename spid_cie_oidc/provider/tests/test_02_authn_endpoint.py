@@ -1,7 +1,5 @@
-
-
 from django.http import HttpRequest
-from django.test import TestCase, Client
+from django.test import Client, TestCase
 from django.urls import reverse
 from spid_cie_oidc.authority.tests.settings import *
 from spid_cie_oidc.entity.jwtse import create_jws
