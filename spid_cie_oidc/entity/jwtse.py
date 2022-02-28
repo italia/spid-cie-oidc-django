@@ -8,10 +8,8 @@ from cryptojwt.jwe.jwe import factory
 from cryptojwt.jwe.jwe_rsa import JWE_RSA
 from cryptojwt.jwk.jwk import key_from_jwk_dict
 from cryptojwt.jws.jws import JWS
-from django.conf import settings
 
-from . settings import * 
-
+from . settings import DEFAULT_JWE_ALG, DEFAULT_JWE_ENC, ENCRYPTION_ALG_VALUES_SUPPORTED, SIGNING_ALG_VALUES_SUPPORTED
 
 
 logger = logging.getLogger(__name__)

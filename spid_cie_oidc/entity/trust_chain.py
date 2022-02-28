@@ -7,6 +7,7 @@ from typing import Union
 from spid_cie_oidc.entity.policy import apply_policy
 
 from . exceptions import (
+    InvalidEntityConfiguration,
     InvalidRequiredTrustMark,
     MetadataDiscoveryException,
     TrustAnchorNeeded
@@ -70,6 +71,8 @@ class TrustChainBuilder:
 
         self.metadata_type = metadata_type
         self.final_metadata: dict = {}
+
+        self.verified_trust_marks = []
 
         self.exp = 0
 
@@ -239,14 +242,19 @@ class TrustChainBuilder:
 
     def get_subject_configuration(self) -> None:
         if not self.subject_configuration:
-            jwt = get_entity_configurations(
-                self.subject, httpc_params=self.httpc_params
-            )
-            self.subject_configuration = EntityConfiguration(
-                jwt[0],
-                trust_anchor_entity_conf = self.trust_anchor_configuration
-            )
-            self.subject_configuration.validate_by_itself()
+            try:
+                jwt = get_entity_configurations(
+                    self.subject, httpc_params=self.httpc_params
+                )
+                self.subject_configuration = EntityConfiguration(
+                    jwt[0],
+                    trust_anchor_entity_conf = self.trust_anchor_configuration
+                )
+                self.subject_configuration.validate_by_itself()
+            except Exception as e:
+                _msg = f"Entity Configuration for {self.subject} failed: {e}"
+                logger.error(_msg)
+                raise InvalidEntityConfiguration(_msg)
 
             # Trust Mark filter
             if self.required_trust_marks:
@@ -258,11 +266,12 @@ class TrustChainBuilder:
                 # sc.trust_mark_issuers_entity_confs = [
                 # trust_mark_issuers_entity_confs
                 # ]
-
                 if not sc.validate_by_allowed_trust_marks():
                     raise InvalidRequiredTrustMark(
                         "The required Trust Marks are not valid"
                     )
+                else:
+                    self.verified_trust_marks.extend(sc.verified_trust_marks)
 
     def serialize(self):
         res = []

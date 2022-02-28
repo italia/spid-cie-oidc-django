@@ -1,14 +1,14 @@
 from django.conf import settings
 from django.urls import path
 
-from .views import authn_request
+from .views import AuthzRequestView
 
 _PREF = getattr(settings, "OIDC_PREFIX", "")
 
 urlpatterns = [
     path(
         f"{_PREF}provider/authnrequest/",
-        authn_request,
+        AuthzRequestView.as_view(),
         name="oidc_provider_authnrequest",
     ),
 ]
