@@ -11,7 +11,7 @@ class GrantTypeSupported(str, Enum):
     authorization_code = "authorization_code"
 
 
-class RpMetadata(BaseModel):
+class RPMetadata(BaseModel):
     redirect_uris: List[HttpUrl]
     response_types = ["code"]
     grant_types: List[GrantTypeSupported]
@@ -20,7 +20,7 @@ class RpMetadata(BaseModel):
     client_name: str
 
 
-class RpMetadataSpid(RpMetadata):
+class RPMetadataSpid(RPMetadata):
     jwks_uri: HttpUrl
     jwks:Optional[JwksSpid]
 
@@ -31,7 +31,7 @@ class RpMetadataSpid(RpMetadata):
             raise ValueError('jwks MUST NOT indicate')
 
 
-class RpMetadataCie(RpMetadata):
+class RPMetadataCie(RPMetadata):
     jwks_uri: HttpUrl
     jwks:Optional[JwksCie]
     application_type = "web"
