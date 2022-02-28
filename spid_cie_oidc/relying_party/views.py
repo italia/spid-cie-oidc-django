@@ -25,7 +25,7 @@ from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from . import OAuth2BaseView
 from .oauth2 import *
 from .oidc import *
-from .models import OidcAuthentication
+from .models import OidcAuthentication, OidcAuthenticationToken
 from .utils import (
     http_dict_to_redirect_uri_path,
     http_redirect_uri_to_dict,
@@ -50,7 +50,7 @@ class SpidCieOidcRpBeginView(View):
         """
         try:
             jwks_dict = get_http_url([jwks_uri], httpc_params=HTTPC_PARAMS).json()
-        except Exceptions as e:
+        except Exception as e:
             logger.error(f"Failed to download jwks from {jwks_uri}: {e}")
             return {}
         return jwks_dict
@@ -375,4 +375,10 @@ def oidc_rpinitiated_logout(request):
 
 
 def oidc_rp_landing(request):
-    return render(request, "rp_landing.html")
+    trust_chains = TrustChain.objects.filter(type="openid_provider")
+    providers = []
+    for tc in trust_chains:
+        if tc.is_valid:
+            providers.append(tc)
+    content= {"providers": providers}
+    return render(request, "rp_landing.html", content)
