@@ -1,11 +1,13 @@
 
+
 from django.http import HttpRequest
-from django.test import TestCase
+from django.test import TestCase, Client
+from django.urls import reverse
 from spid_cie_oidc.authority.tests.settings import *
 from spid_cie_oidc.entity.jwtse import create_jws
 from spid_cie_oidc.entity.models import FetchedEntityStatement, TrustChain
 from spid_cie_oidc.entity.tests.settings import *
-from spid_cie_oidc.provider.settings import *
+from spid_cie_oidc.provider.tests.authn_endpoint_settings import *
 
 
 class AuthnRequestTest(TestCase):
@@ -15,8 +17,7 @@ class AuthnRequestTest(TestCase):
 
 
     def test_auth_request(self):
-        jws=create_jws(PAYLOAD,JWK)
-        self.req.GET = {'request':jws}
+
         fes = FetchedEntityStatement.objects.create(
             sub = "http://rp-test/oidc/rp",
             iss = "http://rp-test/oidc/rp",
@@ -36,10 +37,12 @@ class AuthnRequestTest(TestCase):
             is_active = True
             )
 
-        # please reDO with a django Client as the request were produced by a browser
-        # res = authn_request(self.req)
-        # self.assertTrue(res.status_code == 200)
-        # self.assertIn("username", res.content.decode())
-        # self.assertIn("password", res.content.decode())
+        jws=create_jws(PAYLOAD,JWK)
+        client = Client()
+        url = reverse("oidc_provider_authnrequest")
+        res = client.get(url, {"request": jws})
+        self.assertTrue(res.status_code == 200)
+        self.assertIn("username", res.content.decode())
+        self.assertIn("password", res.content.decode())
 
 
