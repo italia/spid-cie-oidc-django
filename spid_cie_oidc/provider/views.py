@@ -170,7 +170,6 @@ class AuthzRequestView(OpBase, View):
                 state = self.payload["state"])
 
         # stores the authz request in a hidden field in the form
-        breakpoint()
         form = self.get_login_form()
         # TODO: scommentare
         # form()("authz_request_object" =req)
