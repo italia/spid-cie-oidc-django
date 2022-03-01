@@ -1,8 +1,13 @@
 import logging
+import urllib.parse
+import uuid
+from multiprocessing import context
 
 from django.conf import settings
-from django.http import HttpResponse, HttpResponseForbidden
-from django.shortcuts import redirect, render
+from django.contrib.auth import authenticate
+from django.http import (HttpResponseForbidden,
+                         HttpResponseRedirect)
+from django.shortcuts import render
 from django.utils.translation import gettext as _
 from django.views import View
 from pydantic import ValidationError
@@ -10,8 +15,11 @@ from spid_cie_oidc.entity.jwtse import (unpad_jwt_head, unpad_jwt_payload,
                                         verify_jws)
 from spid_cie_oidc.entity.models import TrustChain
 from spid_cie_oidc.entity.tests.settings import *
-from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
-from spid_cie_oidc.onboarding.schemas.authn_requests import AuthenticationRequestSpid
+from spid_cie_oidc.entity.trust_chain_operations import \
+    get_or_create_trust_chain
+from spid_cie_oidc.onboarding.schemas.authn_requests import \
+    AuthenticationRequestSpid
+from spid_cie_oidc.provider.models import OidcSession
 
 from .forms import *
 from .settings import HTTPC_PARAMS
@@ -24,15 +32,14 @@ class OpBase:
         Baseclass with common methods for OPs
     """
 
-    def handle_json_error(
-            self, error:str, error_description:str, state:str
-    ) -> dict:
+    template = "op_user_login.html"
+    consent_template = "op_user_consent.html"
 
-        return dict(
-            error_description = error_description,
-            error = error,
-            state = state,
-        )
+    def redirect_response_data(
+        self, **kwargs
+    ) -> HttpResponseRedirect:
+        url = f'{self.payload["redirect_uri"]}?{urllib.parse.urlencode(kwargs)}'
+        return HttpResponseRedirect(url)
 
     def find_jwk(self, header:dict, jwks:list) -> dict:
         for jwk in jwks:
@@ -47,10 +54,10 @@ class OpBase:
             logger.error(
                 f"Error in Authz request object {dict(req.GET)}: {e}"
             )
-            # TODO: render an error template here
-            return HttpResponse(
-                _("Authorization Request is not valid.")
-            )
+            return self.redirect_response_data(
+                error = "invalid_request",
+                error_description =_("Error in Authz request object"),
+                state = self.payload["state"])
 
         rp_trust_chain = TrustChain.objects.filter(
             type = "openid_relying_party",
@@ -61,7 +68,11 @@ class OpBase:
             logger.warning(
                 f"Disabled client {rp_trust_chain.sub} requests an authorization."
             )
-            raise HttpResponseForbidden()
+            return self.redirect_response_data(
+                # TODO: check error
+                error = "access_denied",
+                error_description =_(f"Disabled client {rp_trust_chain.sub} requests an authorization."),
+                state = self.payload["state"])
 
         elif not rp_trust_chain or not rp_trust_chain.is_valid:
             rp_trust_chain = get_or_create_trust_chain(
@@ -77,7 +88,11 @@ class OpBase:
                 logger.warning(
                     f"Failed trust chain validation for {self.payload['iss']}"
                 )
-                raise HttpResponseForbidden()
+                return self.redirect_response_data(
+                    # TODO: check error
+                    error = "unauthorized_client",
+                    error_description =_(f"Failed trust chain validation for {self.payload['iss']}."),
+                    state = self.payload["state"])
 
         jwks = rp_trust_chain.metadata['jwks']
         jwk = self.find_jwk(header, jwks)
@@ -86,7 +101,11 @@ class OpBase:
                 f"Invalid jwk for {self.payload['iss']}. "
                 f"{header['kid']} not found in {jwks}"
             )
-            raise HttpResponseForbidden()
+            return self.redirect_response_data(
+                # TODO: check error
+                error = "unauthorized_client",
+                error_description =_(f"Invalid jwk for {self.payload['iss']}."),
+                state = self.payload["state"])
 
         try:
             verify_jws(req, jwk)
@@ -95,7 +114,12 @@ class OpBase:
                 "Authz request object signature validation failed "
                 f"for {self.payload['iss']}: {e} "
             )
-            raise HttpResponseForbidden()
+            return self.redirect_response_data(
+                # TODO: check error
+                error = "access_denied",
+                error_description =_("Authz request object signature validation failed "
+                                     f"for {self.payload['iss']}: {e} "),
+                state = self.payload["state"])
 
         return self.payload
 
@@ -104,8 +128,6 @@ class AuthzRequestView(OpBase, View):
     """View which processes the actual Authz request and
     returns a Http Redirect
     """
-    breakpoint()
-    template = "op_user_login.html"
 
     def validate_authz(self, payload: dict):
         AuthenticationRequestSpid(**payload)
@@ -123,26 +145,37 @@ class AuthzRequestView(OpBase, View):
             logger.error(
                 f"Missing Authz request object in {dict(request.GET)}"
             )
-            # TODO: render an error template here
-            return HttpResponse(
-                _("Authorization Request not found.")
-            )
+            return self.redirect_response_data(
+                error = "invalid_request",
+                error_description =_("Missing Authz request object"),
+                # No req -> no payload -> no state
+                state = "")
 
         # yes, again. We MUST.
-        authz_req = self.validate_authz_request_object(req)
+        self.validate_authz_request_object(req)
 
         try:
             self.validate_authz(self.payload)
         except ValidationError as e:
             logger.error(
                 "Authz request object validation failed "
-                f"for {authz_req['iss']}: {e} "
+                f"for {self.payload['iss']}: {e} "
             )
-            raise HttpResponseForbidden()
+            return self.redirect_response_data(
+                # TODO: check error
+                error = "invalid_request",
+                error_description =_(
+                    "Authz request object validation failed "
+                    f"for {self.payload['iss']}: {e} "),
+                state = self.payload["state"])
 
         # stores the authz request in a hidden field in the form
+        breakpoint()
+        form = self.get_login_form()
+        # TODO: scommentare
+        # form()("authz_request_object" =req)
         context = {
-            "form": self.get_login_form(authz_request_object=req)
+            "form": form
         }
         return render(request, self.template, context)
 
@@ -150,59 +183,32 @@ class AuthzRequestView(OpBase, View):
         """
             When the User prompts his credentials
         """
-        form = self.get_login_form(request.POST)
+        form = self.get_login_form()(request.POST)
         if not form.is_valid():
             return render(request, self.template, {'form': form})
 
-        self.validate_authz_request_object(request)
+        authz_request = form.cleaned_data['authz_request_object']
+        self.validate_authz_request_object()
 
         # autenticate the user
-
-        #from django.contrib.auth import authenticate
-        # request.POST lo do a dezhi se è valido faccio authenticate
-        # form.cleanedData
-        # user = authenticate(username=username,
-        #                    password=password)
-        # se va male si ritorna form con errore o password errata
-        # se va tutto bene
-        # creo la session con il jwt dal form
-        # creo un altro web point
-        # faccio redirect su user_content
-
+        form_dict = {**form.cleaned_data}
+        username = form_dict.get("username")
+        password = form_dict.get("password")
+        user = authenticate(username=username, password=password)
+        userinfo_claims = self.payload["claims"]["userinfo"]
+        # creare auth_code
+        auth_code = uuid.uuid4()
         # store the User session
-        # redirect the user to a consent page
-        breakpoint()
-        redirect_uri = self.payload['redirect_uri']
-        state = self.payload['state']
-        # TODO: implement
-        error = "error"
-        error_description = "error_description"
-        response = self.build_error_response(error, error_description, state)
-        return redirect(redirect_uri, **response)
-
-        # check
-        # unpad payload di request.GET.get(request, None)
-        # unpad header di request.GET.get(request, None)
-        # se schifezza try?????
-        # devo fare query su entity.models.trust_chain.objects.filter(type ="openid_relayparty", sub= payload[iss]).first()
-        # se mi rende oggetto e foggetto.isActive() == true controlla isExpired
-        # se scaduto rinnopva trust_chain
-        # altrimenti valido jwt: trust_chain.metadata[jwks]
-        # for jwk : in trust_chain.metadata[jwks]:
-        #   if header[kid] == jwk:
-        #       entity.jwtse.validate_...(request.GET["request"]) se fallisce nell'except torno una response error con unauthorized_client
-
-        #   return redirect HttpsResponse
-        # altrimente devo validare il payload con json schema
-        # se non è valido gli rispondo con error response e invalid_request
-        #
-        # se è valido
-        # return reneder (template logging page) e gli passo anche il dict della request
+        OidcSession.objects.create(
+            user = user, authz_request = authz_request, sub = self.payload["sub"],
+            client_id = self.payload["client_id"], userinfo_claims = userinfo_claims,
+            user_uid = user.uid, auth_code = auth_code)
+        # show to the user the a consent page
+        return render(request, self.consent_template)
 
 
-class ConsentPageView(View):
-    # create a redirect with auth code, scope, state and iss in it
-    template = "op_user_consent.html"
+class ConsentPageView(OpBase, View):
+    # create a redirect with auth code, scope, state and iss in it ???? lo scope nelle linee guida non c'è
 
     def get_consent_form(self):
         return ConsentPageForm
@@ -220,18 +226,28 @@ class ConsentPageView(View):
 
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
+            # TODO: what are the audience? RP or End User
             raise HttpResponseForbidden()
 
         # TODO: create a form with the consent submission
-        # stores the authz request in a hidden field in the form
-        form = self.get_consent_form(request.POST)
+        # stores the authz request in a hidden field in the form ?????NON SERVE é tutto nella sessione
+        form = self.get_consent_form()(request.POST)
         if not form.is_valid():
             # user doesn't give his consent, redirect to an error page
             # TODO: remember to logout the user first!
+            # TODO: what are the audience? RP or End User
+            raise HttpResponseForbidden()
+        session = OidcSession.objects.filter()
+        if not session:
+            # TODO: what are the audience? RP or End User
             raise HttpResponseForbidden()
 
-        context = {"form": form}
-        return render(request, self.template, context)
+        # iss, state e code li recupero dalla session
+        return self.redirect_response_data(
+            code = "",
+            state = "",
+            iss = ""
+        )
 
 
 class TokenEndpoint(View):

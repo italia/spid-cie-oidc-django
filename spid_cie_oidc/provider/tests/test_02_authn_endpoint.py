@@ -5,8 +5,12 @@ from spid_cie_oidc.authority.tests.settings import *
 from spid_cie_oidc.entity.jwtse import create_jws
 from spid_cie_oidc.entity.models import FetchedEntityStatement, TrustChain
 from spid_cie_oidc.entity.tests.settings import *
+from spid_cie_oidc.entity.utils import (datetime_from_timestamp, exp_from_now,
+                                        iat_now)
 from spid_cie_oidc.provider.tests.authn_endpoint_settings import *
 
+NOW = datetime_from_timestamp(iat_now())
+EXP = datetime_from_timestamp(exp_from_now(33))
 
 class AuthnRequestTest(TestCase):
 
@@ -19,16 +23,14 @@ class AuthnRequestTest(TestCase):
         fes = FetchedEntityStatement.objects.create(
             sub = "http://rp-test/oidc/rp",
             iss = "http://rp-test/oidc/rp",
-            #TODO: iat e exp dinamiche
-            exp = "2022-12-28 23:00",
-            iat = "2022-02-26 15:00",
+            exp = EXP,
+            iat = NOW,
             )
         
         TrustChain.objects.create(
             sub = 'http://rp-test/oidc/rp',
             type = "openid_relying_party",
-            #TODO: exp dinamiche
-            exp = "2022-12-28 23:00",
+            exp = EXP,
             metadata = METADATA,
             status = 'valid',
             trust_anchor = fes,
