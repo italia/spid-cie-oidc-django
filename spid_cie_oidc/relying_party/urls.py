@@ -10,7 +10,11 @@ from .views import (
 
 urlpatterns = []
 urlpatterns += (
-    path("oidc/rp/begin", SpidCieOidcRpBeginView.as_view(), name="spid_cie_rp_begin"),
+    path(
+        "oidc/rp/authorization",
+        SpidCieOidcRpBeginView.as_view(),
+        name="spid_cie_rp_begin"
+    ),
 )
 urlpatterns += (
     path(

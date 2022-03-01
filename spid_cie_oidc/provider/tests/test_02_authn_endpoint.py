@@ -48,7 +48,6 @@ class AuthnRequestTest(TestCase):
         url = reverse("oidc_provider_authnrequest")
         res = client.get(url, {"request": jws})
         self.assertTrue(res.status_code == 200)
-
         self.assertIn("username", res.content.decode())
         self.assertIn("password", res.content.decode())
 

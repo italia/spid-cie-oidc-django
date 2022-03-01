@@ -117,7 +117,16 @@ def get_or_create_trust_chain(
     metadata_type:str = "openid_provider",
     force:bool = False
 ) -> TrustChain:
+    """
+        returns a TrustChain model object if any available
+        if available it return it
+        if not available it create a new one
 
+        if available and expired it return the expired one
+        if flag force is set to True -> renew the trust chain, update it and
+        return the updated one
+        
+    """
     fetched_trust_anchor = FetchedEntityStatement.objects.filter(
         sub = trust_anchor, iss = trust_anchor
     )

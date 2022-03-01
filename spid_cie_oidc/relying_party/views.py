@@ -22,6 +22,7 @@ from spid_cie_oidc.entity.models import (
 from spid_cie_oidc.entity.jwtse import create_jws
 from spid_cie_oidc.entity.statements import get_http_url
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
+from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
 
 from . import OAuth2BaseView
 from .oauth2 import *
@@ -92,9 +93,14 @@ class SpidCieOidcRp:
             logger.warning(
                 f"{tc} found but expired at {tc.exp}"
             )
-            # TODO
-            raise NotImplementedError(
-                "We should try to renew the trust chain"
+            logger.warning("We should try to renew the trust chain")
+            tc = get_or_create_trust_chain(
+                    subject = tc.sub,
+                    trust_anchor = trust_anchor,
+                    # TODO
+                    # required_trust_marks: list = [],
+                    metadata_type = "openid_provider",
+                    force = True
             )
         return tc
 

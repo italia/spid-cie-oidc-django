@@ -10,8 +10,12 @@ from django.shortcuts import render
 from django.utils.translation import gettext as _
 from django.views import View
 from pydantic import ValidationError
-from spid_cie_oidc.entity.jwtse import (unpad_jwt_head, unpad_jwt_payload,
-                                        verify_jws)
+from spid_cie_oidc.entity.jwtse import (
+    unpad_jwt_head,
+    unpad_jwt_payload,
+    verify_jws
+)
+from spid_cie_oidc.entity.exceptions import InvalidEntityConfiguration
 from spid_cie_oidc.entity.models import TrustChain
 from spid_cie_oidc.entity.tests.settings import *
 from spid_cie_oidc.entity.trust_chain_operations import \
@@ -124,7 +128,7 @@ class AuthzRequestView(OpBase, View):
     """View which processes the actual Authz request and
     returns a Http Redirect
     """
-    template = "op_user_login.html"
+    template = "user_login.html"
 
     def validate_authz(self, payload: dict):
         AuthenticationRequestSpid(**payload)
@@ -149,7 +153,26 @@ class AuthzRequestView(OpBase, View):
                 state = "")
 
         # yes, again. We MUST.
-        self.validate_authz_request_object(req)
+        try:
+            self.validate_authz_request_object(req)
+        except InvalidEntityConfiguration as e:
+            logger.error(f" {e}")
+            return self.redirect_response_data(
+                error = "invalid_request",
+                error_description =_("Failed to establish the Trust"),
+            )
+        except Exception as e:
+            logger.error(
+                "Error during trust build for "
+                f"{request.GET.get('client_id', 'unknow')}: {e}"
+            )
+            return self.redirect_response_data(
+                error = "invalid_request",
+                error_description =_(
+                    "An Unknown error raised during validation of "
+                    f" authz request object: {e}"
+                )
+            )
 
         try:
             self.validate_authz(self.payload)
@@ -199,7 +222,9 @@ class AuthzRequestView(OpBase, View):
             user_uid = user.uid, auth_code = auth_code)
 
         # show to the user the a consent page
-        reverse('')
+        consent_url = reverse('oidc_provider_consent')
+        breakpoint()
+        return HttpResponseRedirect(consent_url)
 
 
 class ConsentPageView(OpBase, View):

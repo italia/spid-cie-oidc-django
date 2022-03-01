@@ -6,17 +6,17 @@ from .views import (
     ConsentPageView
 )
 
-_PREF = getattr(settings, "OIDC_PREFIX", "")
+_PREF = getattr(settings, "OIDC_PREFIX", "oidc/op")
 
 urlpatterns = [
     path(
-        f"{_PREF}provider/authnrequest/",
+        f"{_PREF}/authorization/",
         AuthzRequestView.as_view(),
         name="oidc_provider_authnrequest",
     ),
 
     path(
-        f"{_PREF}provider/consent/",
+        f"{_PREF}/consent/",
         ConsentPageView.as_view(),
         name="oidc_provider_consent",
     ),
