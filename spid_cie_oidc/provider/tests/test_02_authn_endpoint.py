@@ -1,11 +1,8 @@
 from django.http import HttpRequest
 from django.test import Client, TestCase
 from django.urls import reverse
-from spid_cie_oidc.authority.tests.settings import *
 from spid_cie_oidc.entity.jwtse import create_jws
-from cryptojwt.jwk.jwk import key_from_jwk_dict
 from spid_cie_oidc.entity.models import FetchedEntityStatement, TrustChain
-from spid_cie_oidc.entity.tests.settings import *
 from spid_cie_oidc.entity.utils import (
     datetime_from_timestamp, exp_from_now,
     iat_now

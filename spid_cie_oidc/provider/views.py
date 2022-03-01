@@ -1,7 +1,6 @@
 import logging
 import urllib.parse
 import uuid
-from multiprocessing import context
 
 from django.conf import settings
 from django.contrib.auth import authenticate
@@ -200,14 +199,14 @@ class AuthzRequestView(OpBase, View):
             user_uid = user.uid, auth_code = auth_code)
 
         # show to the user the a consent page
-        consent_page = reverse('')
+        reverse('')
 
 
 class ConsentPageView(OpBase, View):
     # create a redirect with auth code, scope, state and iss in it ???? lo scope nelle linee guida non c'è
 
     template = "op_user_consent.html"
-    
+
     def get_consent_form(self):
         return ConsentPageForm
 

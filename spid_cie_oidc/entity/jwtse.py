@@ -71,7 +71,7 @@ def decrypt_jwe(jwe: str, jwk_dict: dict) -> dict:
 
 
 def create_jws(payload: dict, jwk_dict: dict, alg: str = "RS256", **kwargs) -> str:
-    
+
     _key = key_from_jwk_dict(jwk_dict)
     _signer = JWS(payload, alg=alg, **kwargs)
 

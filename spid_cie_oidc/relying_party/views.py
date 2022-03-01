@@ -390,5 +390,5 @@ def oidc_rp_landing(request):
     for tc in trust_chains:
         if tc.is_valid:
             providers.append(tc)
-    content= {"providers": providers}
+    content = {"providers": providers}
     return render(request, "rp_landing.html", content)
