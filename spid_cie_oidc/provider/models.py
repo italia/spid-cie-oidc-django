@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-
 from spid_cie_oidc.entity.abstract_models import TimeStampedModel
 
 
@@ -20,6 +19,8 @@ class OidcSession(TimeStampedModel):
     userinfo_claims = models.JSONField(blank=True, null=True)
 
     revoked = models.BooleanField(default=False)
+
+    auth_code = models.CharField(max_length=2048, blank=False, null= False)
 
     class Meta:
         verbose_name = ('User Session')

@@ -17,7 +17,9 @@ class AuthLoginForm(forms.Form):
         error_messages={"required": _("Enter your password")},
         widget=forms.PasswordInput()
     )
-    authz_request_object = forms.CharField(widget=forms.HiddenInput())
+    authz_request_object = forms.CharField(
+        widget=forms.HiddenInput()
+    )
 
     # when a prue SSO will be enabled.
     # forget_agreement = forms.BooleanField(label=_("Delete previous agreement"),
