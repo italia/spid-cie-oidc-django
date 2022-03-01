@@ -32,9 +32,6 @@ class OpBase:
         Baseclass with common methods for OPs
     """
 
-    template = "op_user_login.html"
-    consent_template = "op_user_consent.html"
-
     def redirect_response_data(
         self, **kwargs
     ) -> HttpResponseRedirect:
@@ -94,7 +91,7 @@ class OpBase:
                     error_description =_(f"Failed trust chain validation for {self.payload['iss']}."),
                     state = self.payload["state"])
 
-        jwks = rp_trust_chain.metadata['jwks']
+        jwks = rp_trust_chain.metadata['jwks']['keys']
         jwk = self.find_jwk(header, jwks)
         if not jwk:
             logger.error(
@@ -128,6 +125,7 @@ class AuthzRequestView(OpBase, View):
     """View which processes the actual Authz request and
     returns a Http Redirect
     """
+    template = "op_user_login.html"
 
     def validate_authz(self, payload: dict):
         AuthenticationRequestSpid(**payload)
@@ -170,9 +168,7 @@ class AuthzRequestView(OpBase, View):
                 state = self.payload["state"])
 
         # stores the authz request in a hidden field in the form
-        form = self.get_login_form()
-        # TODO: scommentare
-        # form()("authz_request_object" =req)
+        form = self.get_login_form()(dict(authz_request_object=req))
         context = {
             "form": form
         }
@@ -202,13 +198,16 @@ class AuthzRequestView(OpBase, View):
             user = user, authz_request = authz_request, sub = self.payload["sub"],
             client_id = self.payload["client_id"], userinfo_claims = userinfo_claims,
             user_uid = user.uid, auth_code = auth_code)
+
         # show to the user the a consent page
-        return render(request, self.consent_template)
+        consent_page = reverse('')
 
 
 class ConsentPageView(OpBase, View):
     # create a redirect with auth code, scope, state and iss in it ???? lo scope nelle linee guida non c'è
 
+    template = "op_user_consent.html"
+    
     def get_consent_form(self):
         return ConsentPageForm
 

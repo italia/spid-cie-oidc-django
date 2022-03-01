@@ -9,6 +9,9 @@ rp_onboarding_data = dict(
     is_active=True,
 )
 
+RP_METADATA_JWK1 = serialize_rsa_key(new_rsa_key().priv_key, 'private')
+RP_METADATA_JWK1_pub = serialize_rsa_key(new_rsa_key().pub_key)
+
 rp_conf = {
     "sub": rp_onboarding_data["sub"],
     "metadata": {
@@ -21,13 +24,13 @@ rp_conf = {
             "redirect_uris": ["https://rp.example.it/spid/callback"],
             "response_types": ["code"],
             "subject_type": "pairwise",
-            "jwks" : [
-                serialize_rsa_key(new_rsa_key().pub_key)
-            ]
+            "jwks" : {
+                "keys": [RP_METADATA_JWK1]
+            }
         }
     },
     "authority_hints": ["http://testserver/"],
-    "is_active": True,
+    "is_active": True
 }
 
 intermediary_conf = {
@@ -76,11 +79,8 @@ RP_METADATA = {
         "client_name": f"Name of this service called {rp_onboarding_data['sub']}",
         "contacts": ["ops@rp.example.it"],
         "grant_types": ["refresh_token", "authorization_code"],
-        "jwks": {
-            "kty": "RSA",
-            "n": "1cE1PyQiBkmwO4TT30HGUwegdPZ9iKvuwQezUYOe8LqGol_6sUgxAf67_KbAeP1PMrmGH6d-AgNIT2Taa0OAtqyRUTLhG8rl7gT3_Jzwt2mOJu2JI4MfWcQxa-ZtzM8PPr7JUzWUzhHO7Nb1MfBm_fqB20cRcHOS_fvu3PqY-C-t33z3JYeDD_PsvSs2-WLlUiMDf9ILp0rVatF4GTPwvEp7VLCqCf1lLSLIxuuTVI0sc1j3xPbyv4MO_33fTmoAOVDmkUnhi2igLgw_tjc2-iu_4-r2qsKbotGiTu6y1RQrHc8xcrQmfqJ8FUwqAcpgQnlsekEHc6lWx9262Anobw",
-            "e": "AQAB",
-            "kid": "2C3zbeQjgx3jk-CHSqK3pLhdPeV9Fn5eSBPMNUp7vQk",
+        "jwks" : {
+            "keys": [RP_METADATA_JWK1]
         },
         "redirect_uris": [f"{rp_onboarding_data['sub']}/spid/callback"],
         "response_types": ["code"],
