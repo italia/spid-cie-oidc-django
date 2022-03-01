@@ -8,9 +8,7 @@ from spid_cie_oidc.entity.tests.settings import *
 from spid_cie_oidc.entity.utils import (datetime_from_timestamp, exp_from_now,
                                         iat_now)
 from spid_cie_oidc.provider.tests.authn_endpoint_settings import *
-
-NOW = datetime_from_timestamp(iat_now())
-EXP = datetime_from_timestamp(exp_from_now(33))
+from spid_cie_oidc.authority.tests.settings import rp_onboarding_data
 
 class AuthnRequestTest(TestCase):
 
@@ -20,15 +18,18 @@ class AuthnRequestTest(TestCase):
 
     def test_auth_request(self):
 
+        NOW = datetime_from_timestamp(iat_now())
+        EXP = datetime_from_timestamp(exp_from_now(33))
+
         fes = FetchedEntityStatement.objects.create(
-            sub = "http://rp-test/oidc/rp",
-            iss = "http://rp-test/oidc/rp",
+            sub = rp_onboarding_data["sub"],
+            iss = rp_onboarding_data["sub"],
             exp = EXP,
             iat = NOW,
             )
         
         TrustChain.objects.create(
-            sub = 'http://rp-test/oidc/rp',
+            sub = rp_onboarding_data["sub"],
             type = "openid_relying_party",
             exp = EXP,
             metadata = METADATA,
