@@ -378,7 +378,7 @@ class TrustChain(TimeStampedModel):
     )
     status = models.CharField(
         max_length=33,
-        default=False,
+        default="unreachable",
         help_text=_("Status of this trust chain, on each update."),
         choices=[(i, i) for i in list(ENTITY_STATUS.keys())]
     )
@@ -427,6 +427,8 @@ class TrustChain(TimeStampedModel):
     @property
     def is_valid(self):
         return self.is_active and ENTITY_STATUS[self.status]
+
+    # TODO: property is_expired
 
     def __str__(self):
         return "{} [{}] [{}]".format(self.sub, self.type, self.is_valid)

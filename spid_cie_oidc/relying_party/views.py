@@ -37,9 +37,9 @@ from . settings import RP_PKCE_CONF
 logger = logging.getLogger(__name__)
 
 
-class SpidCieOidcRpBeginView(View):
-    """View which processes the actual Authz request and
-    returns a Http Redirect
+class SpidCieOidcRp:
+    """
+        Baseclass with common methods for RPs
     """
 
     def get_jwks_from_jwks_uri(
@@ -97,6 +97,12 @@ class SpidCieOidcRpBeginView(View):
                 "We should try to renew the trust chain"
             )
         return tc
+
+
+class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
+    """View which processes the actual Authz request and
+    returns a Http Redirect
+    """
 
     def get(self, request, *args, **kwargs):
         """
@@ -165,6 +171,7 @@ class SpidCieOidcRpBeginView(View):
         pkce_func = import_string(RP_PKCE_CONF["function"])
         pkce_values = pkce_func(**RP_PKCE_CONF["kwargs"])
         authz_data.update(pkce_values)
+        #
 
         authz_entry = dict(
             client_id=client_conf["client_id"],
@@ -174,7 +181,7 @@ class SpidCieOidcRpBeginView(View):
             issuer_id=tc.sub,
             data=json.dumps(authz_data),
             provider_jwks=json.dumps(jwks_dict),
-            provider_configuration=json.dumps(provider_metadata),
+            provider_configuration=json.dumps(provider_metadata)
         )
 
         # TODO: Prune the old or unbounded authz ...
@@ -344,9 +351,11 @@ class SpidCieOidcRpCallbackView(
 
 
 class SpidCieOidcRpCallbackEchoAttributes(View):
+    template = "echo_attributes.html"
+
     def get(self, request):
         data = {"oidc_rp_user_attrs": request.session["oidc_rp_user_attrs"]}
-        return render(request, "echo_attributes.html", data)
+        return render(request, self.template, data)
 
 
 @login_required
