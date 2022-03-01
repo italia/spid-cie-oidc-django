@@ -160,7 +160,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             scope=" ".join([i for i in request.GET.get("scope", ["openid"])]),
             redirect_uri=redirect_uri,
             response_type=client_conf["response_types"][0],
-            nonce=random_string(24),
+            nonce=random_string(32),
             state=random_string(32),
             client_id=client_conf["client_id"],
             endpoint=authz_endpoint,
@@ -225,6 +225,8 @@ class SpidCieOidcRpCallbackView(
 
     """
 
+    error_template = ".html"
+    
     def process_user_attributes(
         self, userinfo: dict, client_conf: dict, authz: OidcAuthentication
     ):
@@ -264,6 +266,12 @@ class SpidCieOidcRpCallbackView(
         docs here
         """
         request_args = {k: v for k, v in request.GET.items()}
+
+        # TODO
+        breakpoint()
+        if 'error' in request_args:
+            return render(request, self.error_template, request_args)
+        
         authz = OidcAuthentication.objects.filter(
             state=request_args.get("state"),
         )
@@ -274,6 +282,9 @@ class SpidCieOidcRpCallbackView(
 
         authz_data = json.loads(authz.data)
         provider_conf = authz.get_provider_configuration()
+
+        # TODO: get Trust Chain from response and match to the state of
+        # the preexisting OidcAuthentication on the DB
         client_conf = settings.JWTCONN_RP_CLIENTS[authz.issuer_id]
 
         code = request.GET.get("code")
