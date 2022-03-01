@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.http import HttpResponseBadRequest, HttpResponseRedirect, Http404
+from django.http import HttpResponseForbidden
 from django.views import View
 from django.shortcuts import render
 from django.utils import timezone
@@ -25,7 +26,7 @@ from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from . import OAuth2BaseView
 from .oauth2 import *
 from .oidc import *
-from .models import OidcAuthentication
+from .models import OidcAuthentication, OidcAuthenticationToken
 from .utils import (
     http_dict_to_redirect_uri_path,
     http_redirect_uri_to_dict,
@@ -50,7 +51,7 @@ class SpidCieOidcRp:
         """
         try:
             jwks_dict = get_http_url([jwks_uri], httpc_params=HTTPC_PARAMS).json()
-        except Exceptions as e:
+        except Exception as e:
             logger.error(f"Failed to download jwks from {jwks_uri}: {e}")
             return {}
         return jwks_dict
@@ -128,7 +129,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             provider_metadata.get("jwks_uri", None) or
             provider_metadata.get("jwks", None)
         ):
-            raise Http403("Invalid provider Metadata")
+            raise HttpResponseForbidden("Invalid provider Metadata")
 
         if provider_metadata.get("jwks", None):
             jwks_dict = provider_metadata["jwks"]
@@ -137,8 +138,8 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
                 provider_metadata["jwks_uri"]
             )
         if not jwks_dict:
-            _msg = f"Failed to get jwks from {issuer_fqdn}"
-            logger.error(f"{_msg}: {e}")
+            _msg = f"Failed to get jwks from {tc.sub}"
+            logger.error(f"{_msg}:")
             return HttpResponseBadRequest(_(_msg))
 
         authz_endpoint = provider_metadata["authorization_endpoint"]
@@ -150,7 +151,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             redirect_uri = client_conf["redirect_uris"][0]
 
         authz_data = dict(
-            scope=[i for i in request.GET.get("scope", ["openid"])],
+            scope=" ".join([i for i in request.GET.get("scope", ["openid"])]),
             redirect_uri=redirect_uri,
             response_type=client_conf["response_types"][0],
             nonce=random_string(24),
@@ -384,4 +385,10 @@ def oidc_rpinitiated_logout(request):
 
 
 def oidc_rp_landing(request):
-    return render(request, "rp_landing.html")
+    trust_chains = TrustChain.objects.filter(type="openid_provider")
+    providers = []
+    for tc in trust_chains:
+        if tc.is_valid:
+            providers.append(tc)
+    content= {"providers": providers}
+    return render(request, "rp_landing.html", content)
