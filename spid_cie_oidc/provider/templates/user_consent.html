@@ -1,0 +1,86 @@
+{% extends 'op_base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block container %}
+<div>
+    <div class="container pt-2 p-3">
+
+        <div class="row d-lg-flex">
+            <div class="col-12">
+                <div class="card-wrapper card-space">
+                    <div class="card card-bg no-after">
+                        <div class="card-body pl-lg-0">
+                            <div class="row h-100">
+
+                                <div class="col-12 pl-lg-4">
+
+                                    <div class="row row-header border-bottom no-border-bottom-xs">
+                                        <div class="wrap-container">
+                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                                <h1>
+                                                    <a href="/" title="torna alla home">
+                                                        <img src="{% static 'image/logoSpid.png' %}"
+                                                            alt="SPID"
+                                                            class="img-responsive">
+                                                    </a>
+                                                </h1>
+                                            </div>
+                                            <div class="clear"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mt-5 ml-1">
+                                        <div>
+                                            <div class="pb-5">
+                                                <h4 class="text-muted">{% trans 'SPID level access request from' %}</h4>
+                                                <h3>{% trans 'name'%}</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <form method="POST" action="">
+                                        <fieldset>
+                                            <div class="row">
+                                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 ">
+                                                    <div>
+                                                        <p class="font-weight-semibold">
+                                                            {% trans 'the following data is being sent to the service provider'%}
+                                                        </p>
+                                                        <ul>
+                                                            <li>{% trans 'Identification code' %}</li>
+                                                            <li>{% trans 'Fiscal Code' %}</li>
+                                                            <li>{% trans 'Last name' %}</li>
+                                                            <li>{% trans 'First name' %}</li>
+                                                            <li>{% trans 'Gender' %}</li>
+                                                            <li>{% trans 'Date of birth' %}</li>
+                                                            <li>{% trans 'Birth place' %}</li>
+                                                            <li>{% trans 'Mobile phone number' %}</li>
+                                                            <li>{% trans 'Email address' %}</li>
+                                                            <li>{% trans 'Digital domicile' %}</li>
+                                                        </ul>
+                                                        <div class="col-sm-12">
+                                                            <button class="italia-it-button italia-it-button-cancel-m  button-cancel" type="button" >
+                                                            <span class="italia-it-buttons-text">{% trans "DO NOT AGREE" %}</span></button>
+
+                                                            <button class="italia-it-button italia-it-button-size-m button-login"
+                                                                type="submit">
+                                                            <span class="italia-it-buttons-text">{% trans "AGREE" %}</span></button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </fieldset>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="{% static 'js/spid-sp-access-button.js' %}"></script>
+        <script src="{% static 'js/spid_button.js' %}"></script>
+        {% endblock container %}
