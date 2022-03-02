@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate
 from django.http import (HttpResponseForbidden,
                          HttpResponseRedirect)
 from django.shortcuts import render
+from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views import View
 from pydantic import ValidationError
@@ -223,7 +224,6 @@ class AuthzRequestView(OpBase, View):
 
         # show to the user the a consent page
         consent_url = reverse('oidc_provider_consent')
-        breakpoint()
         return HttpResponseRedirect(consent_url)
 
 

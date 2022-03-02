@@ -1,0 +1,58 @@
+<!-- Extends default Bootstrap Unical Italia template -->
+{% extends 'rp_base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block container %}
+<div>
+    <div class="container pt-2 p-3">
+
+        <div class="row d-lg-flex">
+            <div class="col-12">
+                <div class="card-wrapper card-space">
+                    <div class="card card-bg no-after">
+                        <div class="card-body pl-lg-0">
+                            <div class="row h-100">
+                                <div class="col-12 col-lg-6 pl-lg-4">
+                                    {% csrf_token %}
+                                    
+
+                                    <div class="callout danger">
+                                        <!-- <div class="callout-title">
+                                            <svg class="icon">
+                                                <use xlink:href="{% static 'images/svg/sprite.svg' %}#it-close-circle"></use>
+                                            </svg>{% trans "Error during SAML2 authentication" %}</div> -->
+                                        <!-- <p>
+                                            {% if exception_type %}
+                                                <p class="mb-2">
+                                                    <strong>{{exception_type}}</strong>
+                                                    <br>
+                                                </p>
+                                                {% if exception_msg %}
+                                                    <p>{{exception_msg}}</p>
+                                                {% endif %}
+                                            {% endif %}
+                                            {% if extra_message %}
+                                                <p>{{extra_message}}</p>
+                                            {% endif %}
+                                        </p> -->
+                                        <div class="callout-title">
+                                            {% trans error%} 
+                                          </div>
+
+                                        <p>
+                                            {% trans error_description%} 
+                                        </p>
+                                    </div>
+
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'js/spid-sp-access-button.js' %}"></script>
+    <script src="{% static 'js/spid_button.js' %}"></script>
+
+{% endblock container %}

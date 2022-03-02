@@ -225,7 +225,7 @@ class SpidCieOidcRpCallbackView(
 
     """
 
-    error_template = ".html"
+    error_template = "rp_error.html"
     
     def process_user_attributes(
         self, userinfo: dict, client_conf: dict, authz: OidcAuthentication
@@ -266,9 +266,7 @@ class SpidCieOidcRpCallbackView(
         docs here
         """
         request_args = {k: v for k, v in request.GET.items()}
-
-        # TODO
-        breakpoint()
+        
         if 'error' in request_args:
             return render(request, self.error_template, request_args)
         

@@ -20,6 +20,9 @@ from spid_cie_oidc.entity.utils import (
     iat_now
 )
 
+from spid_cie_oidc.provider.schemas.op_metadata import OPMetadataSpid
+from spid_cie_oidc.provider.schemas.rp_metadata import RPMetadataSpid  
+
 import json
 import logging
 import uuid
@@ -61,6 +64,11 @@ class FederationEntityConfiguration(TimeStampedModel):
             raise ValidationError(
                 _(f'Need to specify one of {", ".join(ENTITY_TYPES)}')
             )
+            
+        if value["openid_provider"]:
+            OPMetadataSpid(**value["openid_provider"])
+        if value["openid_relying_party"]:
+            RPMetadataSpid(**value["openid_relying_party"])
 
     def _create_jwks():
         return [create_jwk()]
