@@ -1,3 +1,10 @@
+
+from spid_cie_oidc.entity.utils import exp_from_now, iat_now
+
+# TODO: we need factory function to get fresh now
+IAT = iat_now()
+EXP = exp_from_now()
+
 REQUEST_OBJECT_PAYLOAD = {
     'client_id': 'http://127.0.0.1:8000/oidc/rp/',
     'sub': 'http://rp-test/oidc/rp',
@@ -20,7 +27,13 @@ REQUEST_OBJECT_PAYLOAD = {
             'family_name': None
         }
     },
-    'state': 'fyZiOL9Lf2CeKuNT2JzxiLRDink0uPcd'
+    'state': 'fyZiOL9Lf2CeKuNT2JzxiLRDink0uPcd',
+    'sub': "https://rp.cie.it/",
+    'iss': "https://op.spid.agid.gov.it/",
+    'aud': ["https://rp.spid.agid.gov.it/auth"],
+    'iat': IAT,
+    'exp': EXP,
+    'jti': "a72d5df0-2415-4c7c-a44f-3988b354040b"
 }
 
 # METADATA = {
