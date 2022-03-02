@@ -1,6 +1,6 @@
 from copy import deepcopy
 
-from spid_cie_oidc.provider.tests.jwks_settings import (
+from spid_cie_oidc.entity.tests.jwks_settings import (
     JWKS, JWKS_WITH_N_AND_EC_NO_CORRECT)
 
 OP_METADATA = {

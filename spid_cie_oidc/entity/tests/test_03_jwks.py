@@ -2,8 +2,8 @@
 
 from django.test import TestCase
 from pydantic import ValidationError
-from spid_cie_oidc.provider.schemas.jwks import JwksCie, JwksSpid
-from spid_cie_oidc.provider.tests.jwks_settings import (
+from spid_cie_oidc.entity.schemas.jwks import JwksCie, JwksSpid
+from spid_cie_oidc.entity.tests.jwks_settings import (
     JWKS, JWKS_WITH_N_AND_EC_NO_CORRECT, 
     JWKS_WITH_X_AND_RSA_NO_CORRECT)
 

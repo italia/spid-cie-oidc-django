@@ -1,5 +1,11 @@
 from copy import deepcopy
 
+from spid_cie_oidc.entity.utils import exp_from_now, iat_now
+
+# TODO: we need factory function to get fresh now
+IAT = iat_now()
+EXP = exp_from_now()
+
 AUTHN_REQUEST_SPID = {
     "client_id": "https://rp.cie.it/callback1/",
     "response_type": "code",
@@ -24,6 +30,12 @@ AUTHN_REQUEST_SPID = {
     },
     "state": "fyZiOL9Lf2CeKuNT2JzxiLRDink0uPcd",
     "ui_locales": ["codice1", "codice2", "codice3"],
+    "sub": "https://rp.cie.it/",
+    "iss": "https://op.spid.agid.gov.it/",
+    "aud": ["https://rp.spid.agid.gov.it/auth"],
+    "iat": IAT,
+    "exp": EXP,
+    "jti": "a72d5df0-2415-4c7c-a44f-3988b354040b"
 }
 
 AUTHN_REQUEST_SPID_NO_CLIENT_ID = deepcopy(AUTHN_REQUEST_SPID)

@@ -1,9 +1,9 @@
 
 from django.test import TestCase
 from pydantic import ValidationError
-from spid_cie_oidc.provider.schemas.rp_metadata import (RPMetadataCie,
+from spid_cie_oidc.entity.schemas.rp_metadata import (RPMetadataCie,
                                                         RPMetadataSpid)
-from spid_cie_oidc.provider.tests.rp_metadata_settings import (
+from spid_cie_oidc.entity.tests.rp_metadata_settings import (
     RP_METADATA_CIE, RP_METADATA_SPID, 
     RP_METADATA_SPID_JWKS_AND_JWKS_URI,
     RP_METADATA_SPID_NO_REDIRECT_URIS)

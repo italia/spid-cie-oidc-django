@@ -1,5 +1,6 @@
 from enum import Enum
 from typing import List, Literal, Optional
+import uuid
 
 from pydantic import BaseModel, HttpUrl, conlist, constr, validator
 
@@ -92,6 +93,12 @@ class AuthenticationRequest(BaseModel):
     state: constr(min_length=32)
     # TODO: to be improved
     ui_locales: Optional[List[str]]
+    sub: HttpUrl
+    iss: HttpUrl
+    iat: int
+    exp: int
+    jti: str
+    aud: List[HttpUrl]
 
     @validator("claims")
     def validate_claims(cls, claims):
