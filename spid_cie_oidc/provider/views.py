@@ -145,9 +145,12 @@ class AuthzRequestView(OpBase, View):
             if isinstance(payload.get(i, None), str):
                 payload[i] = [payload[i]]
 
-        if payload['client_id'] not in payload['redirect_uri']:
+        redirect_uri = payload.get('redirect_uri', "")
+        p = urllib.parse.urlparse(redirect_uri)
+        scheme_fqdn = f"{p.scheme}://{p.hostname}"
+        if payload['client_id'] in scheme_fqdn:
             raise ValidationError(
-                f"{payload['client_id']} not in {payload['redirect_uri']}"
+                f"{payload.get('client_id', None)} not in {redirect_uri}"
             )
         
         schema = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
