@@ -10,6 +10,7 @@ from django.http import (
 )
 from django.shortcuts import render
 from django.utils.translation import gettext as _
+from django.urls import reverse
 from django.views import View
 from pydantic import ValidationError
 from spid_cie_oidc.entity.jwtse import (
@@ -21,8 +22,7 @@ from spid_cie_oidc.entity.exceptions import InvalidEntityConfiguration
 from spid_cie_oidc.entity.models import TrustChain
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.tests.settings import *
-from spid_cie_oidc.entity.trust_chain_operations import \
-    get_or_create_trust_chain
+from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
 
 from spid_cie_oidc.provider.models import OidcSession
 
@@ -129,14 +129,14 @@ class OpBase:
                 ),
                 state = self.payload["state"])
 
-        return self.payload
+        return rp_trust_chain
 
 
 class AuthzRequestView(OpBase, View):
     """View which processes the actual Authz request and
     returns a Http Redirect
     """
-    template = "user_login.html"
+    template = "op_user_login.html"
 
     def validate_authz(self, payload: dict):
 
@@ -176,8 +176,9 @@ class AuthzRequestView(OpBase, View):
                 state = "")
 
         # yes, again. We MUST.
+        tc = None
         try:
-            self.validate_authz_request_object(req)
+            tc = self.validate_authz_request_object(req)
         except InvalidEntityConfiguration as e:
             logger.error(f" {e}")
             return self.redirect_response_data(
@@ -215,6 +216,12 @@ class AuthzRequestView(OpBase, View):
         # stores the authz request in a hidden field in the form
         form = self.get_login_form()(dict(authz_request_object=req))
         context = {
+            "client_organization_name": tc.metadata.get(
+                "client_name", self.payload['client_id']
+            ),
+            "client_redirect_uri": self.payload.get(
+                "redirect_uri", "#"
+            ),
             "form": form
         }
         return render(request, self.template, context)
@@ -228,25 +235,22 @@ class AuthzRequestView(OpBase, View):
             return render(request, self.template, {'form': form})
 
         authz_request = form.cleaned_data['authz_request_object']
-        self.validate_authz_request_object()
+        self.validate_authz_request_object(authz_request)
 
         # autenticate the user
-        form_dict = {**form.cleaned_data}
-        username = form_dict.get("username")
-        password = form_dict.get("password")
+        username = form.cleaned_data.get("username")
+        password = form.cleaned_data.get("password")
         user = authenticate(username=username, password=password)
-        userinfo_claims = self.payload["claims"]["userinfo"]
         # creare auth_code
-        auth_code = uuid.uuid4()
+        auth_code = f"{uuid.uuid4()}-{uuid.uuid4()}"
         # store the User session
         OidcSession.objects.create(
             user = user, authz_request = authz_request, sub = self.payload["sub"],
-            client_id = self.payload["client_id"], userinfo_claims = userinfo_claims,
-            user_uid = user.uid, auth_code = auth_code)
+            client_id = self.payload["client_id"],
+            user_uid = user.username, auth_code = auth_code)
 
         # show to the user the a consent page
         consent_url = reverse('oidc_provider_consent')
-        breakpoint()
         return HttpResponseRedirect(consent_url)
 
 
