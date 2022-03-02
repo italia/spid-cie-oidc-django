@@ -5,10 +5,12 @@ from . models import IssuedToken, OidcSession
 
 @admin.register(OidcSession)
 class OidcSessionAdmin(admin.ModelAdmin):
-    list_display = ("user_id", "client_id", "created", "revoked")
+    list_display = ("user_uid", "client_id", "created", "revoked")
     list_filter = ("created", "revoked")
-    search_fields = ("client_id", "user_id")
+    search_fields = ("client_id", "user_uid")
     readonly_fields = (
+        "nonce",
+        "auth_code",
         "user_uid",
         "user",
         "client_id",
@@ -16,7 +18,7 @@ class OidcSessionAdmin(admin.ModelAdmin):
         "revoked",
         "sub",
         "user_claims",
-        "user_id",
+        "user_uid",
         "authz_request"
     )
 

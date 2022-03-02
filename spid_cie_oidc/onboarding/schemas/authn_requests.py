@@ -1,6 +1,5 @@
 from enum import Enum
 from typing import List, Literal, Optional
-import uuid
 
 from pydantic import BaseModel, HttpUrl, conlist, constr, validator
 

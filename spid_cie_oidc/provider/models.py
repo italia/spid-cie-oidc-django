@@ -13,6 +13,7 @@ class OidcSession(TimeStampedModel):
                              blank=False, null=False)
     client_id = models.URLField(blank=True, null=True)
 
+    nonce = models.CharField(max_length=2048, blank=False, null=False)
     authz_request = models.CharField(max_length=2048, blank=False, null=False)
 
     sub = models.CharField(max_length=254, blank=True, null=True)
@@ -25,6 +26,7 @@ class OidcSession(TimeStampedModel):
     class Meta:
         verbose_name = ('User Session')
         verbose_name_plural = ('User Sessions')
+        unique_together = (('client_id', 'nonce'))
 
 
 class IssuedToken(TimeStampedModel):
