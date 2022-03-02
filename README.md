@@ -114,9 +114,15 @@ Setup the example projects
 git clone https://github.com/peppelinux/spid-cie-oidc-django
 cd spid-cie-oidc
 pip install -e .
-
+````
 # Install Django Bootstrap italia template
+````
 pip install design-django-theme
+````
+
+# Install pydantic email validator
+````
+ pip install pydantic[email]
 ````
 
 In `examples/` folder you have three demostrations projects:
