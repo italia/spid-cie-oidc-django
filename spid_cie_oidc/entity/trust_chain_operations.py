@@ -125,7 +125,7 @@ def get_or_create_trust_chain(
         if available and expired it return the expired one
         if flag force is set to True -> renew the trust chain, update it and
         return the updated one
-        
+
     """
     fetched_trust_anchor = FetchedEntityStatement.objects.filter(
         sub = trust_anchor, iss = trust_anchor

@@ -64,7 +64,7 @@ class OpBase:
                 state = self.payload["state"])
 
         self.is_a_replay_authz()
-        
+
         rp_trust_chain = TrustChain.objects.filter(
             type = "openid_relying_party",
             sub = self.payload['iss']
@@ -136,7 +136,7 @@ class OpBase:
         return rp_trust_chain
 
     def is_a_replay_authz(self):
-        preexistent_authz =  OidcSession.objects.filter(
+        preexistent_authz = OidcSession.objects.filter(
             client_id = self.payload["client_id"],
             nonce = self.payload['nonce']
         )
@@ -166,10 +166,9 @@ class AuthzRequestView(OpBase, View):
             raise ValidationError(
                 f"{payload.get('client_id', None)} not in {redirect_uri}"
             )
-        
+
         schema = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
         schema["authorization_request"](**payload)
-
 
     def get_login_form(self):
         return AuthLoginForm
@@ -212,7 +211,7 @@ class AuthzRequestView(OpBase, View):
                     f" authz request object: {e}"
                 )
             )
-            
+
         except Exception as e:
             logger.error(
                 "Error during trust build for "
@@ -281,7 +280,7 @@ class AuthzRequestView(OpBase, View):
                 error_description =_(
                     "Authz request object validation failed "
                     f"for {authz_request}: {e} ")
-                )
+            )
 
         # autenticate the user
         username = form.cleaned_data.get("username")
@@ -289,8 +288,8 @@ class AuthzRequestView(OpBase, View):
         user = authenticate(username=username, password=password)
         # creare auth_code
         auth_code = f"{uuid.uuid4()}-{uuid.uuid4()}"
-        # store the User session           
-        
+        # store the User session
+
         OidcSession.objects.create(
             user = user,
             user_uid = user.username,
@@ -298,7 +297,7 @@ class AuthzRequestView(OpBase, View):
             authz_request = self.payload,
             sub = self.payload["sub"],
             client_id = self.payload["client_id"],
-            auth_code = auth_code            
+            auth_code = auth_code
         )
 
         # show to the user the a consent page

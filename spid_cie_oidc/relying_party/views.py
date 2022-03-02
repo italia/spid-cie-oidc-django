@@ -168,7 +168,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             endpoint=authz_endpoint,
             acr_values = request.GET.get(
                 "acr_values", AcrValuesSpid.l2.value
-                
+
             ),
             aud = [tc.sub, authz_endpoint]
         )
@@ -176,7 +176,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
         _prompt = request.GET.get("prompt", "consent login")
 
         # if "offline_access" in authz_data["scope"]:
-            # _prompt.extend(["consent login"])
+        # _prompt.extend(["consent login"])
 
         authz_data["prompt"] = _prompt
 
@@ -230,7 +230,7 @@ class SpidCieOidcRpCallbackView(
     """
 
     error_template = ".html"
-    
+
     def process_user_attributes(
         self, userinfo: dict, client_conf: dict, authz: OidcAuthentication
     ):
@@ -275,7 +275,7 @@ class SpidCieOidcRpCallbackView(
         # breakpoint()
         if 'error' in request_args:
             return render(request, self.error_template, request_args)
-        
+
         authz = OidcAuthentication.objects.filter(
             state=request_args.get("state"),
         )
