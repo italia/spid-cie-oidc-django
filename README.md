@@ -138,7 +138,7 @@ cd examples/$project_name
 cp $project_name/settingslocal.py.example $project_name/settingslocal.py
 
 # then customize (optional) $project_name/settingslocal.py
-# add OIDCFED_FEDERATION_TRUST_ANCHORS = ["http://127.0.0.1:8000"]
+# add OIDCFED_TRUST_ANCHORS = ["http://127.0.0.1:8000"]
 
 ./manage.py migrate
 

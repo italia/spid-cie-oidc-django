@@ -32,8 +32,8 @@ Regarding django user management
 
 ## General Settings Paramenters
 
-- `OIDCFED_FEDERATION_TRUST_ANCHOR` defines the default Trust Anchor.
-- `OIDCFED_FEDERATION_TRUST_ANCHORS` defines the allowed Trust Anchors. 
+- `OIDCFED_TRUST_ANCHOR` defines the default Trust Anchor.
+- `OIDCFED_TRUST_ANCHORS` defines the allowed Trust Anchors. 
 - `OIDCFED_IDENTITY_PROVIDERS` defines the list of OPs to enable in Trust Chain operations.
 
 Example
@@ -103,7 +103,7 @@ The request is of type GET and supports the following parameters:
 - __redirect_uri__, OPTIONAL. Selects one of the redirect_uri available in RP's metadata.
 - __scope__, OPTIONAL. Selects one or more of the scopes, default is `openid`.
 - __consent__, OPTIONAL. Sets SPID or CIE extended consent values.
-- __trust_anchor__, OPTIONAL. Sets the Trust Anchor to resolve the Federation. Default is `settings.OIDCFED_FEDERATION_TRUST_ANCHOR`.
+- __trust_anchor__, OPTIONAL. Sets the Trust Anchor to resolve the Federation. Default is `settings.OIDCFED_TRUST_ANCHOR`.
 - __acr_values__, OPTIONAL. 
 
 ### auth code redirect

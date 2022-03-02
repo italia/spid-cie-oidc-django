@@ -14,10 +14,10 @@ DEBUG = True
 # the path corresponding the admin backend, default if not defined: admin/
 # CHANGE THIS VALUE
 ADMIN_PATH = 'admin/'
-OIDCFED_FEDERATION_TRUST_ANCHORS = ["http://127.0.0.1:8000/"]
+OIDCFED_TRUST_ANCHORS = ["http://127.0.0.1:8000/"]
 
 # required for onboarding checks and also for all the leafs
-OIDCFED_FEDERATION_TRUST_ANCHOR = "http://127.0.0.1:8000/"
+OIDCFED_TRUST_ANCHOR = "http://127.0.0.1:8000/"
 
 OIDCFED_IDENTITY_PROVIDERS = [
     "http://127.0.0.1:8000/oidc/op/"
@@ -142,7 +142,8 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = 65000
 ADMINS = [('name surname', 'user1@DOMAIN'),
           ('name surnale', 'user2@DOMAIN'),]
 
-OIDCFED_FEDERATION_TRUST_ANCHORS = ["http://127.0.0.1:8000/"]
+OIDCFED_TRUST_ANCHOR = "http://127.0.0.1:8000/"
+OIDCFED_TRUST_ANCHORS = [OIDCFED_TRUST_ANCHOR]
 
 # for RP only
 OIDCFED_IDENTITY_PROVIDERS = [

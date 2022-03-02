@@ -69,9 +69,9 @@ class SpidCieOidcRp:
             )
 
         trust_anchor = request.GET.get(
-            "trust_anchor", settings.OIDCFED_FEDERATION_TRUST_ANCHOR
+            "trust_anchor", settings.OIDCFED_TRUST_ANCHOR
         )
-        if trust_anchor not in settings.OIDCFED_FEDERATION_TRUST_ANCHORS:
+        if trust_anchor not in settings.OIDCFED_TRUST_ANCHORS:
             return HttpResponseBadRequest(
                 f"Unallowed Trust Anchor"
             )

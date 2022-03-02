@@ -42,7 +42,7 @@ class Command(BaseCommand):
             try:
                 tc = get_or_create_trust_chain(
                     subject = op_sub,
-                    trust_anchor = settings.OIDCFED_FEDERATION_TRUST_ANCHOR,
+                    trust_anchor = settings.OIDCFED_TRUST_ANCHOR,
                     metadata_type = 'openid_provider',
                     httpc_params = HTTPC_PARAMS,
                     required_trust_marks = getattr(

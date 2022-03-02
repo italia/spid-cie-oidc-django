@@ -19,13 +19,13 @@ HTTPC_PARAMS = getattr(
     settings, "HTTPC_PARAMS", entity_settings.HTTPC_PARAMS
 )
 try:
-    OIDCFED_FEDERATION_TRUST_ANCHORS = getattr(
-        settings, "OIDCFED_FEDERATION_TRUST_ANCHORS"
+    OIDCFED_TRUST_ANCHORS = getattr(
+        settings, "OIDCFED_TRUST_ANCHORS"
     )
 except AttributeError:
-    OIDCFED_FEDERATION_TRUST_ANCHORS = []
+    OIDCFED_TRUST_ANCHORS = []
     logger.warning(
-        "OIDCFED_FEDERATION_TRUST_ANCHORS not configured in your settings file."
+        "OIDCFED_TRUST_ANCHOR not configured in your settings file."
     )
 
 
@@ -50,12 +50,12 @@ def validate_entity_configuration(value):
         )
     proper_descendant = False
     for i in authority_hints:
-        if i in OIDCFED_FEDERATION_TRUST_ANCHORS:
+        if i in OIDCFED_TRUST_ANCHORS:
             proper_descendant = True
             break
     if not proper_descendant:
         raise NotDescendant(
             "This participant MUST have one of "
-            f"{', '.join(OIDCFED_FEDERATION_TRUST_ANCHORS) or []} in "
+            f"{', '.join(OIDCFED_TRUST_ANCHORS) or []} in "
             f"its authority_hints claim. It has: {authority_hints}"
         )

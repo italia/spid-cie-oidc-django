@@ -36,7 +36,7 @@ ENCRYPTION_ALG_VALUES_SUPPORTED = getattr(
 )
 
 # This is required in general project settings
-# OIDCFED_FEDERATION_TRUST_ANCHORS = [https://..., ]
+# OIDCFED_TRUST_ANCHORS = [https://..., ]
 
 OIDCFED_ALLOWED_TRUST_MARKS = []
 OIDCFED_FILTER_BY_TRUST_MARKS = True

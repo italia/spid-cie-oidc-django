@@ -86,7 +86,7 @@ class OpBase:
         elif not rp_trust_chain or not rp_trust_chain.is_valid:
             rp_trust_chain = get_or_create_trust_chain(
                 subject = self.payload['iss'],
-                trust_anchor = settings.OIDCFED_FEDERATION_TRUST_ANCHOR,
+                trust_anchor = settings.OIDCFED_TRUST_ANCHOR,
                 metadata_type = 'openid_relying_party',
                 httpc_params = HTTPC_PARAMS,
                 required_trust_marks = getattr(
@@ -280,7 +280,7 @@ class AuthzRequestView(OpBase, View):
                 error = "invalid_request",
                 error_description =_(
                     "Authz request object validation failed "
-                    f"for {authz_request}: {e} ")
+                    f"for {authz_request}: {e}")
             )
 
         # autenticate the user
