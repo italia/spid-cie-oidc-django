@@ -229,7 +229,7 @@ class SpidCieOidcRpCallbackView(
 
     """
 
-    error_template = ".html"
+    error_template = "rp_error.html"
 
     def process_user_attributes(
         self, userinfo: dict, client_conf: dict, authz: OidcAuthentication
