@@ -4,8 +4,10 @@ import uuid
 
 from django.conf import settings
 from django.contrib.auth import authenticate
-from django.http import (HttpResponseForbidden,
-                         HttpResponseRedirect)
+from django.http import (
+    HttpResponseForbidden,
+    HttpResponseRedirect
+)
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils.translation import gettext as _
@@ -18,15 +20,15 @@ from spid_cie_oidc.entity.jwtse import (
 )
 from spid_cie_oidc.entity.exceptions import InvalidEntityConfiguration
 from spid_cie_oidc.entity.models import TrustChain
+from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.tests.settings import *
 from spid_cie_oidc.entity.trust_chain_operations import \
     get_or_create_trust_chain
-from spid_cie_oidc.onboarding.schemas.authn_requests import \
-    AuthenticationRequestSpid
+
 from spid_cie_oidc.provider.models import OidcSession
 
 from .forms import *
-from .settings import HTTPC_PARAMS
+from . settings import *
 
 logger = logging.getLogger(__name__)
 
@@ -72,7 +74,9 @@ class OpBase:
             return self.redirect_response_data(
                 # TODO: check error
                 error = "access_denied",
-                error_description =_(f"Disabled client {rp_trust_chain.sub} requests an authorization."),
+                error_description =_(
+                    f"Disabled client {rp_trust_chain.sub} requests an authorization."
+                ),
                 state = self.payload["state"])
 
         elif not rp_trust_chain or not rp_trust_chain.is_valid:
@@ -92,7 +96,9 @@ class OpBase:
                 return self.redirect_response_data(
                     # TODO: check error
                     error = "unauthorized_client",
-                    error_description =_(f"Failed trust chain validation for {self.payload['iss']}."),
+                    error_description =_(
+                        f"Failed trust chain validation for {self.payload['iss']}."
+                    ),
                     state = self.payload["state"])
 
         jwks = rp_trust_chain.metadata['jwks']['keys']
@@ -118,8 +124,10 @@ class OpBase:
             return self.redirect_response_data(
                 # TODO: check error
                 error = "access_denied",
-                error_description =_("Authz request object signature validation failed "
-                                     f"for {self.payload['iss']}: {e} "),
+                error_description =_(
+                    "Authz request object signature validation failed "
+                    f"for {self.payload['iss']}: {e} "
+                ),
                 state = self.payload["state"])
 
         return self.payload
@@ -132,7 +140,19 @@ class AuthzRequestView(OpBase, View):
     template = "user_login.html"
 
     def validate_authz(self, payload: dict):
-        AuthenticationRequestSpid(**payload)
+
+        must_list = ('scope', 'acr_values')
+        for i in must_list:
+            if isinstance(payload.get(i, None), str):
+                payload[i] = [payload[i]]
+
+        if payload['client_id'] not in payload['redirect_uri']:
+            raise ValidationError(
+                f"{payload['client_id']} not in {payload['redirect_uri']}"
+            )
+        
+        schema = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
+        schema["authorization_request"](**payload)
 
     def get_login_form(self):
         return AuthLoginForm

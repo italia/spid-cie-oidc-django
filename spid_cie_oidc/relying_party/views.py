@@ -23,6 +23,7 @@ from spid_cie_oidc.entity.jwtse import create_jws
 from spid_cie_oidc.entity.statements import get_http_url
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
+from spid_cie_oidc.onboarding.schemas.authn_requests import AcrValuesSpid
 
 from . import OAuth2BaseView
 from .oauth2 import *
@@ -33,7 +34,7 @@ from .utils import (
     http_redirect_uri_to_dict,
     random_string,
 )
-from . settings import RP_PKCE_CONF
+from . settings import RP_PKCE_CONF, RP_PROVIDER_PROFILES
 
 logger = logging.getLogger(__name__)
 
@@ -112,7 +113,8 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
 
     def get(self, request, *args, **kwargs):
         """
-            http://localhost:8001/oidc/rp/begin?provider=http://127.0.0.1:8002/
+            http://localhost:8001/oidc/rp/authorization?
+            provider=http://127.0.0.1:8002/
         """
         tc = self.get_oidc_op(request)
         if not tc:
@@ -164,14 +166,18 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             state=random_string(32),
             client_id=client_conf["client_id"],
             endpoint=authz_endpoint,
+            acr_values = request.GET.get(
+                "acr_values", AcrValuesSpid.l2.value
+                
+            )
         )
-        if request.GET.get('consent', None):
-            authz_data["consent"] = request.GET["consent"]
-        if "offline_access" in authz_data["scope"]:
-            if authz_data.get("consent", None):
-                authz_data["consent"].append("prompt")
-            else:
-                authz_data["consent"] = "prompt"
+
+        _prompt = request.GET.get("prompt", "consent login")
+
+        # if "offline_access" in authz_data["scope"]:
+            # _prompt.extend(["consent login"])
+
+        authz_data["prompt"] = _prompt
 
         # PKCE
         pkce_func = import_string(RP_PKCE_CONF["function"])
@@ -203,12 +209,10 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             authz_data_obj, entity_conf.jwks[0]
         )
         authz_data["request"] = request_obj
-
         uri_path = http_dict_to_redirect_uri_path(authz_data)
         url = "?".join((authz_endpoint, uri_path))
         data = http_redirect_uri_to_dict(url)
-        logger.debug(f"Started Authz: {url}")
-        logger.debug(f"Authorization Request data: {data}")
+        logger.info(f"Starting Authz request to {url}")
         return HttpResponseRedirect(url)
 
 
@@ -266,7 +270,9 @@ class SpidCieOidcRpCallbackView(
         docs here
         """
         request_args = {k: v for k, v in request.GET.items()}
-        
+
+        # TODO
+        # breakpoint()
         if 'error' in request_args:
             return render(request, self.error_template, request_args)
         
