@@ -1,11 +1,26 @@
-import aiohttp
 from django.conf import settings
+from spid_cie_oidc.onboarding.schemas.authn_requests import (
+    AuthenticationRequestSpid,
+    AuthenticationRequestCie
+)
 
-HTTPC_PARAMS = getattr(
+
+OIDCFED_PROVIDER_PROFILES = getattr(
     settings,
-    "HTTPC_PARAMS",
+    'OIDCFED_PROVIDER_PROFILES',
     {
-        "connection": {"ssl": True},
-        "session": {"timeout": aiohttp.ClientTimeout(total=4)},
+        "spid": {
+            "authorization_request": AuthenticationRequestSpid,
+        },
+        "cie": {
+            "authorization_request": AuthenticationRequestCie,
+        }
     }
+)
+
+
+OIDCFED_DEFAULT_PROVIDER_PROFILE = getattr(
+    settings,
+    "OIDCFED_PROVIDER_PROFILE",
+    "spid"
 )
