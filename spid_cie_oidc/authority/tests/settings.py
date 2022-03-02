@@ -3,7 +3,7 @@ from spid_cie_oidc.entity.jwks import new_rsa_key, serialize_rsa_key
 
 rp_onboarding_data = dict(
     name="RP Test",
-    sub="http://rp-test/oidc/rp",
+    sub="http://rp-test.it/oidc/rp/",
     type="openid_relying_party",
     metadata_policy={"openid_relying_party": {"scopes": {"value": ["openid"]}}},
     is_active=True,

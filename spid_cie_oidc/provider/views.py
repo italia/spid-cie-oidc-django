@@ -20,6 +20,7 @@ from spid_cie_oidc.entity.jwtse import (
     unpad_jwt_payload,
     verify_jws
 )
+from django.forms.utils import ErrorList
 from spid_cie_oidc.entity.exceptions import InvalidEntityConfiguration
 from spid_cie_oidc.entity.models import TrustChain
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
@@ -68,9 +69,9 @@ class OpBase:
 
         rp_trust_chain = TrustChain.objects.filter(
             type = "openid_relying_party",
-            sub = self.payload['iss']
+            sub = self.payload['iss'],
+            trust_anchor__sub = settings.OIDCFED_FEDERATION_TRUST_ANCHOR
         ).first()
-
         if rp_trust_chain and not rp_trust_chain.is_active:
             logger.warning(
                 f"Disabled client {rp_trust_chain.sub} requests an authorization."
@@ -287,6 +288,10 @@ class AuthzRequestView(OpBase, View):
         username = form.cleaned_data.get("username")
         password = form.cleaned_data.get("password")
         user = authenticate(username=username, password=password)
+        if not user:
+            errors = form._errors.setdefault("username", ErrorList())
+            errors.append(_("invalid username or password"))
+            return render(request, self.template, {'form': form})
         # creare auth_code
         auth_code = f"{uuid.uuid4()}-{uuid.uuid4()}"
         # store the User session
