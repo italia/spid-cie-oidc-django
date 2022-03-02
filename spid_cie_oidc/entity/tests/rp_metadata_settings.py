@@ -1,6 +1,6 @@
 from copy import deepcopy
 
-from spid_cie_oidc.provider.tests.jwks_settings import JWKS
+from spid_cie_oidc.entity.tests.jwks_settings import JWKS
 
 RP_METADATA = {
     "redirect_uris": [

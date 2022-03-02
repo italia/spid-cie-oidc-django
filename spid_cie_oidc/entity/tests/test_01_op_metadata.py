@@ -2,9 +2,9 @@ import logging
 
 from django.test import TestCase
 from pydantic import ValidationError
-from spid_cie_oidc.provider.schemas.op_metadata import (OPMetadataCie,
+from spid_cie_oidc.entity.schemas.op_metadata import (OPMetadataCie,
                                                         OPMetadataSpid)
-from spid_cie_oidc.provider.tests.op_metadata_settings import (
+from spid_cie_oidc.entity.tests.op_metadata_settings import (
     OP_METADATA_CIE, 
     OP_METADATA_CIE_JWKS_AND_JWKS_URI,
     OP_METADATA_CIE_JWKS_URI_NO_CORRECT, 
