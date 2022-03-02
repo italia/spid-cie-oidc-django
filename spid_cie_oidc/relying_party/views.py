@@ -169,7 +169,8 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             acr_values = request.GET.get(
                 "acr_values", AcrValuesSpid.l2.value
                 
-            )
+            ),
+            aud = [tc.sub, authz_endpoint]
         )
 
         _prompt = request.GET.get("prompt", "consent login")
@@ -204,7 +205,6 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
         authz_data_obj = deepcopy(authz_data)
         authz_data_obj["iss"] = client_conf['client_id']
         authz_data_obj["sub"] = client_conf['client_id']
-        authz_data_obj["aud"] = []
         request_obj = create_jws(
             authz_data_obj, entity_conf.jwks[0]
         )
