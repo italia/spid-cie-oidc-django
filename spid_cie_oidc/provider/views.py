@@ -144,7 +144,7 @@ class AuthzRequestView(OpBase, View):
         for i in must_list:
             if isinstance(payload.get(i, None), str):
                 payload[i] = [payload[i]]
-
+        breakpoint()
         if payload['client_id'] not in payload['redirect_uri']:
             raise ValidationError(
                 f"{payload['client_id']} not in {payload['redirect_uri']}"
