@@ -170,6 +170,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
                 "acr_values", AcrValuesSpid.l2.value
 
             ),
+            iat = int(timezone.localtime().timestamp()),
             aud = [tc.sub, authz_endpoint]
         )
 
