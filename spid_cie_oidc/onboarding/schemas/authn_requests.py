@@ -95,8 +95,8 @@ class AuthenticationRequest(BaseModel):
     sub: HttpUrl
     iss: HttpUrl
     iat: int
-    exp: int
-    jti: str
+    exp: Optional[int]
+    jti: Optional[str]
     aud: List[HttpUrl]
 
     @validator("claims")
