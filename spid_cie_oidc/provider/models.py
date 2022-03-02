@@ -16,7 +16,7 @@ class OidcSession(TimeStampedModel):
     authz_request = models.CharField(max_length=2048, blank=False, null=False)
 
     sub = models.CharField(max_length=254, blank=True, null=True)
-    userinfo_claims = models.JSONField(blank=True, null=True)
+    user_claims = models.JSONField(blank=True, null=True)
 
     revoked = models.BooleanField(default=False)
 
