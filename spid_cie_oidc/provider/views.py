@@ -1,3 +1,4 @@
+import hashlib
 import logging
 import urllib.parse
 import uuid
@@ -26,6 +27,7 @@ from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chai
 
 from spid_cie_oidc.provider.models import OidcSession
 
+from . exceptions import AuthzRequestReplay
 from .forms import *
 from . settings import *
 
@@ -61,6 +63,8 @@ class OpBase:
                 error_description =_("Error in Authz request object"),
                 state = self.payload["state"])
 
+        self.is_a_replay_authz()
+        
         rp_trust_chain = TrustChain.objects.filter(
             type = "openid_relying_party",
             sub = self.payload['iss']
@@ -131,6 +135,16 @@ class OpBase:
 
         return rp_trust_chain
 
+    def is_a_replay_authz(self):
+        preexistent_authz =  OidcSession.objects.filter(
+            client_id = self.payload["client_id"],
+            nonce = self.payload['nonce']
+        )
+        if preexistent_authz:
+            raise AuthzRequestReplay(
+                f"{preexistent_authz.client_id} with {preexistent_authz.nonce}"
+            )
+
 
 class AuthzRequestView(OpBase, View):
     """View which processes the actual Authz request and
@@ -155,6 +169,7 @@ class AuthzRequestView(OpBase, View):
         
         schema = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
         schema["authorization_request"](**payload)
+
 
     def get_login_form(self):
         return AuthLoginForm
@@ -185,6 +200,19 @@ class AuthzRequestView(OpBase, View):
                 error = "invalid_request",
                 error_description =_("Failed to establish the Trust"),
             )
+        except AuthzRequestReplay as e:
+            logger.error(
+                "Replay on authz request detected for "
+                f"{request.GET.get('client_id', 'unknow')}: {e}"
+            )
+            return self.redirect_response_data(
+                error = "invalid_request",
+                error_description =_(
+                    "An Unknown error raised during validation of "
+                    f" authz request object: {e}"
+                )
+            )
+            
         except Exception as e:
             logger.error(
                 "Error during trust build for "
@@ -234,8 +262,26 @@ class AuthzRequestView(OpBase, View):
         if not form.is_valid():
             return render(request, self.template, {'form': form})
 
-        authz_request = form.cleaned_data['authz_request_object']
-        self.validate_authz_request_object(authz_request)
+        error = False
+        authz_request = form.cleaned_data.get('authz_request_object')
+
+        try:
+            self.validate_authz_request_object(authz_request)
+        except Exception as e:
+            error = True
+
+        if error:
+            logger.error(
+                "Authz request object validation failed "
+                f"for {authz_request}: {e} "
+            )
+            return self.redirect_response_data(
+                # TODO: check error
+                error = "invalid_request",
+                error_description =_(
+                    "Authz request object validation failed "
+                    f"for {authz_request}: {e} ")
+                )
 
         # autenticate the user
         username = form.cleaned_data.get("username")
@@ -243,11 +289,17 @@ class AuthzRequestView(OpBase, View):
         user = authenticate(username=username, password=password)
         # creare auth_code
         auth_code = f"{uuid.uuid4()}-{uuid.uuid4()}"
-        # store the User session
+        # store the User session           
+        
         OidcSession.objects.create(
-            user = user, authz_request = authz_request, sub = self.payload["sub"],
+            user = user,
+            user_uid = user.username,
+            nonce = self.payload['nonce'],
+            authz_request = self.payload,
+            sub = self.payload["sub"],
             client_id = self.payload["client_id"],
-            user_uid = user.username, auth_code = auth_code)
+            auth_code = auth_code            
+        )
 
         # show to the user the a consent page
         consent_url = reverse('oidc_provider_consent')

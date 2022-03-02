@@ -1,0 +1,2 @@
+class AuthzRequestReplay(Exception):
+    pass
