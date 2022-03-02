@@ -1,25 +1,28 @@
 from django.http import HttpRequest
 from django.test import Client, TestCase
 from django.urls import reverse
+from spid_cie_oidc.accounts.models import User
+from spid_cie_oidc.authority.tests.settings import (
+    RP_METADATA,
+    rp_onboarding_data
+)
 from spid_cie_oidc.entity.jwtse import create_jws
 from spid_cie_oidc.entity.models import FetchedEntityStatement, TrustChain
 from spid_cie_oidc.entity.utils import (
-    datetime_from_timestamp, exp_from_now,
+    datetime_from_timestamp, 
+    exp_from_now,
     iat_now
 )
-from spid_cie_oidc.authority.tests.settings import (
-    rp_onboarding_data,
-    RP_METADATA
-)
 
-from . authn_endpoint_settings import REQUEST_OBJECT_PAYLOAD
-    
+from .authn_endpoint_settings import REQUEST_OBJECT_PAYLOAD
+
 
 class AuthnRequestTest(TestCase):
 
     def setUp(self):
         self.req = HttpRequest()
         self.rp_jwk = RP_METADATA["openid_relying_party"]['jwks']['keys'][0]
+        User.objects.create(first_name ="test", last_name= "test", email="test@test.it")
 
     def test_auth_request(self):
 
@@ -42,7 +45,7 @@ class AuthnRequestTest(TestCase):
             trust_anchor = fes,
             is_active = True
         )
-
+        breakpoint()
         jws=create_jws(REQUEST_OBJECT_PAYLOAD, self.rp_jwk)
         client = Client()
         url = reverse("oidc_provider_authnrequest")
