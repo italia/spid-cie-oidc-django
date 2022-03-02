@@ -110,4 +110,49 @@ class AuthnRequestTest(TestCase):
         res = client.post(url, {"username": "notest", "password":"test", "authz_request_object": jws})
         self.assertIn("error", res.content.decode())
 
+    @override_settings(OIDCFED_TRUST_ANCHOR=TA_SUB)
+    def test_auth_request_preexistent_authz(self):
+        jws=create_jws(REQUEST_OBJECT_PAYLOAD, self.rp_jwk)
+        client = Client()
+        url = reverse("oidc_provider_authnrequest")
+        res = client.get(url, {"request": jws})
+        self.assertTrue(res.status_code == 200)
+        self.assertIn("username", res.content.decode())
+        self.assertIn("password", res.content.decode())
+        res = client.post(url, {"username": "test", "password":"test", "authz_request_object": jws})
+        res = client.get(url, {"request": jws})
+        self.assertTrue(res.status_code == 302)
+        self.assertIn("error=invalid_request", res.url)
 
+
+    @override_settings(OIDCFED_TRUST_ANCHOR=TA_SUB)
+    def test_auth_request_trust_chain_no_active(self):
+        self.trust_chain.is_active = False
+        self.trust_chain.save()
+        jws=create_jws(REQUEST_OBJECT_PAYLOAD, self.rp_jwk)
+        client = Client()
+        url = reverse("oidc_provider_authnrequest")
+        res = client.get(url, {"request": jws})
+        self.assertTrue(res.status_code == 302)
+        self.assertIn("error=access_denied", res.url)
+
+    @override_settings(OIDCFED_TRUST_ANCHOR=TA_SUB)
+    def test_auth_request_invalid_jwk(self):
+        jws=create_jws(REQUEST_OBJECT_PAYLOAD, self.rp_jwk)
+        self.trust_chain.metadata['jwks']['keys'][0]["kid"] = "31ALfVXx9dcAMMHCVvh42qLTlanBL_r6BTnD5uMDzFT"
+        self.trust_chain.save()
+        client = Client()
+        url = reverse("oidc_provider_authnrequest")
+        res = client.get(url, {"request": jws})
+        self.assertTrue(res.status_code == 302)
+        self.assertIn("error=unauthorized_client", res.url)
+
+    @override_settings(OIDCFED_TRUST_ANCHOR=TA_SUB)
+    def test_auth_request_no_correct_payload(self):
+        REQUEST_OBJECT_PAYLOAD["response_type"] = "test"
+        jws=create_jws(REQUEST_OBJECT_PAYLOAD, self.rp_jwk)
+        client = Client()
+        url = reverse("oidc_provider_authnrequest")
+        res = client.get(url, {"request": jws})
+        self.assertTrue(res.status_code == 302)
+        self.assertIn("error=invalid_request", res.url)

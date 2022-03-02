@@ -60,6 +60,7 @@ class OpBase:
             logger.error(
                 f"Error in Authz request object {dict(req.GET)}: {e}"
             )
+            # FIXME: if not payload it's no possible to do redirect
             return self.redirect_response_data(
                 error = "invalid_request",
                 error_description =_("Error in Authz request object"),
@@ -95,6 +96,7 @@ class OpBase:
                 )
             )
             if not rp_trust_chain.is_valid:
+                #FIXME: to do test
                 logger.warning(
                     f"Failed trust chain validation for {self.payload['iss']}"
                 )
@@ -122,6 +124,7 @@ class OpBase:
         try:
             verify_jws(req, jwk)
         except Exception as e:
+            #FIXME: to do test
             logger.error(
                 "Authz request object signature validation failed "
                 f"for {self.payload['iss']}: {e} "
@@ -181,6 +184,7 @@ class AuthzRequestView(OpBase, View):
             it's validated and a login prompt is rendered to the user
         """
         req = request.GET.get('request', None)
+        # FIXME: invalid check: if not request-> no payload-> no redirect_uri
         if not req:
             logger.error(
                 f"Missing Authz request object in {dict(request.GET)}"
@@ -195,7 +199,10 @@ class AuthzRequestView(OpBase, View):
         tc = None
         try:
             tc = self.validate_authz_request_object(req)
+            if type(tc) == HttpResponseRedirect:
+                return tc
         except InvalidEntityConfiguration as e:
+            #FIXME: to do test
             logger.error(f" {e}")
             return self.redirect_response_data(
                 error = "invalid_request",
@@ -215,6 +222,7 @@ class AuthzRequestView(OpBase, View):
             )
 
         except Exception as e:
+            #FIXME: to do test
             logger.error(
                 "Error during trust build for "
                 f"{request.GET.get('client_id', 'unknow')}: {e}"
@@ -292,10 +300,7 @@ class AuthzRequestView(OpBase, View):
             errors = form._errors.setdefault("username", ErrorList())
             errors.append(_("invalid username or password"))
             return render(request, self.template, {'form': form})
-        # creare auth_code
         auth_code = f"{uuid.uuid4()}-{uuid.uuid4()}"
-        # store the User session
-
         OidcSession.objects.create(
             user = user,
             user_uid = user.username,
@@ -305,8 +310,6 @@ class AuthzRequestView(OpBase, View):
             client_id = self.payload["client_id"],
             auth_code = auth_code
         )
-
-        # show to the user the a consent page
         consent_url = reverse('oidc_provider_consent')
         return HttpResponseRedirect(consent_url)
 
