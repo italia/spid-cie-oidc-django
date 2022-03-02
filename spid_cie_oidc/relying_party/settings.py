@@ -3,7 +3,7 @@ from spid_cie_oidc.onboarding.schemas.authn_requests import (
     AcrValuesCie,
     AcrValuesSpid
 )
-from spid_cie_oidc.provider.schemas.rp_metadata import RPMetadataSpid, RPMetadataCie
+from spid_cie_oidc.entity.schemas.rp_metadata import RPMetadataSpid, RPMetadataCie
 
 
 RP_PREFS = {

@@ -3,7 +3,7 @@ from spid_cie_oidc.onboarding.schemas.authn_requests import (
     AuthenticationRequestSpid,
     AuthenticationRequestCie
 )
-from spid_cie_oidc.provider.schemas.op_metadata import OPMetadataSpid, OPMetadataCie
+from spid_cie_oidc.entity.schemas.op_metadata import OPMetadataSpid, OPMetadataCie
 
 
 OIDCFED_PROVIDER_PROFILES = getattr(

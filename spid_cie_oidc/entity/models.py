@@ -20,9 +20,6 @@ from spid_cie_oidc.entity.utils import (
     iat_now
 )
 
-from spid_cie_oidc.provider.schemas.op_metadata import OPMetadataSpid
-from spid_cie_oidc.provider.schemas.rp_metadata import RPMetadataSpid  
-
 from spid_cie_oidc.provider.settings import (
     OIDCFED_PROVIDER_PROFILES, 
     OIDCFED_DEFAULT_PROVIDER_PROFILE
