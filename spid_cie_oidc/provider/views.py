@@ -70,7 +70,7 @@ class OpBase:
         rp_trust_chain = TrustChain.objects.filter(
             type = "openid_relying_party",
             sub = self.payload['iss'],
-            trust_anchor__sub = settings.OIDCFED_FEDERATION_TRUST_ANCHOR
+            trust_anchor__sub = settings.OIDCFED_TRUST_ANCHOR
         ).first()
         if rp_trust_chain and not rp_trust_chain.is_active:
             logger.warning(

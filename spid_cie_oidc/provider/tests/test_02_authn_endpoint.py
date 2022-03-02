@@ -83,7 +83,7 @@ class AuthnRequestTest(TestCase):
             is_active = True
         )
 
-    @override_settings(OIDCFED_FEDERATION_TRUST_ANCHOR=TA_SUB)    
+    @override_settings(OIDCFED_TRUST_ANCHOR=TA_SUB)    
     def test_auth_request(self):
         jws=create_jws(REQUEST_OBJECT_PAYLOAD, self.rp_jwk)
         client = Client()
@@ -97,7 +97,7 @@ class AuthnRequestTest(TestCase):
         self.assertTrue(res.status_code == 302)
 
           
-    @override_settings(OIDCFED_FEDERATION_TRUST_ANCHOR=TA_SUB)
+    @override_settings(OIDCFED_TRUST_ANCHOR=TA_SUB)
     def test_auth_request_wrong_login(self):
         REQUEST_OBJECT_PAYLOAD["nonce"]= '#'*32
         jws=create_jws(REQUEST_OBJECT_PAYLOAD, self.rp_jwk)
