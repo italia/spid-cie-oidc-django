@@ -3,6 +3,7 @@ from spid_cie_oidc.onboarding.schemas.authn_requests import (
     AcrValuesCie,
     AcrValuesSpid
 )
+from spid_cie_oidc.provider.schemas.rp_metadata import RPMetadataSpid, RPMetadataCie
 
 
 RP_PREFS = {
@@ -23,11 +24,13 @@ RP_PROVIDER_PROFILES = getattr(
             "authorization_request": {
                 "acr_values": AcrValuesSpid.l2.value
             },
+            "rp_metadata": RPMetadataSpid
         },
         "cie": {
             "authorization_request": {
                 "acr_values": AcrValuesCie.l2.value
             },
+            "rp_metadata": RPMetadataCie
         }
     }
 )
@@ -56,4 +59,10 @@ RP_PKCE_CONF = getattr(
             "code_challenge_method": "S256"
         },
     }
+)
+
+RP_DEFAULT_PROVIDER_PROFILES = getattr(
+    settings,
+    "RP_PROVIDER_PROFILES",
+    "spid"
 )
