@@ -104,7 +104,8 @@ The request is of type GET and supports the following parameters:
 - __scope__, OPTIONAL. Selects one or more of the scopes, default is `openid`.
 - __consent__, OPTIONAL. Sets SPID or CIE extended consent values.
 - __trust_anchor__, OPTIONAL. Sets the Trust Anchor to resolve the Federation. Default is `settings.OIDCFED_TRUST_ANCHOR`.
-- __acr_values__, OPTIONAL. 
+- __acr_values__, OPTIONAL.
+- __profile__, OPTIONAL. Default: spid. Set (spid, cie)
 
 ### auth code redirect
 

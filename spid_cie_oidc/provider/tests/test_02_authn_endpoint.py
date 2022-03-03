@@ -18,6 +18,7 @@ from spid_cie_oidc.provider.tests.settings import op_conf
 IAT = iat_now()
 EXP = exp_from_now()
 RP_SUB = rp_onboarding_data["sub"]
+
 REQUEST_OBJECT_PAYLOAD = {
     'client_id': RP_SUB,
     'sub': RP_SUB,
@@ -37,7 +38,8 @@ REQUEST_OBJECT_PAYLOAD = {
         },
         'userinfo': {
             'given_name': None,
-            'family_name': None
+            'family_name': None,
+            'email': None
         }
     },
     'state': 'fyZiOL9Lf2CeKuNT2JzxiLRDink0uPcd',
@@ -58,7 +60,13 @@ class AuthnRequestTest(TestCase):
             username = "test",
             first_name ="test", 
             last_name= "test", 
-            email="test@test.it")
+            email="test@test.it",
+            attributes = {
+                'username': "unique_value",
+                'fiscal_number': 'a7s6da87d6a87sd6as78d',
+                'email': "test@test.it",
+            }
+        )
         self.user.set_password("test")
         self.user.save()
         NOW = datetime_from_timestamp(iat_now())

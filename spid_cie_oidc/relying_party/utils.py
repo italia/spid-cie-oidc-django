@@ -76,3 +76,23 @@ def html_json_preview(value):
     msg = json.loads(value or "{}")
     dumps = json.dumps(msg, indent=2)
     return mark_safe(dumps.replace("\n", "<br>").replace(" ", "&nbsp"))  # nosec
+
+
+def process_user_attributes(
+    userinfo: dict, user_map: dict, authz: dict
+):
+    data = dict()
+    for k, v in user_map.items():
+        for i in v:
+            if isinstance(i, str):
+                if i in userinfo:
+                    data[k] = userinfo[i]
+                    break
+
+            elif isinstance(i, dict):
+                args = (userinfo, client_conf, authz, i["kwargs"])
+                value = import_string(i["func"])(*args)
+                if value:
+                    data[k] = value
+                    break
+    return data

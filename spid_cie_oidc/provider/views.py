@@ -4,11 +4,12 @@ import urllib.parse
 import uuid
 
 from django.conf import settings
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 from django.http import (
     HttpResponseForbidden,
     HttpResponseRedirect
 )
+from django.forms.utils import ErrorList
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils.translation import gettext as _
@@ -20,14 +21,13 @@ from spid_cie_oidc.entity.jwtse import (
     unpad_jwt_payload,
     verify_jws
 )
-from django.forms.utils import ErrorList
 from spid_cie_oidc.entity.exceptions import InvalidEntityConfiguration
-from spid_cie_oidc.entity.models import TrustChain
+from spid_cie_oidc.entity.models import FederationEntityConfiguration, TrustChain
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.tests.settings import *
 from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
 
-from spid_cie_oidc.provider.models import OidcSession
+from spid_cie_oidc.provider.models import IssuedToken, OidcSession
 
 from . exceptions import AuthzRequestReplay
 from .forms import *
@@ -292,10 +292,18 @@ class AuthzRequestView(OpBase, View):
             errors = form._errors.setdefault("username", ErrorList())
             errors.append(_("invalid username or password"))
             return render(request, self.template, {'form': form})
-        # creare auth_code
-        auth_code = f"{uuid.uuid4()}-{uuid.uuid4()}"
-        # store the User session
+        else:
+            login(request, user)
+        
+        # create auth_code
+        auth_code = hashlib.sha512(
+            f'{uuid.uuid4()}-{self.payload["client_id"]}-{self.payload["nonce"]}'.encode()
+        ).hexdigest()
 
+        # put the auth_code in the user web session
+        request.session['oidc'] = {'auth_code': auth_code}
+
+        # store the User session
         OidcSession.objects.create(
             user = user,
             user_uid = user.username,
@@ -321,38 +329,87 @@ class ConsentPageView(OpBase, View):
 
     def get(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
+            return HttpResponseForbidden()
+
+        auth_code = request.session.get('oidc', {}).get("auth_code", None)
+        if not auth_code:
+            return HttpResponseForbidden()
+        
+        session = OidcSession.objects.filter(
+            user = request.user,
+            auth_code = auth_code,
+            revoked = False
+        ).first()
+
+        tc = TrustChain.objects.filter(
+            sub=session.client_id,
+            type = "openid_relying_party"
+        ).first()
+
+        # if this auth code has already been used ... forbidden
+        if IssuedToken.objects.filter(session=session):
+            logger.warning(f"Auth code Replay {session}")
             raise HttpResponseForbidden()
 
+        # get up fresh claims
+        user_claims = request.user.attributes
+        user_claims['email'] = user_claims.get('email', request.user.email)
+        user_claims['username'] = request.user.username
+
+        # TODO: mapping with human names
+        # filter on requested claims
+        filtered_user_claims = []
+        for target, claims in session.authz_request.get('claims', {}).items():
+            for claim in claims:
+                if claim in user_claims:
+                    filtered_user_claims.append(claim)
+        #
+        
         # TODO: create a form with the consent submission
         # stores the authz request in a hidden field in the form
         context = {
-            "form": self.get_consent_form()()
+            "form": self.get_consent_form()(),
+            "session": session,
+            "client_organization_name": tc.metadata.get(
+                'client_name', session.client_id
+            ),
+            "user_claims": set(filtered_user_claims)
         }
         return render(request, self.template, context)
 
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            # TODO: what are the audience? RP or End User
             raise HttpResponseForbidden()
 
         # TODO: create a form with the consent submission
-        # stores the authz request in a hidden field in the form ?????NON SERVE é tutto nella sessione
         form = self.get_consent_form()(request.POST)
         if not form.is_valid():
-            # user doesn't give his consent, redirect to an error page
-            # TODO: remember to logout the user first!
-            # TODO: what are the audience? RP or End User
-            raise HttpResponseForbidden()
-        session = OidcSession.objects.filter()
-        if not session:
-            # TODO: what are the audience? RP or End User
-            raise HttpResponseForbidden()
+            return self.redirect_response_data(
+                # TODO: this is not normative -> check AgID/IPZS
+                error = "rejected_by_user",
+                error_description =_(
+                    "User rejected the release of attributes"
+                )
+            )
+        
+        session = OidcSession.objects.filter(
+            auth_code = request.session['oidc']['auth_code'],
+            user = request.user
+        ).first()
 
+        if not session:
+            return HttpResponseForbidden()
+
+        self.payload = session.authz_request
+        issuer = FederationEntityConfiguration.objects.filter(
+                entity_type = 'openid_provider'
+        ).first()
+        
         # iss, state e code li recupero dalla session
         return self.redirect_response_data(
-            code = "",
-            state = "",
-            iss = ""
+            code = session.auth_code,
+            state = session.authz_request['state'],
+            iss = issuer.sub if issuer else ""
         )
 
 

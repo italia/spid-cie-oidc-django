@@ -36,7 +36,7 @@ RP_PROVIDER_PROFILES = getattr(
 )
 
 
-RP_ATTR_MAP = {
+RP_ATTR_MAP = getattr(settings, 'RP_ATTR_MAP', {
     "username": (
         {
             "func": "spid_cie_oidc.relying_party.processors.issuer_prefixed_sub",
@@ -47,7 +47,39 @@ RP_ATTR_MAP = {
     "last_name": ("lastname",),
     "email": ("email",),
 }
+)
 
+
+SPID_REQUESTED_CLAIMS = getattr(
+    settings,
+    'RP_REQUIRED_CLAIMS', {
+        'id_token': {
+            'https://attributes.spid.gov.it/familyName': {'essential': True},
+            'https://attributes.spid.gov.it/email': {'essential': True}
+        },
+        'userinfo': {
+            'https://attributes.spid.gov.it/name': None,
+            'https://attributes.spid.gov.it/familyName': None,
+            'https://attributes.spid.gov.it/email': None,
+            'https://attributes.spid.gov.it/fiscalNumber': None
+        }
+    }
+)
+
+CIE_REQUESTED_CLAIMS = getattr(
+    settings,
+    'RP_REQUIRED_CLAIMS', {
+        'id_token': {
+            'family_name': {'essential': True},
+            'email': {'essential': True}
+        },
+        'userinfo': {
+            'given_name': None,
+            'family_name': None,
+            'email': None
+        }
+    }
+)
 
 RP_PKCE_CONF = getattr(
     settings,
@@ -61,8 +93,13 @@ RP_PKCE_CONF = getattr(
     }
 )
 
+RP_REQUEST_CLAIM_BY_PROFILE = {
+    "spid": SPID_REQUESTED_CLAIMS,
+    "cie": CIE_REQUESTED_CLAIMS
+}
+
 RP_DEFAULT_PROVIDER_PROFILES = getattr(
     settings,
-    "RP_PROVIDER_PROFILES",
+    "RP_DEFAULT_PROVIDER_PROFILES",
     "spid"
 )

@@ -17,7 +17,6 @@ class OidcSessionAdmin(admin.ModelAdmin):
         "created",
         "revoked",
         "sub",
-        "user_claims",
         "user_uid",
         "authz_request"
     )
