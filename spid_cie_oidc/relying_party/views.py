@@ -271,7 +271,7 @@ class SpidCieOidcRpCallbackView(
 
         authz_data = json.loads(authz.data)
         provider_conf = authz.get_provider_configuration()
-        
+
         code = request.GET.get("code")
         authz_token = OidcAuthenticationToken.objects.create(
             authz_request=authz, code=code
@@ -280,7 +280,7 @@ class SpidCieOidcRpCallbackView(
         rp_conf = FederationEntityConfiguration.objects.get(
             sub = authz_token.authz_request.client_id
         )
-        
+
         token_request = self.access_token_request(
             redirect_uri=authz_data["redirect_uri"],
             state=authz.state,

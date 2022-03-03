@@ -272,15 +272,11 @@ class AuthzRequestView(OpBase, View):
         if not form.is_valid():
             return render(request, self.template, {'form': form})
 
-        error = False
         authz_request = form.cleaned_data.get('authz_request_object')
 
         try:
             self.validate_authz_request_object(authz_request)
         except Exception as e:
-            error = True
-        # non si può mettere dentro except?
-        if error:
             logger.error(
                 "Authz request object validation failed "
                 f"for {authz_request}: {e} "

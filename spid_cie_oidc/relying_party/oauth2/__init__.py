@@ -38,7 +38,7 @@ class OAuth2AuthorizationCodeGrant(object):
             state=state,
             code=code,
             code_verifier = code_verifier,
-            
+
             # here private_key_jwt
             client_assertion_type="urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
             client_assertion = create_jws(
