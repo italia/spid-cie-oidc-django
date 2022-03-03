@@ -9,19 +9,22 @@ class OidcSession(TimeStampedModel):
     """
 
     user_uid = models.CharField(max_length=120)
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE,
-                             blank=False, null=False)
+    user = models.ForeignKey(
+        get_user_model(), on_delete=models.CASCADE,
+        blank=False, null=False
+    )
     client_id = models.URLField(blank=True, null=True)
 
     nonce = models.CharField(max_length=2048, blank=False, null=False)
-    authz_request = models.CharField(max_length=2048, blank=False, null=False)
+    authz_request = models.JSONField(max_length=2048, blank=False, null=False)
 
     sub = models.CharField(max_length=254, blank=True, null=True)
-    user_claims = models.JSONField(blank=True, null=True)
 
     revoked = models.BooleanField(default=False)
-
     auth_code = models.CharField(max_length=2048, blank=False, null= False)
+
+    def __str__(self):
+        return "{} {}".format(self.user_uid, self.auth_code)
 
     class Meta:
         verbose_name = ('User Session')

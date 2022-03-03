@@ -54,7 +54,7 @@ class OAuth2AuthorizationCodeGrant(object):
             redirect_uri=redirect_uri,
             client_id=client_id,
             state=state,
-            code=code,
+            code=code
         )
 
         if code_verifier:
@@ -71,7 +71,9 @@ class OAuth2AuthorizationCodeGrant(object):
         )
 
         if token_request.status_code != 200:
-            logger.error(f"Something went wrong with {state}: {token_request.content}")
+            logger.error(
+                f"Something went wrong with {state}: {token_request.content}"
+            )
         else:
             try:
                 token_request = json.loads(token_request.content.decode())

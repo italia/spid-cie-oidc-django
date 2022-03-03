@@ -12,7 +12,6 @@ from django.http import HttpResponseForbidden
 from django.views import View
 from django.shortcuts import render
 from django.utils import timezone
-from django.utils.module_loading import import_string
 from django.utils.translation import gettext as _
 
 from spid_cie_oidc.entity.models import (
@@ -32,9 +31,10 @@ from .models import OidcAuthentication, OidcAuthenticationToken
 from .utils import (
     http_dict_to_redirect_uri_path,
     http_redirect_uri_to_dict,
+    process_user_attributes,
     random_string,
 )
-from . settings import RP_PKCE_CONF, RP_PROVIDER_PROFILES
+from . settings import RP_PKCE_CONF, RP_REQUEST_CLAIM_BY_PROFILE, RP_ATTR_MAP
 
 logger = logging.getLogger(__name__)
 
@@ -168,9 +168,12 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             endpoint=authz_endpoint,
             acr_values = request.GET.get(
                 "acr_values", AcrValuesSpid.l2.value
-
             ),
-            aud = [tc.sub, authz_endpoint]
+            iat = int(timezone.localtime().timestamp()),
+            aud = [tc.sub, authz_endpoint],
+            claims = RP_REQUEST_CLAIM_BY_PROFILE[
+                request.GET.get('profile', 'spid')
+            ]
         )
 
         _prompt = request.GET.get("prompt", "consent login")
@@ -211,7 +214,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
         authz_data["request"] = request_obj
         uri_path = http_dict_to_redirect_uri_path(authz_data)
         url = "?".join((authz_endpoint, uri_path))
-        data = http_redirect_uri_to_dict(url)
+        http_redirect_uri_to_dict(url)
         logger.info(f"Starting Authz request to {url}")
         return HttpResponseRedirect(url)
 
@@ -230,26 +233,6 @@ class SpidCieOidcRpCallbackView(
     """
 
     error_template = "rp_error.html"
-
-    def process_user_attributes(
-        self, userinfo: dict, client_conf: dict, authz: OidcAuthentication
-    ):
-        user_map = client_conf["user_attributes_map"]
-        data = dict()
-        for k, v in user_map.items():
-            for i in v:
-                if isinstance(i, str):
-                    if i in userinfo:
-                        data[k] = userinfo[i]
-                        break
-
-                elif isinstance(i, dict):
-                    args = (userinfo, client_conf, authz.__dict__, i["kwargs"])
-                    value = import_string(i["func"])(*args)
-                    if value:
-                        data[k] = value
-                        break
-        return data
 
     def user_reunification(self, user_attrs: dict, client_conf: dict):
         user_model = get_user_model()
@@ -344,13 +327,15 @@ class SpidCieOidcRpCallbackView(
             authz.state,
             authz_token.access_token,
             provider_conf,
-            verify=client_conf["httpc_params"]["verify"],
+            verify=HTTPC_PARAMS,
         )
         if not userinfo:
-            return HttpResponseBadRequest(_("UserInfo response seems not to be valid."))
+            return HttpResponseBadRequest(
+                _("UserInfo response seems not to be valid.")
+            )
 
         # here django user attr mapping
-        user_attrs = self.process_user_attributes(userinfo, client_conf, authz)
+        user_attrs = process_user_attributes(userinfo, RP_ATTR_MAP, authz.__dict__)
         if not user_attrs:
             _msg = "No user attributes have been processed"
             logger.warning(f"{_msg}: {userinfo}")

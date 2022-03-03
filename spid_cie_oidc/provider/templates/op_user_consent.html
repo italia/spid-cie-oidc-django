@@ -34,37 +34,56 @@
                                         <div>
                                             <div class="pb-5">
                                                 <h4 class="text-muted">{% trans 'SPID level access request from' %}</h4>
-                                                <h3>{% trans 'name'%}</h3>
+                                                <h3>{{ client_organization_name }}</h3>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <form method="POST" action="">
+                                    <form method="POST" action="{% url 'oidc_provider_consent' %}">
+                                        {% csrf_token %}
                                         <fieldset>
                                             <div class="row">
+
+                                                      {% for form_field in form.visible_fields %}
+                                                      <div class="form-row">
+                                                         <div class="col-12 form-group my-3">
+                                                            <label for="id_{{ form_field.html_name }}">
+                                                               <span class="form-label-content">
+                                                                  {{ form_field.label }}
+                                                               </span>
+                                                            </label>
+                                                            {% if form_field.field.widget.input_type%}
+                                                            <input type="{{ form_field.field.widget.input_type }}" 
+                                                               class="form-control" id="id_{{ form_field.html_name }}" 
+                                                               name="{{ form_field.name }}" value="{{form_field.value|default_if_none:""}}">
+                                                            {% else%}
+                                                            <textarea id="id_{{ form_field.html_name }}"
+                                                               name="{{ form_field.name }}">{{ form.public_jwks.value}}</textarea>
+                                                            {% endif %}
+                                                         </div>
+                                                         <span for="id_{{ form_field.html_name }}" class="text-danger">{{ form_field.errors }}</span>
+                                                      </div>
+                                                      {% endfor %}
+
+                                                      {% for hidden in form.hidden_fields %}
+                                                        {{ hidden }}
+                                                      {% endfor %}
+
                                                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 ">
                                                     <div>
                                                         <p class="font-weight-semibold">
-                                                            {% trans 'the following data is being sent to the service provider'%}
+                                                            {% trans 'The following data is being sent'%}
                                                         </p>
                                                         <ul>
-                                                            <li>{% trans 'Identification code' %}</li>
-                                                            <li>{% trans 'Fiscal Code' %}</li>
-                                                            <li>{% trans 'Last name' %}</li>
-                                                            <li>{% trans 'First name' %}</li>
-                                                            <li>{% trans 'Gender' %}</li>
-                                                            <li>{% trans 'Date of birth' %}</li>
-                                                            <li>{% trans 'Birth place' %}</li>
-                                                            <li>{% trans 'Mobile phone number' %}</li>
-                                                            <li>{% trans 'Email address' %}</li>
-                                                            <li>{% trans 'Digital domicile' %}</li>
+                                                            {% for claim in user_claims %}
+                                                                <li>{{ claim }}</li>
+                                                            {% endfor %}
                                                         </ul>
                                                         <div class="col-sm-12">
                                                             <button class="italia-it-button italia-it-button-cancel-m  button-cancel" type="button" >
                                                             <span class="italia-it-buttons-text">{% trans "DO NOT AGREE" %}</span></button>
 
-                                                            <button class="italia-it-button italia-it-button-size-m button-login"
-                                                                type="submit">
+                                                            <button class="italia-it-button italia-it-button-size-m button-login" type="submit">
                                                             <span class="italia-it-buttons-text">{% trans "AGREE" %}</span></button>
                                                         </div>
                                                     </div>

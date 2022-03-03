@@ -44,7 +44,6 @@
                                             <div class="row">
                                                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 ">
                                                     <div>
-
                                                       {% csrf_token %}
                                                       {% for form_field in form.visible_fields %}
                                                       <div class="form-row">
@@ -83,7 +82,7 @@
                                                                      src="{% static 'svg/spid-ico-circle-bb.svg' %}"
                                                                      alt="">
                                                                 </span>
-                                                            <span class="italia-it-buttons-text">{% trans "Login with SPID" %}</span></button>
+                                                            <span class="italia-it-buttons-text">{% trans "Login" %}</span></button>
                                                         </div>
 
                                                     </div>
