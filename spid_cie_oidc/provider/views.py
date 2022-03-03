@@ -348,6 +348,9 @@ class ConsentPageView(OpBase, View):
             revoked = False
         ).first()
 
+        if not session:
+            return HttpResponseForbidden()
+        
         tc = TrustChain.objects.filter(
             sub=session.client_id,
             type = "openid_relying_party"
