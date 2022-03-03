@@ -31,7 +31,7 @@ class OidcAuthenticationAdmin(admin.ModelAdmin):
     list_filter = ("created", "endpoint")
     inlines = (OidcAuthenticationTokenInline,)
     readonly_fields = (
-        "issuer",
+        "provider",
         "client_id",
         "state",
         "endpoint",

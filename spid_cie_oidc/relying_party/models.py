@@ -13,11 +13,12 @@ class OidcAuthentication(models.Model):
     client_id = models.CharField(max_length=255)
     state = models.CharField(max_length=255, unique=True, default="state-is-unique")
     endpoint = models.URLField(blank=True, null=True)
-    issuer = models.CharField(max_length=255, blank=True, null=True)
-    issuer_id = models.CharField(max_length=255, blank=True, null=True)
-    provider_jwks = models.TextField(blank=True, null=True)
     data = models.TextField(blank=True, null=True)
     successful = models.BooleanField(default=False)
+
+    provider = models.CharField(max_length=255, blank=True, null=True)
+    provider_id = models.CharField(max_length=255, blank=True, null=True)
+    provider_jwks = models.TextField(blank=True, null=True)
     provider_configuration = models.TextField(blank=True, null=True)
 
     created = models.DateTimeField(auto_now_add=True)

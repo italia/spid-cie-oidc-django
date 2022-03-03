@@ -194,8 +194,9 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             client_id=client_conf["client_id"],
             state=authz_data["state"],
             endpoint=authz_endpoint,
-            issuer=tc.sub,
-            issuer_id=tc.sub,
+            # TODO: better have here an organization name
+            provider=tc.sub,
+            provider_id=tc.sub,
             data=json.dumps(authz_data),
             provider_jwks=json.dumps(jwks_dict),
             provider_configuration=json.dumps(provider_metadata)
@@ -261,7 +262,7 @@ class SpidCieOidcRpCallbackView(
             return render(request, self.error_template, request_args)
 
         authz = OidcAuthentication.objects.filter(
-            state=request_args.get("state"),
+            state = request_args.get("state"),
         )
         if not authz:
             return HttpResponseBadRequest(_("Unsolicited response"))
@@ -270,24 +271,24 @@ class SpidCieOidcRpCallbackView(
 
         authz_data = json.loads(authz.data)
         provider_conf = authz.get_provider_configuration()
-
-        # TODO: get Trust Chain from response and match to the state of
-        # the preexisting OidcAuthentication on the DB
-        client_conf = settings.JWTCONN_RP_CLIENTS[authz.issuer_id]
-
+        
         code = request.GET.get("code")
         authz_token = OidcAuthenticationToken.objects.create(
             authz_request=authz, code=code
         )
 
+        rp_conf = FederationEntityConfiguration.objects.get(
+            sub = authz_token.authz_request.client_id
+        )
+        
         token_request = self.access_token_request(
             redirect_uri=authz_data["redirect_uri"],
-            client_id=authz.client_id,
             state=authz.state,
             code=code,
-            issuer_id=authz.issuer_id,
-            client_conf=client_conf,
+            issuer_id=authz.provider_id,
+            client_conf=rp_conf,
             token_endpoint_url=provider_conf["token_endpoint"],
+            audience = [authz.provider_id],
             code_verifier=authz_data.get("code_verifier"),
         )
 
