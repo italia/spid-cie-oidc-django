@@ -5,33 +5,31 @@ import uuid
 
 from django.conf import settings
 from django.contrib.auth import authenticate, login
-from django.http import (
-    HttpResponseForbidden,
-    HttpResponseRedirect
-)
 from django.forms.utils import ErrorList
+from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils.translation import gettext as _
-from django.urls import reverse
 from django.views import View
 from pydantic import ValidationError
+from spid_cie_oidc.entity.exceptions import InvalidEntityConfiguration
 from spid_cie_oidc.entity.jwtse import (
     unpad_jwt_head,
     unpad_jwt_payload,
     verify_jws
 )
-from spid_cie_oidc.entity.exceptions import InvalidEntityConfiguration
-from spid_cie_oidc.entity.models import FederationEntityConfiguration, TrustChain
+from spid_cie_oidc.entity.models import (
+    FederationEntityConfiguration,
+    TrustChain
+)
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.tests.settings import *
 from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
-
 from spid_cie_oidc.provider.models import IssuedToken, OidcSession
 
-from . exceptions import AuthzRequestReplay
+from .exceptions import AuthzRequestReplay
 from .forms import *
-from . settings import *
+from .settings import *
 
 logger = logging.getLogger(__name__)
 
@@ -52,37 +50,34 @@ class OpBase:
             if header['kid'] == jwk['kid']:
                 return jwk
 
-    def validate_authz_request_object(self, req):
+    def validate_authz_request_object(self, req) -> TrustChain:
         try:
             self.payload = unpad_jwt_payload(req)
             header = unpad_jwt_head(req)
         except Exception as e:
+            # FIXME: if not payload it's no possible to do redirect
+            state = self.payload["state"]
             logger.error(
-                f"Error in Authz request object {dict(req.GET)}: {e}"
+                f"Error in Authz request object {dict(req.GET)}: {e}."
+                f" error=invalid_request"
+                f"state={state}"
             )
-            return self.redirect_response_data(
-                error = "invalid_request",
-                error_description =_("Error in Authz request object"),
-                state = self.payload["state"])
+            raise Exception()
 
         self.is_a_replay_authz()
-
         rp_trust_chain = TrustChain.objects.filter(
             type = "openid_relying_party",
             sub = self.payload['iss'],
             trust_anchor__sub = settings.OIDCFED_TRUST_ANCHOR
         ).first()
         if rp_trust_chain and not rp_trust_chain.is_active:
+            state = self.payload["state"]
             logger.warning(
                 f"Disabled client {rp_trust_chain.sub} requests an authorization."
+                f"error = access_denied"
+                f"state={state}"
             )
-            return self.redirect_response_data(
-                # TODO: check error
-                error = "access_denied",
-                error_description =_(
-                    f"Disabled client {rp_trust_chain.sub} requests an authorization."
-                ),
-                state = self.payload["state"])
+            raise Exception()
 
         elif not rp_trust_chain or not rp_trust_chain.is_valid:
             rp_trust_chain = get_or_create_trust_chain(
@@ -95,45 +90,39 @@ class OpBase:
                 )
             )
             if not rp_trust_chain.is_valid:
+                # FIXME: to do test
+                state = self.payload['iss']
                 logger.warning(
-                    f"Failed trust chain validation for {self.payload['iss']}"
+                    f"Failed trust chain validation for {self.payload['iss']}."
+                    f"error=unauthorized_clien"
+                    f"state={state}"
                 )
-                return self.redirect_response_data(
-                    # TODO: check error
-                    error = "unauthorized_client",
-                    error_description =_(
-                        f"Failed trust chain validation for {self.payload['iss']}."
-                    ),
-                    state = self.payload["state"])
+                raise Exception()
 
         jwks = rp_trust_chain.metadata['jwks']['keys']
         jwk = self.find_jwk(header, jwks)
         if not jwk:
+            state = self.payload['iss']
             logger.error(
                 f"Invalid jwk for {self.payload['iss']}. "
                 f"{header['kid']} not found in {jwks}"
+                f"error=unauthorized_client"
+                f"state={state}"
             )
-            return self.redirect_response_data(
-                # TODO: check error
-                error = "unauthorized_client",
-                error_description =_(f"Invalid jwk for {self.payload['iss']}."),
-                state = self.payload["state"])
+            raise Exception()
 
         try:
             verify_jws(req, jwk)
         except Exception as e:
+            # FIXME: to do test
+            state = self.payload['iss']
             logger.error(
                 "Authz request object signature validation failed "
                 f"for {self.payload['iss']}: {e} "
+                f"error=access_denied"
+                f"state={state}"
             )
-            return self.redirect_response_data(
-                # TODO: check error
-                error = "access_denied",
-                error_description =_(
-                    "Authz request object signature validation failed "
-                    f"for {self.payload['iss']}: {e} "
-                ),
-                state = self.payload["state"])
+            raise Exception()
 
         return rp_trust_chain
 
@@ -146,6 +135,25 @@ class OpBase:
             raise AuthzRequestReplay(
                 f"{preexistent_authz.client_id} with {preexistent_authz.nonce}"
             )
+
+    def check_session(self, request) -> OidcSession:
+        if not request.user.is_authenticated:
+            raise Exception()
+
+        auth_code = request.session.get('oidc', {}).get("auth_code", None)
+        if not auth_code:
+            # FIXME: to do test
+            raise Exception()
+
+        session = OidcSession.objects.filter(
+            auth_code = request.session['oidc']['auth_code'],
+            user = request.user
+        ).first()
+
+        if not session:
+            raise Exception()
+
+        return session
 
 
 class AuthzRequestView(OpBase, View):
@@ -181,21 +189,23 @@ class AuthzRequestView(OpBase, View):
             it's validated and a login prompt is rendered to the user
         """
         req = request.GET.get('request', None)
+        # FIXME: invalid check: if not request-> no payload-> no redirect_uri
         if not req:
             logger.error(
                 f"Missing Authz request object in {dict(request.GET)}"
+                f"error=invalid_request"
             )
             return self.redirect_response_data(
                 error = "invalid_request",
                 error_description =_("Missing Authz request object"),
                 # No req -> no payload -> no state
                 state = "")
-
         # yes, again. We MUST.
         tc = None
         try:
             tc = self.validate_authz_request_object(req)
         except InvalidEntityConfiguration as e:
+            # FIXME: to do test
             logger.error(f" {e}")
             return self.redirect_response_data(
                 error = "invalid_request",
@@ -222,8 +232,7 @@ class AuthzRequestView(OpBase, View):
             return self.redirect_response_data(
                 error = "invalid_request",
                 error_description =_(
-                    "An Unknown error raised during validation of "
-                    f" authz request object: {e}"
+                    "Authorization request not valid"
                 )
             )
 
@@ -268,9 +277,9 @@ class AuthzRequestView(OpBase, View):
 
         try:
             self.validate_authz_request_object(authz_request)
-        except Exception:
+        except Exception as e:
             error = True
-
+        # non si può mettere dentro except?
         if error:
             logger.error(
                 "Authz request object validation failed "
@@ -313,14 +322,11 @@ class AuthzRequestView(OpBase, View):
             client_id = self.payload["client_id"],
             auth_code = auth_code
         )
-
-        # show to the user the a consent page
         consent_url = reverse('oidc_provider_consent')
         return HttpResponseRedirect(consent_url)
 
 
 class ConsentPageView(OpBase, View):
-    # create a redirect with auth code, scope, state and iss in it ???? lo scope nelle linee guida non c'è
 
     template = "op_user_consent.html"
 
@@ -328,18 +334,11 @@ class ConsentPageView(OpBase, View):
         return ConsentPageForm
 
     def get(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
+        try:
+            session = self.check_session(request)
+        except Exception:
+            logger.warning(f"Invalid session")
             return HttpResponseForbidden()
-
-        auth_code = request.session.get('oidc', {}).get("auth_code", None)
-        if not auth_code:
-            return HttpResponseForbidden()
-
-        session = OidcSession.objects.filter(
-            user = request.user,
-            auth_code = auth_code,
-            revoked = False
-        ).first()
 
         tc = TrustChain.objects.filter(
             sub=session.client_id,
@@ -349,7 +348,7 @@ class ConsentPageView(OpBase, View):
         # if this auth code has already been used ... forbidden
         if IssuedToken.objects.filter(session=session):
             logger.warning(f"Auth code Replay {session}")
-            raise HttpResponseForbidden()
+            return HttpResponseForbidden()
 
         # get up fresh claims
         user_claims = request.user.attributes
@@ -365,8 +364,6 @@ class ConsentPageView(OpBase, View):
                     filtered_user_claims.append(claim)
         #
 
-        # TODO: create a form with the consent submission
-        # stores the authz request in a hidden field in the form
         context = {
             "form": self.get_consent_form()(),
             "session": session,
@@ -378,10 +375,13 @@ class ConsentPageView(OpBase, View):
         return render(request, self.template, context)
 
     def post(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            raise HttpResponseForbidden()
+        try:
+            session = self.check_session(request)
+        except Exception:
+            logger.warning(f"Invalid session")
+            return HttpResponseForbidden()
 
-        # TODO: create a form with the consent submission
+        self.payload = session.authz_request
         form = self.get_consent_form()(request.POST)
         if not form.is_valid():
             return self.redirect_response_data(
@@ -392,20 +392,10 @@ class ConsentPageView(OpBase, View):
                 )
             )
 
-        session = OidcSession.objects.filter(
-            auth_code = request.session['oidc']['auth_code'],
-            user = request.user
-        ).first()
-
-        if not session:
-            return HttpResponseForbidden()
-
-        self.payload = session.authz_request
         issuer = FederationEntityConfiguration.objects.filter(
                 entity_type = 'openid_provider'
         ).first()
 
-        # iss, state e code li recupero dalla session
         return self.redirect_response_data(
             code = session.auth_code,
             state = session.authz_request['state'],
