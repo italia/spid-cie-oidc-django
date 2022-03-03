@@ -268,7 +268,7 @@ class AuthzRequestView(OpBase, View):
 
         try:
             self.validate_authz_request_object(authz_request)
-        except Exception as e:
+        except Exception:
             error = True
 
         if error:
@@ -294,7 +294,7 @@ class AuthzRequestView(OpBase, View):
             return render(request, self.template, {'form': form})
         else:
             login(request, user)
-        
+
         # create auth_code
         auth_code = hashlib.sha512(
             f'{uuid.uuid4()}-{self.payload["client_id"]}-{self.payload["nonce"]}'.encode()
@@ -334,7 +334,7 @@ class ConsentPageView(OpBase, View):
         auth_code = request.session.get('oidc', {}).get("auth_code", None)
         if not auth_code:
             return HttpResponseForbidden()
-        
+
         session = OidcSession.objects.filter(
             user = request.user,
             auth_code = auth_code,
@@ -364,7 +364,7 @@ class ConsentPageView(OpBase, View):
                 if claim in user_claims:
                     filtered_user_claims.append(claim)
         #
-        
+
         # TODO: create a form with the consent submission
         # stores the authz request in a hidden field in the form
         context = {
@@ -391,7 +391,7 @@ class ConsentPageView(OpBase, View):
                     "User rejected the release of attributes"
                 )
             )
-        
+
         session = OidcSession.objects.filter(
             auth_code = request.session['oidc']['auth_code'],
             user = request.user
@@ -404,7 +404,7 @@ class ConsentPageView(OpBase, View):
         issuer = FederationEntityConfiguration.objects.filter(
                 entity_type = 'openid_provider'
         ).first()
-        
+
         # iss, state e code li recupero dalla session
         return self.redirect_response_data(
             code = session.auth_code,

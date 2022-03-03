@@ -10,6 +10,7 @@ import urllib
 
 
 from cryptojwt.key_jar import KeyJar
+from django.utils.module_loading import import_string
 from django.utils.safestring import mark_safe
 from oidcmsg.message import Message
 
@@ -90,7 +91,7 @@ def process_user_attributes(
                     break
 
             elif isinstance(i, dict):
-                args = (userinfo, client_conf, authz, i["kwargs"])
+                args = (userinfo, authz, i["kwargs"])
                 value = import_string(i["func"])(*args)
                 if value:
                     data[k] = value

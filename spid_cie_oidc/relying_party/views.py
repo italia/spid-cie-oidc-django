@@ -12,7 +12,6 @@ from django.http import HttpResponseForbidden
 from django.views import View
 from django.shortcuts import render
 from django.utils import timezone
-from django.utils.module_loading import import_string
 from django.utils.translation import gettext as _
 
 from spid_cie_oidc.entity.models import (
@@ -215,7 +214,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
         authz_data["request"] = request_obj
         uri_path = http_dict_to_redirect_uri_path(authz_data)
         url = "?".join((authz_endpoint, uri_path))
-        data = http_redirect_uri_to_dict(url)
+        http_redirect_uri_to_dict(url)
         logger.info(f"Starting Authz request to {url}")
         return HttpResponseRedirect(url)
 

@@ -14,7 +14,7 @@ class OidcSession(TimeStampedModel):
         blank=False, null=False
     )
     client_id = models.URLField(blank=True, null=True)
-    
+
     nonce = models.CharField(max_length=2048, blank=False, null=False)
     authz_request = models.JSONField(max_length=2048, blank=False, null=False)
 
@@ -25,7 +25,7 @@ class OidcSession(TimeStampedModel):
 
     def __str__(self):
         return "{} {}".format(self.user_uid, self.auth_code)
-    
+
     class Meta:
         verbose_name = ('User Session')
         verbose_name_plural = ('User Sessions')
