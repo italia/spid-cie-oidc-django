@@ -275,9 +275,9 @@ class AuthzRequestView(OpBase, View):
 
         try:
             self.validate_authz_request_object(authz_request)
-        except Exception:
+        except Exception as e:
             error = True
-
+        # non si può mettere dentro except?
         if error:
             logger.error(
                 "Authz request object validation failed "
@@ -334,10 +334,12 @@ class ConsentPageView(OpBase, View):
 
     def get(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
+            # FIXME: to do test
             return HttpResponseForbidden()
 
         auth_code = request.session.get('oidc', {}).get("auth_code", None)
         if not auth_code:
+            # FIXME: to do test
             return HttpResponseForbidden()
 
         session = OidcSession.objects.filter(
@@ -354,7 +356,7 @@ class ConsentPageView(OpBase, View):
         # if this auth code has already been used ... forbidden
         if IssuedToken.objects.filter(session=session):
             logger.warning(f"Auth code Replay {session}")
-            raise HttpResponseForbidden()
+            return HttpResponseForbidden()
 
         # get up fresh claims
         user_claims = request.user.attributes
@@ -384,8 +386,18 @@ class ConsentPageView(OpBase, View):
 
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            raise HttpResponseForbidden()
+            # FIXME: to do test
+            return HttpResponseForbidden()
 
+        session = OidcSession.objects.filter(
+            auth_code = request.session['oidc']['auth_code'],
+            user = request.user
+        ).first()
+
+        if not session:
+            return HttpResponseForbidden()
+
+        self.payload = session.authz_request
         # TODO: create a form with the consent submission
         form = self.get_consent_form()(request.POST)
         if not form.is_valid():
@@ -397,20 +409,10 @@ class ConsentPageView(OpBase, View):
                 )
             )
 
-        session = OidcSession.objects.filter(
-            auth_code = request.session['oidc']['auth_code'],
-            user = request.user
-        ).first()
-
-        if not session:
-            return HttpResponseForbidden()
-
-        self.payload = session.authz_request
         issuer = FederationEntityConfiguration.objects.filter(
                 entity_type = 'openid_provider'
         ).first()
 
-        # iss, state e code li recupero dalla session
         return self.redirect_response_data(
             code = session.auth_code,
             state = session.authz_request['state'],
