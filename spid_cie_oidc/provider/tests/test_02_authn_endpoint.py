@@ -162,6 +162,24 @@ class AuthnRequestTest(TestCase):
 
     
     @override_settings(OIDCFED_TRUST_ANCHOR=TA_SUB)    
+    def test_auth_request_no_session_in_get_consent(self):
+        jws=create_jws(REQUEST_OBJECT_PAYLOAD, self.rp_jwk)
+        client = Client()
+        url = reverse("oidc_provider_authnrequest")
+        res = client.get(url, {"request": jws})
+        self.assertTrue(res.status_code == 200)
+        self.assertIn("username", res.content.decode())
+        self.assertIn("password", res.content.decode())
+        res = client.post(url, {"username": "test", "password":"test", "authz_request_object": jws})
+        self.assertFalse("error" in res.content.decode())
+        self.assertTrue(res.status_code == 302)
+        consent_page_url = res.url
+        OidcSession.objects.all().delete()
+        res = client.get(consent_page_url)
+        self.assertTrue(res.status_code == 403)
+
+
+    @override_settings(OIDCFED_TRUST_ANCHOR=TA_SUB)    
     def test_auth_request_auth_code_already_used(self):
         jws=create_jws(REQUEST_OBJECT_PAYLOAD, self.rp_jwk)
         client = Client()
