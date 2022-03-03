@@ -12,6 +12,7 @@ from django.http import HttpResponseForbidden
 from django.views import View
 from django.shortcuts import render
 from django.utils import timezone
+from django.utils.module_loading import import_string
 from django.utils.translation import gettext as _
 
 from spid_cie_oidc.entity.models import (
