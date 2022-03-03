@@ -1,5 +1,6 @@
 import json
 import logging
+import import_string
 
 from copy import deepcopy
 from django.conf import settings
