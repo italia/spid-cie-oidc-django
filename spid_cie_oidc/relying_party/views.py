@@ -1,6 +1,5 @@
 import json
 import logging
-import import_string
 
 from copy import deepcopy
 from django.conf import settings
@@ -13,6 +12,7 @@ from django.http import HttpResponseForbidden
 from django.views import View
 from django.shortcuts import render
 from django.utils import timezone
+from django.utils.module_loading import import_string
 from django.utils.translation import gettext as _
 
 from spid_cie_oidc.entity.models import (
@@ -194,8 +194,9 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             client_id=client_conf["client_id"],
             state=authz_data["state"],
             endpoint=authz_endpoint,
-            issuer=tc.sub,
-            issuer_id=tc.sub,
+            # TODO: better have here an organization name
+            provider=tc.sub,
+            provider_id=tc.sub,
             data=json.dumps(authz_data),
             provider_jwks=json.dumps(jwks_dict),
             provider_configuration=json.dumps(provider_metadata)
@@ -276,13 +277,15 @@ class SpidCieOidcRpCallbackView(
             authz_request=authz, code=code
         )
 
-        rp_conf = FederationEntityConfiguration.objects.get(authz_token.client_id)
+        rp_conf = FederationEntityConfiguration.objects.get(
+            sub = authz_token.authz_request.client_id
+        )
         
         token_request = self.access_token_request(
             redirect_uri=authz_data["redirect_uri"],
             state=authz.state,
             code=code,
-            issuer_id=authz.issuer_id,
+            issuer_id=authz.provider_id,
             client_conf=rp_conf,
             token_endpoint_url=provider_conf["token_endpoint"],
             audience = [authz.provider_id],

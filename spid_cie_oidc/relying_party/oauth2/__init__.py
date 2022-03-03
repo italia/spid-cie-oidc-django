@@ -1,10 +1,11 @@
 import json
 import logging
 import requests
+import uuid
 
 from spid_cie_oidc.entity.models import FederationEntityConfiguration
 from spid_cie_oidc.entity.jwtse import create_jws
-from spid_cie_oidc.entity.settings import HTTPC_PARAMS
+from spid_cie_oidc.entity.settings import HTTPC_PARAMS, HTTPC_TIMEOUT
 from spid_cie_oidc.entity.utils import iat_now, exp_from_now
 
 logger = logging.getLogger(__name__)
@@ -33,7 +34,7 @@ class OAuth2AuthorizationCodeGrant(object):
         grant_data = dict(
             grant_type="authorization_code",
             redirect_uri=redirect_uri,
-            client_id=client_id,
+            client_id=client_conf.sub,
             state=state,
             code=code,
             code_verifier = code_verifier,
@@ -54,12 +55,13 @@ class OAuth2AuthorizationCodeGrant(object):
         )
 
         issuer_id = issuer_id
-        logger.debug(f"Access Token Request for {state}: {token_req_data} ")
+        logger.debug(f"Access Token Request for {state}: {grant_data} ")
 
         token_request = requests.post(
             token_endpoint_url,
-            **token_req_data,
-            verify = HTTPC_PARAMS,
+            data = grant_data,
+            verify = HTTPC_PARAMS['connection']['ssl'],
+            timeout = HTTPC_TIMEOUT
         )
 
         if token_request.status_code != 200:

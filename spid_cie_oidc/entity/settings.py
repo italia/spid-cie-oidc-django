@@ -51,12 +51,13 @@ OIDCFED_MAX_PATH_LEN = 1
 # }
 
 # for aiohttp
+HTTPC_TIMEOUT = 4
 HTTPC_PARAMS = getattr(
     settings,
     "HTTPC_PARAMS",
     {
         "connection": {"ssl": True},
-        "session": {"timeout": aiohttp.ClientTimeout(total=4)},
+        "session": {"timeout": aiohttp.ClientTimeout(total=HTTPC_TIMEOUT)},
     }
 )
 
