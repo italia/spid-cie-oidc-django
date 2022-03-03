@@ -47,8 +47,13 @@ class ClaimsType(str, Enum):
     value = ClaimsTypeStringValue
     values = ClaimsTypeStringValues
 
+nameStr = "https://attributes.spid.gov.it/name"
 
-class UserInfo(BaseModel):
+class UserInfoSpid(BaseModel):
+    pass
+
+
+class UserInfoCie(BaseModel):
     given_name: Optional[dict]
     family_name: Optional[dict]
     email: Optional[dict]
@@ -65,7 +70,7 @@ class UserInfo(BaseModel):
     physical_phone_number: Optional[dict]
 
 
-class IdToken(UserInfo):
+class IdToken(UserInfoCie):
     pass
 
 
@@ -75,9 +80,9 @@ TYPES = {
     "values": ClaimsTypeStringValues,
 }
 
-CLAIMS_SPID = {"userinfo": UserInfo}
+CLAIMS_SPID = {"userinfo": UserInfoSpid}
 
-CLAIMS_CIE = {"userinfo": UserInfo, "id_token": IdToken}
+CLAIMS_CIE = {"userinfo": UserInfoCie, "id_token": IdToken}
 
 
 class AuthenticationRequest(BaseModel):
