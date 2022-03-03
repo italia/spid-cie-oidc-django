@@ -99,6 +99,16 @@ class AuthnRequestTest(TestCase):
         )
 
     @override_settings(OIDCFED_TRUST_ANCHOR=TA_SUB)    
+    def test_auth_request_unknown_error(self):
+        jws=create_jws(REQUEST_OBJECT_PAYLOAD, self.rp_jwk)
+        client = Client()
+        TrustChain.objects.all().delete()
+        url = reverse("oidc_provider_authnrequest")
+        res = client.get(url, {"request": jws})
+        self.assertTrue(res.status_code == 302)
+        self.assertTrue("error=invalid_request" in res.url)
+
+    @override_settings(OIDCFED_TRUST_ANCHOR=TA_SUB)    
     def test_auth_request_ok(self):
         jws=create_jws(REQUEST_OBJECT_PAYLOAD, self.rp_jwk)
         client = Client()
@@ -224,7 +234,6 @@ class AuthnRequestTest(TestCase):
         self.assertTrue(res.status_code == 302)
         self.assertIn("error=invalid_request", res.url)
 
-
     @override_settings(OIDCFED_TRUST_ANCHOR=TA_SUB)
     def test_auth_request_trust_chain_no_active(self):
         self.trust_chain.is_active = False
@@ -234,7 +243,7 @@ class AuthnRequestTest(TestCase):
         url = reverse("oidc_provider_authnrequest")
         res = client.get(url, {"request": jws})
         self.assertTrue(res.status_code == 302)
-        self.assertIn("error=access_denied", res.url)
+        self.assertIn("error=invalid_request", res.url)
 
     @override_settings(OIDCFED_TRUST_ANCHOR=TA_SUB)
     def test_auth_request_invalid_jwk(self):
@@ -245,7 +254,7 @@ class AuthnRequestTest(TestCase):
         url = reverse("oidc_provider_authnrequest")
         res = client.get(url, {"request": jws})
         self.assertTrue(res.status_code == 302)
-        self.assertIn("error=unauthorized_client", res.url)
+        self.assertIn("error=invalid_request", res.url)
 
     @override_settings(OIDCFED_TRUST_ANCHOR=TA_SUB)
     def test_auth_request_no_correct_payload(self):
@@ -257,3 +266,12 @@ class AuthnRequestTest(TestCase):
         res = client.get(url, {"request": jws})
         self.assertTrue(res.status_code == 302)
         self.assertIn("error=invalid_request", res.url)
+
+    @override_settings(OIDCFED_TRUST_ANCHOR=TA_SUB)
+    def test_auth_request_invalid_session(self):
+        client = Client()
+        url = reverse("oidc_provider_consent")
+        res = client.get(url)
+        self.assertTrue(res.status_code == 403)
+        res = client.post(url)
+        self.assertTrue(res.status_code == 403)
