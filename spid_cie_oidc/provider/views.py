@@ -1,37 +1,31 @@
-import hashlib
 import logging
 import urllib.parse
 import uuid
 
 from django.conf import settings
 from django.contrib.auth import authenticate
-from django.http import (
-    HttpResponseForbidden,
-    HttpResponseRedirect
-)
+from django.forms.utils import ErrorList
+from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils.translation import gettext as _
-from django.urls import reverse
 from django.views import View
 from pydantic import ValidationError
+from spid_cie_oidc.entity.exceptions import InvalidEntityConfiguration
 from spid_cie_oidc.entity.jwtse import (
     unpad_jwt_head,
     unpad_jwt_payload,
     verify_jws
 )
-from django.forms.utils import ErrorList
-from spid_cie_oidc.entity.exceptions import InvalidEntityConfiguration
 from spid_cie_oidc.entity.models import TrustChain
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.tests.settings import *
 from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
-
 from spid_cie_oidc.provider.models import OidcSession
 
-from . exceptions import AuthzRequestReplay
+from .exceptions import AuthzRequestReplay
 from .forms import *
-from . settings import *
+from .settings import *
 
 logger = logging.getLogger(__name__)
 
@@ -96,7 +90,7 @@ class OpBase:
                 )
             )
             if not rp_trust_chain.is_valid:
-                #FIXME: to do test
+                # FIXME: to do test
                 logger.warning(
                     f"Failed trust chain validation for {self.payload['iss']}"
                 )
@@ -124,7 +118,7 @@ class OpBase:
         try:
             verify_jws(req, jwk)
         except Exception as e:
-            #FIXME: to do test
+            # FIXME: to do test
             logger.error(
                 "Authz request object signature validation failed "
                 f"for {self.payload['iss']}: {e} "
@@ -194,7 +188,6 @@ class AuthzRequestView(OpBase, View):
                 error_description =_("Missing Authz request object"),
                 # No req -> no payload -> no state
                 state = "")
-
         # yes, again. We MUST.
         tc = None
         try:
@@ -202,7 +195,7 @@ class AuthzRequestView(OpBase, View):
             if type(tc) == HttpResponseRedirect:
                 return tc
         except InvalidEntityConfiguration as e:
-            #FIXME: to do test
+            # FIXME: to do test
             logger.error(f" {e}")
             return self.redirect_response_data(
                 error = "invalid_request",
@@ -222,7 +215,7 @@ class AuthzRequestView(OpBase, View):
             )
 
         except Exception as e:
-            #FIXME: to do test
+            # FIXME: to do test
             logger.error(
                 "Error during trust build for "
                 f"{request.GET.get('client_id', 'unknow')}: {e}"

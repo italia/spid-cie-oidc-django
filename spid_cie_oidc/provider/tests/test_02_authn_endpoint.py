@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from django.contrib.auth import get_user_model
 from django.http import HttpRequest
 from django.test import Client, TestCase, override_settings
@@ -7,11 +9,17 @@ from spid_cie_oidc.authority.tests.settings import (
     rp_onboarding_data
 )
 from spid_cie_oidc.entity.jwtse import create_jws
-from spid_cie_oidc.entity.models import (FederationEntityConfiguration,
-                                         FetchedEntityStatement, TrustChain)
+from spid_cie_oidc.entity.models import (
+    FederationEntityConfiguration,
+    FetchedEntityStatement, 
+    TrustChain
+)
 from spid_cie_oidc.entity.tests.settings import TA_SUB
-from spid_cie_oidc.entity.utils import (datetime_from_timestamp, exp_from_now,
-                                        iat_now)
+from spid_cie_oidc.entity.utils import (
+    datetime_from_timestamp, 
+    exp_from_now,
+    iat_now
+)
 from spid_cie_oidc.provider.tests.settings import op_conf
 
 # TODO: we need factory function to get fresh now
@@ -46,7 +54,6 @@ REQUEST_OBJECT_PAYLOAD = {
     'exp': EXP,
     'jti': "a72d5df0-2415-4c7c-a44f-3988b354040b"
 }
-
 
 
 class AuthnRequestTest(TestCase):
@@ -149,8 +156,9 @@ class AuthnRequestTest(TestCase):
 
     @override_settings(OIDCFED_TRUST_ANCHOR=TA_SUB)
     def test_auth_request_no_correct_payload(self):
-        REQUEST_OBJECT_PAYLOAD["response_type"] = "test"
-        jws=create_jws(REQUEST_OBJECT_PAYLOAD, self.rp_jwk)
+        NO_CORRECT_OBJECT_PAYLOAD = deepcopy(REQUEST_OBJECT_PAYLOAD)
+        NO_CORRECT_OBJECT_PAYLOAD["response_type"] = "test"
+        jws=create_jws(NO_CORRECT_OBJECT_PAYLOAD, self.rp_jwk)
         client = Client()
         url = reverse("oidc_provider_authnrequest")
         res = client.get(url, {"request": jws})
