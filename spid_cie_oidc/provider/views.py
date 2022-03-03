@@ -1,3 +1,4 @@
+import hashlib
 import logging
 import urllib.parse
 import uuid
