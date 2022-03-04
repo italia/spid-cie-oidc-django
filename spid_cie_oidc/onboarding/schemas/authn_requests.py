@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import List, Literal, Optional
 
-from pydantic import BaseModel, HttpUrl, conlist, constr, validator
+from pydantic import BaseModel, Field, HttpUrl, conlist, constr, validator
 
 # TODO: Schema of claims is not genrated
 
@@ -50,7 +50,22 @@ class ClaimsType(str, Enum):
 nameStr = "https://attributes.spid.gov.it/name"
 
 class UserInfoSpid(BaseModel):
-    pass
+    name: Optional[dict]=Field(alias="https://attributes.spid.gov.it/name", default=None)
+    family_name: Optional[dict]=Field(alias="https://attributes.spid.gov.it/familyName", default=None)
+    place_of_birth: Optional[dict]=Field(alias="https://attributes.spid.gov.it/placeOfBirth", default=None)
+    county_of_birth: Optional[dict]=Field(alias="https://attributes.spid.gov.it/countyOfBirth", default=None)
+    date_of_birth: Optional[dict]=Field(alias="https://attributes.spid.gov.it/dateOfBirth", default=None)
+    gender: Optional[dict]=Field(alias="https://attributes.spid.gov.it/gender", default=None)
+    company_name: Optional[dict]=Field(alias="https://attributes.spid.gov.it/companyName", default=None)
+    registered_office: Optional[dict]=Field(alias="https://attributes.spid.gov.it/registeredOffice", default=None)
+    fiscal_number: Optional[dict]=Field(alias="https://attributes.spid.gov.it/fiscalNumber", default=None)
+    iva_code: Optional[dict]=Field(alias="https://attributes.spid.gov.it/ivaCode", default=None)
+    id_card: Optional[dict]=Field(alias="https://attributes.spid.gov.it/idCard", default=None)
+    mobile_phone: Optional[dict]=Field(alias="https://attributes.spid.gov.it/mobilePhone", default=None)
+    email: Optional[dict]=Field(alias="https://attributes.spid.gov.it/email", default=None)
+    address: Optional[dict]=Field(alias="https://attributes.spid.gov.it/address", default=None)
+    expiration_date: Optional[dict]=Field(alias="https://attributes.spid.gov.it/expirationDate", default=None)
+    digital_address: Optional[dict]=Field(alias="https://attributes.spid.gov.it/digitalAddress", default=None)
 
 
 class UserInfoCie(BaseModel):
