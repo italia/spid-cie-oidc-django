@@ -12,5 +12,5 @@ class HttpClient(TestCase):
         url = "https://icanhazip.com/"
         get = http_get([url], {})
         value = asyncio.run(get)
-        self.assertTrue("93.71.202.64" in str(value))
+        self.assertFalse(len(value) == 0)
 
