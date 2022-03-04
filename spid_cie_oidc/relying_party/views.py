@@ -1,41 +1,37 @@
+
 import json
 import logging
-
 from copy import deepcopy
+
 from django.conf import settings
-from django.contrib.auth import login, logout, get_user_model
+from django.contrib.auth import get_user_model, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
-from django.http import HttpResponseBadRequest, HttpResponseRedirect, Http404
-from django.http import HttpResponseForbidden
-from django.views import View
+from django.http import HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import render
 from django.utils import timezone
 from django.utils.module_loading import import_string
 from django.utils.translation import gettext as _
-
+from django.views import View
+from spid_cie_oidc.entity.exceptions import InvalidTrustchain
+from spid_cie_oidc.entity.jwtse import create_jws
 from spid_cie_oidc.entity.models import (
     FederationEntityConfiguration,
     TrustChain
 )
-from spid_cie_oidc.entity.jwtse import create_jws
-from spid_cie_oidc.entity.statements import get_http_url
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
-from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
+from spid_cie_oidc.entity.statements import get_http_url
+from spid_cie_oidc.entity.trust_chain_operations import  get_or_create_trust_chain
 from spid_cie_oidc.onboarding.schemas.authn_requests import AcrValuesSpid
 
 from . import OAuth2BaseView
+from .models import OidcAuthentication, OidcAuthenticationToken
 from .oauth2 import *
 from .oidc import *
-from .models import OidcAuthentication, OidcAuthenticationToken
-from .utils import (
-    http_dict_to_redirect_uri_path,
-    http_redirect_uri_to_dict,
-    process_user_attributes,
-    random_string,
-)
-from . settings import RP_PKCE_CONF, RP_REQUEST_CLAIM_BY_PROFILE, RP_ATTR_MAP
+from .settings import RP_ATTR_MAP, RP_PKCE_CONF, RP_REQUEST_CLAIM_BY_PROFILE
+from .utils import (http_dict_to_redirect_uri_path, http_redirect_uri_to_dict,
+                    process_user_attributes, random_string)
 
 logger = logging.getLogger(__name__)
 
@@ -64,24 +60,26 @@ class SpidCieOidcRp:
         get available trust to a specific OP
         """
         if not request.GET.get("provider", None):
-            return HttpResponseBadRequest(
-                f"Missing provider url. "
+            logger.warning( f"Missing provider url. "
                 "Please try '?provider=https://provider-subject/'"
+            )
+            raise InvalidTrustchain( f"Missing provider url. "
+                 "Please try '?provider=https://provider-subject/'"
             )
 
         trust_anchor = request.GET.get(
             "trust_anchor", settings.OIDCFED_TRUST_ANCHOR
         )
         if trust_anchor not in settings.OIDCFED_TRUST_ANCHORS:
-            return HttpResponseBadRequest(
+            logger.warning( 
                 f"Unallowed Trust Anchor"
             )
+            raise InvalidTrustchain(f"Unallowed Trust Anchor")
 
         tc = TrustChain.objects.filter(
             sub = request.GET["provider"],
             trust_anchor__sub = trust_anchor,
         ).first()
-
         if not tc:
             logger.info(
                 f'Trust Chain not found for {request.GET["provider"]}'
@@ -90,7 +88,7 @@ class SpidCieOidcRp:
             logger.warning(
                 f"{tc} found but DISABLED at {tc.modified}"
             )
-            raise Http404("provider metadata not found.")
+            raise InvalidTrustchain(f"{tc} found but DISABLED at {tc.modified}")
         elif tc.is_expired:
             logger.warning(
                 f"{tc} found but expired at {tc.exp}"
@@ -112,17 +110,35 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
     returns a Http Redirect
     """
 
+    error_template = "rp_error.html"
+
     def get(self, request, *args, **kwargs):
         """
             http://localhost:8001/oidc/rp/authorization?
             provider=http://127.0.0.1:8002/
         """
-        tc = self.get_oidc_op(request)
+        try:
+            tc = self.get_oidc_op(request)
+        except InvalidTrustchain as exc:
+            context = {
+                "error":_("Request rejected"),
+                "error_description": _(str(exc.args))
+            }
+            return render(request, self.error_template, context)
+
         if not tc:
-            raise Http404("Trust Chain is unavailable.")
+            context = {
+                "error":_("Request rejected"),
+                "error_description": "Trust Chain is unavailable."
+            }
+            return render(request, self.error_template, context)
         provider_metadata = tc.metadata
         if not provider_metadata:
-            raise Http404("provider metadata not found.")
+            context = {
+                "error":_("Request rejected"),
+                "error_description": _('provider metadata not found')
+            }
+            return render(request, self.error_template, context)
 
         entity_conf = FederationEntityConfiguration.objects.filter(
             entity_type = "openid_relying_party",
@@ -130,15 +146,22 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             # sub = request.build_absolute_uri()
         ).first()
         if not entity_conf:
-            raise Http404("Missing configuration.")
-
+            context = {
+                "error":_("Request rejected"),
+                "error_description": _("Missing configuration.")
+            }
+            return render(request, self.error_template, context)
+        
         client_conf = entity_conf.metadata['openid_relying_party']
-
         if not (
             provider_metadata.get("jwks_uri", None) or
             provider_metadata.get("jwks", None)
-        ):
-            raise HttpResponseForbidden("Invalid provider Metadata")
+        ):  
+            context = {
+                "error":_("Request rejected"),
+                "error_description": _("Invalid provider Metadata.")
+            }
+            return render(request, self.error_template, context)
 
         if provider_metadata.get("jwks", None):
             jwks_dict = provider_metadata["jwks"]
@@ -149,7 +172,11 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
         if not jwks_dict:
             _msg = f"Failed to get jwks from {tc.sub}"
             logger.error(f"{_msg}:")
-            return HttpResponseBadRequest(_(_msg))
+            context = {
+                "error":_("Request rejected"),
+                "error_description": _(f"{_msg}:")
+            }
+            return render(request, self.error_template, context)
 
         authz_endpoint = provider_metadata["authorization_endpoint"]
 
@@ -233,7 +260,6 @@ class SpidCieOidcRpCallbackView(
 
 
     """
-
     error_template = "rp_error.html"
 
     def user_reunification(self, user_attrs: dict, client_conf: dict):
@@ -257,7 +283,6 @@ class SpidCieOidcRpCallbackView(
         request_args = {k: v for k, v in request.GET.items()}
 
         # TODO
-        # breakpoint()
         if 'error' in request_args:
             return render(request, self.error_template, request_args)
 
@@ -265,6 +290,7 @@ class SpidCieOidcRpCallbackView(
             state = request_args.get("state"),
         )
         if not authz:
+            # render?
             return HttpResponseBadRequest(_("Unsolicited response"))
         else:
             authz = authz.last()
@@ -272,6 +298,7 @@ class SpidCieOidcRpCallbackView(
         authz_data = json.loads(authz.data)
         provider_conf = authz.get_provider_configuration()
 
+        # non si controlla se c'è o no il code
         code = request.GET.get("code")
         authz_token = OidcAuthenticationToken.objects.create(
             authz_request=authz, code=code
@@ -280,6 +307,15 @@ class SpidCieOidcRpCallbackView(
         rp_conf = FederationEntityConfiguration.objects.get(
             sub = authz_token.authz_request.client_id
         )
+
+        if not rp_conf:
+            context = {
+                "error":_("Request rejected"),
+                "error_description": _("Missing configuration.")
+            }
+            return render(request, self.error_template, context)
+        
+        client_conf = rp_conf.metadata['openid_relying_party']
 
         token_request = self.access_token_request(
             redirect_uri=authz_data["redirect_uri"],
