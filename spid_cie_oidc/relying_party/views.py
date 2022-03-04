@@ -284,7 +284,6 @@ class SpidCieOidcRpCallbackView(
             return user
 
     def get_jwk(access_token, provider_jwks):
-        breakpoint()
         head = unpad_jwt_head(access_token)
         kid = head["kid"]
         jwk = {}
