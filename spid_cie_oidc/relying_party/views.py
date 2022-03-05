@@ -377,14 +377,13 @@ class SpidCieOidcRpCallbackView(
                 "error_description": _("Authentication token seems not to be valid.")
             }
             return render(request, self.error_template, context, status=403)
-
         if not verify_jws(access_token, op_ac_jwk):
             pass
             # Actually AgID Login have a non-JWT access token!
             # return HttpResponseBadRequest(
             # _('Authentication response validation error.')
             # )
-        if not verify_jws(id_token, op_id_jwk):
+        if not verify_jws(access_token, op_id_jwk):
             # TODO: verify error message
             context = {
                 "error":_("Not valid authentication token"),
