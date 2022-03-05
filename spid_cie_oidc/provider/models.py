@@ -14,8 +14,7 @@ class OidcSession(TimeStampedModel):
 
     user_uid = models.CharField(max_length=120)
     user = models.ForeignKey(
-        get_user_model(), on_delete=models.CASCADE,
-        blank=False, null=False
+        get_user_model(), on_delete=models.CASCADE, blank=False, null=False
     )
     client_id = models.URLField(blank=True, null=True)
 
@@ -23,7 +22,7 @@ class OidcSession(TimeStampedModel):
     authz_request = models.JSONField(max_length=2048, blank=False, null=False)
 
     revoked = models.BooleanField(default=False)
-    auth_code = models.CharField(max_length=2048, blank=False, null= False)
+    auth_code = models.CharField(max_length=2048, blank=False, null=False)
 
     def pairwised_sub(self):
         return hashlib.sha256(
@@ -39,9 +38,9 @@ class OidcSession(TimeStampedModel):
         return "{} {}".format(self.user_uid, self.auth_code)
 
     class Meta:
-        verbose_name = ('User Session')
-        verbose_name_plural = ('User Sessions')
-        unique_together = (('client_id', 'nonce'))
+        verbose_name = "User Session"
+        verbose_name_plural = "User Sessions"
+        unique_together = ("client_id", "nonce")
 
 
 class IssuedToken(TimeStampedModel):
@@ -53,8 +52,8 @@ class IssuedToken(TimeStampedModel):
     revoked = models.BooleanField(default=False)
 
     class Meta:
-        verbose_name = ('Issued Token')
-        verbose_name_plural = ('Issued Tokens')
+        verbose_name = "Issued Token"
+        verbose_name_plural = "Issued Tokens"
 
     @property
     def client_id(self):
@@ -65,6 +64,4 @@ class IssuedToken(TimeStampedModel):
         return self.session.user_uid
 
     def __str__(self):
-        return "{} @ {}".format(
-            self.session__user_uid, self.session__client_id
-        )
+        return "{} @ {}".format(self.session__user_uid, self.session__client_id)

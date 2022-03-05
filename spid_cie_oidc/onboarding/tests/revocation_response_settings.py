@@ -1,9 +1,8 @@
-
 from copy import deepcopy
 
 REVOCATION_RESPONSE_CIE = {
     "error": "unauthorized_client",
-    "error_description": "description of the error"
+    "error_description": "description of the error",
 }
 
 REVOCATION_RESPONSE_CIE_NO_ERROR = deepcopy(REVOCATION_RESPONSE_CIE)
@@ -16,4 +15,6 @@ REVOCATION_RESPONSE_CIE_NO_ERROR_DESCRIPTION = deepcopy(REVOCATION_RESPONSE_CIE)
 REVOCATION_RESPONSE_CIE_NO_ERROR_DESCRIPTION.pop("error_description")
 
 REVOCATION_RESPONSE_CIE_NO_CORRECT_ERROR_DESCRIPTION = deepcopy(REVOCATION_RESPONSE_CIE)
-REVOCATION_RESPONSE_CIE_NO_CORRECT_ERROR_DESCRIPTION["error_description"] = ["error description"]
+REVOCATION_RESPONSE_CIE_NO_CORRECT_ERROR_DESCRIPTION["error_description"] = [
+    "error description"
+]

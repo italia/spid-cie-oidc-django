@@ -4,22 +4,21 @@ from django.utils.translation import gettext_lazy as _
 
 class AuthLoginForm(forms.Form):
     """
-        The User Authentication Form for an Authorized request
+    The User Authentication Form for an Authorized request
     """
+
     username = forms.CharField(
-        initial='',
-        label= _("Username"),
-        error_messages={'required' : _('Enter your username')}
+        initial="",
+        label=_("Username"),
+        error_messages={"required": _("Enter your username")},
     )
     password = forms.CharField(
         initial="",
         label=_("Password"),
         error_messages={"required": _("Enter your password")},
-        widget=forms.PasswordInput()
+        widget=forms.PasswordInput(),
     )
-    authz_request_object = forms.CharField(
-        widget=forms.HiddenInput()
-    )
+    authz_request_object = forms.CharField(widget=forms.HiddenInput())
 
     # when a prue SSO will be enabled.
     # forget_agreement = forms.BooleanField(label=_("Delete previous agreement"),
@@ -31,7 +30,4 @@ class AuthLoginForm(forms.Form):
 
 
 class ConsentPageForm(forms.Form):
-    agree = forms.BooleanField(
-        initial = True,
-        widget=forms.HiddenInput()
-    )
+    agree = forms.BooleanField(initial=True, widget=forms.HiddenInput())

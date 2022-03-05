@@ -9,24 +9,21 @@ from spid_cie_oidc.entity.jwks import (
     create_jwk,
     serialize_rsa_key,
     private_pem_from_jwk,
-    public_pem_from_jwk
+    public_pem_from_jwk,
 )
 from spid_cie_oidc.entity.jwtse import create_jws
 from spid_cie_oidc.entity.validators import validate_public_jwks
 from spid_cie_oidc.entity.settings import FEDERATION_DEFAULT_EXP
 from spid_cie_oidc.entity.statements import EntityConfiguration
-from spid_cie_oidc.entity.utils import (
-    exp_from_now,
-    iat_now
-)
+from spid_cie_oidc.entity.utils import exp_from_now, iat_now
 
 from spid_cie_oidc.provider.settings import (
     OIDCFED_PROVIDER_PROFILES,
-    OIDCFED_DEFAULT_PROVIDER_PROFILE
+    OIDCFED_DEFAULT_PROVIDER_PROFILE,
 )
 from spid_cie_oidc.relying_party.settings import (
     RP_DEFAULT_PROVIDER_PROFILES,
-    RP_PROVIDER_PROFILES
+    RP_PROVIDER_PROFILES,
 )
 
 import json
@@ -137,7 +134,7 @@ class FederationEntityConfiguration(TimeStampedModel):
         blank=True,
         default="openid_relying_party",
         choices=[(i, i) for i in ENTITY_TYPES],
-        help_text=_("OpenID Connect Federation entity type")
+        help_text=_("OpenID Connect Federation entity type"),
     )
     metadata = models.JSONField(
         blank=False,
@@ -323,8 +320,7 @@ class FetchedEntityStatement(TimeStampedModel):
     iat = models.DateTimeField()
 
     statement = models.JSONField(
-        blank=False, null=False,
-        help_text=_("Entity statement"), default=dict
+        blank=False, null=False, help_text=_("Entity statement"), default=dict
     )
     jwt = models.CharField(max_length=2048)
 
@@ -337,9 +333,7 @@ class FetchedEntityStatement(TimeStampedModel):
 
     @property
     def is_expired(self):
-        return (
-            self.exp <= timezone.localtime()
-        )
+        return self.exp <= timezone.localtime()
 
     def __str__(self):
         return f"{self.sub} issued by {self.iss}"
@@ -353,17 +347,15 @@ class TrustChain(TimeStampedModel):
     sub = models.URLField(
         max_length=255,
         blank=False,
-        help_text=_("URL that identifies this Entity in the Federation. ")
+        help_text=_("URL that identifies this Entity in the Federation. "),
     )
-    trust_anchor = models.ForeignKey(
-        FetchedEntityStatement, on_delete=models.CASCADE
-    )
+    trust_anchor = models.ForeignKey(FetchedEntityStatement, on_delete=models.CASCADE)
     type = models.CharField(
         max_length=33,
         blank=True,
         default="openid_provider",
         choices=[(i, i) for i in ENTITY_TYPES],
-        help_text=_("OpenID Connect Federation entity type")
+        help_text=_("OpenID Connect Federation entity type"),
     )
     exp = models.DateTimeField()
     iat = models.DateTimeField(auto_now_add=True)
@@ -372,7 +364,7 @@ class TrustChain(TimeStampedModel):
         help_text=_(
             "A list of entity statements collected during the metadata discovery"
         ),
-        default=list
+        default=list,
     )
     metadata = models.JSONField(
         blank=True,
@@ -380,41 +372,33 @@ class TrustChain(TimeStampedModel):
         help_text=_(
             "The final metadata applied with the metadata policy built over the chain"
         ),
-        default=dict
+        default=dict,
     )
     trust_marks = models.JSONField(
-        blank=True,
-        help_text=_("verified trust marks"),
-        default=list
+        blank=True, help_text=_("verified trust marks"), default=list
     )
     parties_involved = models.JSONField(
         blank=True,
         help_text=_("subjects involved in the metadata discovery"),
-        default=list
+        default=list,
     )
     status = models.CharField(
         max_length=33,
         default="unreachable",
         help_text=_("Status of this trust chain, on each update."),
-        choices=[(i, i) for i in list(ENTITY_STATUS.keys())]
+        choices=[(i, i) for i in list(ENTITY_STATUS.keys())],
     )
-    log = models.TextField(
-        blank=True,
-        help_text=_("status log"),
-        default=""
-    )
+    log = models.TextField(blank=True, help_text=_("status log"), default="")
     processing_start = models.DateTimeField(
         help_text=_(
             "When the metadata discovery started for this Trust Chain. "
             "It should prevent concurrent processing for the same sub/type."
         ),
-        default=timezone.localtime
+        default=timezone.localtime,
     )
     is_active = models.BooleanField(
         default=True,
-        help_text=_(
-            "If you need to disable the trust to this subject, uncheck this"
-        )
+        help_text=_("If you need to disable the trust to this subject, uncheck this"),
     )
 
     class Meta:
@@ -428,9 +412,7 @@ class TrustChain(TimeStampedModel):
 
     @property
     def is_expired(self):
-        return (
-            self.exp <= timezone.localtime()
-        )
+        return self.exp <= timezone.localtime()
 
     @property
     def iat_as_timestamp(self):

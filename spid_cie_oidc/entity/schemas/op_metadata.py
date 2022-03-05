@@ -16,12 +16,12 @@ class ScopeSupported(str, Enum):
 
 
 class ResponseModesSupported(str, Enum):
-    form_post = "form_post",
+    form_post = ("form_post",)
     query = "query"
 
 
 class GrantTypeSupported(str, Enum):
-    refresh_token = "refresh_token" # nosec - B105
+    refresh_token = "refresh_token"  # nosec - B105
     authorization_code = "authorization_code"
 
 
@@ -80,10 +80,16 @@ class ClaimsSupported(str, Enum):
     place_of_birth = "place_of_birth"
     address = "address"
     document_details = "document_details"
-    https_attributes_eid_gov_it_e_delivery_service = "https://attributes.eid.gov.it/e_delivery_service"
-    https_attributes_eid_gov_it_fiscal_number = "https://attributes.eid.gov.it/fiscal_number"
+    https_attributes_eid_gov_it_e_delivery_service = (
+        "https://attributes.eid.gov.it/e_delivery_service"
+    )
+    https_attributes_eid_gov_it_fiscal_number = (
+        "https://attributes.eid.gov.it/fiscal_number"
+    )
     https_attributes_eid_gov_it_idANPR = "https://attributes.eid.gov.it/idANPR"
-    https_attributes_eid_gov_it_physical_phone_number = "https://attributes.eid.gov.it/physical_phone_number"
+    https_attributes_eid_gov_it_physical_phone_number = (
+        "https://attributes.eid.gov.it/physical_phone_number"
+    )
 
 
 class OPMetadata(BaseModel):
@@ -122,11 +128,11 @@ class OPMetadataCie(OPMetadata):
 
     @validator("jwks_uri")
     def validate_jwks_uri(cls, jwks_uri, values):
-        if (jwks_uri != JWKS_URI_CIE):
-            raise ValueError('jwks_uri no correct')
+        if jwks_uri != JWKS_URI_CIE:
+            raise ValueError("jwks_uri no correct")
         jwks = values.get("jwks")
-        if (jwks_uri and jwks):
-            raise ValueError('jwks MUST NOT indicate')
+        if jwks_uri and jwks:
+            raise ValueError("jwks MUST NOT indicate")
 
 
 class OPMetadataSpid(OPMetadata):
@@ -140,8 +146,8 @@ class OPMetadataSpid(OPMetadata):
 
     @validator("jwks_uri")
     def validate_jwks_uri(cls, jwks_uri, values):
-        if (jwks_uri != JWKS_URI_CIE):
-            raise ValueError('jwks no correct')
+        if jwks_uri != JWKS_URI_CIE:
+            raise ValueError("jwks no correct")
         jwks = values.get("jwks")
-        if (jwks_uri and jwks):
-            raise ValueError('jwks MUST NOT indicate')
+        if jwks_uri and jwks:
+            raise ValueError("jwks MUST NOT indicate")

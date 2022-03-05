@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 class OAuth2AuthorizationCodeGrant(object):
     """
-        https://tools.ietf.org/html/rfc6749
+    https://tools.ietf.org/html/rfc6749
     """
 
     def access_token_request(
@@ -25,7 +25,7 @@ class OAuth2AuthorizationCodeGrant(object):
         client_conf: FederationEntityConfiguration,
         token_endpoint_url: str,
         audience: list,
-        code_verifier: str = None
+        code_verifier: str = None,
     ):
         """
         Access Token Request
@@ -37,30 +37,29 @@ class OAuth2AuthorizationCodeGrant(object):
             client_id=client_conf.sub,
             state=state,
             code=code,
-            code_verifier = code_verifier,
-
+            code_verifier=code_verifier,
             # here private_key_jwt
             client_assertion_type="urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-            client_assertion = create_jws(
+            client_assertion=create_jws(
                 {
                     "iss": client_conf.sub,
                     "sub": client_conf.sub,
                     "aud": [token_endpoint_url],
                     "iat": iat_now(),
                     "exp": exp_from_now(),
-                    "jti": str(uuid.uuid4())
+                    "jti": str(uuid.uuid4()),
                 },
-                jwk_dict = client_conf.jwks[0]
-            )
+                jwk_dict=client_conf.jwks[0],
+            ),
         )
 
         logger.debug(f"Access Token Request for {state}: {grant_data} ")
 
         token_request = requests.post(
             token_endpoint_url,
-            data = grant_data,
-            verify = HTTPC_PARAMS['connection']['ssl'],
-            timeout = HTTPC_TIMEOUT
+            data=grant_data,
+            verify=HTTPC_PARAMS["connection"]["ssl"],
+            timeout=HTTPC_TIMEOUT,
         )
 
         if token_request.status_code != 200:

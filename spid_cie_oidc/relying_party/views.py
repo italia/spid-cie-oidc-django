@@ -1,4 +1,3 @@
-
 import json
 import logging
 from copy import deepcopy
@@ -18,12 +17,10 @@ from spid_cie_oidc.entity.exceptions import InvalidTrustchain
 from spid_cie_oidc.entity.jwtse import (
     create_jws,
     unpad_jwt_head,
-    unpad_jwt_payload, verify_jws
+    unpad_jwt_payload,
+    verify_jws,
 )
-from spid_cie_oidc.entity.models import (
-    FederationEntityConfiguration,
-    TrustChain
-)
+from spid_cie_oidc.entity.models import FederationEntityConfiguration, TrustChain
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.statements import get_http_url
 from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
@@ -33,25 +30,30 @@ from .models import OidcAuthentication, OidcAuthenticationToken
 from .oauth2 import *
 from .oidc import *
 from .settings import (
-    RP_ATTR_MAP, RP_PKCE_CONF,
+    RP_ATTR_MAP,
+    RP_PKCE_CONF,
     RP_REQUEST_CLAIM_BY_PROFILE,
     RP_USER_CREATE,
-    RP_USER_LOOKUP_FIELD
+    RP_USER_LOOKUP_FIELD,
 )
-from .utils import (http_dict_to_redirect_uri_path, http_redirect_uri_to_dict,
-                    process_user_attributes, random_string)
+from .utils import (
+    http_dict_to_redirect_uri_path,
+    http_redirect_uri_to_dict,
+    process_user_attributes,
+    random_string,
+)
 
 logger = logging.getLogger(__name__)
 
 
 class SpidCieOidcRp:
     """
-        Baseclass with common methods for RPs
+    Baseclass with common methods for RPs
     """
 
-    def get_jwks_from_jwks_uri(self, jwks_uri:str) -> dict:
+    def get_jwks_from_jwks_uri(self, jwks_uri: str) -> dict:
         """
-            get jwks
+        get jwks
         """
         try:
             jwks_dict = get_http_url([jwks_uri], httpc_params=HTTPC_PARAMS).json()
@@ -65,48 +67,37 @@ class SpidCieOidcRp:
         get available trust to a specific OP
         """
         if not request.GET.get("provider", None):
-            logger.warning(f"Missing provider url. "
-                           "Please try '?provider=https://provider-subject/'"
+            logger.warning(
+                "Missing provider url. Please try '?provider=https://provider-subject/'"
             )
             raise InvalidTrustchain(
-                f"Missing provider url. "
-                "Please try '?provider=https://provider-subject/'"
+                "Missing provider url. Please try '?provider=https://provider-subject/'"
             )
 
-        trust_anchor = request.GET.get(
-            "trust_anchor", settings.OIDCFED_TRUST_ANCHOR
-        )
+        trust_anchor = request.GET.get("trust_anchor", settings.OIDCFED_TRUST_ANCHOR)
         if trust_anchor not in settings.OIDCFED_TRUST_ANCHORS:
-            logger.warning(
-                f"Unallowed Trust Anchor"
-            )
-            raise InvalidTrustchain(f"Unallowed Trust Anchor")
+            logger.warning("Unallowed Trust Anchor")
+            raise InvalidTrustchain("Unallowed Trust Anchor")
 
         tc = TrustChain.objects.filter(
-            sub = request.GET["provider"],
-            trust_anchor__sub = trust_anchor,
+            sub=request.GET["provider"],
+            trust_anchor__sub=trust_anchor,
         ).first()
         if not tc:
-            logger.info(
-                f'Trust Chain not found for {request.GET["provider"]}'
-            )
+            logger.info(f'Trust Chain not found for {request.GET["provider"]}')
         elif not tc.is_active:
-            logger.warning(
-                f"{tc} found but DISABLED at {tc.modified}"
-            )
+            logger.warning(f"{tc} found but DISABLED at {tc.modified}")
             raise InvalidTrustchain(f"{tc} found but DISABLED at {tc.modified}")
         elif tc.is_expired:
-            logger.warning(
-                f"{tc} found but expired at {tc.exp}"
-            )
+            logger.warning(f"{tc} found but expired at {tc.exp}")
             logger.warning("We should try to renew the trust chain")
             tc = get_or_create_trust_chain(
-                    subject = tc.sub,
-                    trust_anchor = trust_anchor,
-                    # TODO
-                    # required_trust_marks: list = [],
-                    metadata_type = "openid_provider",
-                    force = True
+                subject=tc.sub,
+                trust_anchor=trust_anchor,
+                # TODO
+                # required_trust_marks: list = [],
+                metadata_type="openid_provider",
+                force=True,
             )
         return tc
 
@@ -120,75 +111,71 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
 
     def get(self, request, *args, **kwargs):
         """
-            http://localhost:8001/oidc/rp/authorization?
-            provider=http://127.0.0.1:8002/
+        http://localhost:8001/oidc/rp/authorization?
+        provider=http://127.0.0.1:8002/
         """
         try:
             tc = self.get_oidc_op(request)
         except InvalidTrustchain as exc:
             context = {
-                "error":_("Request rejected"),
-                "error_description": _(str(exc.args))
+                "error": _("Request rejected"),
+                "error_description": _(str(exc.args)),
             }
             return render(request, self.error_template, context)
 
         if not tc:
             context = {
-                "error":_("Request rejected"),
-                "error_description": "Trust Chain is unavailable."
+                "error": _("Request rejected"),
+                "error_description": "Trust Chain is unavailable.",
             }
             return render(request, self.error_template, context)
         provider_metadata = tc.metadata
         if not provider_metadata:
             context = {
-                "error":_("Request rejected"),
-                "error_description": _('provider metadata not found')
+                "error": _("Request rejected"),
+                "error_description": _("provider metadata not found"),
             }
             return render(request, self.error_template, context)
 
         entity_conf = FederationEntityConfiguration.objects.filter(
-            entity_type = "openid_relying_party",
+            entity_type="openid_relying_party",
             # TODO: RPs multitenancy?
             # sub = request.build_absolute_uri()
         ).first()
         if not entity_conf:
             context = {
-                "error":_("Request rejected"),
-                "error_description": _("Missing configuration.")
+                "error": _("Request rejected"),
+                "error_description": _("Missing configuration."),
             }
             return render(request, self.error_template, context)
 
-        client_conf = entity_conf.metadata['openid_relying_party']
+        client_conf = entity_conf.metadata["openid_relying_party"]
         if not (
-            provider_metadata.get("jwks_uri", None) or
-            provider_metadata.get("jwks", None)
+            provider_metadata.get("jwks_uri", None)
+            or provider_metadata.get("jwks", None)
         ):
             context = {
-                "error":_("Request rejected"),
-                "error_description": _("Invalid provider Metadata.")
+                "error": _("Request rejected"),
+                "error_description": _("Invalid provider Metadata."),
             }
             return render(request, self.error_template, context)
 
         if provider_metadata.get("jwks", None):
             jwks_dict = provider_metadata["jwks"]
         else:
-            jwks_dict = self.get_jwks_from_jwks_uri(
-                provider_metadata["jwks_uri"]
-            )
+            jwks_dict = self.get_jwks_from_jwks_uri(provider_metadata["jwks_uri"])
         if not jwks_dict:
             _msg = f"Failed to get jwks from {tc.sub}"
             logger.error(f"{_msg}:")
             context = {
-                "error":_("Request rejected"),
-                "error_description": _(f"{_msg}:")
+                "error": _("Request rejected"),
+                "error_description": _(f"{_msg}:"),
             }
             return render(request, self.error_template, context)
 
         authz_endpoint = provider_metadata["authorization_endpoint"]
 
-        redirect_uri = request.GET.get(
-            "redirect_uri", client_conf["redirect_uris"][0]
-        )
+        redirect_uri = request.GET.get("redirect_uri", client_conf["redirect_uris"][0])
         if redirect_uri not in client_conf["redirect_uris"]:
             redirect_uri = client_conf["redirect_uris"][0]
 
@@ -200,14 +187,10 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             state=random_string(32),
             client_id=client_conf["client_id"],
             endpoint=authz_endpoint,
-            acr_values = request.GET.get(
-                "acr_values", AcrValuesSpid.l2.value
-            ),
-            iat = int(timezone.localtime().timestamp()),
-            aud = [tc.sub, authz_endpoint],
-            claims = RP_REQUEST_CLAIM_BY_PROFILE[
-                request.GET.get('profile', 'spid')
-            ]
+            acr_values=request.GET.get("acr_values", AcrValuesSpid.l2.value),
+            iat=int(timezone.localtime().timestamp()),
+            aud=[tc.sub, authz_endpoint],
+            claims=RP_REQUEST_CLAIM_BY_PROFILE[request.GET.get("profile", "spid")],
         )
 
         _prompt = request.GET.get("prompt", "consent login")
@@ -232,7 +215,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             provider_id=tc.sub,
             data=json.dumps(authz_data),
             provider_jwks=json.dumps(jwks_dict),
-            provider_configuration=json.dumps(provider_metadata)
+            provider_configuration=json.dumps(provider_metadata),
         )
 
         # TODO: Prune the old or unbounded authz ...
@@ -241,11 +224,9 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
         authz_data.pop("code_verifier")
         # add the signed request object
         authz_data_obj = deepcopy(authz_data)
-        authz_data_obj["iss"] = client_conf['client_id']
-        authz_data_obj["sub"] = client_conf['client_id']
-        request_obj = create_jws(
-            authz_data_obj, entity_conf.jwks[0]
-        )
+        authz_data_obj["iss"] = client_conf["client_id"]
+        authz_data_obj["sub"] = client_conf["client_id"]
+        request_obj = create_jws(authz_data_obj, entity_conf.jwks[0])
         authz_data["request"] = request_obj
         uri_path = http_dict_to_redirect_uri_path(authz_data)
         url = "?".join((authz_endpoint, uri_path))
@@ -254,9 +235,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
         return HttpResponseRedirect(url)
 
 
-class SpidCieOidcRpCallbackView(
-    View, OidcUserInfo, OAuth2AuthorizationCodeGrant
-):
+class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant):
     """
     View which processes an Authorization Response
     https://tools.ietf.org/html/rfc6749#section-4.1.2
@@ -266,11 +245,14 @@ class SpidCieOidcRpCallbackView(
 
 
     """
+
     error_template = "rp_error.html"
 
     def user_reunification(self, user_attrs: dict, client_conf: dict):
         user_model = get_user_model()
-        lookup = {f"attributes__{RP_USER_LOOKUP_FIELD}": user_attrs[RP_USER_LOOKUP_FIELD]}
+        lookup = {
+            f"attributes__{RP_USER_LOOKUP_FIELD}": user_attrs[RP_USER_LOOKUP_FIELD]
+        }
         user = user_model.objects.filter(**lookup).first()
         if user:
             user.attributes.update(user_attrs)
@@ -279,16 +261,16 @@ class SpidCieOidcRpCallbackView(
             return user
         elif RP_USER_CREATE:
             user = user_model.objects.create(
-                username = user_attrs.get('username', user_attrs['sub']),
-                first_name = user_attrs.get('given_name', user_attrs['sub']),
-                surname = user_attrs.get('family_name', user_attrs['sub']),
-                email = user_attrs.get('email', ""),
-                attributes = user_attrs
+                username=user_attrs.get("username", user_attrs["sub"]),
+                first_name=user_attrs.get("given_name", user_attrs["sub"]),
+                surname=user_attrs.get("family_name", user_attrs["sub"]),
+                email=user_attrs.get("email", ""),
+                attributes=user_attrs,
             )
             logger.info(f"Created new user {user}")
             return user
 
-    def get_jwk_from_jwt(self, jwt:str, provider_jwks:dict) -> dict:
+    def get_jwk_from_jwt(self, jwt: str, provider_jwks: dict) -> dict:
         head = unpad_jwt_head(jwt)
         kid = head["kid"]
         for jwk in provider_jwks:
@@ -301,17 +283,17 @@ class SpidCieOidcRpCallbackView(
         docs here
         """
         request_args = {k: v for k, v in request.GET.items()}
-        if 'error' in request_args:
+        if "error" in request_args:
             return render(request, self.error_template, request_args, status=401)
 
         authz = OidcAuthentication.objects.filter(
-            state = request_args.get("state"),
+            state=request_args.get("state"),
         )
         if not authz:
             # TODO: verify error message and status
             context = {
-                "error":_("Request unauthorized"),
-                "error_description": _("Authentication not found")
+                "error": _("Request unauthorized"),
+                "error_description": _("Authentication not found"),
             }
             return render(request, self.error_template, context, status=401)
         else:
@@ -324,8 +306,8 @@ class SpidCieOidcRpCallbackView(
         if not code:
             # TODO: verify error message and status
             context = {
-                "error":_("Invalid request"),
-                "error_description": _("Request MUST contain code")
+                "error": _("Invalid request"),
+                "error_description": _("Request MUST contain code"),
             }
             return render(request, self.error_template, context, status=400)
 
@@ -333,18 +315,18 @@ class SpidCieOidcRpCallbackView(
             authz_request=authz, code=code
         )
         self.rp_conf = FederationEntityConfiguration.objects.get(
-            sub = authz_token.authz_request.client_id
+            sub=authz_token.authz_request.client_id
         )
 
         if not self.rp_conf:
             # TODO: verify error message and status
             context = {
-                "error":_("Invalid request"),
-                "error_description": _("Relay party not found")
+                "error": _("Invalid request"),
+                "error_description": _("Relay party not found"),
             }
             return render(request, self.error_template, context, status=400)
 
-        client_conf = self.rp_conf.metadata['openid_relying_party']
+        client_conf = self.rp_conf.metadata["openid_relying_party"]
         token_response = self.access_token_request(
             redirect_uri=authz_data["redirect_uri"],
             state=authz.state,
@@ -352,22 +334,22 @@ class SpidCieOidcRpCallbackView(
             issuer_id=authz.provider_id,
             client_conf=self.rp_conf,
             token_endpoint_url=provider_conf["token_endpoint"],
-            audience = [authz.provider_id],
+            audience=[authz.provider_id],
             code_verifier=authz_data.get("code_verifier"),
         )
         if not token_response:
             # TODO: verify error message
             context = {
-                "error":_("Not valid token response"),
-                "error_description": _("Token response seems not to be valid")
+                "error": _("Not valid token response"),
+                "error_description": _("Token response seems not to be valid"),
             }
             return render(request, self.error_template, context, status=400)
         # da verificare
         entity_conf = FederationEntityConfiguration.objects.filter(
-            entity_type = "openid_provider",
+            entity_type="openid_provider",
         ).first()
 
-        op_conf = entity_conf.metadata['openid_provider']
+        op_conf = entity_conf.metadata["openid_provider"]
         jwks = op_conf["jwks"]["keys"]
         ###################
         access_token = token_response["access_token"]
@@ -377,8 +359,8 @@ class SpidCieOidcRpCallbackView(
         if not op_ac_jwk or not op_id_jwk:
             # TODO: verify error message and status
             context = {
-                "error":_("Not valid authentication token"),
-                "error_description": _("Authentication token seems not to be valid.")
+                "error": _("Not valid authentication token"),
+                "error_description": _("Authentication token seems not to be valid."),
             }
             return render(request, self.error_template, context, status=403)
         if not verify_jws(access_token, op_ac_jwk):
@@ -390,8 +372,8 @@ class SpidCieOidcRpCallbackView(
         if not verify_jws(access_token, op_id_jwk):
             # TODO: verify error message
             context = {
-                "error":_("Not valid authentication token"),
-                "error_description": _("Authentication token validation error.")
+                "error": _("Not valid authentication token"),
+                "error_description": _("Authentication token validation error."),
             }
             return render(request, self.error_template, context, status=403)
 
@@ -417,8 +399,8 @@ class SpidCieOidcRpCallbackView(
         if not userinfo:
             # TODO: verify error message
             context = {
-                "error":_("Not valid UserInfo response"),
-                "error_description": _("UserInfo response seems not to be valid")
+                "error": _("Not valid UserInfo response"),
+                "error_description": _("UserInfo response seems not to be valid"),
             }
             return render(request, self.error_template, context, status=400)
 
@@ -429,18 +411,15 @@ class SpidCieOidcRpCallbackView(
             logger.warning(f"{_msg}: {userinfo}")
             # TODO: verify error message and status
             context = {
-                "error":_("No user attributes have been processed"),
-                "error_description": _(f"{_msg}: {userinfo}")
+                "error": _("No user attributes have been processed"),
+                "error_description": _(f"{_msg}: {userinfo}"),
             }
             return render(request, self.error_template, context, status=403)
-        
+
         user = self.user_reunification(user_attrs, client_conf)
         if not user:
             # TODO: verify error message and status
-            context = {
-                "error":_("No user found"),
-                "error_description": _("")
-            }
+            context = {"error": _("No user found"), "error_description": _("")}
             return render(request, self.error_template, context, status=403)
 
         # authenticate the user
@@ -450,7 +429,9 @@ class SpidCieOidcRpCallbackView(
         authz_token.save()
 
         return HttpResponseRedirect(
-            getattr(settings, "LOGIN_REDIRECT_URL", reverse("spid_cie_rp_echo_attributes"))
+            getattr(
+                settings, "LOGIN_REDIRECT_URL", reverse("spid_cie_rp_echo_attributes")
+            )
         )
 
 

@@ -6,18 +6,18 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('spid_cie_oidc_relying_party', '0001_initial'),
+        ("spid_cie_oidc_relying_party", "0001_initial"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='oidcauthentication',
-            old_name='issuer',
-            new_name='provider',
+            model_name="oidcauthentication",
+            old_name="issuer",
+            new_name="provider",
         ),
         migrations.RenameField(
-            model_name='oidcauthentication',
-            old_name='issuer_id',
-            new_name='provider_id',
+            model_name="oidcauthentication",
+            old_name="issuer_id",
+            new_name="provider_id",
         ),
     ]

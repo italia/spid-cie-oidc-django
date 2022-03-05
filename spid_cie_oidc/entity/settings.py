@@ -32,7 +32,7 @@ ENCRYPTION_ALG_VALUES_SUPPORTED = getattr(
         "ECDH-ES+A128KW",
         "ECDH-ES+A192KW",
         "ECDH-ES+A256KW",
-    ]
+    ],
 )
 
 # This is required in general project settings
@@ -58,7 +58,7 @@ HTTPC_PARAMS = getattr(
     {
         "connection": {"ssl": True},
         "session": {"timeout": aiohttp.ClientTimeout(total=HTTPC_TIMEOUT)},
-    }
+    },
 )
 
 # in minutes
@@ -71,6 +71,4 @@ OIDCFED_MAXIMUM_AUTHORITY_HINTS = getattr(
     2,
 )
 
-FEDERATION_DEFAULT_EXP = getattr(
-    settings, "FEDERATION_DEFAULT_EXP", 2880
-)
+FEDERATION_DEFAULT_EXP = getattr(settings, "FEDERATION_DEFAULT_EXP", 2880)

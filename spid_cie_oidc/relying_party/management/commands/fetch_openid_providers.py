@@ -12,28 +12,32 @@ logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
-    help = 'Attribute release query'
+    help = "Attribute release query"
 
     def add_arguments(self, parser):
-        parser.epilog = 'Example: ./manage.py fetch_openid_providers'
+        parser.epilog = "Example: ./manage.py fetch_openid_providers"
         parser.add_argument(
-            '--start', action="store_true", required=True,
+            "--start",
+            action="store_true",
+            required=True,
             help=_(
                 "Collect a trust chains for each openid_provider defined in "
                 "settings.OIDCFED_IDENTITY_PROVIDERS"
-            )
+            ),
         )
         parser.add_argument(
-            '-f', "--force", action="store_true", required=False,
-            help=_(
-                "Don't use already cached statements and chains"
-            )
+            "-f",
+            "--force",
+            action="store_true",
+            required=False,
+            help=_("Don't use already cached statements and chains"),
         )
-        parser.add_argument('-debug', required=False, action="store_true",
-                            help="see debug message")
+        parser.add_argument(
+            "-debug", required=False, action="store_true", help="see debug message"
+        )
 
     def handle(self, *args, **options):
-        if not options['start']:
+        if not options["start"]:
             return
 
         res = []
@@ -41,26 +45,22 @@ class Command(BaseCommand):
             logger.info(f"Fetching Entity Configuration for {op_sub}")
             try:
                 tc = get_or_create_trust_chain(
-                    subject = op_sub,
-                    trust_anchor = settings.OIDCFED_TRUST_ANCHOR,
-                    metadata_type = 'openid_provider',
-                    httpc_params = HTTPC_PARAMS,
-                    required_trust_marks = getattr(
-                        settings, 'OIDCFED_REQUIRED_TRUST_MARKS', []
+                    subject=op_sub,
+                    trust_anchor=settings.OIDCFED_TRUST_ANCHOR,
+                    metadata_type="openid_provider",
+                    httpc_params=HTTPC_PARAMS,
+                    required_trust_marks=getattr(
+                        settings, "OIDCFED_REQUIRED_TRUST_MARKS", []
                     ),
-                    force=options['force']
+                    force=options["force"],
                 )
                 if tc.is_valid:
                     res.append(tc)
 
-                logger.info(
-                    f"Final Metadata for {tc.sub}:\n\n{tc.metadata}"
-                )
+                logger.info(f"Final Metadata for {tc.sub}:\n\n{tc.metadata}")
 
             except Exception as e:
-                logger.error(
-                    f"Failed to download {op_sub} due to: {e}"
-                )
+                logger.error(f"Failed to download {op_sub} due to: {e}")
                 continue
 
         logger.info(f"Found {res}")

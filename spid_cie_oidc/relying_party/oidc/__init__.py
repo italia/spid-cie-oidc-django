@@ -1,13 +1,7 @@
-import json
 import logging
 import requests
 from spid_cie_oidc.entity.exceptions import UnknownKid
-from spid_cie_oidc.entity.jwtse import (
-    unpad_jwt_head, 
-    decrypt_jwe, 
-    unpad_jwt_payload, 
-    verify_jws
-)
+from spid_cie_oidc.entity.jwtse import unpad_jwt_head, decrypt_jwe, verify_jws
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +10,7 @@ class OidcUserInfo(object):
     """
     https://openid.net/specs/openid-connect-core-1_0.html#UserInfo
     """
+
     def get_jwk(self, kid, jwks):
         for jwk in jwks:
             if jwk["kid"] == kid:
@@ -35,7 +30,9 @@ class OidcUserInfo(object):
             provider_conf["userinfo_endpoint"], headers=headers, verify=verify
         )
         if authz_userinfo.status_code != 200:  # pragma: no cover
-            logger.error(f"Something went wrong with {state}: {authz_userinfo.status_code}")
+            logger.error(
+                f"Something went wrong with {state}: {authz_userinfo.status_code}"
+            )
             return False
         else:
             try:
@@ -47,7 +44,7 @@ class OidcUserInfo(object):
                 header = unpad_jwt_head(jws)
                 idp_jwks = provider_conf["jwks"]["keys"]
                 idp_jwk = self.get_jwk(header["kid"], idp_jwks)
-                
+
                 decoded_jwt = verify_jws(jws, idp_jwk)
                 logger.debug(f"Userinfo endpoint result: {decoded_jwt}")
                 return decoded_jwt

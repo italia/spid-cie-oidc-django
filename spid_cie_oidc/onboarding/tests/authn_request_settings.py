@@ -7,24 +7,24 @@ IAT = iat_now()
 EXP = exp_from_now()
 
 CLAIMS_SPID = {
-        "userinfo": {
-            "https://attributes.spid.gov.it/name": {"values": ["str", "str"]},
-            "https://attributes.spid.gov.it/familyName": None,
-            "https://attributes.spid.gov.it/dateOfBirth": {"value": "str"},
-        },
+    "userinfo": {
+        "https://attributes.spid.gov.it/name": {"values": ["str", "str"]},
+        "https://attributes.spid.gov.it/familyName": None,
+        "https://attributes.spid.gov.it/dateOfBirth": {"value": "str"},
+    },
 }
 
 CLAIMS_CIE = {
-        "userinfo": {
-            "given_name": {"values": ["str", "str"]},
-            "family_name": None,
-            "birthdate": {"value": "str"},
-        },
-        "id_token": {
-            "given_name": {"values": ["str", "str"]},
-            "family_name": None,
-            "birthdate": {"value": "str"},
-        },
+    "userinfo": {
+        "given_name": {"values": ["str", "str"]},
+        "family_name": None,
+        "birthdate": {"value": "str"},
+    },
+    "id_token": {
+        "given_name": {"values": ["str", "str"]},
+        "family_name": None,
+        "birthdate": {"value": "str"},
+    },
 }
 
 AUTHN_REQUEST_SPID = {
@@ -45,16 +45,16 @@ AUTHN_REQUEST_SPID = {
     "aud": ["https://rp.spid.agid.gov.it/auth"],
     "iat": IAT,
     "exp": EXP,
-    "jti": "a72d5df0-2415-4c7c-a44f-3988b354040b"
+    "jti": "a72d5df0-2415-4c7c-a44f-3988b354040b",
 }
 
 AUTHN_REQUEST_SPID_NO_CLIENT_ID = deepcopy(AUTHN_REQUEST_SPID)
 AUTHN_REQUEST_SPID_NO_CLIENT_ID.pop("client_id")
 
 AUTHN_REQUEST_SPID_NO_CORRECT_CLAIMS = deepcopy(AUTHN_REQUEST_SPID)
-AUTHN_REQUEST_SPID_NO_CORRECT_CLAIMS["claims"]["userinfo"]["https://attributes.spid.gov.it/name"]["values"] = [
-    "str"
-]
+AUTHN_REQUEST_SPID_NO_CORRECT_CLAIMS["claims"]["userinfo"][
+    "https://attributes.spid.gov.it/name"
+]["values"] = ["str"]
 
 AUTHN_REQUEST_SPID_NO_CODE_CHALLENGE = deepcopy(AUTHN_REQUEST_SPID)
 AUTHN_REQUEST_SPID_NO_CODE_CHALLENGE.pop("code_challenge")

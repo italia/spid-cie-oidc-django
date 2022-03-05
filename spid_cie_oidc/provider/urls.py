@@ -1,12 +1,7 @@
 from django.conf import settings
 from django.urls import path
 
-from .views import (
-    AuthzRequestView,
-    ConsentPageView,
-    TokenEndpoint,
-    UserInfoEndpoint
-)
+from .views import AuthzRequestView, ConsentPageView, TokenEndpoint, UserInfoEndpoint
 
 _PREF = getattr(settings, "OIDC_PREFIX", "oidc/op")
 

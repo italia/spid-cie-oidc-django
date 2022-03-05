@@ -7,23 +7,23 @@ import django.utils.timezone
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('spid_cie_oidc_provider', '0002_remove_oidcsession_user_claims'),
+        ("spid_cie_oidc_provider", "0002_remove_oidcsession_user_claims"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='oidcsession',
-            name='sub',
+            model_name="oidcsession",
+            name="sub",
         ),
         migrations.AddField(
-            model_name='issuedtoken',
-            name='expires',
+            model_name="issuedtoken",
+            name="expires",
             field=models.DateTimeField(default=django.utils.timezone.now),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='issuedtoken',
-            name='revoked',
+            model_name="issuedtoken",
+            name="revoked",
             field=models.BooleanField(default=False),
         ),
     ]

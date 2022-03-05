@@ -8,12 +8,12 @@ from spid_cie_oidc.entity.models import *
 from spid_cie_oidc.entity.trust_chain_operations import (
     dumps_statements_from_trust_chain_to_db,
     get_or_create_trust_chain,
-    trust_chain_builder
+    trust_chain_builder,
 )
 from spid_cie_oidc.entity.statements import (
     EntityConfiguration,
     get_entity_configurations,
-    TrustMark
+    TrustMark,
 )
 from spid_cie_oidc.entity.tests.settings import *
 
@@ -129,9 +129,9 @@ class TrustChainTest(TestCase):
         trust_chain = trust_chain_builder(
             subject=self.rp.sub,
             trust_anchor=trust_anchor_ec,
-            metadata_type="openid_relying_party"
+            metadata_type="openid_relying_party",
         )
-        
+
         self.assertTrue(trust_chain)
         self.assertTrue(trust_chain.final_metadata)
 
@@ -141,47 +141,42 @@ class TrustChainTest(TestCase):
 
         for ec in trust_chain.trust_path:
             self.assertTrue(ec.is_valid)
-        
+
         self.assertTrue(len(trust_chain.trust_path) == 3)
-        self.assertTrue(
-            (len(trust_chain.trust_path) - 2) == trust_chain.max_path_len
-        )
+        self.assertTrue((len(trust_chain.trust_path) - 2) == trust_chain.max_path_len)
 
         dumps = dumps_statements_from_trust_chain_to_db(trust_chain)
 
-        self.assertTrue(
-            isinstance(dumps, list) and len(dumps) == 5
+        self.assertTrue(isinstance(dumps, list) and len(dumps) == 5)
+
+        self.assertTrue("sub" in dumps[0].get_entity_configuration_as_obj().payload)
+
+        stored_trust_chain = TrustChain.objects.create(
+            sub=trust_chain.subject,
+            type=trust_chain.metadata_type,
+            exp=trust_chain.exp_datetime,
+            chain=trust_chain.serialize(),
+            metadata=trust_chain.final_metadata,
+            parties_involved=[i.sub for i in trust_chain.trust_path],
+            status="valid",
+            trust_anchor=FetchedEntityStatement.objects.get(
+                sub=trust_anchor_ec.sub, iss=trust_anchor_ec.sub
+            ),
+            is_active=True,
         )
 
-        self.assertTrue(
-            'sub' in dumps[0].get_entity_configuration_as_obj().payload
-        )
-        
-        stored_trust_chain = TrustChain.objects.create(
-            sub = trust_chain.subject,
-            type = trust_chain.metadata_type,
-            exp = trust_chain.exp_datetime,
-            chain = trust_chain.serialize(),
-            metadata = trust_chain.final_metadata,
-            parties_involved = [i.sub for i in trust_chain.trust_path],
-            status = 'valid',
-            trust_anchor = FetchedEntityStatement.objects.get(
-                sub = trust_anchor_ec.sub, iss = trust_anchor_ec.sub
-            ),
-            is_active = True
-        )
-        
     @override_settings(HTTP_CLIENT_SYNC=True)
     @patch("requests.get", return_value=EntityResponseWithIntermediateManyHints())
     def test_trust_chain_valid_with_intermediaries_many_authhints(self, mocked):
-        
+
         trust_anchor_ec = self._create_federation_with_intermediary()
 
         self.rp_conf.authority_hints = [
-            'http://intermediary-test', "http://that-faulty"
+            "http://intermediary-test",
+            "http://that-faulty",
         ]
         self.rp_conf.save()
-        
+
         trust_chain = trust_chain_builder(
             subject=self.rp.sub,
             trust_anchor=trust_anchor_ec,
@@ -192,53 +187,42 @@ class TrustChainTest(TestCase):
             self.assertTrue(ec.is_valid)
 
         self.assertTrue(len(trust_chain.trust_path) == 3)
-        self.assertTrue(
-            (len(trust_chain.trust_path) - 2) == trust_chain.max_path_len
-        )
+        self.assertTrue((len(trust_chain.trust_path) - 2) == trust_chain.max_path_len)
 
     @override_settings(HTTP_CLIENT_SYNC=True)
     @patch("requests.get", return_value=EntityResponseWithIntermediate())
     def test_trust_chain_valid_with_intermediaries_and_trust_mark_filter(self, mocked):
-        
+
         trust_anchor_ec = self._create_federation_with_intermediary()
 
         # the RP exposes a trust marks in its entity configuration
         self.rp_conf.trust_marks = [
-            FederationEntityAssignedProfile.objects.filter(
-                descendant=self.rp
-            ).first().trust_mark
+            FederationEntityAssignedProfile.objects.filter(descendant=self.rp)
+            .first()
+            .trust_mark
         ]
         self.rp_conf.save()
-        
+
         trust_chain = trust_chain_builder(
             subject=self.rp.sub,
             trust_anchor=trust_anchor_ec,
             metadata_type="openid_relying_party",
-            required_trust_marks = [
-                'https://www.spid.gov.it/certification/rp'
-            ]
+            required_trust_marks=["https://www.spid.gov.it/certification/rp"],
         )
 
         for ec in trust_chain.trust_path:
             self.assertTrue(ec.is_valid)
 
         self.assertTrue(trust_chain.verified_trust_marks)
-        self.assertTrue(
-            isinstance(
-                trust_chain.verified_trust_marks[0],
-                TrustMark
-            )
-        )
+        self.assertTrue(isinstance(trust_chain.verified_trust_marks[0], TrustMark))
 
         self.assertTrue(len(trust_chain.trust_path) == 3)
-        self.assertTrue(
-            (len(trust_chain.trust_path) - 2) == trust_chain.max_path_len
-        )
+        self.assertTrue((len(trust_chain.trust_path) - 2) == trust_chain.max_path_len)
 
     @override_settings(HTTP_CLIENT_SYNC=True)
     @patch("requests.get", return_value=EntityResponseWithIntermediate())
     def test_trust_chain_with_missing_trust_mark(self, mocked):
-        
+
         trust_anchor_ec = self._create_federation_with_intermediary()
 
         with self.assertRaises(InvalidRequiredTrustMark):
@@ -246,9 +230,7 @@ class TrustChainTest(TestCase):
                 subject=self.rp.sub,
                 trust_anchor=trust_anchor_ec,
                 metadata_type="openid_relying_party",
-                required_trust_marks = [
-                    'https://www.spid.gov.it/certification/rp'
-                ]
+                required_trust_marks=["https://www.spid.gov.it/certification/rp"],
             )
 
     @override_settings(HTTP_CLIENT_SYNC=True)
@@ -256,11 +238,11 @@ class TrustChainTest(TestCase):
     def test_trust_chain_valid_helpers(self, mocked):
 
         gctc = get_or_create_trust_chain(
-            subject = rp_conf["sub"],
-            trust_anchor = self.ta_conf.sub,
+            subject=rp_conf["sub"],
+            trust_anchor=self.ta_conf.sub,
             # TODO
-            #required_trust_marks: list = [],
-            metadata_type = "openid_relying_party"
+            # required_trust_marks: list = [],
+            metadata_type="openid_relying_party",
         )
 
         self.assertFalse(gctc.is_expired)
@@ -270,26 +252,19 @@ class TrustChainTest(TestCase):
     @patch("requests.get", return_value=EntityResponseNoIntermediate())
     def test_resolve_endpoint(self, mocked):
         gctc = get_or_create_trust_chain(
-            subject = rp_conf["sub"],
-            trust_anchor = self.ta_conf.sub,
+            subject=rp_conf["sub"],
+            trust_anchor=self.ta_conf.sub,
             # TODO
-            #required_trust_marks: list = [],
-            metadata_type = "openid_relying_party"
+            # required_trust_marks: list = [],
+            metadata_type="openid_relying_party",
         )
-        
+
         url = reverse("oidcfed_resolve")
 
         c = Client()
-        res = c.get(
-            url,
-            data={
-                "sub": self.rp.sub,
-                "anchor": self.ta_conf.sub
-            }
-        )
+        res = c.get(url, data={"sub": self.rp.sub, "anchor": self.ta_conf.sub})
         self.assertTrue(res.status_code == 200)
         verify_jws(res.content.decode(), self.ta_conf.jwks[0])
-
 
     def test_trust_mark_status_endpoint(self):
         url = reverse("oidcfed_trust_mark_status")
@@ -299,35 +274,35 @@ class TrustChainTest(TestCase):
             url,
             data={
                 "id": self.rp_assigned_profile.profile.profile_id,
-                "sub": self.rp_assigned_profile.descendant.sub
-            }
+                "sub": self.rp_assigned_profile.descendant.sub,
+            },
         )
         self.assertTrue(res.status_code == 200)
-        self.assertTrue(res.json() == {"active":True})
-        
-        res = c.get(
-            url,
-            data={
-                "trust_mark": self.rp_assigned_profile.trust_mark['trust_mark'],
-            }
-        )
-        self.assertTrue(res.status_code == 200)
-        self.assertTrue(res.json() == {"active":True})
+        self.assertTrue(res.json() == {"active": True})
 
         res = c.get(
             url,
             data={
-                "trust_mark": self.rp_assigned_profile.trust_mark['trust_mark'][1:],
-            }
+                "trust_mark": self.rp_assigned_profile.trust_mark["trust_mark"],
+            },
         )
         self.assertTrue(res.status_code == 200)
-        self.assertTrue(res.json() == {"active":False})
+        self.assertTrue(res.json() == {"active": True})
+
+        res = c.get(
+            url,
+            data={
+                "trust_mark": self.rp_assigned_profile.trust_mark["trust_mark"][1:],
+            },
+        )
+        self.assertTrue(res.status_code == 200)
+        self.assertTrue(res.json() == {"active": False})
 
         res = c.get(
             url,
             data={
                 "id": self.rp_assigned_profile.profile.profile_id,
-            }
+            },
         )
         self.assertTrue(res.status_code == 200)
-        self.assertTrue(res.json() == {"active":False})
+        self.assertTrue(res.json() == {"active": False})

@@ -2,12 +2,12 @@ import logging
 
 from typing import Union
 
-from . exceptions import InvalidTrustchain
-from . models import FetchedEntityStatement, TrustChain
-from . statements import EntityConfiguration, get_entity_configurations
-from . settings import HTTPC_PARAMS
-from . trust_chain import TrustChainBuilder
-from . utils import datetime_from_timestamp
+from .exceptions import InvalidTrustchain
+from .models import FetchedEntityStatement, TrustChain
+from .statements import EntityConfiguration, get_entity_configurations
+from .settings import HTTPC_PARAMS
+from .trust_chain import TrustChainBuilder
+from .utils import datetime_from_timestamp
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +32,7 @@ def trust_chain_builder(
         trust_anchor=trust_anchor,
         required_trust_marks=required_trust_marks,
         httpc_params=httpc_params,
-        metadata_type=metadata_type
+        metadata_type=metadata_type,
     )
     tc.start()
 
@@ -46,33 +46,26 @@ def trust_chain_builder(
         return tc
 
 
-def dumps_statements_from_trust_chain_to_db(
-    trust_chain:TrustChainBuilder
-) -> list:
+def dumps_statements_from_trust_chain_to_db(trust_chain: TrustChainBuilder) -> list:
 
     entity_statements = []
 
     for stat in trust_chain.trust_path:
 
         data = dict(
-            exp = datetime_from_timestamp(stat.payload['exp']),
-            iat = datetime_from_timestamp(stat.payload['iat']),
-            statement = stat.payload,
-            jwt = stat.jwt
+            exp=datetime_from_timestamp(stat.payload["exp"]),
+            iat=datetime_from_timestamp(stat.payload["iat"]),
+            statement=stat.payload,
+            jwt=stat.jwt,
         )
 
-        fes = FetchedEntityStatement.objects.filter(
-            sub = stat.sub,
-            iss = stat.iss
-        )
+        fes = FetchedEntityStatement.objects.filter(sub=stat.sub, iss=stat.iss)
 
         if fes:
             fes.update(**data)
         else:
             fes = FetchedEntityStatement.objects.create(
-                sub = stat.sub,
-                iss = stat.iss,
-                **data
+                sub=stat.sub, iss=stat.iss, **data
             )
 
         entity_statements.append(fes)
@@ -84,24 +77,21 @@ def dumps_statements_from_trust_chain_to_db(
                 jwt = stat.verified_descendant_statements_as_jwt[desc_stat_sub]
 
                 _data = dict(
-                    exp = datetime_from_timestamp(payload['exp']),
-                    iat = datetime_from_timestamp(payload['iat']),
-                    statement = payload,
-                    jwt = jwt
+                    exp=datetime_from_timestamp(payload["exp"]),
+                    iat=datetime_from_timestamp(payload["iat"]),
+                    statement=payload,
+                    jwt=jwt,
                 )
 
                 desc_fes = FetchedEntityStatement.objects.filter(
-                    sub = payload['sub'],
-                    iss = payload['iss']
+                    sub=payload["sub"], iss=payload["iss"]
                 )
 
                 if desc_fes:
                     desc_fes.update(**_data)
                 else:
                     desc_fes = FetchedEntityStatement.objects.create(
-                        sub = payload['sub'],
-                        iss = payload['iss'],
-                        **_data
+                        sub=payload["sub"], iss=payload["iss"], **_data
                     )
 
                 entity_statements.append(desc_fes)
@@ -110,54 +100,50 @@ def dumps_statements_from_trust_chain_to_db(
 
 
 def get_or_create_trust_chain(
-    subject:str,
-    trust_anchor:str,
+    subject: str,
+    trust_anchor: str,
     httpc_params: dict = HTTPC_PARAMS,
     required_trust_marks: list = [],
-    metadata_type:str = "openid_provider",
-    force:bool = False
+    metadata_type: str = "openid_provider",
+    force: bool = False,
 ) -> Union[TrustChain, None]:
     """
-        returns a TrustChain model object if any available
-        if available it return it
-        if not available it create a new one
+    returns a TrustChain model object if any available
+    if available it return it
+    if not available it create a new one
 
-        if available and expired it return the expired one
-        if flag force is set to True -> renew the trust chain, update it and
-        return the updated one
+    if available and expired it return the expired one
+    if flag force is set to True -> renew the trust chain, update it and
+    return the updated one
 
     """
     fetched_trust_anchor = FetchedEntityStatement.objects.filter(
-        sub = trust_anchor, iss = trust_anchor
+        sub=trust_anchor, iss=trust_anchor
     )
     if not fetched_trust_anchor or fetched_trust_anchor.first().is_expired or force:
 
-        jwts = get_entity_configurations(
-            [trust_anchor], httpc_params = httpc_params
-        )
+        jwts = get_entity_configurations([trust_anchor], httpc_params=httpc_params)
         ta_conf = EntityConfiguration(jwts[0], httpc_params=httpc_params)
 
         data = dict(
-            exp = datetime_from_timestamp(ta_conf.payload['exp']),
-            iat = datetime_from_timestamp(ta_conf.payload['iat']),
-            statement = ta_conf.payload,
-            jwt = ta_conf.jwt
+            exp=datetime_from_timestamp(ta_conf.payload["exp"]),
+            iat=datetime_from_timestamp(ta_conf.payload["iat"]),
+            statement=ta_conf.payload,
+            jwt=ta_conf.jwt,
         )
 
         if not fetched_trust_anchor:
             # trust to the anchor should be absolute trusted!
             # ta_conf.validate_by_itself()
             fetched_trust_anchor = FetchedEntityStatement.objects.create(
-                sub = ta_conf.sub,
-                iss = ta_conf.iss,
-                **data
+                sub=ta_conf.sub, iss=ta_conf.iss, **data
             )
         else:
             fetched_trust_anchor.update(
-                exp = datetime_from_timestamp(ta_conf.payload['exp']),
-                iat = datetime_from_timestamp(ta_conf.payload['iat']),
-                statement = ta_conf.payload,
-                jwt = ta_conf.jwt
+                exp=datetime_from_timestamp(ta_conf.payload["exp"]),
+                iat=datetime_from_timestamp(ta_conf.payload["iat"]),
+                statement=ta_conf.payload,
+                jwt=ta_conf.jwt,
             )
             fetched_trust_anchor = fetched_trust_anchor.first()
 
@@ -165,11 +151,7 @@ def get_or_create_trust_chain(
         fetched_trust_anchor = fetched_trust_anchor.first()
         ta_conf = fetched_trust_anchor.get_entity_configuration_as_obj()
 
-    tc = TrustChain.objects.filter(
-        sub = subject,
-        trust_anchor__sub = trust_anchor
-
-    ).first()
+    tc = TrustChain.objects.filter(sub=subject, trust_anchor__sub=trust_anchor).first()
 
     if tc and not tc.is_active:
         # if manualy disabled by staff
@@ -178,8 +160,8 @@ def get_or_create_trust_chain(
         trust_chain = trust_chain_builder(
             subject=subject,
             trust_anchor=ta_conf,
-            required_trust_marks = required_trust_marks,
-            metadata_type=metadata_type
+            required_trust_marks=required_trust_marks,
+            metadata_type=metadata_type,
         )
         if not trust_chain or not trust_chain.is_valid:
             raise InvalidTrustchain(
@@ -189,23 +171,20 @@ def get_or_create_trust_chain(
         dumps_statements_from_trust_chain_to_db(trust_chain)
 
         tc = TrustChain.objects.filter(
-            sub = subject,
-            type = metadata_type,
-            trust_anchor__sub = trust_anchor
-
+            sub=subject, type=metadata_type, trust_anchor__sub=trust_anchor
         )
 
         data = dict(
-            exp = trust_chain.exp_datetime,
-            chain = trust_chain.serialize(),
-            metadata = trust_chain.final_metadata,
-            parties_involved = [i.sub for i in trust_chain.trust_path],
-            status = 'valid',
-            trust_marks = [
+            exp=trust_chain.exp_datetime,
+            chain=trust_chain.serialize(),
+            metadata=trust_chain.final_metadata,
+            parties_involved=[i.sub for i in trust_chain.trust_path],
+            status="valid",
+            trust_marks=[
                 {"id": i.id, "trust_mark": i.jwt}
                 for i in trust_chain.verified_trust_marks
             ],
-            is_active = True
+            is_active=True,
         )
 
         if tc:
@@ -213,10 +192,10 @@ def get_or_create_trust_chain(
             tc = tc.first()
         else:
             tc = TrustChain.objects.create(
-                sub = subject,
-                type = metadata_type,
-                trust_anchor = fetched_trust_anchor,
-                **data
+                sub=subject,
+                type=metadata_type,
+                trust_anchor=fetched_trust_anchor,
+                **data,
             )
 
     return tc

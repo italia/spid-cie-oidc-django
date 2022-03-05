@@ -9,7 +9,7 @@ rp_onboarding_data = dict(
     is_active=True,
 )
 
-RP_METADATA_JWK1 = serialize_rsa_key(new_rsa_key().priv_key, 'private')
+RP_METADATA_JWK1 = serialize_rsa_key(new_rsa_key().priv_key, "private")
 RP_METADATA_JWK1_pub = serialize_rsa_key(new_rsa_key().pub_key)
 
 rp_conf = {
@@ -25,13 +25,11 @@ rp_conf = {
             "response_types": ["code"],
             "subject_type": "pairwise",
             "client_id": "https://rp.example.it",
-            "jwks" : {
-                "keys": [RP_METADATA_JWK1]
-            }
+            "jwks": {"keys": [RP_METADATA_JWK1]},
         }
     },
     "authority_hints": ["http://testserver/"],
-    "is_active": True
+    "is_active": True,
 }
 
 intermediary_conf = {
@@ -80,9 +78,7 @@ RP_METADATA = {
         "client_name": f"Name of this service called {rp_onboarding_data['sub']}",
         "contacts": ["ops@rp.example.it"],
         "grant_types": ["refresh_token", "authorization_code"],
-        "jwks" : {
-            "keys": [RP_METADATA_JWK1]
-        },
+        "jwks": {"keys": [RP_METADATA_JWK1]},
         "redirect_uris": [f"{rp_onboarding_data['sub']}/spid/callback"],
         "response_types": ["code"],
         "subject_type": "pairwise",

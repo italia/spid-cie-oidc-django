@@ -1,33 +1,48 @@
-
 import json
 import logging
-from django.http import HttpResponse, HttpResponseRedirect
 
-from django.test import Client, RequestFactory
-from django.urls import reverse
-from spid_cie_oidc.onboarding.tests.token_response_settings import TOKEN_RESPONSE
 from spid_cie_oidc.provider.tests.settings import op_conf
-from spid_cie_oidc.entity.jwks import create_jwk
-from spid_cie_oidc.entity.jwtse import create_jws
+from spid_cie_oidc.authority.tests.settings import rp_conf
+from spid_cie_oidc.entity.jwtse import create_jws, encrypt_dict
+from spid_cie_oidc.entity.utils import iat_now, exp_from_now
 logger = logging.getLogger(__name__)
 
-class TokenEndPointResponse():
+
+class MockedTokenEndPointResponse:
     def __init__(self):
         self.status_code = 200
 
     @property
     def content(self):
-        data = {}
-        jwk = {}
-        breakpoint()
-        jws = create_jws(data, jwk)
-        return json.dump(jws).encode()
-# def __init__(self):
-#         self.status_code = 200
-#         self.client = Client()
+        id_token = {
+            'sub': '2ed008b45e66ce53e48273dca5a4463bc8ebd036ebaa824f4582627683c2451b', 
+            'nonce': 'ljbvL3rpscgS4ZGda7cgibXHr7vrNREW', 
+            'at_hash': 'u2RjeYbZSJZO55XwY2LJew', 
+            'c_hash': 'tij0h-zL_bSrsVXy-d3qHw', 
+            'aud': [rp_conf["metadata"]["openid_relying_party"]["client_id"],], 
+            'iss': op_conf["sub"], 
+            'jti': '402e61bd-950c-4934-83d4-c09a05468828', 
+            'exp': exp_from_now(), 
+            'iat': iat_now()
+        }
+        access_token = {
+            'iss': op_conf["sub"], 
+            'sub': '2ed008b45e66ce53e48273dca5a4463bc8ebd036ebaa824f4582627683c2451b', 
+            'aud': [rp_conf["metadata"]["openid_relying_party"]["client_id"],], 
+            'client_id': rp_conf["metadata"]["openid_relying_party"]["client_id"],
+            'scope': 'openid', 
+            'jti': '402e61bd-950c-4934-83d4-c09a05468828', 
+            'exp': exp_from_now(), 
+            'iat': iat_now()
+        }
+        jwt_at = create_jws(access_token, op_conf['jwks'][0], typ="at+jwt")
+        jwt_id = create_jws(id_token, op_conf['jwks'][0])
 
-#     @property
-#     def content(self):
-#         breakpoint()
-
-#         return json.dumps(TOKEN_RESPONSE).encode()
+        res = {
+                "access_token": jwt_at,
+                "id_token": jwt_id,
+                "token_type": "bearer",
+                "expires_in": 3600,
+                "scope": "openid",
+            }
+        return json.dumps(res).encode()

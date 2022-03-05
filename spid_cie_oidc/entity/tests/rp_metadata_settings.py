@@ -5,7 +5,7 @@ from spid_cie_oidc.entity.tests.jwks_settings import JWKS
 RP_METADATA = {
     "redirect_uris": [
         "https://rp.example.it/spid/callback1/",
-        "https://rp.example.it/spid/callback2/"
+        "https://rp.example.it/spid/callback2/",
     ],
     "jwks_uri": "https://registry.cie.gov.it/keys.json",
     "response_types": ["code"],

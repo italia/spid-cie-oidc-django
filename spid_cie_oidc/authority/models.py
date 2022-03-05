@@ -21,7 +21,7 @@ from spid_cie_oidc.entity.utils import exp_from_now
 from typing import Union
 
 from . import settings as local_settings
-from . validators import validate_entity_configuration
+from .validators import validate_entity_configuration
 
 import json
 import logging
