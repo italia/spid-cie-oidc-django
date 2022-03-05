@@ -2,6 +2,10 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from spid_cie_oidc.entity.abstract_models import TimeStampedModel
 
+import hashlib
+
+from spid_cie_oidc.provider.settings import OIDCFED_PROVIDER_SALT
+
 
 class OidcSession(TimeStampedModel):
     """
@@ -22,6 +26,16 @@ class OidcSession(TimeStampedModel):
 
     revoked = models.BooleanField(default=False)
     auth_code = models.CharField(max_length=2048, blank=False, null= False)
+
+    def pairwised_sub(self):
+        return hashlib.sha256(
+            f"{self.user_uid}{self.client_id}{OIDCFED_PROVIDER_SALT}".encode()
+        ).hexdigest()
+
+    def public_sub(self):
+        return hashlib.sha256(
+            f"{self.user_uid}{OIDCFED_PROVIDER_SALT}".encode()
+        ).hexdigest()
 
     def __str__(self):
         return "{} {}".format(self.user_uid, self.auth_code)

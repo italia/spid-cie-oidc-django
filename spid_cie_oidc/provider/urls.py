@@ -3,7 +3,8 @@ from django.urls import path
 
 from .views import (
     AuthzRequestView,
-    ConsentPageView
+    ConsentPageView,
+    TokenEndpoint
 )
 
 _PREF = getattr(settings, "OIDC_PREFIX", "oidc/op")
@@ -14,11 +15,14 @@ urlpatterns = [
         AuthzRequestView.as_view(),
         name="oidc_provider_authnrequest",
     ),
-
     path(
         f"{_PREF}/consent/",
         ConsentPageView.as_view(),
         name="oidc_provider_consent",
     ),
-
+    path(
+        f"{_PREF}/token/",
+        TokenEndpoint.as_view(),
+        name="oidc_provider_token_endpoint",
+    ),
 ]
