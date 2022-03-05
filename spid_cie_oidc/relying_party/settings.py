@@ -35,6 +35,8 @@ RP_PROVIDER_PROFILES = getattr(
     }
 )
 
+RP_USER_LOOKUP_FIELD = getattr(settings, 'RP_USER_LOOKUP_FIELD', "sub")
+RP_USER_CREATE = getattr(settings, 'RP_USER_CREATE', True)
 
 RP_ATTR_MAP = getattr(settings, 'RP_ATTR_MAP', {
     "username": (
@@ -43,9 +45,9 @@ RP_ATTR_MAP = getattr(settings, 'RP_ATTR_MAP', {
             "kwargs": {"sep": "__"},
         },
     ),
-    "first_name": ("firstname",),
-    "last_name": ("lastname",),
-    "email": ("email",),
+    "first_name": ("given_name", "https://attributes.spid.gov.it/name"),
+    "last_name": ("family_name","https://attributes.spid.gov.it/familyName"),
+    "email": ("email","https://attributes.spid.gov.it/email"),
 }
 )
 
@@ -103,3 +105,4 @@ RP_DEFAULT_PROVIDER_PROFILES = getattr(
     "RP_DEFAULT_PROVIDER_PROFILES",
     "spid"
 )
+

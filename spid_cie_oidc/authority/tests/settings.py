@@ -24,6 +24,7 @@ rp_conf = {
             "redirect_uris": ["https://rp.example.it/spid/callback"],
             "response_types": ["code"],
             "subject_type": "pairwise",
+            "client_id": "https://rp.example.it",
             "jwks" : {
                 "keys": [RP_METADATA_JWK1]
             }

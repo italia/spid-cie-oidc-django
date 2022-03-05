@@ -116,7 +116,7 @@ def get_or_create_trust_chain(
     required_trust_marks: list = [],
     metadata_type:str = "openid_provider",
     force:bool = False
-) -> TrustChain:
+) -> Union[TrustChain, None]:
     """
         returns a TrustChain model object if any available
         if available it return it
@@ -171,7 +171,10 @@ def get_or_create_trust_chain(
 
     ).first()
 
-    if force or not tc or tc.is_expired:
+    if tc and not tc.is_active:
+        # if manualy disabled by staff
+        return None
+    elif force or not tc or tc.is_expired:
         trust_chain = trust_chain_builder(
             subject=subject,
             trust_anchor=ta_conf,
