@@ -482,7 +482,7 @@ class TokenEndpoint(OpBase, View):
             id_token = jwt_id,
             expires = datetime_from_timestamp(commons['exp'])
             # TODO
-            #refresh_token = 
+            # refresh_token =
         )
 
         return JsonResponse(
@@ -500,7 +500,7 @@ class TokenEndpoint(OpBase, View):
 class UserInfoEndpoint(OpBase, View):
 
     def get(self, request, *args, **kwargs):
-        
+
         ah = request.headers.get('Authorization', None)
         if not ah or 'Bearer ' not in ah:
             return HttpResponseForbidden()
@@ -514,17 +514,16 @@ class UserInfoEndpoint(OpBase, View):
         ).first()
         if not token:
             return HttpResponseForbidden()
-        
+
         issuer = self.get_issuer()
 
         access_token_data = unpad_jwt_payload(token.access_token)
 
         # TODO: user claims
         jwt = {'sub': access_token_data['sub']}
-        for claims in token.session.authz_request.get('claims', {}).get('userinfo', {}).keys():
-            for claim in claims:
-                if claim in token.session.user.attributes:
-                    jwt[claim] = request.user.attributes[claim]
+        for claim in token.session.authz_request.get('claims', {}).get('userinfo', {}).keys():
+            if claim in token.session.user.attributes:
+                jwt[claim] = token.session.user.attributes[claim]
 
         # breakpoint()
         # sign the data
@@ -532,8 +531,7 @@ class UserInfoEndpoint(OpBase, View):
 
         # encrypt the data
         jwe = encrypt_dict(jws, issuer.jwks[0])
-
-        return HttpResponse(jwe)
+        return HttpResponse(jwe, content_type="application/jose")
 
 
 class IntrospectionEndpoint(View):

@@ -209,11 +209,8 @@ written by Roland Hedberg and licensed under the same Apache 2 license.
 
 ## Implementation notes
 
-All the operation related to JWT signature and encryption, and part of OIDC messages operations, 
-are built on top of [IdentityPython](https://idpy.org/):
-
-- [oidcmsg](https://github.com/IdentityPython/JWTConnect-Python-OidcMsg)
-- [cryptojwt](https://github.com/IdentityPython/JWTConnect-Python-CryptoJWT)
+All the operation related to JWT signature and encryption are built on top of [IdentityPython](https://idpy.org/) 
+[cryptojwt](https://github.com/IdentityPython/JWTConnect-Python-CryptoJWT)
 
 This project proposes an implementation of the italian OIDC Federation profile with
 __automatic_client_registration__ and the adoption of the trust marks as mandatory.

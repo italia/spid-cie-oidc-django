@@ -23,7 +23,7 @@ class OidcUserInfo(object):
             provider_conf["userinfo_endpoint"], headers=headers, verify=verify
         )
         if authz_userinfo.status_code != 200:  # pragma: no cover
-            logger.error(f"Something went wrong with {state}: {authz_userinfo.content}")
+            logger.error(f"Something went wrong with {state}: {authz_userinfo.status_code}")
             return False
         else:
             try:
