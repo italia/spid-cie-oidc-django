@@ -283,7 +283,7 @@ class SpidCieOidcRpCallbackView(
             logger.info(f"Created new user {user}")
             return user
 
-    def get_jwk(access_token, provider_jwks):
+    def get_jwk(self, access_token, provider_jwks):
         head = unpad_jwt_head(access_token)
         kid = head["kid"]
         jwk = {}

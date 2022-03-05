@@ -9,7 +9,7 @@ from spid_cie_oidc.entity.jwks import (
     create_jwk,
     serialize_rsa_key,
     private_pem_from_jwk,
-    public_pem_from_jwk,
+    public_pem_from_jwk
 )
 from spid_cie_oidc.entity.jwtse import create_jws
 from spid_cie_oidc.entity.validators import validate_public_jwks

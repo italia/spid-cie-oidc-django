@@ -45,7 +45,7 @@ class OAuth2AuthorizationCodeGrant(object):
                 {
                     "iss": client_conf.sub,
                     "sub": client_conf.sub,
-                    "aud": [],
+                    "aud": [token_endpoint_url],
                     "iat": iat_now(),
                     "exp": exp_from_now(),
                     "jti": str(uuid.uuid4())
@@ -54,7 +54,6 @@ class OAuth2AuthorizationCodeGrant(object):
             )
         )
 
-        issuer_id = issuer_id
         logger.debug(f"Access Token Request for {state}: {grant_data} ")
 
         token_request = requests.post(
@@ -66,12 +65,11 @@ class OAuth2AuthorizationCodeGrant(object):
 
         if token_request.status_code != 200:
             logger.error(
-                f"Something went wrong with {state}: {token_request.content}"
+                f"Something went wrong with {state}: {token_request.status_code}"
             )
         else:
             try:
                 token_request = json.loads(token_request.content.decode())
-                return token_request
             except Exception as e:  # pragma: no cover
                 logger.error(f"Something went wrong with {state}: {e}")
         return token_request

@@ -1,30 +1,36 @@
+import base64
 import hashlib
 import logging
 import urllib.parse
 import uuid
+from os import access
 
+from cryptojwt.jws.utils import left_hash
 from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.forms.utils import ErrorList
-from django.http import HttpResponseForbidden, HttpResponseRedirect
+from django.http import (HttpResponse, HttpResponseBadRequest, HttpResponseForbidden,
+                         HttpResponseRedirect, JsonResponse)
 from django.shortcuts import render
 from django.urls import reverse
+from django.utils import timezone
+from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.views import View
+from django.views.decorators.csrf import csrf_exempt
 from pydantic import ValidationError
 from spid_cie_oidc.entity.exceptions import InvalidEntityConfiguration
-from spid_cie_oidc.entity.jwtse import (
-    unpad_jwt_head,
-    unpad_jwt_payload,
-    verify_jws
-)
-from spid_cie_oidc.entity.models import (
-    FederationEntityConfiguration,
-    TrustChain
-)
+from spid_cie_oidc.entity.jwtse import (create_jws, encrypt_dict,
+                                        unpad_jwt_head, unpad_jwt_payload,
+                                        verify_jws)
+from spid_cie_oidc.entity.models import (FederationEntityConfiguration,
+                                         TrustChain)
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.tests.settings import *
-from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
+from spid_cie_oidc.entity.trust_chain_operations import \
+    get_or_create_trust_chain
+from spid_cie_oidc.entity.utils import (datetime_from_timestamp, exp_from_now,
+                                        iat_now)
 from spid_cie_oidc.provider.models import IssuedToken, OidcSession
 
 from .exceptions import AuthzRequestReplay
@@ -154,6 +160,11 @@ class OpBase:
             raise Exception()
 
         return session
+
+    def get_issuer(self):
+        return FederationEntityConfiguration.objects.filter(
+            entity_type = 'openid_provider'
+        ).first()
 
 
 class AuthzRequestView(OpBase, View):
@@ -314,7 +325,6 @@ class AuthzRequestView(OpBase, View):
             user_uid = user.username,
             nonce = self.payload['nonce'],
             authz_request = self.payload,
-            sub = self.payload["sub"],
             client_id = self.payload["client_id"],
             auth_code = auth_code
         )
@@ -388,9 +398,7 @@ class ConsentPageView(OpBase, View):
                 )
             )
 
-        issuer = FederationEntityConfiguration.objects.filter(
-                entity_type = 'openid_provider'
-        ).first()
+        issuer = self.get_issuer()
 
         return self.redirect_response_data(
             code = session.auth_code,
@@ -399,22 +407,133 @@ class ConsentPageView(OpBase, View):
         )
 
 
-class TokenEndpoint(View):
+@method_decorator(csrf_exempt, name='dispatch')
+class TokenEndpoint(OpBase, View):
+
+    def get_jwt_common_data(self):
+        return {
+            "jti": str(uuid.uuid4()),
+            "exp": exp_from_now(),
+            "iat": iat_now()
+        }
 
     def get(self, request, *args, **kwargs):
-        pass
+        return HttpResponseBadRequest()
 
     def post(self, request, *args, **kwargs):
-        pass
+        """
+            {
+                'grant_type': ['authorization_code'], 
+                'redirect_uri': ['http://127.0.0.1:8000/oidc/rp/callback'], 
+                'client_id': ['http://127.0.0.1:8000/oidc/rp/'], 
+                'state': ['tiIjdMSE20tuIWwruFhYaDROadKxKO9x'], 
+                'code': ['7348f5dd913e96e6db480662d4717b8a3669ba04b49f690773af693ae4d7228f2fbeb6fbf418306192be27ed79c24ecb21a099308f9ec3337fd8e6433a5c5ccc'], 
+                'code_verifier': ['WGzumG7gKBioHAWNc567YTPoLBQxRyrVqsl6TJPC8XmQ8flbPbUsHQ'], 
+                'client_assertion_type': ['urn:ietf:params:oauth:client-assertion-type:jwt-bearer'], 
+                'client_assertion': ['eyJhbGciOiJSUzI1NiIsImtpZCI6IjJIbm9GUzNZbkM5dGppQ2FpdmhXTFZVSjNBeHdHR3pfOTh1UkZhcU1FRXMifQ.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvb2lkYy9ycC8iLCJzdWIiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvb2lkYy9ycC8iLCJhdWQiOlsiaHR0cDovLzEyNy4wLjAuMTo4MDAwL29pZGMvb3AvdG9rZW4vIl0sImlhdCI6MTY0NjQzODQ2OCwiZXhwIjoxNjQ2NDQwNDQ4LCJqdGkiOiJjODRjYjZkMy0wN2VjLTQxNjktODA3OC05MDQ3NTk0MzNiYzQifQ.u2uK3zN_UvsmWsPVuNlaD8VEaJTSOUg5_3Y7mufrZF_-O-IwyZk3kfukgLWpxqIPJi531aVt4X5YSofgf3IhORmZqx7buUFP1LjlKC03-dSXTHlhhWqwtp2gyI4hjUPTQvRaNfIJ6icVRXiKuPUUJ00inqDQISxZtvIooGm3M7-GNtDroAx4aa3BSxxytG48v4-mDKJ_K04FOGI82JHmAIca1H_eHoC_vMoAGWwQNwvMbpS26F1J0s7bqWnmTE1JF_t--2FJZkVRRdOwzIxgZhEZsXIM6tUovDmHHIIh3K1QiTIwM-v_SuHpDO9sXi8IwhwAes8xiWAL2rwHyDkJgA']
+            }
+        """
+        logger.debug(f'{request.headers}: {request.POST}')
+
+        commons = self.get_jwt_common_data()
+        issuer = self.get_issuer()
+        authz = OidcSession.objects.filter(
+            auth_code=request.POST['code'], revoked = False
+        ).first()
+
+        if not authz:
+            return HttpResponseBadRequest()
+
+        # PKCE check - based on authz.authz_request["code_challenge_method"] == S256
+        code_challenge = hashlib.sha256(request.POST['code_verifier'].encode()).digest()
+        code_challenge = base64.urlsafe_b64encode(code_challenge).decode("utf-8")
+        code_challenge = code_challenge.replace("=", "")
+        if code_challenge != authz.authz_request["code_challenge"]:
+            return HttpResponseForbidden()
+
+        _sub = authz.pairwised_sub()
+        access_token = {
+            "iss": issuer.sub,
+            "sub": _sub,
+            "aud": [authz.client_id],
+            "client_id": authz.client_id,
+            "scope": " ".join(authz.authz_request["scope"])
+        }
+        access_token.update(commons)
+        jwt_at = create_jws(access_token, issuer.jwks[0], typ = "at+jwt")
+
+        id_token = {
+            "sub": _sub,
+            "nonce": authz.authz_request['nonce'],
+            "at_hash": left_hash(jwt_at, "HS256"),
+            "c_hash": left_hash(authz.auth_code, "HS256"),
+            "aud": [authz.client_id],
+            "iss": issuer.sub
+        }
+        id_token.update(commons)
+        jwt_id = create_jws(id_token, issuer.jwks[0])
+
+        # TODO: refresh token is scope offline_access and prompt == consent
+        # ...
+
+        IssuedToken.objects.create(
+            session = authz,
+            access_token = jwt_at,
+            id_token = jwt_id,
+            expires = datetime_from_timestamp(commons['exp'])
+            # TODO
+            #refresh_token = 
+        )
+
+        return JsonResponse(
+            {
+                'access_token': jwt_at,
+                'id_token': jwt_id,
+                'token_type': 'bearer',
+                'expires_in': 3600,
+                # TODO: remove unsupported scope
+                'scope': authz.authz_request['scope']
+            }
+        )
 
 
-class UserInfoEndpoint(View):
+class UserInfoEndpoint(OpBase, View):
 
     def get(self, request, *args, **kwargs):
-        pass
+        
+        ah = request.headers.get('Authorization', None)
+        if not ah or 'Bearer ' not in ah:
+            return HttpResponseForbidden()
+        bearer = ah.split('Bearer ')[1]
 
-    def post(self, request, *args, **kwargs):
-        pass
+        token = IssuedToken.objects.filter(
+            access_token = bearer,
+            revoked = False,
+            session__revoked = False,
+            expires__gte=timezone.localtime()
+        ).first()
+        if not token:
+            return HttpResponseForbidden()
+        
+        issuer = self.get_issuer()
+
+        access_token_data = unpad_jwt_payload(token.access_token)
+
+        # TODO: user claims
+        jwt = {'sub': access_token_data['sub']}
+        for claims in token.session.authz_request.get('claims', {}).get('userinfo', {}).keys():
+            for claim in claims:
+                if claim in token.session.user.attributes:
+                    jwt[claim] = request.user.attributes[claim]
+
+        # breakpoint()
+        # sign the data
+        jws = create_jws(jwt, issuer.jwks[0])
+
+        # encrypt the data
+        jwe = encrypt_dict(jws, issuer.jwks[0])
+
+        return HttpResponse(jwe)
 
 
 class IntrospectionEndpoint(View):

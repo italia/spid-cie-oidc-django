@@ -8,6 +8,8 @@ from spid_cie_oidc.authority.tests.settings import (
     RP_METADATA,
     rp_onboarding_data
 )
+from django.utils import timezone
+
 from spid_cie_oidc.entity.jwtse import create_jws
 from spid_cie_oidc.entity.models import (
     FederationEntityConfiguration,
@@ -202,7 +204,11 @@ class AuthnRequestTest(TestCase):
         self.assertFalse("error" in res.content.decode())
         self.assertTrue(res.status_code == 302)
         session = OidcSession.objects.all().first()
-        IssuedToken.objects.create(session = session)
+        IssuedToken.objects.create(
+            session = session,
+            expires = timezone.localtime()
+        
+        )
         consent_page_url = res.url
         res = client.get(consent_page_url)
         self.assertTrue(res.status_code == 403)
