@@ -3,29 +3,34 @@ import hashlib
 import logging
 import urllib.parse
 import uuid
+from os import access
 
 from cryptojwt.jws.utils import left_hash
 from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.forms.utils import ErrorList
-from django.http import HttpResponseBadRequest, HttpResponseForbidden, HttpResponseRedirect, JsonResponse
+from django.http import (HttpResponse, HttpResponseBadRequest, HttpResponseForbidden,
+                         HttpResponseRedirect, JsonResponse)
 from django.shortcuts import render
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from pydantic import ValidationError
 from spid_cie_oidc.entity.exceptions import InvalidEntityConfiguration
-from spid_cie_oidc.entity.jwtse import (create_jws, unpad_jwt_head,
-                                        unpad_jwt_payload, verify_jws)
+from spid_cie_oidc.entity.jwtse import (create_jws, encrypt_dict,
+                                        unpad_jwt_head, unpad_jwt_payload,
+                                        verify_jws)
 from spid_cie_oidc.entity.models import (FederationEntityConfiguration,
                                          TrustChain)
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.tests.settings import *
 from spid_cie_oidc.entity.trust_chain_operations import \
     get_or_create_trust_chain
-from spid_cie_oidc.entity.utils import exp_from_now, iat_now
+from spid_cie_oidc.entity.utils import (datetime_from_timestamp, exp_from_now,
+                                        iat_now)
 from spid_cie_oidc.provider.models import IssuedToken, OidcSession
 
 from .exceptions import AuthzRequestReplay
@@ -320,7 +325,6 @@ class AuthzRequestView(OpBase, View):
             user_uid = user.username,
             nonce = self.payload['nonce'],
             authz_request = self.payload,
-            sub = self.payload["sub"],
             client_id = self.payload["client_id"],
             auth_code = auth_code
         )
@@ -451,8 +455,8 @@ class TokenEndpoint(OpBase, View):
         access_token = {
             "iss": issuer.sub,
             "sub": _sub,
-            "aud": [authz.sub],
-            "client_id": authz.sub,
+            "aud": [authz.client_id],
+            "client_id": authz.client_id,
             "scope": " ".join(authz.authz_request["scope"])
         }
         access_token.update(commons)
@@ -463,11 +467,23 @@ class TokenEndpoint(OpBase, View):
             "nonce": authz.authz_request['nonce'],
             "at_hash": left_hash(jwt_at, "HS256"),
             "c_hash": left_hash(authz.auth_code, "HS256"),
-            "aud": [authz.sub],
+            "aud": [authz.client_id],
             "iss": issuer.sub
         }
         id_token.update(commons)
         jwt_id = create_jws(id_token, issuer.jwks[0])
+
+        # TODO: refresh token is scope offline_access and prompt == consent
+        # ...
+
+        IssuedToken.objects.create(
+            session = authz,
+            access_token = jwt_at,
+            id_token = jwt_id,
+            expires = datetime_from_timestamp(commons['exp'])
+            # TODO
+            #refresh_token = 
+        )
 
         return JsonResponse(
             {
@@ -481,13 +497,43 @@ class TokenEndpoint(OpBase, View):
         )
 
 
-class UserInfoEndpoint(View):
+class UserInfoEndpoint(OpBase, View):
 
     def get(self, request, *args, **kwargs):
-        pass
+        
+        ah = request.headers.get('Authorization', None)
+        if not ah or 'Bearer ' not in ah:
+            return HttpResponseForbidden()
+        bearer = ah.split('Bearer ')[1]
 
-    def post(self, request, *args, **kwargs):
-        pass
+        token = IssuedToken.objects.filter(
+            access_token = bearer,
+            revoked = False,
+            session__revoked = False,
+            expires__gte=timezone.localtime()
+        ).first()
+        if not token:
+            return HttpResponseForbidden()
+        
+        issuer = self.get_issuer()
+
+        access_token_data = unpad_jwt_payload(token.access_token)
+
+        # TODO: user claims
+        jwt = {'sub': access_token_data['sub']}
+        for claims in token.session.authz_request.get('claims', {}).get('userinfo', {}).keys():
+            for claim in claims:
+                if claim in token.session.user.attributes:
+                    jwt[claim] = request.user.attributes[claim]
+
+        # breakpoint()
+        # sign the data
+        jws = create_jws(jwt, issuer.jwks[0])
+
+        # encrypt the data
+        jwe = encrypt_dict(jws, issuer.jwks[0])
+
+        return HttpResponse(jwe)
 
 
 class IntrospectionEndpoint(View):

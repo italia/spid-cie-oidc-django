@@ -27,6 +27,12 @@ class OidcUserInfo(object):
             return False
         else:
             try:
+                
+                # TODO: Francesca, qui devi fare unpad dell'header
+                # prendere alg e kid
+                # decriptare col jwk relativo a questo kid
+                # verificare il jwt decriptato
+
                 authz_userinfo = json.loads(authz_userinfo.content.decode())
                 logger.debug(f"Userinfo endpoint result: {authz_userinfo}")
                 return authz_userinfo

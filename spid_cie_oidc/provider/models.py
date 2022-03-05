@@ -22,8 +22,6 @@ class OidcSession(TimeStampedModel):
     nonce = models.CharField(max_length=2048, blank=False, null=False)
     authz_request = models.JSONField(max_length=2048, blank=False, null=False)
 
-    sub = models.CharField(max_length=254, blank=True, null=True)
-
     revoked = models.BooleanField(default=False)
     auth_code = models.CharField(max_length=2048, blank=False, null= False)
 
@@ -51,6 +49,8 @@ class IssuedToken(TimeStampedModel):
     access_token = models.TextField(blank=True, null=True)
     id_token = models.TextField(blank=True, null=True)
     refresh_token = models.TextField(blank=True, null=True)
+    expires = models.DateTimeField()
+    revoked = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = ('Issued Token')
@@ -63,3 +63,8 @@ class IssuedToken(TimeStampedModel):
     @property
     def user_uid(self):
         return self.session.user_uid
+
+    def __str__(self):
+        return "{} @ {}".format(
+            self.session__user_uid, self.session__client_id
+        )
