@@ -35,10 +35,11 @@ RP_PROVIDER_PROFILES = getattr(
     }
 )
 
-RP_USER_LOOKUP_FIELD = getattr(settings, 'RP_USER_LOOKUP_FIELD', "sub")
+RP_USER_LOOKUP_FIELD = getattr(settings, 'RP_USER_LOOKUP_FIELD', "fiscal_number")
 RP_USER_CREATE = getattr(settings, 'RP_USER_CREATE', True)
 
 RP_ATTR_MAP = getattr(settings, 'RP_ATTR_MAP', {
+    "sub": ('sub',),
     "username": (
         {
             "func": "spid_cie_oidc.relying_party.processors.issuer_prefixed_sub",
@@ -46,8 +47,9 @@ RP_ATTR_MAP = getattr(settings, 'RP_ATTR_MAP', {
         },
     ),
     "first_name": ("given_name", "https://attributes.spid.gov.it/name"),
-    "last_name": ("family_name","https://attributes.spid.gov.it/familyName"),
-    "email": ("email","https://attributes.spid.gov.it/email"),
+    "last_name": ("family_name","https://attributes.spid.gov.it/familyName",),
+    "email": ("email","https://attributes.spid.gov.it/email",),
+    "fiscal_number" : ("https://attributes.spid.gov.it/fiscalNumber",),
 }
 )
 
@@ -78,7 +80,8 @@ CIE_REQUESTED_CLAIMS = getattr(
         'userinfo': {
             'given_name': None,
             'family_name': None,
-            'email': None
+            'email': None,
+
         }
     }
 )

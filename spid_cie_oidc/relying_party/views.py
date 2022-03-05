@@ -49,10 +49,7 @@ class SpidCieOidcRp:
         Baseclass with common methods for RPs
     """
 
-    def get_jwks_from_jwks_uri(
-        self,
-        jwks_uri:str
-    ) -> dict:
+    def get_jwks_from_jwks_uri(self, jwks_uri:str) -> dict:
         """
             get jwks
         """
@@ -71,8 +68,9 @@ class SpidCieOidcRp:
             logger.warning(f"Missing provider url. "
                            "Please try '?provider=https://provider-subject/'"
             )
-            raise InvalidTrustchain(f"Missing provider url. "
-                                    "Please try '?provider=https://provider-subject/'"
+            raise InvalidTrustchain(
+                f"Missing provider url. "
+                "Please try '?provider=https://provider-subject/'"
             )
 
         trust_anchor = request.GET.get(
@@ -272,25 +270,31 @@ class SpidCieOidcRpCallbackView(
 
     def user_reunification(self, user_attrs: dict, client_conf: dict):
         user_model = get_user_model()
-        lookup = {RP_USER_LOOKUP_FIELD: user_attrs[RP_USER_LOOKUP_FIELD]}
-        user = user_model.objects.filter(**lookup)
+        lookup = {f"attributes__{RP_USER_LOOKUP_FIELD}": user_attrs[RP_USER_LOOKUP_FIELD]}
+        user = user_model.objects.filter(**lookup).first()
         if user:
-            user = user.first()
+            user.attributes.update(user_attrs)
+            user.save()
             logger.info(f"{RP_USER_LOOKUP_FIELD} matched on user {user}")
             return user
         elif RP_USER_CREATE:
-            user = user_model.objects.create(**user_attrs)
+            user = user_model.objects.create(
+                username = user_attrs.get('username', user_attrs['sub']),
+                first_name = user_attrs.get('given_name', user_attrs['sub']),
+                surname = user_attrs.get('family_name', user_attrs['sub']),
+                email = user_attrs.get('email', ""),
+                attributes = user_attrs
+            )
             logger.info(f"Created new user {user}")
             return user
 
-    def get_jwk(self, access_token, provider_jwks):
-        head = unpad_jwt_head(access_token)
+    def get_jwk_from_jwt(self, jwt:str, provider_jwks:dict) -> dict:
+        head = unpad_jwt_head(jwt)
         kid = head["kid"]
-        jwk = {}
         for jwk in provider_jwks:
             if jwk["kid"] == kid:
                 return jwk
-        return jwk
+        return {}
 
     def get(self, request, *args, **kwargs):
         """
@@ -328,11 +332,11 @@ class SpidCieOidcRpCallbackView(
         authz_token = OidcAuthenticationToken.objects.create(
             authz_request=authz, code=code
         )
-        rp_conf = FederationEntityConfiguration.objects.get(
+        self.rp_conf = FederationEntityConfiguration.objects.get(
             sub = authz_token.authz_request.client_id
         )
 
-        if not rp_conf:
+        if not self.rp_conf:
             # TODO: verify error message and status
             context = {
                 "error":_("Invalid request"),
@@ -340,13 +344,13 @@ class SpidCieOidcRpCallbackView(
             }
             return render(request, self.error_template, context, status=400)
 
-        client_conf = rp_conf.metadata['openid_relying_party']
+        client_conf = self.rp_conf.metadata['openid_relying_party']
         token_response = self.access_token_request(
             redirect_uri=authz_data["redirect_uri"],
             state=authz.state,
             code=code,
             issuer_id=authz.provider_id,
-            client_conf=rp_conf,
+            client_conf=self.rp_conf,
             token_endpoint_url=provider_conf["token_endpoint"],
             audience = [authz.provider_id],
             code_verifier=authz_data.get("code_verifier"),
@@ -358,7 +362,7 @@ class SpidCieOidcRpCallbackView(
                 "error_description": _("Token response seems not to be valid")
             }
             return render(request, self.error_template, context, status=400)
-        ################ da verificare
+        # da verificare
         entity_conf = FederationEntityConfiguration.objects.filter(
             entity_type = "openid_provider",
         ).first()
@@ -368,8 +372,8 @@ class SpidCieOidcRpCallbackView(
         ###################
         access_token = token_response["access_token"]
         id_token = token_response["id_token"]
-        op_ac_jwk = self.get_jwk(access_token, jwks)
-        op_id_jwk = self.get_jwk(id_token, jwks)
+        op_ac_jwk = self.get_jwk_from_jwt(access_token, jwks)
+        op_id_jwk = self.get_jwk_from_jwt(id_token, jwks)
         if not op_ac_jwk or not op_id_jwk:
             # TODO: verify error message and status
             context = {
@@ -429,6 +433,7 @@ class SpidCieOidcRpCallbackView(
                 "error_description": _(f"{_msg}: {userinfo}")
             }
             return render(request, self.error_template, context, status=403)
+        
         user = self.user_reunification(user_attrs, client_conf)
         if not user:
             # TODO: verify error message and status

@@ -1,6 +1,7 @@
 import json
 import logging
 import requests
+from spid_cie_oidc.entity.exceptions import UnknownKid
 from spid_cie_oidc.entity.jwtse import (
     unpad_jwt_head, 
     decrypt_jwe, 
@@ -15,13 +16,12 @@ class OidcUserInfo(object):
     """
     https://openid.net/specs/openid-connect-core-1_0.html#UserInfo
     """
-    def get_jwk(kid, jwks):
-        jwk = {}
+    def get_jwk(self, kid, jwks):
         for jwk in jwks:
             if jwk["kid"] == kid:
                 return jwk
-        if not jwk:
-            raise Exception()
+        # else
+        raise UnknownKid()
 
     def get_userinfo(
         self, state: str, access_token: str, provider_conf: dict, verify: bool
@@ -39,21 +39,25 @@ class OidcUserInfo(object):
             return False
         else:
             try:
-                header = unpad_jwt_head(authz_userinfo)
-                jwe = unpad_jwt_payload(authz_userinfo)
-                kid = header["kid"]
-                jwks = provider_conf["openid_provider"]["metadata"]["jwks"]["keys"]
-                jwk = self.get_jwk(kid, jwks)
-                jws = decrypt_jwe(jwe, jwk)
-                verify_jws(jws, jwk)
-                # TODO: Francesca, qui devi fare unpad dell'header
-                # prendere alg e kid
-                # decriptare col jwk relativo a questo kid
-                # verificare il jwt decriptato
+                jwe = authz_userinfo.content.decode()
+                header = unpad_jwt_head(jwe)
+                rp_jwk = self.get_jwk(header["kid"], self.rp_conf.jwks)
+                jws = decrypt_jwe(jwe, rp_jwk)
 
-                authz_userinfo = json.loads(authz_userinfo.content.decode())
-                logger.debug(f"Userinfo endpoint result: {authz_userinfo}")
-                return authz_userinfo
+                header = unpad_jwt_head(jws)
+                idp_jwks = provider_conf["jwks"]["keys"]
+                idp_jwk = self.get_jwk(header["kid"], idp_jwks)
+                
+                decoded_jwt = verify_jws(jws, idp_jwk)
+                logger.debug(f"Userinfo endpoint result: {decoded_jwt}")
+                return decoded_jwt
+
+            except KeyError as e:
+                logger.error(f"Userinfo response error {state}: {e}")
+                return False
+            except UnknownKid as e:
+                logger.error(f"Userinfo Unknow KID for session {state}: {e}")
+                return False
             except Exception as e:  # pragma: no cover
-                logger.error(f"Something went wrong with {state}: {e}")
+                logger.error(f"Userinfo response unknown error {state}: {e}")
                 return False

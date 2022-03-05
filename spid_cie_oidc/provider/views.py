@@ -512,11 +512,19 @@ class UserInfoEndpoint(OpBase, View):
             session__revoked = False,
             expires__gte=timezone.localtime()
         ).first()
+
         if not token:
             return HttpResponseForbidden()
 
-        issuer = self.get_issuer()
+        rp_tc = TrustChain.objects.filter(
+            sub=token.session.client_id,
+            type = 'openid_relying_party',
+            is_active = True
+        ).first()
+        if not rp_tc:
+            return HttpResponseForbidden()
 
+        issuer = self.get_issuer()
         access_token_data = unpad_jwt_payload(token.access_token)
 
         # TODO: user claims
@@ -525,12 +533,11 @@ class UserInfoEndpoint(OpBase, View):
             if claim in token.session.user.attributes:
                 jwt[claim] = token.session.user.attributes[claim]
 
-        # breakpoint()
         # sign the data
         jws = create_jws(jwt, issuer.jwks[0])
 
         # encrypt the data
-        jwe = encrypt_dict(jws, issuer.jwks[0])
+        jwe = encrypt_dict(jws, rp_tc.metadata['jwks']['keys'][0])
         return HttpResponse(jwe, content_type="application/jose")
 
 
