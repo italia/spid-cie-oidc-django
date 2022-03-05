@@ -63,15 +63,16 @@ The Technical specifications of these SDKs are available here:
 - SPID and CIE OpenID Connect Relying Party
 - OIDC Federation onboarding demo service
 - OIDC Federation 1.0
-  - Trust Anchor
-  - Intermediary
-  - automatic client registration
-  - trust marks
-  - trust chain storage and discovery
+  - Trust Anchor and Intermediary
+  - Automatic client registration
+  - Entity profiles and Trust marks
+  - Trust chain storage and discovery
   - Entity statement resolve endpoint
   - Fetch statement endpoing
   - List entities endpoint
   - Federation CLI
+    - RP: build trust chains for all the available OPs
+    - OP: build trust chains for all the available RPs
 - Multitenancy, a single service can configure many entities like RPs, OP, Trust Anchors and intermediaries
 - gettext compliant (i18n)
 - Bootstrap Italia Design templates
@@ -85,6 +86,7 @@ We can install this SDK in two ways:
  - django application in a preexisting Django project
  - demo projects for example purpose
 
+
 #### Install as Django application
 Install __spid-cie-oidc__ as python package and use it in your django project
 ````
@@ -92,6 +94,7 @@ pip install spid-cie-oidc
 
 # then include `spid_cie_oidc.{app_name}` in your project settings.INSTALLED_APPS
 ````
+
 
 #### Configure the example projects
 
@@ -151,7 +154,7 @@ cp $project_name/settingslocal.py.example $project_name/settingslocal.py
 # run the web server
 ./manage.py runserver
 ````
-Point your web browser to `http://localhost:8000/admin` to enter in the management interface.
+Point your web browser to `http://127.0.0.1:8000/admin` to enter in the management interface.
 
 
 ## Docker compose
@@ -162,9 +165,9 @@ Point your web browser to `http://localhost:8000/admin` to enter in the manageme
 
 The demo propose a small federation composed by the following entities:
 
- - Federation Authority, acts as trust anchor and onboarding system. It's available at `http://localhost:8000`
- - OpenID Relying Party, available at `http://localhost:8001`
- - OpenID Provider, available at `http://localhost:8002`
+ - Federation Authority, acts as trust anchor and onboarding system. It's available at `http://127.0.0.1:8000/`
+ - OpenID Relying Party, available at `http://127.0.0.1:8001/`
+ - OpenID Provider, available at `http://127.0.0.1:8002/`
 
 
 ## Contribute
@@ -188,7 +191,7 @@ Please consider the following branches:
 Backup and share your demo data
 ````
 # backup your data (upgrade example data), -e excludes.
-./manage.py dumpdata -e spid_cie_oidc_accounts -e admin -e auth -e contenttypes -e sessions > dumps/example.json
+./manage.py dumpdata -e admin -e auth -e contenttypes -e sessions > dumps/example.json
 ````
 
 In this project we adopt [Semver](https://semver.org/lang/it/) and
