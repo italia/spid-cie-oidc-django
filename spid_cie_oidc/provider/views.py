@@ -431,7 +431,7 @@ class TokenEndpoint(OpBase, View):
         """
         logger.debug(f'{request.headers}: {request.POST}')
 
-        self.get_jwt_common_data()
+        commons = self.get_jwt_common_data()
         issuer = self.get_issuer()
         authz = OidcSession.objects.filter(
             auth_code=request.POST['code'], revoked = False
@@ -455,6 +455,7 @@ class TokenEndpoint(OpBase, View):
             "client_id": authz.sub,
             "scope": " ".join(authz.authz_request["scope"])
         }
+        access_token.update(commons)
         jwt_at = create_jws(access_token, issuer.jwks[0], typ = "at+jwt")
 
         id_token = {
@@ -465,6 +466,7 @@ class TokenEndpoint(OpBase, View):
             "aud": [authz.sub],
             "iss": issuer.sub
         }
+        id_token.update(commons)
         jwt_id = create_jws(id_token, issuer.jwks[0])
 
         return JsonResponse(
