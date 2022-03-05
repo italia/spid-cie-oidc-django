@@ -66,7 +66,7 @@ def entity_list(request):
     return JsonResponse(list(set(entries)), safe=False)
 
 
-def resolve_entity_statement(request):
+def resolve_entity_statement(request, format: str = "jose"):
     """
     resolves the final metadata of its descendants
 
@@ -120,13 +120,14 @@ def resolve_entity_statement(request):
       "metadata": entity.metadata
     }
 
-    if request.GET.get("format") == "json":
+    if request.GET.get("format") == "json" or format == "json":
         return JsonResponse(res, safe=False)
     else:
         return HttpResponse(
             create_jws(res, iss.jwks[0]),
             content_type="application/jose",
         )
+
 
 
 def trust_mark_status(request):

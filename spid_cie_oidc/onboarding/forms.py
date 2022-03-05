@@ -1,8 +1,24 @@
+from email.policy import default
+import logging
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from spid_cie_oidc.entity.validators import validate_public_jwks
 from spid_cie_oidc.authority.validators import validate_entity_configuration
 from .validators import unique_entity_url
+from spid_cie_oidc.entity.models import ENTITY_TYPES
+from django.conf import settings
+
+logger = logging.getLogger(__name__)
+
+try:
+    OIDCFED_TRUST_ANCHORS = getattr(
+        settings, "OIDCFED_TRUST_ANCHORS"
+    )
+except AttributeError:
+    OIDCFED_TRUST_ANCHORS = []
+    logger.warning(
+        "OIDCFED_TRUST_ANCHOR not configured in your settings file."
+    )
 
 
 class OnboardingRegistrationForm(forms.Form):
@@ -35,4 +51,45 @@ class OnboardingRegistrationForm(forms.Form):
         label=_("public jwks of the entities"),
         error_messages={"required": _("Enter the public jwks of the entities")},
         validators = [validate_public_jwks]
+    )
+
+
+class OnboardingCreateTrustChain(forms.Form):
+
+    sub = forms.URLField(
+        initial="",
+        label=_("url of subject"),
+        error_messages={"required": _("Enter the subject")},
+    )
+
+    type = forms.ChoiceField(
+        choices=[(i, i) for i in ENTITY_TYPES],
+        label="OpenID Connect Federation entity type",
+        error_messages={"required": _("Select a entity type")},
+    )
+
+    anchor = forms.ChoiceField(
+        choices=[(i, i) for i in OIDCFED_TRUST_ANCHORS],
+        label=_("url of the trust anchor"),
+        error_messages={"required": _("Enter the url of trust anchor")},
+    )
+
+class OnboardingValidatingTrustMarkForm(forms.Form):
+
+    sub = forms.URLField(
+        initial="",
+        label=_("Url of subject"),
+        required=False
+    )
+
+    id = forms.URLField(
+        initial="",
+        label=_("Id"),
+        required=False
+    )
+
+    trust_mark = forms.JSONField(
+        initial = dict,
+        label=_("Enter trust mark"),
+        required=False
     )

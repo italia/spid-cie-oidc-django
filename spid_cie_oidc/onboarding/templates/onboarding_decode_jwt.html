@@ -1,0 +1,69 @@
+<!-- Extends default Bootstrap Unical Italia template -->
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block container %}
+
+<div>
+   <div class="container pt-2 p-3">
+
+      <div class="row d-lg-flex">
+         <div class="col-12">
+            <div class="card-wrapper card-space">
+               <div class="card card-bg no-after">
+                  <div class="card-body pl-lg-0">
+                     <div class="row h-100">
+                        <div class="col-12 pl-lg-4">
+                           
+                           <h3 class="text-left">
+                              {% trans "Decode or verify jwt" %}
+                           </h3>
+                           
+                           <p class="card-title">
+                              {% lorem 1 %}
+                           </p>
+                           <form method="post" action="">
+                              {% csrf_token %}
+                              <div class="row">
+                                 <div class="col-12 col-lg-7">
+                                    <div class="form-row">
+                                       <div class="col-12 form-group my-3">
+                                          <textarea id="jwt" rows="14" placeholder="Insert jwt here to decode"
+                                             name="jwt">{{ jwt }}</textarea>
+                                       </div>
+                                    </div>
+                                    <div class="form-row">
+                                       <div class="col-12 form-group my-3">
+                                          <textarea id="jwt" rows="6" placeholder="Insert jwk here to verify jws"
+                                             name="jwk">{{ jwk }}</textarea>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div class="col-12 col-lg-5">
+                                    <div class="form-row">
+                                       <div class="col-12 form-group my-3">
+                                          <textarea id="private_pem" rows="6" 
+                                             name="private_pem">{{ head }}</textarea>
+                                       </div>
+                                    </div>
+                                    <div class="form-row">
+                                       <div class="col-12 form-group my-2">
+                                          <textarea id="private_pem" rows="12"
+                                             name="private_pem">{{ payload }}</textarea>
+                                       </div>
+                                    </div>
+                                    <input type="submit" name="decode" class="btn btn-lg btn-success btn-block"
+                                    value="{% trans 'decode or verify' %}" />
+                                 </div>
+                              </div>
+                           </form>
+
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+{% endblock container %}
