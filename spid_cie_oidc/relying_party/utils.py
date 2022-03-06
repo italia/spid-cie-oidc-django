@@ -34,7 +34,7 @@ def decode_token(bearer_token, keyjar, verify_sign=True):
     return msg.to_dict()
 
 
-def random_string(n=27):
+def random_string(n=32):
     return "".join(random.choices(string.ascii_letters + string.digits, k=n))  # nosec
 
 

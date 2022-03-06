@@ -1,6 +1,7 @@
 from copy import deepcopy
 import json
 from unittest.mock import patch
+from django.contrib.auth import get_user_model
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 from spid_cie_oidc.entity.models import FederationEntityConfiguration
@@ -9,7 +10,7 @@ from spid_cie_oidc.relying_party.models import OidcAuthentication
 from spid_cie_oidc.authority.tests.settings import rp_conf
 from spid_cie_oidc.provider.tests.settings import op_conf
 from spid_cie_oidc.onboarding.tests.authn_request_settings import AUTHN_REQUEST_SPID
-from spid_cie_oidc.relying_party.tests.mocked_response import MockedTokenEndPointResponse
+from spid_cie_oidc.relying_party.tests.mocked_response import MockedTokenEndPointResponse, MockedUserInfoResponse
 
 STATE = "fyZiOL9Lf2CeKuNT2JzxiLRDink0uPcd"
 CODE = "usDwMnEzJPpG5oaV8x3j&"
@@ -34,7 +35,12 @@ class RpCallBack(TestCase):
 
     @override_settings(HTTP_CLIENT_SYNC=True)
     @patch("requests.post", return_value=MockedTokenEndPointResponse())
-    def test_rp_callback(self, mocked):
+    @patch("requests.get", return_value=MockedUserInfoResponse())
+    def test_rp_callback(self, mocked, mocked_2):
         client = Client()
         url = reverse("spid_cie_rp_callback")
         res = client.get(url, {"state": STATE, "code": CODE})
+        user = get_user_model().objects.first()
+        self.assertTrue(
+            user.attributes['fiscal_number'] == "sdfsfs908df09s8df90s8fd0"
+        )

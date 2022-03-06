@@ -29,7 +29,8 @@ class OidcUserInfo(object):
         authz_userinfo = requests.get(
             provider_conf["userinfo_endpoint"], headers=headers, verify=verify
         )
-        if authz_userinfo.status_code != 200:  # pragma: no cover
+
+        if authz_userinfo.status_code != 200:
             logger.error(
                 f"Something went wrong with {state}: {authz_userinfo.status_code}"
             )

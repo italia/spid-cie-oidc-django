@@ -1,7 +1,9 @@
 import json
 import logging
 
-from spid_cie_oidc.provider.tests.settings import op_conf
+from django.http import HttpResponseForbidden
+
+from spid_cie_oidc.provider.tests.settings import op_conf, op_conf_priv_jwk
 from spid_cie_oidc.authority.tests.settings import rp_conf
 from spid_cie_oidc.entity.jwtse import create_jws, encrypt_dict
 from spid_cie_oidc.entity.utils import iat_now, exp_from_now
@@ -35,8 +37,11 @@ class MockedTokenEndPointResponse:
             'exp': exp_from_now(), 
             'iat': iat_now()
         }
-        jwt_at = create_jws(access_token, op_conf['jwks'][0], typ="at+jwt")
-        jwt_id = create_jws(id_token, op_conf['jwks'][0])
+        jwt_at = create_jws(access_token, op_conf_priv_jwk, typ="at+jwt")
+        jwt_id = create_jws(id_token, op_conf_priv_jwk)
+
+        self.access_token = jwt_at
+        self.id_token = jwt_id
 
         res = {
                 "access_token": jwt_at,
@@ -46,3 +51,18 @@ class MockedTokenEndPointResponse:
                 "scope": "openid",
             }
         return json.dumps(res).encode()
+
+
+class MockedUserInfoResponse:
+    def __init__(self):
+        self.status_code = 200
+
+    @property
+    def content(self):
+        jwt = {
+            "sub": 'asdasdasdasasdasdas',
+            "https://attributes.spid.gov.it/fiscalNumber": "sdfsfs908df09s8df90s8fd0"
+        }
+        jws = create_jws(jwt, op_conf_priv_jwk)
+        jwe = encrypt_dict(jws, rp_conf["metadata"]["openid_relying_party"]["jwks"]["keys"][0])
+        return jwe.encode()

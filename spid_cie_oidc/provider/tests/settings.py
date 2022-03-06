@@ -1,3 +1,13 @@
+op_conf_priv_jwk = {
+    "kty": "RSA",
+    "kid": "dB67gL7ck3TFiIAf7N6_7SHvqk0MDYMEQcoGGlkUAAw",
+    "n": "01_4aI2Lu5ggsElmRkE_S_a83V_szXU0txV4db2hmJ8HR1Y2s7PsZZ5-emGpnTydGrR3n-QExeEEIcFt_a06Ryiink34RQcKoGXUDBMBU0Bu8G7NcZ99YX6yeG9wFi4xs-WviTPmtPqijkz6jm1_ltWDcwbktfkraIRKKggZaEl9ldtsFr2wSpin3AXuGIdeJ0hZqhF92ODBLGjJlaIL9KlwopDy56adReVnraawSdrxmuPGj78IEADNAme2nQNvv9UCu0FkAn5St1bKds3Gpv26W0kjr1gZLsmQrj9lTcDk_KbAwfEY__P7se62kusoSuKMTQqUG1TQpUY7oFGSdw",
+    "e": "AQAB",
+    "d": "AxvyR3dtisDeGjm6K2ZiS_fBJ3B1xz_mGptSPkkfy2LrdH0sKNCItaXzLlGpcQqnNPFaoRt1hoOcz_JMb-LQbKOIYNO8xycnXNyildrhthvIhfjbRMSXz4tRjLv25hyf1omWX2pIBnl5UqaHOPkbW1igqlx7mMGlhdAMVznvRb1oJOXxPtSdlVOhqT5ohn4BJZcJ85TKm_E49KUKUsz_xkd3BlYnUaiuEu-VQbC0u61iH-N017wg4ZQn9eXQgAzFdSNI2GQ7IH76l00iUu-y9oT2ld4WHGYMmsZBJgaQZnu2Yj4IMb5NjQz2VAOTU844RXP7-7Y5rWsS1oewfWSHAQ",
+    "p": "9dvm96S4wBrwzs73DOG8eV6sWEN13ZJNLa4tKzJvonOLG_8Z9Rshnfg_HcYDm_mqRD-nFC-8JKufnNaZbZuO_hDiA6UkvlZMGePxoN7nueHGfAqZ9lRQX0Vpp2Ac480jJgBLOhwgjkySRI5Ck-enTGabkxVN_LJSU9FC54TW6KE",
+    "q": "3BfwsumO62vhekd2gm97Uk1XFOM5UXmb1esdFnZ_RZRw1tDUB2irTxLJSqECCZbMWRoFRB3k-17LAOMaITUqv8g-83zdCmR3gpO71ahbdEfkGGKQYL7WmMNv3YvSMY5lN4_mCEz8R_OCz0_H7bip0Es_KAl5TSXjnVTvaACnLBc",
+}
+
 op_conf = {
     "sub": "http://op-test/oidc/op/",
     "default_exp": 2880,
@@ -6,12 +16,9 @@ op_conf = {
     "jwks": [
         {
             "kty": "RSA",
-            "kid": "dB67gL7ck3TFiIAf7N6_7SHvqk0MDYMEQcoGGlkUAAw",
             "n": "01_4aI2Lu5ggsElmRkE_S_a83V_szXU0txV4db2hmJ8HR1Y2s7PsZZ5-emGpnTydGrR3n-QExeEEIcFt_a06Ryiink34RQcKoGXUDBMBU0Bu8G7NcZ99YX6yeG9wFi4xs-WviTPmtPqijkz6jm1_ltWDcwbktfkraIRKKggZaEl9ldtsFr2wSpin3AXuGIdeJ0hZqhF92ODBLGjJlaIL9KlwopDy56adReVnraawSdrxmuPGj78IEADNAme2nQNvv9UCu0FkAn5St1bKds3Gpv26W0kjr1gZLsmQrj9lTcDk_KbAwfEY__P7se62kusoSuKMTQqUG1TQpUY7oFGSdw",
             "e": "AQAB",
-            "d": "AxvyR3dtisDeGjm6K2ZiS_fBJ3B1xz_mGptSPkkfy2LrdH0sKNCItaXzLlGpcQqnNPFaoRt1hoOcz_JMb-LQbKOIYNO8xycnXNyildrhthvIhfjbRMSXz4tRjLv25hyf1omWX2pIBnl5UqaHOPkbW1igqlx7mMGlhdAMVznvRb1oJOXxPtSdlVOhqT5ohn4BJZcJ85TKm_E49KUKUsz_xkd3BlYnUaiuEu-VQbC0u61iH-N017wg4ZQn9eXQgAzFdSNI2GQ7IH76l00iUu-y9oT2ld4WHGYMmsZBJgaQZnu2Yj4IMb5NjQz2VAOTU844RXP7-7Y5rWsS1oewfWSHAQ",
-            "p": "9dvm96S4wBrwzs73DOG8eV6sWEN13ZJNLa4tKzJvonOLG_8Z9Rshnfg_HcYDm_mqRD-nFC-8JKufnNaZbZuO_hDiA6UkvlZMGePxoN7nueHGfAqZ9lRQX0Vpp2Ac480jJgBLOhwgjkySRI5Ck-enTGabkxVN_LJSU9FC54TW6KE",
-            "q": "3BfwsumO62vhekd2gm97Uk1XFOM5UXmb1esdFnZ_RZRw1tDUB2irTxLJSqECCZbMWRoFRB3k-17LAOMaITUqv8g-83zdCmR3gpO71ahbdEfkGGKQYL7WmMNv3YvSMY5lN4_mCEz8R_OCz0_H7bip0Es_KAl5TSXjnVTvaACnLBc",
+            "kid": "dB67gL7ck3TFiIAf7N6_7SHvqk0MDYMEQcoGGlkUAAw",
         }
     ],
     "trust_marks": [],
@@ -19,12 +26,12 @@ op_conf = {
     "entity_type": "openid_provider",
     "metadata": {
         "openid_provider": {
-            "authorization_endpoint": "http://op-test/oidc/op/authorization",
-            "token_endpoint": "http://op-test/oidc/op/token",
-            "userinfo_endpoint": "http://op-test/oidc/op/userinfo",
-            "introspection_endpoint": "http://op-test/oidc/op/introspection",
+            "authorization_endpoint": "http://op-test/oidc/op/authorization/",
+            "token_endpoint": "http://op-test/oidc/op/token/",
+            "userinfo_endpoint": "http://op-test/oidc/op/userinfo/",
+            "introspection_endpoint": "http://op-test/oidc/op/introspection/",
             "claims_parameter_supported": True,
-            "contacts": ["ops@https://idp.it"],
+            "contacts": ["ops@op-test.it"],
             "client_registration_types_supported": ["automatic"],
             "request_authentication_methods_supported": {"ar": ["request_object"]},
             "acr_values_supported": [
