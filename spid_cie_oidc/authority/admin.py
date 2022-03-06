@@ -4,8 +4,7 @@ from .models import (
     FederationDescendant,
     FederationDescendantContact,
     FederationEntityProfile,
-    FederationEntityAssignedProfile,
-    FederationDescendantJwk,
+    FederationEntityAssignedProfile
 )
 
 
@@ -14,13 +13,6 @@ class FederationDescendantContactAdminInline(admin.TabularInline):
     extra = 0
     readonly_fields = ("created", "modified")
     raw_id_fields = ("entity",)
-
-
-class FederationDescendantJwkAdminInline(admin.StackedInline):
-    model = FederationDescendantJwk
-    extra = 0
-    readonly_fields = ("created", "modified")
-    raw_id_fields = ("jwk",)
 
 
 @admin.register(FederationDescendant)
@@ -34,18 +26,7 @@ class FederationDescendantAdmin(admin.ModelAdmin):
         "entity_statement_as_json",
     )
     inlines = (
-        FederationDescendantJwkAdminInline,
         FederationDescendantContactAdminInline,
-    )
-
-
-@admin.register(FederationDescendantJwk)
-class FederationDescendantJwkAdmin(admin.ModelAdmin):
-    list_display = ("descendant", "jwk", "created")
-    list_filter = ("created", "modified")
-    search_fields = (
-        "descendant__sub",
-        "kid",
     )
 
 
