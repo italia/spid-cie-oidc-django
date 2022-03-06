@@ -1,7 +1,6 @@
 import json
 import logging
 
-from django.http import HttpResponseForbidden
 
 from spid_cie_oidc.provider.tests.settings import op_conf, op_conf_priv_jwk
 from spid_cie_oidc.authority.tests.settings import rp_conf

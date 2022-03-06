@@ -5,14 +5,13 @@ from django.contrib import messages
 from django.utils.translation import gettext as _
 
 from .forms import (
-    OnboardingRegistrationForm, 
-    OnboardingCreateTrustChain, 
+    OnboardingRegistrationForm,
+    OnboardingCreateTrustChain,
     OnboardingValidatingTrustMarkForm
 )
 from .models import OnBoardingRegistration
-from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.jwks import (
-    private_pem_from_jwk, 
+    private_pem_from_jwk,
     public_pem_from_jwk,
     new_rsa_key,
     serialize_rsa_key
@@ -20,6 +19,7 @@ from spid_cie_oidc.entity.jwks import (
 
 from spid_cie_oidc.entity.jwtse import unpad_jwt_head, unpad_jwt_payload, verify_jws
 from spid_cie_oidc.authority.views import trust_mark_status, resolve_entity_statement
+
 
 def onboarding_landing(request):
     return render(request, "onboarding_landing.html")
@@ -51,6 +51,7 @@ def onboarding_entities(request):
         {"entity_list": entity_list, "entities": entities},
     )
 
+
 def onboarding_create_jwk(request):
     jwk = serialize_rsa_key(new_rsa_key().priv_key, 'private')
     context = {
@@ -67,7 +68,7 @@ def onboarding_convert_jwk(request):
         "pem": "",
         "jwk_type": jwk_type
     }
-        
+
     if request.method == 'POST':
         try:
             jwk_str = request.POST.get('jwk')
@@ -104,10 +105,10 @@ def onboarding_resolve_statement(request):
         try:
             res = resolve_entity_statement(request, format="json")
             context["resolved_statement"] = res.content.decode()
-        except Exception as e: 
+        except Exception:
             messages.error(request, _('Failed to resolve entity statement, Please check your inserted data'))
             render(request, 'onboarding_resolve_statement.html', context)
-        
+
     return render(request, 'onboarding_resolve_statement.html', context)
 
 
@@ -152,7 +153,7 @@ def onboarding_decode_jwt(request):
             try:
                 verify_jws(jwt, jwk)
                 messages.success(request, _('Your jws is verified'))
-            except Exception as e:
+            except Exception:
                 messages.error(request, _("Jws verification failed"))
                 render(request, 'onboarding_decode_jwt.html', context)
     return render(request, 'onboarding_decode_jwt.html', context)
