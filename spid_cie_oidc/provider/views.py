@@ -482,8 +482,6 @@ class TokenEndpoint(OpBase, View):
         id_token.update(commons)
         jwt_id = create_jws(id_token, issuer.jwks[0])
 
-        breakpoint()
-
         # TODO: refresh token is scope offline_access and prompt == consent
         # ...
 
