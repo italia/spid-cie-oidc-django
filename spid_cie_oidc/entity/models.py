@@ -272,33 +272,6 @@ class FederationEntityConfiguration(TimeStampedModel):
         return "{} [{}]".format(self.sub, "active" if self.is_active else "--")
 
 
-class PublicJwk(TimeStampedModel):
-
-    kid = models.CharField(
-        max_length=1024,
-        unique=True,
-        help_text=_("unique code that identifies this jwks. "),
-    )
-    jwk = models.JSONField(
-        blank=False,
-        null=False,
-        help_text=_("Public jwk"),
-        default=dict,
-        validators=[validate_public_jwks],
-    )
-
-    class Meta:
-        verbose_name = "Public JWKs"
-        verbose_name_plural = "Public JWKs"
-
-    @property
-    def jwk_as_json(self):
-        return json.dumps(self.jwk)
-
-    def __str__(self):
-        return f"{self.kid}"
-
-
 class FetchedEntityStatement(TimeStampedModel):
     """
     Entity Statement acquired by a third party
