@@ -82,8 +82,8 @@ class OpBase:
         if rp_trust_chain and not rp_trust_chain.is_active:
             state = self.payload["state"]
             logger.warning(
-                f"Disabled client {rp_trust_chain.sub} requests an authorization."
-                f"error = access_denied"
+                f"Disabled client {rp_trust_chain.sub} requests an authorization. "
+                "error = access_denied, "
                 f"state={state}"
             )
             raise Exception()
@@ -102,8 +102,8 @@ class OpBase:
                 # FIXME: to do test
                 state = self.payload["iss"]
                 logger.warning(
-                    f"Failed trust chain validation for {self.payload['iss']}."
-                    f"error=unauthorized_clien"
+                    f"Failed trust chain validation for {self.payload['iss']}. "
+                    "error=unauthorized_client, "
                     f"state={state}"
                 )
                 raise Exception()
@@ -114,8 +114,8 @@ class OpBase:
             state = self.payload["iss"]
             logger.error(
                 f"Invalid jwk for {self.payload['iss']}. "
-                f"{header['kid']} not found in {jwks}"
-                f"error=unauthorized_client"
+                f"{header['kid']} not found in {jwks}."
+                "error=unauthorized_client, "
                 f"state={state}"
             )
             raise Exception()
@@ -127,8 +127,8 @@ class OpBase:
             state = self.payload["iss"]
             logger.error(
                 "Authz request object signature validation failed "
-                f"for {self.payload['iss']}: {e} "
-                f"error=access_denied"
+                f"for {self.payload['iss']}: {e}. "
+                "error=access_denied, "
                 f"state={state}"
             )
             raise Exception()
@@ -137,8 +137,9 @@ class OpBase:
 
     def is_a_replay_authz(self):
         preexistent_authz = OidcSession.objects.filter(
-            client_id=self.payload["client_id"], nonce=self.payload["nonce"]
-        )
+            client_id=self.payload["client_id"], 
+            nonce=self.payload["nonce"]
+        ).first()
         if preexistent_authz:
             raise AuthzRequestReplay(
                 f"{preexistent_authz.client_id} with {preexistent_authz.nonce}"
@@ -154,7 +155,8 @@ class OpBase:
             raise InvalidSession()
 
         session = OidcSession.objects.filter(
-            auth_code=request.session["oidc"]["auth_code"], user=request.user
+            auth_code=request.session["oidc"]["auth_code"], 
+            user=request.user
         ).first()
 
         if not session:
@@ -172,8 +174,9 @@ class OpBase:
 
 
 class AuthzRequestView(OpBase, View):
-    """View which processes the actual Authz request and
-    returns a Http Redirect
+    """
+        View which processes the actual Authz request and
+        returns a Http Redirect
     """
 
     template = "op_user_login.html"
@@ -219,6 +222,7 @@ class AuthzRequestView(OpBase, View):
             )
         # yes, again. We MUST.
         tc = None
+
         try:
             tc = self.validate_authz_request_object(req)
         except InvalidEntityConfiguration as e:
@@ -244,7 +248,7 @@ class AuthzRequestView(OpBase, View):
         except Exception as e:
             logger.error(
                 "Error during trust build for "
-                f"{request.GET.get('client_id', 'unknow')}: {e}"
+                f"{request.GET.get('client_id', 'unknown')}: {e}"
             )
             return self.redirect_response_data(
                 error="invalid_request",
@@ -487,7 +491,7 @@ class TokenEndpoint(OpBase, View):
             # TODO
             # refresh_token =
         )
-
+        
         return JsonResponse(
             {
                 "access_token": jwt_at,
@@ -500,6 +504,18 @@ class TokenEndpoint(OpBase, View):
         )
 
     def grant_refresh_token(self, request, *args, **kwargs):
+        """
+            client_id=https://rp.cie.it& 
+            client_assertion=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IlNQSUQiLCJhZG1pbiI6dHJ1ZX0.LVyRDPVJm0S9q7oiXcYVIIqGWY0wWQlqxvFGYswL...&
+            client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer& 
+            refresh_token=8xLOxBtZp8 &  
+            grant_type=refresh_token 
+        """
+
+        # 1. get the IssuedToken refresh one, revoked = None
+        # 2. create a new instance of issuedtoken linked to the same sessions and revoke the older
+        # 3. response with a new refresh, access and id_token
+
         raise NotImplementedError()
 
     def post(self, request, *args, **kwargs):
