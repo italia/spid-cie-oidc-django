@@ -480,24 +480,40 @@ class TokenEndpoint(OpBase, View):
         id_token.update(self.commons)
         jwt_id = create_jws(id_token, self.issuer.jwks[0])
 
-        # TODO: refresh token is scope offline_access and prompt == consent
-        # ...
-
-        IssuedToken.objects.create(
+        iss_token_data = dict(
             session=self.authz,
             access_token=jwt_at,
             id_token=jwt_id,
             expires=datetime_from_timestamp(self.commons["exp"])
-            # TODO
-            # refresh_token =
         )
+
+        # refresh token is scope offline_access and prompt == consent
+        if (
+            "offline_access" in self.authz.authz_request['scope'] and 
+            'consent' in self.authz.authz_request['prompt']
+        ):
+            refresh_token = {
+                "sub": _sub,
+                "at_hash": left_hash(jwt_at, "HS256"),
+                "c_hash": left_hash(self.authz.auth_code, "HS256"),
+                "aud": [self.authz.client_id],
+                "iss": self.issuer.sub,
+            }
+            id_token.update(self.commons)
+            iss_token_data['refresh_token'] = refresh_token
+
+        IssuedToken.objects.create(**iss_token_data)
         
+        expires_in = timezone.timedelta(
+            seconds = access_token['exp'] - access_token['iat']
+        ).seconds
+
         return JsonResponse(
             {
                 "access_token": jwt_at,
                 "id_token": jwt_id,
                 "token_type": "bearer",
-                "expires_in": 3600,
+                "expires_in": expires_in,
                 # TODO: remove unsupported scope
                 "scope": self.authz.authz_request["scope"],
             }
