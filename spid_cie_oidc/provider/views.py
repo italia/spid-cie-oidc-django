@@ -38,7 +38,7 @@ from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chai
 from spid_cie_oidc.entity.utils import datetime_from_timestamp, exp_from_now, iat_now
 from spid_cie_oidc.provider.models import IssuedToken, OidcSession
 
-from .exceptions import AuthzRequestReplay
+from .exceptions import AuthzRequestReplay, InvalidSession, RevokedSession
 from .forms import *
 from .settings import *
 
@@ -146,19 +146,22 @@ class OpBase:
 
     def check_session(self, request) -> OidcSession:
         if not request.user.is_authenticated:
-            raise Exception()
+            raise InvalidSession()
 
         auth_code = request.session.get("oidc", {}).get("auth_code", None)
         if not auth_code:
             # FIXME: to do test
-            raise Exception()
+            raise InvalidSession()
 
         session = OidcSession.objects.filter(
             auth_code=request.session["oidc"]["auth_code"], user=request.user
         ).first()
 
         if not session:
-            raise Exception()
+            raise InvalidSession()
+
+        if session.revoked:
+            raise RevokedSession()
 
         return session
 
@@ -408,14 +411,18 @@ class ConsentPageView(OpBase, View):
 @method_decorator(csrf_exempt, name="dispatch")
 class TokenEndpoint(OpBase, View):
     def get_jwt_common_data(self):
-        return {"jti": str(uuid.uuid4()), "exp": exp_from_now(), "iat": iat_now()}
+        return {
+            "jti": str(uuid.uuid4()), 
+            "exp": exp_from_now(), 
+            "iat": iat_now()
+        }
 
     def get(self, request, *args, **kwargs):
         return HttpResponseBadRequest()
 
-    def post(self, request, *args, **kwargs):
+    def grant_auth_code(self, request, *args, **kwargs):
         """
-        Example gien of a Token request:
+        Example of a Token request:
 
         {
             'grant_type': ['authorization_code'],
@@ -439,57 +446,44 @@ class TokenEndpoint(OpBase, View):
             ]
         }
         """
-        logger.debug(f"{request.headers}: {request.POST}")
-
-        # TODO: Francesca - please apply token request json validator on request.POST
-
-        commons = self.get_jwt_common_data()
-        issuer = self.get_issuer()
-        authz = OidcSession.objects.filter(
-            auth_code=request.POST["code"], revoked=False
-        ).first()
-
-        if not authz:
-            return HttpResponseBadRequest()
-
         # PKCE check - based on authz.authz_request["code_challenge_method"] == S256
         code_challenge = hashlib.sha256(request.POST["code_verifier"].encode()).digest()
         code_challenge = base64.urlsafe_b64encode(code_challenge).decode("utf-8")
         code_challenge = code_challenge.replace("=", "")
-        if code_challenge != authz.authz_request["code_challenge"]:
+        if code_challenge != self.authz.authz_request["code_challenge"]:
             return HttpResponseForbidden()
         #
 
-        _sub = authz.pairwised_sub()
+        _sub = self.authz.pairwised_sub()
         access_token = {
-            "iss": issuer.sub,
+            "iss": self.issuer.sub,
             "sub": _sub,
-            "aud": [authz.client_id],
-            "client_id": authz.client_id,
-            "scope": authz.authz_request["scope"],
+            "aud": [self.authz.client_id],
+            "client_id": self.authz.client_id,
+            "scope": self.authz.authz_request["scope"],
         }
-        access_token.update(commons)
-        jwt_at = create_jws(access_token, issuer.jwks[0], typ="at+jwt")
+        access_token.update(self.commons)
+        jwt_at = create_jws(access_token, self.issuer.jwks[0], typ="at+jwt")
 
         id_token = {
             "sub": _sub,
-            "nonce": authz.authz_request["nonce"],
+            "nonce": self.authz.authz_request["nonce"],
             "at_hash": left_hash(jwt_at, "HS256"),
-            "c_hash": left_hash(authz.auth_code, "HS256"),
-            "aud": [authz.client_id],
-            "iss": issuer.sub,
+            "c_hash": left_hash(self.authz.auth_code, "HS256"),
+            "aud": [self.authz.client_id],
+            "iss": self.issuer.sub,
         }
-        id_token.update(commons)
-        jwt_id = create_jws(id_token, issuer.jwks[0])
+        id_token.update(self.commons)
+        jwt_id = create_jws(id_token, self.issuer.jwks[0])
 
         # TODO: refresh token is scope offline_access and prompt == consent
         # ...
 
         IssuedToken.objects.create(
-            session=authz,
+            session=self.authz,
             access_token=jwt_at,
             id_token=jwt_id,
-            expires=datetime_from_timestamp(commons["exp"])
+            expires=datetime_from_timestamp(self.commons["exp"])
             # TODO
             # refresh_token =
         )
@@ -501,10 +495,35 @@ class TokenEndpoint(OpBase, View):
                 "token_type": "bearer",
                 "expires_in": 3600,
                 # TODO: remove unsupported scope
-                "scope": authz.authz_request["scope"],
+                "scope": self.authz.authz_request["scope"],
             }
         )
 
+    def grant_refresh_token(self, request, *args, **kwargs):
+        raise NotImplementedError()
+
+    def post(self, request, *args, **kwargs):
+
+        logger.debug(f"{request.headers}: {request.POST}")
+
+        # TODO: Francesca - please apply token request json validator on request.POST
+
+        self.commons = self.get_jwt_common_data()
+        self.issuer = self.get_issuer()
+
+        self.authz = OidcSession.objects.filter(
+            auth_code=request.POST["code"], revoked=False
+        ).first()
+
+        if not self.authz:
+            return HttpResponseBadRequest()
+
+        if request.POST.get("grant_type") == 'authorization_code':
+            return self.grant_auth_code(request)
+        elif request.POST.get("grant_type") == 'refresh_token':
+            return self.grant_refresh_token(request)
+        else:
+            raise NotImplementedError()
 
 class UserInfoEndpoint(OpBase, View):
     def get(self, request, *args, **kwargs):

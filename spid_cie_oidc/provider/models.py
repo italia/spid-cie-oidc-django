@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.utils import timezone
 from spid_cie_oidc.entity.abstract_models import TimeStampedModel
 
 import hashlib
@@ -14,7 +15,7 @@ class OidcSession(TimeStampedModel):
 
     user_uid = models.CharField(max_length=120)
     user = models.ForeignKey(
-        get_user_model(), on_delete=models.CASCADE, blank=False, null=False
+        get_user_model(), on_delete=models.SET_NULL, blank=True, null=True
     )
     client_id = models.URLField(blank=True, null=True)
 
@@ -62,6 +63,10 @@ class IssuedToken(TimeStampedModel):
     @property
     def user_uid(self):
         return self.session.user_uid
+
+    @property
+    def expired(self):
+        return timezone.localtime() >= self.expires
 
     def __str__(self):
         return "{} @ {}".format(self.session__user_uid, self.session__client_id)
