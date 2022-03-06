@@ -15,6 +15,7 @@ from spid_cie_oidc.entity.models import (
 )
 
 from spid_cie_oidc.entity.jwtse import create_jws
+from spid_cie_oidc.entity.validators import validate_public_jwks
 from spid_cie_oidc.entity.utils import iat_now
 from spid_cie_oidc.entity.utils import exp_from_now
 from typing import Union
@@ -134,6 +135,8 @@ class FederationDescendant(TimeStampedModel):
         blank=False,
         null=False,
         help_text=_("a list of public keys"),
+        default=list,
+        validators = [validate_public_jwks]
     )
     metadata_policy = models.JSONField(
         blank=True, help_text=_("if present overloads the DEFAULT policy"), default=dict

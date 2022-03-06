@@ -12,7 +12,6 @@ from spid_cie_oidc.entity.jwks import (
     public_pem_from_jwk,
 )
 from spid_cie_oidc.entity.jwtse import create_jws
-from spid_cie_oidc.entity.validators import validate_public_jwks
 from spid_cie_oidc.entity.settings import FEDERATION_DEFAULT_EXP
 from spid_cie_oidc.entity.statements import EntityConfiguration
 from spid_cie_oidc.entity.utils import exp_from_now, iat_now
