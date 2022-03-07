@@ -34,7 +34,7 @@ def decode_token(bearer_token, keyjar, verify_sign=True):
     return msg.to_dict()
 
 
-def random_string(n=27):
+def random_string(n=32):
     return "".join(random.choices(string.ascii_letters + string.digits, k=n))  # nosec
 
 
@@ -79,9 +79,7 @@ def html_json_preview(value):
     return mark_safe(dumps.replace("\n", "<br>").replace(" ", "&nbsp"))  # nosec
 
 
-def process_user_attributes(
-    userinfo: dict, user_map: dict, authz: dict
-):
+def process_user_attributes(userinfo: dict, user_map: dict, authz: dict):
     data = dict()
     for k, v in user_map.items():
         for i in v:

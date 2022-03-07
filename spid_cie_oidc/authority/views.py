@@ -7,9 +7,7 @@ from spid_cie_oidc.authority.models import (
     FederationEntityAssignedProfile,
     get_first_self_trust_anchor,
 )
-from spid_cie_oidc.entity.jwtse import (
-    create_jws, unpad_jwt_payload, unpad_jwt_head
-)
+from spid_cie_oidc.entity.jwtse import create_jws, unpad_jwt_payload, unpad_jwt_head
 from spid_cie_oidc.entity.models import TrustChain
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
@@ -74,36 +72,28 @@ def resolve_entity_statement(request, format: str = "jose"):
     Metadata if it's valid
     we avoid any possibility to trigger a new Metadata discovery if
     """
-    if not all(
-        (
-            request.GET.get("sub", None),
-            request.GET.get("anchor", None)
-        )
-    ):
+    if not all((request.GET.get("sub", None), request.GET.get("anchor", None))):
         raise Http404("sub and anchor parameters are REQUIRED.")
 
-    if request.GET.get('iss'):
-        iss = get_first_self_trust_anchor(sub = request.GET['iss'])
+    if request.GET.get("iss"):
+        iss = get_first_self_trust_anchor(sub=request.GET["iss"])
     else:
         iss = get_first_self_trust_anchor()
 
-    _q = dict(
-        sub=request.GET["sub"],
-        trust_anchor__sub=request.GET["anchor"]
-    )
+    _q = dict(sub=request.GET["sub"], trust_anchor__sub=request.GET["anchor"])
     if request.GET.get("type", None):
-        _q['type'] = request.GET["type"]
+        _q["type"] = request.GET["type"]
 
     entity = TrustChain.objects.filter(**_q).first()
     if entity and not entity.is_active:
         raise Http404("entity not found.")
     else:
         get_or_create_trust_chain(
-            httpc_params = HTTPC_PARAMS,
+            httpc_params=HTTPC_PARAMS,
             # TODO
             # required_trust_marks = [],
-            subject = _q['sub'],
-            trust_anchor = _q['trust_anchor__sub']
+            subject=_q["sub"],
+            trust_anchor=_q["trust_anchor__sub"],
         )
         entity = TrustChain.objects.filter(**_q).first()
 
@@ -111,13 +101,13 @@ def resolve_entity_statement(request, format: str = "jose"):
         raise Http404("entity not found.")
 
     res = {
-      "iss": iss.sub,
-      "sub": request.GET["sub"],
-      # "aud": [],
-      "iat": entity.iat_as_timestamp,
-      "exp": entity.exp_as_timestamp,
-      "trust_marks": [],
-      "metadata": entity.metadata
+        "iss": iss.sub,
+        "sub": request.GET["sub"],
+        # "aud": [],
+        "iat": entity.iat_as_timestamp,
+        "exp": entity.exp_as_timestamp,
+        "trust_marks": [],
+        "metadata": entity.metadata,
     }
 
     if request.GET.get("format") == "json" or format == "json":
@@ -132,25 +122,23 @@ def resolve_entity_statement(request, format: str = "jose"):
 def trust_mark_status(request):
     failed_data = {"active": False}
 
-    if request.GET.get('sub', "") and request.GET.get('id', ""):
+    if request.GET.get("sub", "") and request.GET.get("id", ""):
         sub = request.GET["sub"]
         _id = request.GET["id"]
 
-    elif request.GET.get('trust_mark', ""):
+    elif request.GET.get("trust_mark", ""):
         try:
-            unpad_jwt_head(request.GET['trust_mark'])
-            payload = unpad_jwt_payload(request.GET['trust_mark'])
-            sub = payload.get('sub', "")
-            _id = payload.get('id', "")
+            unpad_jwt_head(request.GET["trust_mark"])
+            payload = unpad_jwt_payload(request.GET["trust_mark"])
+            sub = payload.get("sub", "")
+            _id = payload.get("id", "")
         except Exception:
             return JsonResponse(failed_data)
     else:
         return JsonResponse(failed_data)
 
     res = FederationEntityAssignedProfile.objects.filter(
-        descendant__sub = sub,
-        profile__profile_id = _id,
-        descendant__is_active = True
+        descendant__sub=sub, profile__profile_id=_id, descendant__is_active=True
     )
     if res:
         return JsonResponse({"active": True})

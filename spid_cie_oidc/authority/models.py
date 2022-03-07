@@ -11,17 +11,17 @@ from spid_cie_oidc.entity.abstract_models import TimeStampedModel
 from spid_cie_oidc.entity.models import (
     ENTITY_TYPES,
     ENTITY_STATUS,
-    FederationEntityConfiguration,
-    PublicJwk,
+    FederationEntityConfiguration
 )
 
 from spid_cie_oidc.entity.jwtse import create_jws
+from spid_cie_oidc.entity.validators import validate_public_jwks
 from spid_cie_oidc.entity.utils import iat_now
 from spid_cie_oidc.entity.utils import exp_from_now
 from typing import Union
 
 from . import settings as local_settings
-from . validators import validate_entity_configuration
+from .validators import validate_entity_configuration
 
 import json
 import logging
@@ -131,6 +131,13 @@ class FederationDescendant(TimeStampedModel):
         ),
         blank=True,
     )
+    jwks = models.JSONField(
+        blank=False,
+        null=False,
+        help_text=_("a list of public keys"),
+        default=list,
+        validators = [validate_public_jwks]
+    )
     metadata_policy = models.JSONField(
         blank=True, help_text=_("if present overloads the DEFAULT policy"), default=dict
     )
@@ -178,12 +185,6 @@ class FederationDescendant(TimeStampedModel):
         ]
 
     def entity_statement_as_dict(self, iss: str = None, aud: list = None) -> dict:
-        jwks = [
-            i.jwk.jwk for i in FederationDescendantJwk.objects.filter(descendant=self)
-        ]
-        if not jwks:
-            logger.warning(f"Any JWKs found for {self.sub}")
-            return {}
 
         policies = {
             k: local_settings.FEDERATION_DEFAULT_POLICY[k] for k in self.entity_profiles
@@ -197,7 +198,7 @@ class FederationDescendant(TimeStampedModel):
             "iat": iat_now(),
             "iss": get_first_self_trust_anchor(iss).sub,
             "sub": self.sub,
-            "jwks": {"keys": jwks},
+            "jwks": {"keys": self.jwks},
             "metadata_policy": policies,
         }
         if aud:
@@ -241,18 +242,6 @@ class FederationDescendant(TimeStampedModel):
         return "{} [{} and {}]".format(
             self.sub, self.status, "active" if self.is_active else "--"
         )
-
-
-class FederationDescendantJwk(TimeStampedModel):
-    descendant = models.ForeignKey(FederationDescendant, on_delete=models.CASCADE)
-    jwk = models.ForeignKey(PublicJwk, on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name = "Federation Descendant Public JWK"
-        verbose_name_plural = "Federation Descendant Public JWKs"
-
-    def __str__(self):
-        return f"{self.descendant.sub} {self.jwk.kid}"
 
 
 class FederationEntityAssignedProfile(TimeStampedModel):

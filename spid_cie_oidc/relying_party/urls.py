@@ -13,7 +13,7 @@ urlpatterns += (
     path(
         "oidc/rp/authorization",
         SpidCieOidcRpBeginView.as_view(),
-        name="spid_cie_rp_begin"
+        name="spid_cie_rp_begin",
     ),
 )
 urlpatterns += (

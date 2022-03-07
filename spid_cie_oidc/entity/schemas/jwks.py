@@ -4,14 +4,25 @@ from pydantic import BaseModel, validator
 
 
 class Jwk(BaseModel):
-    kid: str # Base64url-encoded thumbprint string
+    kid: str  # Base64url-encoded thumbprint string
     kty: Literal["EC", "RSA"]
     # TODO: verify if is optional
-    alg: Optional[Literal[
-        "RS256", "RS384", "RS512", "ES256", "ES384", "ES512", "PS256", "PS384", "PS512"]]
+    alg: Optional[
+        Literal[
+            "RS256",
+            "RS384",
+            "RS512",
+            "ES256",
+            "ES384",
+            "ES512",
+            "PS256",
+            "PS384",
+            "PS512",
+        ]
+    ]
     use: Literal["sig", "enc"]
-    n: Optional[str] # Base64urlUInt-encoded
-    e: Optional[str] # Base64urlUInt-encoded
+    n: Optional[str]  # Base64urlUInt-encoded
+    e: Optional[str]  # Base64urlUInt-encoded
 
     def check_value_for_rsa(value, name, values):
         if "EC" == values.get("kty") and value:
@@ -31,8 +42,8 @@ class Jwk(BaseModel):
 
 
 class JwkCie(Jwk):
-    x: str # Base64url-encoded
-    y: str # Base64url-encoded
+    x: str  # Base64url-encoded
+    y: str  # Base64url-encoded
     crv: Literal["P-256", "P-384", "P-521"]
 
     @validator("x")
@@ -49,8 +60,8 @@ class JwkCie(Jwk):
 
 
 class JwksCie(BaseModel):
-    keys : List[JwkCie]
+    keys: List[JwkCie]
 
 
 class JwksSpid(BaseModel):
-    keys : List[Jwk]
+    keys: List[Jwk]

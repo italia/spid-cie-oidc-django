@@ -7,8 +7,7 @@ from django.utils.safestring import mark_safe
 from .models import (
     FederationEntityConfiguration,
     FetchedEntityStatement,
-    TrustChain,
-    PublicJwk,
+    TrustChain
 )
 
 
@@ -69,14 +68,6 @@ class TrustChainAdmin(admin.ModelAdmin):
         "chain",
         "iat",
     )
-
-
-@admin.register(PublicJwk)
-class PublicJwkAdmin(admin.ModelAdmin):
-    list_display = ("kid", "created")
-    list_filter = ("created", "modified")
-    search_fields = ("kid",)
-    readonly_fields = ("created", "modified", "jwk_as_json")
 
 
 @admin.register(FetchedEntityStatement)

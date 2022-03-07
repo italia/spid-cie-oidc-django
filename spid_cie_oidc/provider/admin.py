@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from . models import IssuedToken, OidcSession
+from .models import IssuedToken, OidcSession
 
 
 @admin.register(OidcSession)
@@ -13,12 +13,12 @@ class OidcSessionAdmin(admin.ModelAdmin):
         "auth_code",
         "user_uid",
         "user",
+        "sid",
         "client_id",
         "created",
         "revoked",
-        "sub",
         "user_uid",
-        "authz_request"
+        "authz_request",
     )
 
 
@@ -32,5 +32,5 @@ class IssuedTokenAdmin(admin.ModelAdmin):
         "id_token",
         "refresh_token",
         "created",
-        "session"
+        "session",
     )

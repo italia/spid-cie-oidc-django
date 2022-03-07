@@ -4,14 +4,16 @@ from spid_cie_oidc.entity.tests.jwks_settings import JWKS
 
 RP_METADATA = {
     "redirect_uris": [
-        "https://rp.cie.it/callback1/",
-        "https://rp.cie.it/callback2/"
+        "https://rp.example.it/spid/callback1/",
+        "https://rp.example.it/spid/callback2/",
     ],
     "jwks_uri": "https://registry.cie.gov.it/keys.json",
     "response_types": ["code"],
     "grant_types": ["authorization_code", "refresh_token"],
-    "client_id": "https://rp.cie.it",
+    "client_id": "https://rp.example.it/spid",
     "client_name": "Nome RP",
+    "contacts": ["ops@rp.example.it"],
+    "subject_type": "pairwise",
 }
 
 RP_METADATA_CIE = deepcopy(RP_METADATA)
