@@ -25,24 +25,23 @@ from spid_cie_oidc.entity.models import (FederationEntityConfiguration,
                                          TrustChain)
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.statements import get_http_url
-from spid_cie_oidc.entity.trust_chain_operations import \
-    get_or_create_trust_chain
+from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
 from spid_cie_oidc.onboarding.schemas.authn_requests import AcrValuesSpid
 
 from .models import OidcAuthentication, OidcAuthenticationToken
 from .oauth2 import *
 from .oidc import *
 from .settings import (
-    RP_ATTR_MAP, 
-    RP_PKCE_CONF, 
+    RP_ATTR_MAP,
+    RP_PKCE_CONF,
     RP_REQUEST_CLAIM_BY_PROFILE,
-    RP_USER_CREATE, 
+    RP_USER_CREATE,
     RP_USER_LOOKUP_FIELD,
 )
 from .utils import (
     http_dict_to_redirect_uri_path,
     http_redirect_uri_to_dict,
-    process_user_attributes, 
+    process_user_attributes,
     random_string,
 )
 
@@ -476,7 +475,6 @@ def oidc_rpinitiated_logout(request):
         auth_token = auth_tokens.last()
         auth_token.logged_out = timezone.localtime()
         auth_token.save()
-        breakpoint()
         data_request = dict(
             token = auth_token.id_token,
             client_id = authz.client_id,
@@ -485,10 +483,9 @@ def oidc_rpinitiated_logout(request):
         )
         try:
             requests.post(end_session_url, data = data_request)
-            breakpoint()
         except Exception as e:
             logger.warning(f"Token revocation failed: {e}")
-        return HttpResponseRedirect(getattr(settings, "LOGOUT_REDIRECT_URL", "/"))
+        return HttpResponseRedirect(getattr(settings, "LOGOUT_REDIRECT_URL", None) or "/")
 
 
 def oidc_rp_landing(request):

@@ -1,10 +1,13 @@
 from django.conf import settings
-from spid_cie_oidc.onboarding.schemas.authn_requests import (
-    AuthenticationRequestSpid,
-    AuthenticationRequestCie,
+from spid_cie_oidc.entity.schemas.op_metadata import (
+    OPMetadataCie,
+    OPMetadataSpid
 )
-from spid_cie_oidc.entity.schemas.op_metadata import OPMetadataSpid, OPMetadataCie
-
+from spid_cie_oidc.onboarding.schemas.authn_requests import (
+    AuthenticationRequestCie,
+    AuthenticationRequestSpid
+)
+from spid_cie_oidc.onboarding.schemas.token_requests import TokenAuthnCodeRequest
 
 OIDCFED_PROVIDER_PROFILES = getattr(
     settings,
@@ -13,10 +16,12 @@ OIDCFED_PROVIDER_PROFILES = getattr(
         "spid": {
             "authorization_request": AuthenticationRequestSpid,
             "op_metadata": OPMetadataSpid,
+            "token_request": TokenAuthnCodeRequest
         },
         "cie": {
             "authorization_request": AuthenticationRequestCie,
             "op_metadata": OPMetadataCie,
+            "token_request": TokenAuthnCodeRequest
         },
     },
 )

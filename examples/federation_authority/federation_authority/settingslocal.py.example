@@ -211,3 +211,4 @@ LOGGING = {
 }
 
 LOGIN_REDIRECT_URL = "/echo_attributes"
+LOGOUT_REDIRECT_URL = "/oidc/rp/landing"
