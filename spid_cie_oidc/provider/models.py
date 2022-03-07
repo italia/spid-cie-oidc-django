@@ -1,13 +1,12 @@
+import hashlib
+import logging
+
 from django.contrib.auth import get_user_model
 from django.contrib.sessions.models import Session
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from spid_cie_oidc.entity.abstract_models import TimeStampedModel
-
-import hashlib
-import logging
-
 from spid_cie_oidc.provider.settings import OIDCFED_PROVIDER_SALT
 
 logger = logging.getLogger(__name__)
@@ -92,6 +91,10 @@ class IssuedToken(TimeStampedModel):
     @property
     def expired(self):
         return timezone.localtime() >= self.expires
+
+    @property
+    def is_revoked(self):
+        return self.session.revoked or self.revoked
 
     def __str__(self):
         return "{} @ {}".format(self.session__user_uid, self.session__client_id)
