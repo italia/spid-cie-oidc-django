@@ -334,7 +334,13 @@ class AuthzRequestView(OpBase, View):
 
         # create auth_code
         auth_code = hashlib.sha512(
-            f'{uuid.uuid4()}-{self.payload["client_id"]}-{self.payload["nonce"]}'.encode()
+            '-'.join(
+                (
+                    f'{uuid.uuid4()}',
+                    f'{self.payload["client_id"]}',
+                    f'{self.payload["nonce"]}'
+                )
+            ).encode()
         ).hexdigest()
 
         # put the auth_code in the user web session
