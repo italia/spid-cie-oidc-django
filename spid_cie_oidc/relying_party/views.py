@@ -263,7 +263,6 @@ class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant
             user = user_model.objects.create(
                 username=user_attrs.get("username", user_attrs["sub"]),
                 first_name=user_attrs.get("given_name", user_attrs["sub"]),
-                #TODO: Giuseppe ho cambiato surname con last_name???????? se no non funzionava
                 last_name=user_attrs.get("family_name", user_attrs["sub"]),
                 email=user_attrs.get("email", ""),
                 attributes=user_attrs,

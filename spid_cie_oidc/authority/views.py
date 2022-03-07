@@ -119,7 +119,6 @@ def resolve_entity_statement(request, format: str = "jose"):
         )
 
 
-
 def trust_mark_status(request):
     failed_data = {"active": False}
 

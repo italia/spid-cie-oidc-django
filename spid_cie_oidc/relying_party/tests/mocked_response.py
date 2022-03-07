@@ -1,11 +1,17 @@
 import json
 import logging
 
+<<<<<<< HEAD
 from django.http import HttpResponse
 from spid_cie_oidc.entity.models import FederationEntityConfiguration
 
 from spid_cie_oidc.provider.tests.settings import op_conf
 from spid_cie_oidc.authority.tests.settings import RP_METADATA_JWK1_pub, rp_conf
+=======
+
+from spid_cie_oidc.provider.tests.settings import op_conf, op_conf_priv_jwk
+from spid_cie_oidc.authority.tests.settings import rp_conf
+>>>>>>> fac011e3b4767b44d9ace28b9cd4b276c29a395a
 from spid_cie_oidc.entity.jwtse import create_jws, encrypt_dict
 from spid_cie_oidc.entity.utils import iat_now, exp_from_now
 logger = logging.getLogger(__name__)
@@ -38,8 +44,11 @@ class MockedTokenEndPointResponse:
             'exp': exp_from_now(), 
             'iat': iat_now()
         }
-        jwt_at = create_jws(access_token, op_conf['jwks'][0], typ="at+jwt")
-        jwt_id = create_jws(id_token, op_conf['jwks'][0])
+        jwt_at = create_jws(access_token, op_conf_priv_jwk, typ="at+jwt")
+        jwt_id = create_jws(id_token, op_conf_priv_jwk)
+
+        self.access_token = jwt_at
+        self.id_token = jwt_id
 
         res = {
                 "access_token": jwt_at,
@@ -50,28 +59,17 @@ class MockedTokenEndPointResponse:
             }
         return json.dumps(res).encode()
 
-class MockedUserinfoEndPointResponse:
+
+class MockedUserInfoResponse:
     def __init__(self):
         self.status_code = 200
 
     @property
     def content(self):
-
-        rp_conf_saved = FederationEntityConfiguration.objects.all().first()  
-        
-        userinfo = {
-                    "iss": op_conf["sub"],
-                    "aud": [rp_conf["metadata"]["openid_relying_party"]["client_id"],], 
-                    "iat": iat_now(),
-                    "nbf": iat_now(),
-                    "exp": exp_from_now(),
-                    "sub": '2ed008b45e66ce53e48273dca5a4463bc8ebd036ebaa824f4582627683c2451b',
-                    "name": "Mario",
-                    "family_name": "Rossi",
-                    "tax_number": "MROXXXXXXXXXXXXX"
+        jwt = {
+            "sub": 'asdasdasdasasdasdas',
+            "https://attributes.spid.gov.it/fiscalNumber": "sdfsfs908df09s8df90s8fd0"
         }
-        jwt = create_jws(userinfo, op_conf['jwks'][0], typ="at+jwt")
-        #jwe = encrypt_dict(jwt, rp_conf['metadata']['openid_relying_party']['jwks']['keys'][0])
-        breakpoint()
-        jwe = encrypt_dict(jwt, rp_conf_saved.metadata["openid_relying_party"]["jwks"]["keys"][0])
-        return HttpResponse(jwe, content_type="application/jose").content
+        jws = create_jws(jwt, op_conf_priv_jwk)
+        jwe = encrypt_dict(jws, rp_conf["metadata"]["openid_relying_party"]["jwks"]["keys"][0])
+        return jwe.encode()

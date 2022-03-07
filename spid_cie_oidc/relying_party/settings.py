@@ -51,7 +51,7 @@ RP_ATTR_MAP = getattr(
             "email",
             "https://attributes.spid.gov.it/email",
         ),
-        "fiscal_number": ("https://attributes.spid.gov.it/fiscalNumber",),
+        "fiscal_number": ("https://attributes.spid.gov.it/fiscalNumber", "fiscal_number"),
     },
 )
 

@@ -34,11 +34,7 @@ class TrustChainTest(TestCase):
 
         self.rp_profile = FederationEntityProfile.objects.create(**RP_PROFILE)
         self.rp = FederationDescendant.objects.create(**rp_onboarding_data)
-
-        self.rp_jwk = PublicJwk.objects.create(
-            jwk=self.rp_conf.public_jwks[0], kid=self.rp_conf.public_jwks[0]["kid"]
-        )
-        FederationDescendantJwk.objects.create(descendant=self.rp, jwk=self.rp_jwk)
+ 
         self.rp_assigned_profile = FederationEntityAssignedProfile.objects.create(
             descendant=self.rp, profile=self.rp_profile, issuer=self.ta_conf
         )
@@ -103,16 +99,11 @@ class TrustChainTest(TestCase):
         self.intermediate = FederationEntityConfiguration.objects.create(
             **intermediary_conf
         )
-        self.intermediate_jwk = PublicJwk.objects.create(
-            jwk=self.intermediate.public_jwks[0],
-            kid=self.intermediate.public_jwks[0]["kid"],
-        )
+
         self.intermediate_desc = FederationDescendant.objects.create(
             **intermediary_onboarding_data
         )
-        FederationDescendantJwk.objects.create(
-            descendant=self.intermediate_desc, jwk=self.intermediate_jwk
-        )
+
         FederationEntityAssignedProfile.objects.create(
             descendant=self.rp, profile=self.rp_profile, issuer=self.intermediate
         )

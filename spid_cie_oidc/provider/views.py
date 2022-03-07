@@ -38,7 +38,7 @@ from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chai
 from spid_cie_oidc.entity.utils import datetime_from_timestamp, exp_from_now, iat_now
 from spid_cie_oidc.provider.models import IssuedToken, OidcSession
 
-from .exceptions import AuthzRequestReplay
+from .exceptions import AuthzRequestReplay, InvalidSession, RevokedSession
 from .forms import *
 from .settings import *
 
@@ -82,8 +82,8 @@ class OpBase:
         if rp_trust_chain and not rp_trust_chain.is_active:
             state = self.payload["state"]
             logger.warning(
-                f"Disabled client {rp_trust_chain.sub} requests an authorization."
-                f"error = access_denied"
+                f"Disabled client {rp_trust_chain.sub} requests an authorization. "
+                "error = access_denied, "
                 f"state={state}"
             )
             raise Exception()
@@ -102,8 +102,8 @@ class OpBase:
                 # FIXME: to do test
                 state = self.payload["iss"]
                 logger.warning(
-                    f"Failed trust chain validation for {self.payload['iss']}."
-                    f"error=unauthorized_clien"
+                    f"Failed trust chain validation for {self.payload['iss']}. "
+                    "error=unauthorized_client, "
                     f"state={state}"
                 )
                 raise Exception()
@@ -114,8 +114,8 @@ class OpBase:
             state = self.payload["iss"]
             logger.error(
                 f"Invalid jwk for {self.payload['iss']}. "
-                f"{header['kid']} not found in {jwks}"
-                f"error=unauthorized_client"
+                f"{header['kid']} not found in {jwks}."
+                "error=unauthorized_client, "
                 f"state={state}"
             )
             raise Exception()
@@ -127,8 +127,8 @@ class OpBase:
             state = self.payload["iss"]
             logger.error(
                 "Authz request object signature validation failed "
-                f"for {self.payload['iss']}: {e} "
-                f"error=access_denied"
+                f"for {self.payload['iss']}: {e}. "
+                "error=access_denied, "
                 f"state={state}"
             )
             raise Exception()
@@ -137,8 +137,9 @@ class OpBase:
 
     def is_a_replay_authz(self):
         preexistent_authz = OidcSession.objects.filter(
-            client_id=self.payload["client_id"], nonce=self.payload["nonce"]
-        )
+            client_id=self.payload["client_id"],
+            nonce=self.payload["nonce"]
+        ).first()
         if preexistent_authz:
             raise AuthzRequestReplay(
                 f"{preexistent_authz.client_id} with {preexistent_authz.nonce}"
@@ -146,19 +147,23 @@ class OpBase:
 
     def check_session(self, request) -> OidcSession:
         if not request.user.is_authenticated:
-            raise Exception()
+            raise InvalidSession()
 
         auth_code = request.session.get("oidc", {}).get("auth_code", None)
         if not auth_code:
             # FIXME: to do test
-            raise Exception()
+            raise InvalidSession()
 
         session = OidcSession.objects.filter(
-            auth_code=request.session["oidc"]["auth_code"], user=request.user
+            auth_code=request.session["oidc"]["auth_code"],
+            user=request.user
         ).first()
 
         if not session:
-            raise Exception()
+            raise InvalidSession()
+
+        if session.revoked:
+            raise RevokedSession()
 
         return session
 
@@ -167,10 +172,24 @@ class OpBase:
             entity_type="openid_provider"
         ).first()
 
+    def check_client_assertion(self, client_id: str, client_assertion: str) -> bool:
+        head = unpad_jwt_head(client_assertion)
+        payload = unpad_jwt_payload(client_assertion)
+        if payload['sub'] != client_id:
+            # TODO Specialize exceptions
+            raise Exception()
+
+        tc = TrustChain.objects.get(sub=client_id, is_active=True)
+        jwk = self.find_jwk(head, tc.metadata['jwks']['keys'])
+        verify_jws(client_assertion, jwk)
+
+        return True
+
 
 class AuthzRequestView(OpBase, View):
-    """View which processes the actual Authz request and
-    returns a Http Redirect
+    """
+        View which processes the actual Authz request and
+        returns a Http Redirect
     """
 
     template = "op_user_login.html"
@@ -216,6 +235,7 @@ class AuthzRequestView(OpBase, View):
             )
         # yes, again. We MUST.
         tc = None
+
         try:
             tc = self.validate_authz_request_object(req)
         except InvalidEntityConfiguration as e:
@@ -241,7 +261,7 @@ class AuthzRequestView(OpBase, View):
         except Exception as e:
             logger.error(
                 "Error during trust build for "
-                f"{request.GET.get('client_id', 'unknow')}: {e}"
+                f"{request.GET.get('client_id', 'unknown')}: {e}"
             )
             return self.redirect_response_data(
                 error="invalid_request",
@@ -321,7 +341,7 @@ class AuthzRequestView(OpBase, View):
         request.session["oidc"] = {"auth_code": auth_code}
 
         # store the User session
-        OidcSession.objects.create(
+        session = OidcSession.objects.create(
             user=user,
             user_uid=user.username,
             nonce=self.payload["nonce"],
@@ -329,6 +349,8 @@ class AuthzRequestView(OpBase, View):
             client_id=self.payload["client_id"],
             auth_code=auth_code,
         )
+        session.set_sid(request)
+
         consent_url = reverse("oidc_provider_consent")
         return HttpResponseRedirect(consent_url)
 
@@ -408,14 +430,18 @@ class ConsentPageView(OpBase, View):
 @method_decorator(csrf_exempt, name="dispatch")
 class TokenEndpoint(OpBase, View):
     def get_jwt_common_data(self):
-        return {"jti": str(uuid.uuid4()), "exp": exp_from_now(), "iat": iat_now()}
+        return {
+            "jti": str(uuid.uuid4()),
+            "exp": exp_from_now(),
+            "iat": iat_now()
+        }
 
     def get(self, request, *args, **kwargs):
         return HttpResponseBadRequest()
 
-    def post(self, request, *args, **kwargs):
+    def grant_auth_code(self, request, *args, **kwargs):
         """
-        Example gien of a Token request:
+        Example of a Token request:
 
         {
             'grant_type': ['authorization_code'],
@@ -439,86 +465,130 @@ class TokenEndpoint(OpBase, View):
             ]
         }
         """
-        logger.debug(f"{request.headers}: {request.POST}")
-
-        # TODO: Francesca - please apply token request json validator on request.POST
-        # try:
-        #     schema = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
-        #     schema["token_request"](**dict(request.POST))
-        # except ValidationError as e:
-        #     breakpoint()
-        #     logger.error(
-        #         "Token request object validation failed "
-        #         f"for {request.POST['client_id']}: {e} "
-        #     )
-        #     return JsonResponse(
-        #         {
-        #             "error": "invalid_request",
-        #             "error_description": "Token request object validation failed ",
-        #         }
-        #     )
-        commons = self.get_jwt_common_data()
-        issuer = self.get_issuer()
-        authz = OidcSession.objects.filter(
-            auth_code=request.POST["code"], revoked=False
-        ).first()
-
-        if not authz:
-            return HttpResponseBadRequest()
-
         # PKCE check - based on authz.authz_request["code_challenge_method"] == S256
         code_challenge = hashlib.sha256(request.POST["code_verifier"].encode()).digest()
         code_challenge = base64.urlsafe_b64encode(code_challenge).decode("utf-8")
         code_challenge = code_challenge.replace("=", "")
-        if code_challenge != authz.authz_request["code_challenge"]:
+        if code_challenge != self.authz.authz_request["code_challenge"]:
             return HttpResponseForbidden()
         #
 
-        _sub = authz.pairwised_sub()
+        _sub = self.authz.pairwised_sub()
         access_token = {
-            "iss": issuer.sub,
+            "iss": self.issuer.sub,
             "sub": _sub,
-            "aud": [authz.client_id],
-            "client_id": authz.client_id,
-            "scope": authz.authz_request["scope"],
+            "aud": [self.authz.client_id],
+            "client_id": self.authz.client_id,
+            "scope": self.authz.authz_request["scope"],
         }
-        access_token.update(commons)
-        jwt_at = create_jws(access_token, issuer.jwks[0], typ="at+jwt")
+        access_token.update(self.commons)
+        jwt_at = create_jws(access_token, self.issuer.jwks[0], typ="at+jwt")
 
         id_token = {
             "sub": _sub,
-            "nonce": authz.authz_request["nonce"],
+            "nonce": self.authz.authz_request["nonce"],
             "at_hash": left_hash(jwt_at, "HS256"),
-            "c_hash": left_hash(authz.auth_code, "HS256"),
-            "aud": [authz.client_id],
-            "iss": issuer.sub,
+            "c_hash": left_hash(self.authz.auth_code, "HS256"),
+            "aud": [self.authz.client_id],
+            "iss": self.issuer.sub,
         }
-        id_token.update(commons)
-        jwt_id = create_jws(id_token, issuer.jwks[0])
+        id_token.update(self.commons)
+        jwt_id = create_jws(id_token, self.issuer.jwks[0])
 
-
-        # TODO: refresh token is scope offline_access and prompt == consent
-        # ...
-
-        IssuedToken.objects.create(
-            session=authz,
+        iss_token_data = dict(
+            session=self.authz,
             access_token=jwt_at,
             id_token=jwt_id,
-            expires=datetime_from_timestamp(commons["exp"])
-            # TODO
-            # refresh_token =
+            expires=datetime_from_timestamp(self.commons["exp"])
         )
+
+        # refresh token is scope offline_access and prompt == consent
+        if (
+            "offline_access" in self.authz.authz_request['scope'] and
+            'consent' in self.authz.authz_request['prompt']
+        ):
+            refresh_token = {
+                "sub": _sub,
+                "at_hash": left_hash(jwt_at, "HS256"),
+                "c_hash": left_hash(self.authz.auth_code, "HS256"),
+                "aud": [self.authz.client_id],
+                "iss": self.issuer.sub,
+            }
+            id_token.update(self.commons)
+            iss_token_data['refresh_token'] = refresh_token
+
+        IssuedToken.objects.create(**iss_token_data)
+
+        expires_in = timezone.timedelta(
+            seconds = access_token['exp'] - access_token['iat']
+        ).seconds
 
         return JsonResponse(
             {
                 "access_token": jwt_at,
                 "id_token": jwt_id,
                 "token_type": "bearer",
-                "expires_in": 3600,
+                "expires_in": expires_in,
                 # TODO: remove unsupported scope
-                "scope": authz.authz_request["scope"],
+                "scope": self.authz.authz_request["scope"],
             }
         )
+
+    def grant_refresh_token(self, request, *args, **kwargs):
+        """
+            client_id=https://rp.cie.it& 
+            client_assertion=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IlNQSUQiLCJhZG1pbiI6dHJ1ZX0.LVyRDPVJm0S9q7oiXcYVIIqGWY0wWQlqxvFGYswL...&
+            client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer& 
+            refresh_token=8xLOxBtZp8 &  
+            grant_type=refresh_token 
+        """
+
+        # 1. get the IssuedToken refresh one, revoked = None
+        # 2. create a new instance of issuedtoken linked to the same sessions and revoke the older
+        # 3. response with a new refresh, access and id_token
+
+        raise NotImplementedError()
+
+    def post(self, request, *args, **kwargs):
+
+        logger.debug(f"{request.headers}: {request.POST}")
+
+        # TODO: Francesca - please apply token request json validator on request.POST
+
+        self.commons = self.get_jwt_common_data()
+        self.issuer = self.get_issuer()
+
+        self.authz = OidcSession.objects.filter(
+            auth_code=request.POST["code"],
+            revoked=False
+        ).first()
+
+        if not self.authz:
+            return HttpResponseBadRequest()
+
+        # check client_assertion and client ownership
+        try:
+            self.check_client_assertion(
+                request.POST['client_id'],
+                request.POST['client_assertion']
+            )
+        except Exception:
+            # TODO: coverage test
+            return JsonResponse(
+                # TODO: error message here
+                {
+                    'error': "...",
+                    'error_description': "..."
+
+                }, status = 403
+            )
+
+        if request.POST.get("grant_type") == 'authorization_code':
+            return self.grant_auth_code(request)
+        elif request.POST.get("grant_type") == 'refresh_token':
+            return self.grant_refresh_token(request)
+        else:
+            raise NotImplementedError()
 
 
 class UserInfoEndpoint(OpBase, View):
@@ -540,7 +610,9 @@ class UserInfoEndpoint(OpBase, View):
             return HttpResponseForbidden()
 
         rp_tc = TrustChain.objects.filter(
-            sub=token.session.client_id, type="openid_relying_party", is_active=True
+            sub=token.session.client_id,
+            type="openid_relying_party",
+            is_active=True
         ).first()
         if not rp_tc:
             return HttpResponseForbidden()

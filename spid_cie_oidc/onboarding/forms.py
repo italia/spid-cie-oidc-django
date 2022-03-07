@@ -73,6 +73,7 @@ class OnboardingCreateTrustChain(forms.Form):
         error_messages={"required": _("Enter the url of trust anchor")},
     )
 
+
 class OnboardingValidatingTrustMarkForm(forms.Form):
 
     sub = forms.URLField(

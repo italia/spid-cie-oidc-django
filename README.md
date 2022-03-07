@@ -32,7 +32,11 @@ The app is installed using a common python package manager, such as _poetry_ or 
 and can be used, inherited, and integrated into other projects.
 
 A project is a service configuration that integrates one or more applications.
-In this repository we have three example projects for demo purpose.
+In this repository we have three example projects for demo purpose:
+
+ - federation_authority
+ - relying_party
+ - provider
 
 The Technical specifications of these SDKs are available here:
 
