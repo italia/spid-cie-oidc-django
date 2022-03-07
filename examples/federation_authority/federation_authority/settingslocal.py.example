@@ -209,3 +209,5 @@ LOGGING = {
         }
     }
 }
+
+LOGIN_REDIRECT_URL = "/echo_attributes"
