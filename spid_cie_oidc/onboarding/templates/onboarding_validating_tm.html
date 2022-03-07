@@ -14,12 +14,12 @@
                   <div class="card-body pl-lg-0">
                      <div class="row h-100">
                         <div class="col-12 pl-lg-4">
-                           <h3 class="text-left">
+                           <h4 class="text-left">
                               {% trans 'Validating Trust Mark' %}
-                           </h3>
+                           </h4>
                            
                            <p class="card-title">
-                              {% lorem 1 %}
+                              {% trans "To validate a trust mark insert the entity's sub and the id or directly the trust mark" %}
                            </p>
                            
                            <form method="get" action="">
@@ -32,13 +32,13 @@
                                           {{ form_field.label }}
                                        </span>
                                     </label>
-                                    {% if form_field.field.widget.input_type%}
-                                    <input type="{{ form_field.field.widget.input_type }}" 
-                                       class="form-control" id="id_{{ form_field.html_name }}" 
-                                       name="{{ form_field.name }}" value="{{form_field.value}}">
-                                    {% else%}
-                                    <textarea id="id_{{ form_field.html_name }}"
+                                    {% if form_field.name == 'trust_mark'%}
+                                    <textarea id="id_{{ form_field.html_name }}" rows="4"
                                        name="{{ form_field.name }}">{{ form.trust_mark.value}}</textarea>
+                                    {% else%}
+                                       <input type="{{ form_field.field.widget.input_type }}" 
+                                          class="form-control" id="id_{{ form_field.html_name }}" 
+                                       name="{{ form_field.name }}" value="{{form_field.value}}">
                                     {% endif %}
                                  </div>
                                  <span for="id_{{ form_field.html_name }}" class="text-danger">{{ form_field.errors }}</span>

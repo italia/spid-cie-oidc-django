@@ -51,7 +51,7 @@ urlpatterns = [
         name="oidc_onboarding_create_jwk",
     ),
     path(
-        f"{_PREF}onboarding/convert-jwk-private/",
+        f"{_PREF}onboarding/convert-jwk/",
         onboarding_convert_jwk,
         name="oidc_onboarding_convert_jwk",
     ),

@@ -36,7 +36,7 @@ class RpCallBack(TestCase):
             provider_id=op_conf["sub"],
             data=json.dumps(data),
             state=STATE,
-            provider_configuration=json.dumps(op_conf["metadata"]["openid_provider"]),
+            provider_configuration=op_conf["metadata"]["openid_provider"],
         )
         OidcAuthentication.objects.create(**authz_entry)
         self.rp_config["sub"] = self.rp_config["metadata"]["openid_relying_party"]["client_id"]

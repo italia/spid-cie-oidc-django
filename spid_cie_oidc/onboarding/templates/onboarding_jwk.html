@@ -14,20 +14,30 @@
                   <div class="card-body pl-lg-0">
                      <div class="row h-100">
                         <div class="col-12 pl-lg-4">
-                           <h3 class="text-left">
-                              {% trans jwk_titile %}
-                           </h3>
+                           <h4 class="text-left">
+                              {% trans "Create a JWT" %}
+                           </h4>
                            
-                           <form method="post" action="">
-                              {% csrf_token %}
+                           <p class="pt-4 mb-0">
+                              {% trans "In this page you have a brand new JWK. Refresh the page to gent another one." %}
+                           </p>
+
                               <div class="form-row">
                                  <div class="col-12 form-group my-3">
                                     <textarea id="jwk" rows="14"
-                                       name="jwk">{{ jwk }}</textarea>
+                                       name="jwk">{{ private_jwk }}</textarea>
                                  </div>
                               </div>
 
-                           </form>
+                              <p class="pt-4 mb-0">
+                                 {% trans "Here the public version of the previous private JWK." %}
+                              </p>
+                              <div class="form-row">
+                                 <div class="col-12 form-group my-3">
+                                    <textarea id="jwk" rows="14"
+                                       name="jwk">{{ public_jwk }}</textarea>
+                                 </div>
+                              </div>
 
                         </div>
                      </div>

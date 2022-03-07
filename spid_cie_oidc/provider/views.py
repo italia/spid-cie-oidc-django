@@ -84,7 +84,7 @@ class OpBase:
         rp_trust_chain = TrustChain.objects.filter(
             type="openid_relying_party",
             sub=self.payload["iss"],
-            trust_anchor__sub=settings.OIDCFED_TRUST_ANCHOR,
+            trust_anchor__sub=settings.OIDCFED_TRUST_ANCHOR
         ).first()
         if rp_trust_chain and not rp_trust_chain.is_active:
             state = self.payload["state"]
@@ -95,7 +95,7 @@ class OpBase:
             )
             raise Exception()
 
-        elif not rp_trust_chain or not rp_trust_chain.is_valid:
+        elif not rp_trust_chain or rp_trust_chain.is_expired:
             rp_trust_chain = get_or_create_trust_chain(
                 subject=self.payload["iss"],
                 trust_anchor=settings.OIDCFED_TRUST_ANCHOR,
@@ -341,7 +341,13 @@ class AuthzRequestView(OpBase, View):
 
         # create auth_code
         auth_code = hashlib.sha512(
-            f'{uuid.uuid4()}-{self.payload["client_id"]}-{self.payload["nonce"]}'.encode()
+            '-'.join(
+                (
+                    f'{uuid.uuid4()}',
+                    f'{self.payload["client_id"]}',
+                    f'{self.payload["nonce"]}'
+                )
+            ).encode()
         ).hexdigest()
 
         # put the auth_code in the user web session
