@@ -53,10 +53,12 @@ def onboarding_entities(request):
 
 
 def onboarding_create_jwk(request):
-    jwk = serialize_rsa_key(new_rsa_key().priv_key, 'private')
+    _rsa_key = new_rsa_key()
+    private_jwk = serialize_rsa_key(_rsa_key.priv_key, 'private')
+    public_jwk = serialize_rsa_key(_rsa_key.pub_key)
     context = {
-        "jwk_titile": "Jwk private created",
-        "jwk": jwk,
+        "private_jwk": private_jwk,
+        "public_jwk": public_jwk
     }
     return render(request, 'onboarding_jwk.html', context)
 
