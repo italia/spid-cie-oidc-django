@@ -442,7 +442,21 @@ class TokenEndpoint(OpBase, View):
         logger.debug(f"{request.headers}: {request.POST}")
 
         # TODO: Francesca - please apply token request json validator on request.POST
-
+        # try:
+        #     schema = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
+        #     schema["token_request"](**dict(request.POST))
+        # except ValidationError as e:
+        #     breakpoint()
+        #     logger.error(
+        #         "Token request object validation failed "
+        #         f"for {request.POST['client_id']}: {e} "
+        #     )
+        #     return JsonResponse(
+        #         {
+        #             "error": "invalid_request",
+        #             "error_description": "Token request object validation failed ",
+        #         }
+        #     )
         commons = self.get_jwt_common_data()
         issuer = self.get_issuer()
         authz = OidcSession.objects.filter(
@@ -482,7 +496,6 @@ class TokenEndpoint(OpBase, View):
         id_token.update(commons)
         jwt_id = create_jws(id_token, issuer.jwks[0])
 
-        breakpoint()
 
         # TODO: refresh token is scope offline_access and prompt == consent
         # ...
@@ -510,7 +523,7 @@ class TokenEndpoint(OpBase, View):
 
 class UserInfoEndpoint(OpBase, View):
     def get(self, request, *args, **kwargs):
-
+        
         ah = request.headers.get("Authorization", None)
         if not ah or "Bearer " not in ah:
             return HttpResponseForbidden()

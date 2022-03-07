@@ -263,7 +263,8 @@ class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant
             user = user_model.objects.create(
                 username=user_attrs.get("username", user_attrs["sub"]),
                 first_name=user_attrs.get("given_name", user_attrs["sub"]),
-                surname=user_attrs.get("family_name", user_attrs["sub"]),
+                #TODO: Giuseppe ho cambiato surname con last_name???????? se no non funzionava
+                last_name=user_attrs.get("family_name", user_attrs["sub"]),
                 email=user_attrs.get("email", ""),
                 attributes=user_attrs,
             )
@@ -317,7 +318,6 @@ class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant
         self.rp_conf = FederationEntityConfiguration.objects.get(
             sub=authz_token.authz_request.client_id
         )
-
         if not self.rp_conf:
             # TODO: verify error message and status
             context = {
@@ -344,14 +344,12 @@ class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant
                 "error_description": _("Token response seems not to be valid"),
             }
             return render(request, self.error_template, context, status=400)
-        # da verificare
         entity_conf = FederationEntityConfiguration.objects.filter(
             entity_type="openid_provider",
         ).first()
 
         op_conf = entity_conf.metadata["openid_provider"]
         jwks = op_conf["jwks"]["keys"]
-        ###################
         access_token = token_response["access_token"]
         id_token = token_response["id_token"]
         op_ac_jwk = self.get_jwk_from_jwt(access_token, jwks)
@@ -403,7 +401,6 @@ class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant
                 "error_description": _("UserInfo response seems not to be valid"),
             }
             return render(request, self.error_template, context, status=400)
-
         # here django user attr mapping
         user_attrs = process_user_attributes(userinfo, RP_ATTR_MAP, authz.__dict__)
         if not user_attrs:

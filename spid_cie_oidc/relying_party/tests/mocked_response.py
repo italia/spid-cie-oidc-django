@@ -1,8 +1,11 @@
 import json
 import logging
 
+from django.http import HttpResponse
+from spid_cie_oidc.entity.models import FederationEntityConfiguration
+
 from spid_cie_oidc.provider.tests.settings import op_conf
-from spid_cie_oidc.authority.tests.settings import rp_conf
+from spid_cie_oidc.authority.tests.settings import RP_METADATA_JWK1_pub, rp_conf
 from spid_cie_oidc.entity.jwtse import create_jws, encrypt_dict
 from spid_cie_oidc.entity.utils import iat_now, exp_from_now
 logger = logging.getLogger(__name__)
@@ -46,3 +49,29 @@ class MockedTokenEndPointResponse:
                 "scope": "openid",
             }
         return json.dumps(res).encode()
+
+class MockedUserinfoEndPointResponse:
+    def __init__(self):
+        self.status_code = 200
+
+    @property
+    def content(self):
+
+        rp_conf_saved = FederationEntityConfiguration.objects.all().first()  
+        
+        userinfo = {
+                    "iss": op_conf["sub"],
+                    "aud": [rp_conf["metadata"]["openid_relying_party"]["client_id"],], 
+                    "iat": iat_now(),
+                    "nbf": iat_now(),
+                    "exp": exp_from_now(),
+                    "sub": '2ed008b45e66ce53e48273dca5a4463bc8ebd036ebaa824f4582627683c2451b',
+                    "name": "Mario",
+                    "family_name": "Rossi",
+                    "tax_number": "MROXXXXXXXXXXXXX"
+        }
+        jwt = create_jws(userinfo, op_conf['jwks'][0], typ="at+jwt")
+        #jwe = encrypt_dict(jwt, rp_conf['metadata']['openid_relying_party']['jwks']['keys'][0])
+        breakpoint()
+        jwe = encrypt_dict(jwt, rp_conf_saved.metadata["openid_relying_party"]["jwks"]["keys"][0])
+        return HttpResponse(jwe, content_type="application/jose").content
