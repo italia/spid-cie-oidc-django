@@ -1,11 +1,16 @@
 from django.contrib.auth import get_user_model
+from django.contrib.sessions.models import Session
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from spid_cie_oidc.entity.abstract_models import TimeStampedModel
 
 import hashlib
+import logging
 
 from spid_cie_oidc.provider.settings import OIDCFED_PROVIDER_SALT
+
+logger = logging.getLogger(__name__)
 
 
 class OidcSession(TimeStampedModel):
@@ -18,12 +23,32 @@ class OidcSession(TimeStampedModel):
         get_user_model(), on_delete=models.SET_NULL, blank=True, null=True
     )
     client_id = models.URLField(blank=True, null=True)
-
+    sid = models.CharField(
+        max_length=1024, blank=True, null=True,
+        help_text=_("django session key")
+    )
     nonce = models.CharField(max_length=2048, blank=False, null=False)
     authz_request = models.JSONField(max_length=2048, blank=False, null=False)
 
     revoked = models.BooleanField(default=False)
     auth_code = models.CharField(max_length=2048, blank=False, null=False)
+
+    def set_sid(self, request):
+        try:
+            Session.objects.get(session_key=request.session.session_key)
+            self.sid = request.session.session_key
+            self.save()
+        except Exception:
+            logger.warning(f"Error setting SID for OidcSession {self}")
+
+    def revoke(self):
+        session = Session.objects.filter(session_key=self.sid)
+        if session:
+            session.delete()
+        self.revoked = True
+        iss_tokens = IssuedToken.objects.filter(session=self)
+        iss_tokens.update(revoked=True)
+        self.save()
 
     def pairwised_sub(self):
         return hashlib.sha256(

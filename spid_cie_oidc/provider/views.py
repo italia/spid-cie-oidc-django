@@ -137,7 +137,7 @@ class OpBase:
 
     def is_a_replay_authz(self):
         preexistent_authz = OidcSession.objects.filter(
-            client_id=self.payload["client_id"], 
+            client_id=self.payload["client_id"],
             nonce=self.payload["nonce"]
         ).first()
         if preexistent_authz:
@@ -155,7 +155,7 @@ class OpBase:
             raise InvalidSession()
 
         session = OidcSession.objects.filter(
-            auth_code=request.session["oidc"]["auth_code"], 
+            auth_code=request.session["oidc"]["auth_code"],
             user=request.user
         ).first()
 
@@ -178,12 +178,13 @@ class OpBase:
         if payload['sub'] != client_id:
             # TODO Specialize exceptions
             raise Exception()
-        
+
         tc = TrustChain.objects.get(sub=client_id, is_active=True)
         jwk = self.find_jwk(head, tc.metadata['jwks']['keys'])
         verify_jws(client_assertion, jwk)
 
         return True
+
 
 class AuthzRequestView(OpBase, View):
     """
@@ -340,7 +341,7 @@ class AuthzRequestView(OpBase, View):
         request.session["oidc"] = {"auth_code": auth_code}
 
         # store the User session
-        OidcSession.objects.create(
+        session = OidcSession.objects.create(
             user=user,
             user_uid=user.username,
             nonce=self.payload["nonce"],
@@ -348,6 +349,8 @@ class AuthzRequestView(OpBase, View):
             client_id=self.payload["client_id"],
             auth_code=auth_code,
         )
+        session.set_sid(request)
+
         consent_url = reverse("oidc_provider_consent")
         return HttpResponseRedirect(consent_url)
 
@@ -428,8 +431,8 @@ class ConsentPageView(OpBase, View):
 class TokenEndpoint(OpBase, View):
     def get_jwt_common_data(self):
         return {
-            "jti": str(uuid.uuid4()), 
-            "exp": exp_from_now(), 
+            "jti": str(uuid.uuid4()),
+            "exp": exp_from_now(),
             "iat": iat_now()
         }
 
@@ -501,7 +504,7 @@ class TokenEndpoint(OpBase, View):
 
         # refresh token is scope offline_access and prompt == consent
         if (
-            "offline_access" in self.authz.authz_request['scope'] and 
+            "offline_access" in self.authz.authz_request['scope'] and
             'consent' in self.authz.authz_request['prompt']
         ):
             refresh_token = {
@@ -515,7 +518,7 @@ class TokenEndpoint(OpBase, View):
             iss_token_data['refresh_token'] = refresh_token
 
         IssuedToken.objects.create(**iss_token_data)
-        
+
         expires_in = timezone.timedelta(
             seconds = access_token['exp'] - access_token['iat']
         ).seconds
@@ -556,7 +559,7 @@ class TokenEndpoint(OpBase, View):
         self.issuer = self.get_issuer()
 
         self.authz = OidcSession.objects.filter(
-            auth_code=request.POST["code"], 
+            auth_code=request.POST["code"],
             revoked=False
         ).first()
 
@@ -566,7 +569,7 @@ class TokenEndpoint(OpBase, View):
         # check client_assertion and client ownership
         try:
             self.check_client_assertion(
-                request.POST['client_id'], 
+                request.POST['client_id'],
                 request.POST['client_assertion']
             )
         except Exception:
@@ -576,7 +579,7 @@ class TokenEndpoint(OpBase, View):
                 {
                     'error': "...",
                     'error_description': "..."
-                
+
                 }, status = 403
             )
 
@@ -586,6 +589,7 @@ class TokenEndpoint(OpBase, View):
             return self.grant_refresh_token(request)
         else:
             raise NotImplementedError()
+
 
 class UserInfoEndpoint(OpBase, View):
     def get(self, request, *args, **kwargs):
@@ -606,8 +610,8 @@ class UserInfoEndpoint(OpBase, View):
             return HttpResponseForbidden()
 
         rp_tc = TrustChain.objects.filter(
-            sub=token.session.client_id, 
-            type="openid_relying_party", 
+            sub=token.session.client_id,
+            type="openid_relying_party",
             is_active=True
         ).first()
         if not rp_tc:

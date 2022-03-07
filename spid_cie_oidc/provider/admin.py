@@ -13,6 +13,7 @@ class OidcSessionAdmin(admin.ModelAdmin):
         "auth_code",
         "user_uid",
         "user",
+        "sid",
         "client_id",
         "created",
         "revoked",
