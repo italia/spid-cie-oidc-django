@@ -4,7 +4,7 @@ import logging
 from django.contrib.auth import get_user_model
 from django.db import models
 
-from .utils import decode_token, get_issuer_keyjar
+from .utils import decode_token
 
 logger = logging.getLogger(__name__)
 
@@ -31,13 +31,9 @@ class OidcAuthentication(models.Model):
     def __str__(self):
         return f"{self.client_id} {self.state} to {self.endpoint}"
 
-    def get_provider_configuration(self):
+    @property
+    def provider_configuration_as_json(self):
         return json.loads(self.provider_configuration)
-
-    def get_provider_keyjar(self):
-        jwks = json.loads(self.provider_jwks)
-        keyjar = get_issuer_keyjar(jwks, self.issuer)
-        return keyjar
 
 
 class OidcAuthenticationToken(models.Model):
@@ -48,6 +44,7 @@ class OidcAuthenticationToken(models.Model):
     code = models.CharField(max_length=255, blank=True, null=True)
     access_token = models.TextField(blank=True, null=True)
     id_token = models.TextField(blank=True, null=True)
+    refresh_token = models.TextField(blank=True, null=True)
 
     scope = models.CharField(max_length=255, blank=True, null=True)
     token_type = models.CharField(max_length=255, blank=True, null=True)
@@ -55,7 +52,7 @@ class OidcAuthenticationToken(models.Model):
 
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
-    logged_out = models.DateTimeField(blank=True, null=True)
+    revoked = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.authz_request} {self.code}"
