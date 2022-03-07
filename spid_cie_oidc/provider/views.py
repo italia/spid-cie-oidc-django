@@ -736,6 +736,20 @@ class RevocationEndpoint(OpBase,View):
 
     def post(self, request, *args, **kwargs):
         try:
+            schema = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
+            schema["revocation_request"](**request.POST.dict())
+        except ValidationError as e:
+            logger.error(
+                "Revocation request object validation failed "
+                f"for {request.POST.get('client_id', None)}: {e} "
+            )
+            return JsonResponse(
+                {
+                    "error": "invalid_request",
+                    "error_description": "Revocation request object validation failed ",
+                }
+            )
+        try:
             self.check_client_assertion(
                 request.POST['client_id'],
                 request.POST['client_assertion']
