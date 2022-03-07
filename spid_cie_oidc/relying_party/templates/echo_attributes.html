@@ -1,18 +1,38 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-  </head>
-  <body>
-    <h1>OIDC attributes</h1>
-    <dl>
-      {% for attribute, value in oidc_rp_user_attrs.items %}
-      <dt>{{ attribute }}:</dt>
-      <dd>{{ value }}</dd>
-      {% endfor %}
-    </dl>
+{% extends 'rp_base.html' %}
+{% load i18n %}
+{% load static %}
 
-    <p><a href="{% url 'spid_cie_rpinitiated_logout' %}">Log out</a></p>
-  </body>
-</html>
+{% block container %}
+<div>
+    <div class="container pt-2 p-3">
+
+        <div class="row d-lg-flex">
+            <div class="col-12">
+                <div class="card-wrapper card-space">
+                    <div class="card card-bg no-after">
+                        <div class="card-body pl-lg-0">
+                            <div class="row h-100">
+                                <div class="col-12 col-lg-6 pl-lg-4">
+                                    {% csrf_token %}
+                                  <h4 class="text-left">
+                                      {% trans "OIDC attributes" %}
+                                  </h4>
+
+                                  <dl>
+                                    {% for attribute, value in oidc_rp_user_attrs.items %}
+                                    <dt>{{ attribute }}:</dt>
+                                    <dd>{{ value }}</dd>
+                                    {% endfor %}
+                                  </dl>
+                                  
+                                  <a href="#" class="btn btn-secondary" role="button">Link disabilitato</a>
+
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock container %}
