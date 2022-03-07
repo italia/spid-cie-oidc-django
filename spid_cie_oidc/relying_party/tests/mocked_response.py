@@ -1,17 +1,9 @@
 import json
 import logging
 
-<<<<<<< HEAD
-from django.http import HttpResponse
-from spid_cie_oidc.entity.models import FederationEntityConfiguration
-
-from spid_cie_oidc.provider.tests.settings import op_conf
-from spid_cie_oidc.authority.tests.settings import RP_METADATA_JWK1_pub, rp_conf
-=======
 
 from spid_cie_oidc.provider.tests.settings import op_conf, op_conf_priv_jwk
 from spid_cie_oidc.authority.tests.settings import rp_conf
->>>>>>> fac011e3b4767b44d9ace28b9cd4b276c29a395a
 from spid_cie_oidc.entity.jwtse import create_jws, encrypt_dict
 from spid_cie_oidc.entity.utils import iat_now, exp_from_now
 logger = logging.getLogger(__name__)
