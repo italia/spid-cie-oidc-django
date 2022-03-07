@@ -6,6 +6,27 @@ from spid_cie_oidc.entity.utils import exp_from_now, iat_now
 IAT = iat_now()
 EXP = exp_from_now()
 
+CLAIMS_SPID = {
+    "userinfo": {
+        "https://attributes.spid.gov.it/name": {"values": ["str", "str"]},
+        "https://attributes.spid.gov.it/familyName": None,
+        "https://attributes.spid.gov.it/dateOfBirth": {"value": "str"},
+    },
+}
+
+CLAIMS_CIE = {
+    "userinfo": {
+        "given_name": {"values": ["str", "str"]},
+        "family_name": None,
+        "birthdate": {"value": "str"},
+    },
+    "id_token": {
+        "given_name": {"values": ["str", "str"]},
+        "family_name": None,
+        "birthdate": {"value": "str"},
+    },
+}
+
 AUTHN_REQUEST_SPID = {
     "client_id": "https://rp.cie.it/callback1/",
     "response_type": "code",
@@ -16,18 +37,7 @@ AUTHN_REQUEST_SPID = {
     "prompt": "verify",
     "redirect_uri": "https://rp.cie.it/callback1/",
     "acr_values": ["https://www.spid.gov.it/SpidL2", "https://www.spid.gov.it/SpidL1"],
-    "claims": {
-        "userinfo": {
-            "given_name": {"values": ["str", "str"]},
-            "family_name": None,
-            "birthdate": {"value": "str"},
-        },
-        "id_token": {
-            "given_name": {"values": ["str", "str"]},
-            "family_name": None,
-            "birthdate": {"value": "str"},
-        },
-    },
+    "claims": CLAIMS_SPID,
     "state": "fyZiOL9Lf2CeKuNT2JzxiLRDink0uPcd",
     "ui_locales": ["codice1", "codice2", "codice3"],
     "sub": "https://rp.cie.it/",
@@ -35,17 +45,16 @@ AUTHN_REQUEST_SPID = {
     "aud": ["https://rp.spid.agid.gov.it/auth"],
     "iat": IAT,
     "exp": EXP,
-    "jti": "a72d5df0-2415-4c7c-a44f-3988b354040b"
+    "jti": "a72d5df0-2415-4c7c-a44f-3988b354040b",
 }
 
 AUTHN_REQUEST_SPID_NO_CLIENT_ID = deepcopy(AUTHN_REQUEST_SPID)
 AUTHN_REQUEST_SPID_NO_CLIENT_ID.pop("client_id")
 
 AUTHN_REQUEST_SPID_NO_CORRECT_CLAIMS = deepcopy(AUTHN_REQUEST_SPID)
-AUTHN_REQUEST_SPID_NO_CORRECT_CLAIMS["claims"].pop("id_token")
-AUTHN_REQUEST_SPID_NO_CORRECT_CLAIMS["claims"]["userinfo"]["given_name"]["values"] = [
-    "str"
-]
+AUTHN_REQUEST_SPID_NO_CORRECT_CLAIMS["claims"]["userinfo"][
+    "https://attributes.spid.gov.it/name"
+]["values"] = ["str"]
 
 AUTHN_REQUEST_SPID_NO_CODE_CHALLENGE = deepcopy(AUTHN_REQUEST_SPID)
 AUTHN_REQUEST_SPID_NO_CODE_CHALLENGE.pop("code_challenge")
@@ -109,6 +118,7 @@ AUTHN_REQUEST_CIE = deepcopy(AUTHN_REQUEST_SPID)
 AUTHN_REQUEST_CIE["scope"] = ["openid", "offline_access", "email", "profile"]
 AUTHN_REQUEST_CIE["prompt"] = "consent login"
 AUTHN_REQUEST_CIE["acr_values"] = ["CIE_L2", "CIE_L1"]
+AUTHN_REQUEST_CIE["claims"] = CLAIMS_CIE
 
 AUTHN_REQUEST_CIE_NO_ACR_VALUES = deepcopy(AUTHN_REQUEST_CIE)
 AUTHN_REQUEST_CIE_NO_ACR_VALUES.pop("acr_values")

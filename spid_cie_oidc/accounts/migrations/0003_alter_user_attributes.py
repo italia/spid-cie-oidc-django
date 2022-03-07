@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('spid_cie_oidc_accounts', '0002_remove_user_taxpayer_id_user_attributes'),
+        ("spid_cie_oidc_accounts", "0002_remove_user_taxpayer_id_user_attributes"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='user',
-            name='attributes',
+            model_name="user",
+            name="attributes",
             field=models.JSONField(blank=True, default=dict, null=True),
         ),
     ]

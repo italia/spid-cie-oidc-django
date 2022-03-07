@@ -31,18 +31,18 @@ class OnBoardingRegistration(TimeStampedModel):
         blank=False,
         help_text=_("Public jwks of the Entities"),
         default=dict,
-        validators = [validate_public_jwks]
+        validators=[validate_public_jwks],
     )
 
     status = models.CharField(
         max_length=33,
         choices=(
             ("onboarded", "onboarded"),
-            ("failed","failed"),
-            ("processing","processing"),
-            ("aquired", "aquired")
+            ("failed", "failed"),
+            ("processing", "processing"),
+            ("aquired", "aquired"),
         ),
-        default="aquired"
+        default="aquired",
     )
 
     created_by = models.ForeignKey(
@@ -52,7 +52,7 @@ class OnBoardingRegistration(TimeStampedModel):
     class Meta:
         verbose_name = "OnBoarding Registration"
         verbose_name_plural = "OnBoarding Registrations"
-        ordering = ['-created']
+        ordering = ["-created"]
 
     def __str__(self):
         return f"{self.organization_name} {self.url_entity}"

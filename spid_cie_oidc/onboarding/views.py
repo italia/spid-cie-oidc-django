@@ -27,23 +27,23 @@ def onboarding_landing(request):
 
 def onboarding_registration(request):
     form = OnboardingRegistrationForm()
-    context = {'form': form}
-    if request.method == 'POST':
+    context = {"form": form}
+    if request.method == "POST":
         form = OnboardingRegistrationForm(request.POST)
         if not form.is_valid():
-            context = {'form': form}
+            context = {"form": form}
         else:
             form_dict = {**form.cleaned_data}
             OnBoardingRegistration.objects.create(**form_dict)
-            messages.success(request, _('Registration successfully'))
-            return redirect('oidc_onboarding_entities')
-    return render(request, 'onboarding_registration.html', context)
+            messages.success(request, _("Registration successfully"))
+            return redirect("oidc_onboarding_entities")
+    return render(request, "onboarding_registration.html", context)
 
 
 def onboarding_entities(request):
     entity_list = OnBoardingRegistration.objects.all()
     p = Paginator(entity_list, 10)
-    page = request.GET.get('page')
+    page = request.GET.get("page")
     entities = p.get_page(page)
     return render(
         request,
@@ -53,10 +53,12 @@ def onboarding_entities(request):
 
 
 def onboarding_create_jwk(request):
-    jwk = serialize_rsa_key(new_rsa_key().priv_key, 'private')
+    _rsa_key = new_rsa_key()
+    private_jwk = serialize_rsa_key(_rsa_key.priv_key, 'private')
+    public_jwk = serialize_rsa_key(_rsa_key.pub_key)
     context = {
-        "jwk_titile": "Jwk private created",
-        "jwk": jwk,
+        "private_jwk": private_jwk,
+        "public_jwk": public_jwk
     }
     return render(request, 'onboarding_jwk.html', context)
 

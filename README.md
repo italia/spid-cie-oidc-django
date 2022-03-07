@@ -32,7 +32,11 @@ The app is installed using a common python package manager, such as _poetry_ or 
 and can be used, inherited, and integrated into other projects.
 
 A project is a service configuration that integrates one or more applications.
-In this repository we have three example projects for demo purpose.
+In this repository we have three example projects for demo purpose:
+
+ - federation_authority
+ - relying_party
+ - provider
 
 The Technical specifications of these SDKs are available here:
 
@@ -63,15 +67,23 @@ The Technical specifications of these SDKs are available here:
 - SPID and CIE OpenID Connect Relying Party
 - OIDC Federation onboarding demo service
 - OIDC Federation 1.0
-  - Trust Anchor
-  - Intermediary
-  - automatic client registration
-  - trust marks
-  - trust chain storage and discovery
+  - Trust Anchor and Intermediary
+  - Automatic client registration
+  - Entity profiles and Trust marks
+  - Trust chain storage and discovery
   - Entity statement resolve endpoint
   - Fetch statement endpoing
   - List entities endpoint
   - Federation CLI
+    - RP: build trust chains for all the available OPs
+    - OP: build trust chains for all the available RPs
+- OIDC Federation web tools:
+  - Create a JWK
+  - Convert a private jwk to PEM certificate/key
+  - Convert a public jwk to PEM certificate/key
+  - Decode a jwt and verify the signature
+  - Resolve entity statement web UI
+  - Validating a trust mark web UI
 - Multitenancy, a single service can configure many entities like RPs, OP, Trust Anchors and intermediaries
 - gettext compliant (i18n)
 - Bootstrap Italia Design templates
@@ -79,80 +91,7 @@ The Technical specifications of these SDKs are available here:
 
 ## Setup
 
-The Database storage engine can be one of which supported by Django, the example project comes with sqlite3.
-We can install this SDK in two ways:
-
- - django application in a preexisting Django project
- - demo projects for example purpose
-
-#### Install as Django application
-Install __spid-cie-oidc__ as python package and use it in your django project
-````
-pip install spid-cie-oidc
-
-# then include `spid_cie_oidc.{app_name}` in your project settings.INSTALLED_APPS
-````
-
-#### Configure the example projects
-
-Install enviroment and dependencies
-````
-apt install python3-dev python3-pip git
-python3 -m pip install --upgrade pip
-sudo pip install virtualenv
-````
-
-Activate the environment. It's optional and up to you if you want to install 
-in a separate env or system wide
-````
-virtualenv -p python3 env
-source env/bin/activate
-````
-
-Setup the example projects
-````
-git clone https://github.com/peppelinux/spid-cie-oidc-django
-cd spid-cie-oidc
-pip install -e .
-````
-# Install Django Bootstrap italia template
-````
-pip install design-django-theme
-````
-
-# Install pydantic email validator
-````
- pip install pydantic[email]
-````
-
-In `examples/` folder you have three demostrations projects:
-
- - federation_authority
- - relying_party
- - provider
-
-for each project you have to create the db and load the example data, as follows:
-
-````
-cd examples/$project_name
-cp $project_name/settingslocal.py.example $project_name/settingslocal.py
-
-# then customize (optional) $project_name/settingslocal.py
-# add OIDCFED_TRUST_ANCHORS = ["http://127.0.0.1:8000"]
-
-./manage.py migrate
-
-# load the demo configuration
-./manage.py loaddata dumps/example.json
-
-# create a super user
-./manage.py createsuperuser
-
-# run the web server
-./manage.py runserver
-````
-Point your web browser to `http://localhost:8000/admin` to enter in the management interface.
-
+Consult the [setup documentation](docs/SETUP.md). 
 
 ## Docker compose
 
@@ -162,10 +101,9 @@ Point your web browser to `http://localhost:8000/admin` to enter in the manageme
 
 The demo propose a small federation composed by the following entities:
 
- - Federation Authority, acts as trust anchor and onboarding system. It's available at `http://localhost:8000`
- - OpenID Relying Party, available at `http://localhost:8001`
- - OpenID Provider, available at `http://localhost:8002`
-
+ - Federation Authority, acts as trust anchor and onboarding system. It's available at `http://127.0.0.1:8000/`
+ - OpenID Relying Party, available at `http://127.0.0.1:8001/`
+ - OpenID Provider, available at `http://127.0.0.1:8002/`
 
 ## Contribute
 
@@ -188,7 +126,7 @@ Please consider the following branches:
 Backup and share your demo data
 ````
 # backup your data (upgrade example data), -e excludes.
-./manage.py dumpdata -e spid_cie_oidc_accounts -e admin -e auth -e contenttypes -e sessions > dumps/example.json
+./manage.py dumpdata -e admin -e auth -e contenttypes -e sessions > dumps/example.json
 ````
 
 In this project we adopt [Semver](https://semver.org/lang/it/) and
@@ -206,11 +144,8 @@ written by Roland Hedberg and licensed under the same Apache 2 license.
 
 ## Implementation notes
 
-All the operation related to JWT signature and encryption, and part of OIDC messages operations, 
-are built on top of [IdentityPython](https://idpy.org/):
-
-- [oidcmsg](https://github.com/IdentityPython/JWTConnect-Python-OidcMsg)
-- [cryptojwt](https://github.com/IdentityPython/JWTConnect-Python-CryptoJWT)
+All the operation related to JWT signature and encryption are built on top of [IdentityPython](https://idpy.org/) 
+[cryptojwt](https://github.com/IdentityPython/JWTConnect-Python-CryptoJWT)
 
 This project proposes an implementation of the italian OIDC Federation profile with
 __automatic_client_registration__ and the adoption of the trust marks as mandatory.

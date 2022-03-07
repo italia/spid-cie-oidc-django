@@ -9,7 +9,12 @@ from cryptojwt.jwe.jwe_rsa import JWE_RSA
 from cryptojwt.jwk.jwk import key_from_jwk_dict
 from cryptojwt.jws.jws import JWS
 
-from . settings import DEFAULT_JWE_ALG, DEFAULT_JWE_ENC, ENCRYPTION_ALG_VALUES_SUPPORTED, SIGNING_ALG_VALUES_SUPPORTED
+from .settings import (
+    DEFAULT_JWE_ALG,
+    DEFAULT_JWE_ENC,
+    ENCRYPTION_ALG_VALUES_SUPPORTED,
+    SIGNING_ALG_VALUES_SUPPORTED,
+)
 
 
 logger = logging.getLogger(__name__)

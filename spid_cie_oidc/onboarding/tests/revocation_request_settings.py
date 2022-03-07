@@ -4,7 +4,7 @@ REVOCATION_REQUEST = {
     "client_assertion": "eyJhbGciOiJIUzpXVCJ9.eyJzdWIdHJ1ZX0.LVyRDPVJm0S9q",
     "client_assertion_type": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
     "client_id": "https://rp.spid.agid.gov.it",
-    "token" : "eyJhbGciOiJSUzI1NiJ9.eyR9.FXDtEzDLbTHzFNroW7w27RLk"
+    "token": "eyJhbGciOiJSUzI1NiJ9.eyR9.FXDtEzDLbTHzFNroW7w27RLk",
 }
 
 REVOCATION_REQUEST_NO_CLIENT_ASSERTION = deepcopy(REVOCATION_REQUEST)

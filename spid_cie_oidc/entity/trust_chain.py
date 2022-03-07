@@ -6,11 +6,10 @@ from typing import Union
 
 from spid_cie_oidc.entity.policy import apply_policy
 
-from . exceptions import (
+from .exceptions import (
     InvalidEntityConfiguration,
     InvalidRequiredTrustMark,
     MetadataDiscoveryException,
-    TrustAnchorNeeded
 )
 
 from .statements import (
@@ -118,9 +117,9 @@ class TrustChainBuilder:
         # once I filtered a concrete and unique trust path I can apply the metadata policy
         if path_found:
             logger.info(f"Found a trust path: {self.trust_path}")
-            self.final_metadata = self.subject_configuration.payload.get("metadata", {}).get(
-                self.metadata_type
-            )
+            self.final_metadata = self.subject_configuration.payload.get(
+                "metadata", {}
+            ).get(self.metadata_type)
             if not self.final_metadata:
                 logger.error(
                     f"Missing {self.metadata_type} in "
@@ -156,9 +155,7 @@ class TrustChainBuilder:
         return a chain of verified statements
         from the lower up to the trust anchor
         """
-        logger.info(
-            f"Starting a Walk into Metadata Discovery for {self.subject}"
-        )
+        logger.info(f"Starting a Walk into Metadata Discovery for {self.subject}")
         self.tree_of_trust[0] = [self.subject_configuration]
 
         ecs_history = []
@@ -247,8 +244,7 @@ class TrustChainBuilder:
                     self.subject, httpc_params=self.httpc_params
                 )
                 self.subject_configuration = EntityConfiguration(
-                    jwt[0],
-                    trust_anchor_entity_conf = self.trust_anchor_configuration
+                    jwt[0], trust_anchor_entity_conf=self.trust_anchor_configuration
                 )
                 self.subject_configuration.validate_by_itself()
             except Exception as e:
@@ -279,10 +275,7 @@ class TrustChainBuilder:
             res.append(stat.payload)
             if stat.verified_descendant_statements:
                 res.append(
-                    [
-                        dict(i)
-                        for i in stat.verified_descendant_statements.values()
-                    ]
+                    [dict(i) for i in stat.verified_descendant_statements.values()]
                 )
         return res
 

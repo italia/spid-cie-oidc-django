@@ -2,7 +2,7 @@ from .exceptions import (
     UnknownKid,
     MissingJwksClaim,
     MissingTrustMark,
-    TrustAnchorNeeded
+    TrustAnchorNeeded,
 )
 from .http_client import http_get
 from .jwtse import verify_jws, unpad_jwt_head, unpad_jwt_payload
@@ -71,7 +71,6 @@ def get_entity_configurations(subjects: list, httpc_params: dict = {}):
 
 
 class TrustMark:
-
     def __init__(self, jwt: str, httpc_params: dict = {}):
         self.jwt = jwt
         self.header = unpad_jwt_head(jwt)
@@ -107,9 +106,7 @@ class TrustMark:
 
         if not self.issuer_entity_configuration.validate_by_itself():
             self.is_valid = False
-            logger.warning(
-                f"Issuer {self.iss} of trust mark {self.id} is not valid."
-            )
+            logger.warning(f"Issuer {self.iss} of trust mark {self.id} is not valid.")
             return False
 
         if self.header.get("kid") not in self.issuer_entity_configuration.kids:
@@ -123,7 +120,7 @@ class TrustMark:
             self.jwt,
             self.issuer_entity_configuration.jwks[
                 self.issuer_entity_configuration.kids.index(self.header["kid"])
-            ]
+            ],
         )
         self.is_valid = True
         return payload
@@ -142,7 +139,7 @@ class EntityConfiguration:
         jwt: str,
         httpc_params: dict = {},
         filter_by_allowed_trust_marks: list = [],
-        trust_anchor_entity_conf = None,
+        trust_anchor_entity_conf=None,
         trust_mark_issuers_entity_confs: dict = [],
     ):
         self.jwt = jwt
@@ -210,7 +207,7 @@ class EntityConfiguration:
         if not self.filter_by_allowed_trust_marks:
             return True
 
-        if not self.payload.get('trust_marks'):
+        if not self.payload.get("trust_marks"):
             logger.warning(
                 f"{self.sub} doesn't have the trust marks claim "
                 "in its Entity Configuration"
@@ -219,33 +216,29 @@ class EntityConfiguration:
 
         trust_marks = []
         is_valid = False
-        for tm in self.payload['trust_marks']:
+        for tm in self.payload["trust_marks"]:
 
-            if tm.get('id', None) not in self.filter_by_allowed_trust_marks:
+            if tm.get("id", None) not in self.filter_by_allowed_trust_marks:
                 continue
 
             try:
-                trust_mark = TrustMark(tm['trust_mark'])
+                trust_mark = TrustMark(tm["trust_mark"])
             except KeyError:
                 logger.warning(
                     f"Trust Mark decoding failed on [{tm}]. "
                     "Missing 'trust_mark' claim in it"
                 )
             except Exception:
-                logger.warning(
-                    f"Trust Mark decoding failed on [{tm}]"
-                )
+                logger.warning(f"Trust Mark decoding failed on [{tm}]")
                 continue
             else:
                 trust_marks.append(trust_mark)
 
         if not trust_marks:
-            raise MissingTrustMark(
-                "Required Trust marks are missing."
-            )
+            raise MissingTrustMark("Required Trust marks are missing.")
 
         trust_mark_issuers_by_id = self.trust_anchor_entity_conf.payload.get(
-            'trust_mark_issuers', {}
+            "trust_mark_issuers", {}
         )
 
         # TODO : cache of issuers -> it would be better to have a proxy function
@@ -288,14 +281,10 @@ class EntityConfiguration:
                 is_valid = False
 
             if is_valid:
-                logger.info(
-                    f"Trust Mark {trust_mark} is valid"
-                )
+                logger.info(f"Trust Mark {trust_mark} is valid")
                 self.verified_trust_marks.append(trust_mark)
             else:
-                logger.warning(
-                    f"Trust Mark {trust_mark} is not valid"
-                )
+                logger.warning(f"Trust Mark {trust_mark} is not valid")
 
         return is_valid
 
@@ -338,9 +327,7 @@ class EntityConfiguration:
             try:
                 ec = self.__class__(jwt, httpc_params=self.httpc_params)
             except Exception as e:
-                logger.warning(
-                    f"Get Entity Configuration for {jwt}: {e}"
-                )
+                logger.warning(f"Get Entity Configuration for {jwt}: {e}")
                 continue
 
             if ec.validate_by_itself():
