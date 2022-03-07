@@ -735,7 +735,6 @@ class UserInfoEndpoint(OpBase, View):
 class RevocationEndpoint(OpBase,View):
 
     def post(self, request, *args, **kwargs):
-        breakpoint()
         try:
             schema = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
             schema["revocation_request"](**request.POST.dict())

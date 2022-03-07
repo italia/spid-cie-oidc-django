@@ -7,13 +7,14 @@ from django.conf import settings
 from django.contrib.auth import get_user_model, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.module_loading import import_string
 from django.utils.translation import gettext as _
 from django.views import View
+from pydantic import ValidationError
 from spid_cie_oidc.entity.exceptions import InvalidTrustchain
 from spid_cie_oidc.entity.jwtse import (
     create_jws,
@@ -27,6 +28,10 @@ from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.statements import get_http_url
 from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
 from spid_cie_oidc.onboarding.schemas.authn_requests import AcrValuesSpid
+from spid_cie_oidc.relying_party.settings import (
+    RP_DEFAULT_PROVIDER_PROFILES,
+    RP_PROVIDER_PROFILES
+)
 
 from .models import OidcAuthentication, OidcAuthenticationToken
 from .oauth2 import *
@@ -290,6 +295,20 @@ class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant
         authz = OidcAuthentication.objects.filter(
             state=request_args.get("state"),
         )
+        try:
+            schema = RP_PROVIDER_PROFILES[RP_DEFAULT_PROVIDER_PROFILES]
+            schema["authn_response"](**request.GET.dict())
+        except ValidationError as e:
+            logger.error(
+                "Authn response object validation failed "
+                f"for {request.POST.get('client_id', None)}: {e} "
+            )
+            return JsonResponse(
+                {
+                    "error": "invalid_request",
+                    "error_description": "Authn response object validation failed ",
+                }
+            )
         if not authz:
             # TODO: verify error message and status
             context = {
