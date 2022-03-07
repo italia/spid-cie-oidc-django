@@ -536,11 +536,11 @@ class TokenEndpoint(OpBase, View):
 
     def grant_refresh_token(self, request, *args, **kwargs):
         """
-            client_id=https://rp.cie.it& 
+            client_id=https://rp.cie.it&
             client_assertion=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IlNQSUQiLCJhZG1pbiI6dHJ1ZX0.LVyRDPVJm0S9q7oiXcYVIIqGWY0wWQlqxvFGYswL...&
-            client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer& 
-            refresh_token=8xLOxBtZp8 &  
-            grant_type=refresh_token 
+            client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&
+            refresh_token=8xLOxBtZp8 &
+            grant_type=refresh_token
         """
 
         # 1. get the IssuedToken refresh one, revoked = None
@@ -593,7 +593,7 @@ class TokenEndpoint(OpBase, View):
 
 class UserInfoEndpoint(OpBase, View):
     def get(self, request, *args, **kwargs):
-        
+
         ah = request.headers.get("Authorization", None)
         if not ah or "Bearer " not in ah:
             return HttpResponseForbidden()
@@ -634,6 +634,42 @@ class UserInfoEndpoint(OpBase, View):
         # encrypt the data
         jwe = encrypt_dict(jws, rp_tc.metadata["jwks"]["keys"][0])
         return HttpResponse(jwe, content_type="application/jose")
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class RvocationEndpoint(OpBase,View):
+
+    def post(self, request, *args, **kwargs):
+        try:
+            self.check_client_assertion(
+                request.POST['client_id'],
+                request.POST['client_assertion']
+            )
+        except Exception:
+            return HttpResponse()
+
+        breakpoint()
+        token = IssuedToken.objects.filter(
+            id_token= request.POST['token']
+        ).first()
+
+        if not token or token.expired:
+            return HttpResponse()
+
+        session = OidcSession.objects.filter(
+            client_id= request.POST['client_id']
+        ).last()
+
+        if not session or session.revoked:
+            return HttpResponse()
+
+        if session.revoked:
+            iss_tokens = IssuedToken.objects.filter(session=session)
+            iss_tokens.update(revoked=True)
+            return HttpResponse()
+
+        session.revoke()
+        return HttpResponse()
 
 
 class IntrospectionEndpoint(View):

@@ -2,6 +2,7 @@ import json
 import logging
 from copy import deepcopy
 
+import requests
 from django.conf import settings
 from django.contrib.auth import get_user_model, login, logout
 from django.contrib.auth.decorators import login_required
@@ -18,28 +19,30 @@ from spid_cie_oidc.entity.jwtse import (
     create_jws,
     unpad_jwt_head,
     unpad_jwt_payload,
-    verify_jws,
+    verify_jws
 )
-from spid_cie_oidc.entity.models import FederationEntityConfiguration, TrustChain
+from spid_cie_oidc.entity.models import (FederationEntityConfiguration,
+                                         TrustChain)
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.statements import get_http_url
-from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
+from spid_cie_oidc.entity.trust_chain_operations import \
+    get_or_create_trust_chain
 from spid_cie_oidc.onboarding.schemas.authn_requests import AcrValuesSpid
 
 from .models import OidcAuthentication, OidcAuthenticationToken
 from .oauth2 import *
 from .oidc import *
 from .settings import (
-    RP_ATTR_MAP,
-    RP_PKCE_CONF,
+    RP_ATTR_MAP, 
+    RP_PKCE_CONF, 
     RP_REQUEST_CLAIM_BY_PROFILE,
-    RP_USER_CREATE,
+    RP_USER_CREATE, 
     RP_USER_LOOKUP_FIELD,
 )
 from .utils import (
     http_dict_to_redirect_uri_path,
     http_redirect_uri_to_dict,
-    process_user_attributes,
+    process_user_attributes, 
     random_string,
 )
 
@@ -205,7 +208,6 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
         pkce_values = pkce_func(**RP_PKCE_CONF["kwargs"])
         authz_data.update(pkce_values)
         #
-
         authz_entry = dict(
             client_id=client_conf["client_id"],
             state=authz_data["state"],
@@ -423,7 +425,6 @@ class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant
         request.session["oidc_rp_user_attrs"] = user_attrs
         authz_token.user = user
         authz_token.save()
-
         return HttpResponseRedirect(
             getattr(
                 settings, "LOGIN_REDIRECT_URL", reverse("spid_cie_rp_echo_attributes")
@@ -449,20 +450,45 @@ def oidc_rpinitiated_logout(request):
     )
     authz = auth_tokens.last().authz_request
     provider_conf = authz.get_provider_configuration()
-    end_session_url = provider_conf.get("end_session_endpoint")
-
+    end_session_url = provider_conf.get("revocation_endpoint")
     # first of all on RP side ...
     logout(request)
-
     if not end_session_url:
         logger.warning(f"{authz.issuer_url} does not support end_session_endpoint !")
         return HttpResponseRedirect(settings.LOGOUT_REDIRECT_URL)
+
     else:
+        rp_conf = FederationEntityConfiguration.objects.filter(
+            sub= authz.client_id,
+            is_active=True,
+        ).first()
+        client_assertion = create_jws(
+            {
+                "iss": authz.client_id,
+                "sub": authz.client_id,
+                "aud": [end_session_url],
+                "iat": iat_now(),
+                "exp": exp_from_now(),
+                "jti": str(uuid.uuid4()),
+            },
+            jwk_dict=rp_conf.jwks[0],
+        )
         auth_token = auth_tokens.last()
-        url = f"{end_session_url}?id_token_hint={auth_token.id_token}"
         auth_token.logged_out = timezone.localtime()
         auth_token.save()
-        return HttpResponseRedirect(url)
+        breakpoint()
+        data_request = dict(
+            token = auth_token.id_token,
+            client_id = authz.client_id,
+            client_assertion = client_assertion,
+            client_assertion_type = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
+        )
+        try:
+            requests.post(end_session_url, data = data_request)
+            breakpoint()
+        except Exception as e:
+            logger.warning(f"Token revocation failed: {e}")
+        return HttpResponseRedirect(getattr(settings, "LOGOUT_REDIRECT_URL", "/"))
 
 
 def oidc_rp_landing(request):

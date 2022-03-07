@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.urls import path
 
-from .views import AuthzRequestView, ConsentPageView, TokenEndpoint, UserInfoEndpoint
+from .views import AuthzRequestView, ConsentPageView, RvocationEndpoint, TokenEndpoint, UserInfoEndpoint
 
 _PREF = getattr(settings, "OIDC_PREFIX", "oidc/op")
 
@@ -25,5 +25,10 @@ urlpatterns = [
         f"{_PREF}/userinfo/",
         UserInfoEndpoint.as_view(),
         name="oidc_provider_userinfo_endpoint",
+    ),
+    path(
+        f"{_PREF}/revocation/",
+        RvocationEndpoint.as_view(),
+        name="end_session_endpoint",
     ),
 ]
