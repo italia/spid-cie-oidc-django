@@ -15,40 +15,56 @@
                      <div class="row h-100">
                         <div class="col-12 pl-lg-4">
                            
-                           <h3 class="text-left">
+                           <h4 class="text-left">
                               {% trans "Decode or verify jwt" %}
-                           </h3>
+                           </h4>
                            
                            <p class="card-title">
-                              {% lorem 1 %}
+                              {% trans "Enter your signed jwt and jwk to get jwt decryption and verification" %}
                            </p>
                            <form method="post" action="">
                               {% csrf_token %}
                               <div class="row">
                                  <div class="col-12 col-lg-7">
-                                    <div class="form-row">
+                                    <div class="form-row">                                   
                                        <div class="col-12 form-group my-3">
-                                          <textarea id="jwt" rows="14" placeholder="Insert jwt here to decode"
-                                             name="jwt">{{ jwt }}</textarea>
+                                          <label for="id_jwt">
+                                             <span class="form-label-content">
+                                                Jwt
+                                             </span>
+                                          </label>
+                                          <textarea id="id_jwt" rows="14" name="jwt">{{ jwt }}</textarea>
                                        </div>
                                     </div>
-                                    <div class="form-row">
+                                    <div class="form-row">                        
                                        <div class="col-12 form-group my-3">
-                                          <textarea id="jwt" rows="6" placeholder="Insert jwk here to verify jws"
-                                             name="jwk">{{ jwk }}</textarea>
+                                          <label for="id_jwk">
+                                             <span class="form-label-content">
+                                                Jwk
+                                             </span>
+                                          </label>
+                                          <textarea id="id_jwk" rows="6" name="jwk">{{ jwk }}</textarea>
                                        </div>
                                     </div>
                                  </div>
                                  <div class="col-12 col-lg-5">
-                                    <div class="form-row">
+                                    <div class="form-row">   
                                        <div class="col-12 form-group my-3">
-                                          <textarea id="head" rows="6" 
+                                          <label for="id_head">
+                                             <span class="form-label-content">
+                                                Head
+                                             </span>
+                                          </label>
+                                          <textarea id="id_head" rows="6" 
                                              name="head">{{ head }}</textarea>
                                        </div>
                                     </div>
                                     <div class="form-row">
                                        <div class="col-12 form-group my-2">
-                                          <textarea id="payload" rows="12"
+                                          <label for="id_payload">
+                                             Payload
+                                          </label>
+                                          <textarea id="id_payload" rows="12"
                                              name="payload">{{ payload }}</textarea>
                                        </div>
                                     </div>

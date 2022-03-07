@@ -15,18 +15,23 @@
                      <div class="row h-100">
                         <div class="col-12 pl-lg-4">
                            
-                           <h3 class="text-left">
+                           <h4 class="text-left">
                               {% trans "Convert jwk to pem" %}
-                           </h3>
+                           </h4>
                            
                            <p class="card-title">
-                              {% lorem 1 %}
+                              {% trans "enter a jwk in the field below to encrypt in PEM" %}
                            </p>
                            <form method="post" action="">
                               {% csrf_token %}
                               <div class="form-row">
                                  <div class="col-12 form-group my-3">
-                                    <textarea id="jwk" rows="12" placeholder="Insert jwk to convert here"
+                                    <label for="id_jwt">
+                                       <span class="form-label-content">
+                                          Jwk
+                                       </span>
+                                    </label>
+                                    <textarea id="id_jwk" rows="12"
                                        name="jwk">{{ jwk }}</textarea>
                                  </div>
                               </div>
