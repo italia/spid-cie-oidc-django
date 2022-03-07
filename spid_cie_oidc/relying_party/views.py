@@ -443,7 +443,7 @@ def oidc_rpinitiated_logout(request):
     http://localhost:8000/end-session/?id_token_hint=
     """
     auth_tokens = OidcAuthenticationToken.objects.filter(user=request.user).filter(
-        Q(logged_out__iexact="") | Q(logged_out__isnull=True)
+        revoked__isnull=True
     )
     authz = auth_tokens.last().authz_request
 
