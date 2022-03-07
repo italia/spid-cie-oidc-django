@@ -32,13 +32,13 @@
                                           {{ form_field.label }}
                                        </span>
                                     </label>
-                                    {% if form_field.field.widget.input_type%}
-                                    <input type="{{ form_field.field.widget.input_type }}" 
-                                       class="form-control" id="id_{{ form_field.html_name }}" 
-                                       name="{{ form_field.name }}" value="{{form_field.value}}">
-                                    {% else%}
-                                    <textarea id="id_{{ form_field.html_name }}"
+                                    {% if form_field.name == 'trust_mark'%}
+                                    <textarea id="id_{{ form_field.html_name }}" rows="4"
                                        name="{{ form_field.name }}">{{ form.trust_mark.value}}</textarea>
+                                    {% else%}
+                                       <input type="{{ form_field.field.widget.input_type }}" 
+                                          class="form-control" id="id_{{ form_field.html_name }}" 
+                                       name="{{ form_field.name }}" value="{{form_field.value}}">
                                     {% endif %}
                                  </div>
                                  <span for="id_{{ form_field.html_name }}" class="text-danger">{{ form_field.errors }}</span>

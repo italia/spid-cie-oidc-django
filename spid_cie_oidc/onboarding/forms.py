@@ -87,8 +87,8 @@ class OnboardingValidatingTrustMarkForm(forms.Form):
         required=False
     )
 
-    trust_mark = forms.JSONField(
-        initial = dict,
+    trust_mark = forms.CharField(
+        initial = "",
         label=_("Enter trust mark"),
         required=False
     )
