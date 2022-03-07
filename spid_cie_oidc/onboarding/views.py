@@ -70,7 +70,6 @@ def onboarding_convert_jwk(request):
         "pem": "",
         "jwk_type": jwk_type
     }
-
     if request.method == 'POST':
         try:
             jwk_str = request.POST.get('jwk')
@@ -99,6 +98,7 @@ def onboarding_resolve_statement(request):
     else:
         form = OnboardingCreateTrustChain()
     context = {'form': form}
+
     if form.is_valid():
         context = {
             'form': form,
@@ -123,6 +123,7 @@ def onboarding_validating_trustmark(request):
     context = {"form": form}
 
     if form.is_valid():
+
         res = trust_mark_status(request)
         content = json.loads(res.content.decode())
         context = {'form': form}
