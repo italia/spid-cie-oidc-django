@@ -7,7 +7,7 @@ from spid_cie_oidc.onboarding.schemas.authn_requests import (
     AuthenticationRequestCie,
     AuthenticationRequestSpid
 )
-from spid_cie_oidc.onboarding.schemas.token_requests import TokenAuthnCodeRequest
+from spid_cie_oidc.onboarding.schemas.token_requests import TokenAuthnCodeRequest, TokenRefreshRequest
 
 OIDCFED_PROVIDER_PROFILES = getattr(
     settings,
@@ -16,12 +16,14 @@ OIDCFED_PROVIDER_PROFILES = getattr(
         "spid": {
             "authorization_request": AuthenticationRequestSpid,
             "op_metadata": OPMetadataSpid,
-            "token_request": TokenAuthnCodeRequest
+            "authorization_code": TokenAuthnCodeRequest,
+            "refresh_token": TokenRefreshRequest
         },
         "cie": {
             "authorization_request": AuthenticationRequestCie,
             "op_metadata": OPMetadataCie,
-            "token_request": TokenAuthnCodeRequest
+            "authorization_code": TokenAuthnCodeRequest,
+            "refresh_token": TokenRefreshRequest
         },
     },
 )
