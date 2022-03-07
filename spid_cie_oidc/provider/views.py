@@ -620,7 +620,8 @@ class TokenEndpoint(OpBase, View):
             seconds = access_token['exp'] - access_token['iat']
         ).seconds
 
-        issuedToken.update(revoked=True)
+        issuedToken.revoked = True
+        issuedToken.save()
         return JsonResponse(
             {
                 "access_token": jwt_at,
@@ -633,13 +634,10 @@ class TokenEndpoint(OpBase, View):
         )
 
     def post(self, request, *args, **kwargs):
-
         logger.debug(f"{request.headers}: {request.POST}")
-
-        # TODO: Francesca - please apply token request json validator on request.POST
         try:
             schema = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
-            schema["token_request"](**request.POST.dict())
+            schema[request.POST["grant_type"]](**request.POST.dict())
         except ValidationError as e:
             logger.error(
                 "Token request object validation failed "
