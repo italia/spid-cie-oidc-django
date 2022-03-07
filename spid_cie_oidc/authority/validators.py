@@ -14,10 +14,10 @@ from spid_cie_oidc.entity.exceptions import MissingAuthorityHintsClaim, NotDesce
 logger = logging.getLogger(__name__)
 HTTPC_PARAMS = getattr(settings, "HTTPC_PARAMS", entity_settings.HTTPC_PARAMS)
 try:
-    OIDCFED_TRUST_ANCHORS = getattr(settings, "OIDCFED_TRUST_ANCHORS")
+    OIDCFED_DEFAULT_TRUST_ANCHOR = getattr(settings, "OIDCFED_DEFAULT_TRUST_ANCHOR")
 except AttributeError:
-    OIDCFED_TRUST_ANCHORS = []
-    logger.warning("OIDCFED_TRUST_ANCHOR not configured in your settings file.")
+    OIDCFED_DEFAULT_TRUST_ANCHOR = []
+    logger.warning("OIDCFED_DEFAULT_TRUST_ANCHOR not configured in your settings file.")
 
 
 def validate_entity_configuration(value):
@@ -34,7 +34,7 @@ def validate_entity_configuration(value):
     authority_hints = ec.payload.get("authority_hints", [])
     if not authority_hints:
         raise MissingAuthorityHintsClaim(
-            "authority_hints must be present " "in a descendant entity configuration"
+            "authority_hints must be present in a descendant entity configuration"
         )
     proper_descendant = False
     for i in authority_hints:

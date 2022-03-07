@@ -84,7 +84,7 @@ class OpBase:
         rp_trust_chain = TrustChain.objects.filter(
             type="openid_relying_party",
             sub=self.payload["iss"],
-            trust_anchor__sub=settings.OIDCFED_TRUST_ANCHOR
+            trust_anchor__sub=settings.OIDCFED_DEFAULT_TRUST_ANCHOR
         ).first()
         if rp_trust_chain and not rp_trust_chain.is_active:
             state = self.payload["state"]
@@ -98,7 +98,7 @@ class OpBase:
         elif not rp_trust_chain or rp_trust_chain.is_expired:
             rp_trust_chain = get_or_create_trust_chain(
                 subject=self.payload["iss"],
-                trust_anchor=settings.OIDCFED_TRUST_ANCHOR,
+                trust_anchor=settings.OIDCFED_DEFAULT_TRUST_ANCHOR,
                 metadata_type="openid_relying_party",
                 httpc_params=HTTPC_PARAMS,
                 required_trust_marks=getattr(
@@ -121,7 +121,7 @@ class OpBase:
             state = self.payload["iss"]
             logger.error(
                 f"Invalid jwk for {self.payload['iss']}. "
-                f"{header['kid']} not found in {jwks}."
+                f"{header['kid']} not found in {jwks}. "
                 "error=unauthorized_client, "
                 f"state={state}"
             )

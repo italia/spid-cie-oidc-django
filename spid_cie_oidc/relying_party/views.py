@@ -71,7 +71,7 @@ class SpidCieOidcRp:
 
     def get_oidc_op(self, request) -> TrustChain:
         """
-        get available trust to a specific OP
+            get available trust to a specific OP
         """
         if not request.GET.get("provider", None):
             logger.warning(
@@ -81,7 +81,14 @@ class SpidCieOidcRp:
                 "Missing provider url. Please try '?provider=https://provider-subject/'"
             )
 
-        trust_anchor = request.GET.get("trust_anchor", settings.OIDCFED_TRUST_ANCHOR)
+        trust_anchor = request.GET.get(
+            "trust_anchor", 
+            settings.OIDCFED_IDENTITY_PROVIDERS.get(
+                request.GET["provider"], 
+                settings.OIDCFED_DEFAULT_TRUST_ANCHOR
+            )
+        )
+
         if trust_anchor not in settings.OIDCFED_TRUST_ANCHORS:
             logger.warning("Unallowed Trust Anchor")
             raise InvalidTrustchain("Unallowed Trust Anchor")
@@ -90,19 +97,26 @@ class SpidCieOidcRp:
             sub=request.GET["provider"],
             trust_anchor__sub=trust_anchor,
         ).first()
+
+        discover_trust = False
         if not tc:
             logger.info(f'Trust Chain not found for {request.GET["provider"]}')
+            discover_trust = True
+        
         elif not tc.is_active:
             logger.warning(f"{tc} found but DISABLED at {tc.modified}")
             raise InvalidTrustchain(f"{tc} found but DISABLED at {tc.modified}")
         elif tc.is_expired:
             logger.warning(f"{tc} found but expired at {tc.exp}")
-            logger.warning("We should try to renew the trust chain")
+            logger.warning("Try to renew the trust chain")
+            discover_trust = True
+        
+        if discover_trust:
             tc = get_or_create_trust_chain(
                 subject=tc.sub,
                 trust_anchor=trust_anchor,
-                # TODO
-                # required_trust_marks: list = [],
+                # TODO - not sure that it's required for a RP that fetches OP directly from TA
+                # required_trust_marks = [],
                 metadata_type="openid_provider",
                 force=True,
             )
@@ -110,8 +124,9 @@ class SpidCieOidcRp:
 
 
 class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
-    """View which processes the actual Authz request and
-    returns a Http Redirect
+    """
+        View which processes the actual Authz request and 
+        returns a Http Redirect
     """
 
     error_template = "rp_error.html"
@@ -136,6 +151,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
                 "error_description": "Trust Chain is unavailable.",
             }
             return render(request, self.error_template, context)
+
         provider_metadata = tc.metadata
         if not provider_metadata:
             context = {
@@ -149,6 +165,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             # TODO: RPs multitenancy?
             # sub = request.build_absolute_uri()
         ).first()
+
         if not entity_conf:
             context = {
                 "error": _("Request rejected"),
@@ -184,6 +201,10 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
 
         redirect_uri = request.GET.get("redirect_uri", client_conf["redirect_uris"][0])
         if redirect_uri not in client_conf["redirect_uris"]:
+            logger.warning(
+                f"Requested for unknown redirect uri {redirect_uri}. "
+                f"Reverted to default {client_conf['redirect_uris'][0]}."
+            )
             redirect_uri = client_conf["redirect_uris"][0]
 
         authz_data = dict(
@@ -232,29 +253,27 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
         authz_data_obj = deepcopy(authz_data)
         authz_data_obj["iss"] = client_conf["client_id"]
         authz_data_obj["sub"] = client_conf["client_id"]
+        
         request_obj = create_jws(authz_data_obj, entity_conf.jwks[0])
         authz_data["request"] = request_obj
         uri_path = http_dict_to_redirect_uri_path(authz_data)
         url = "?".join((authz_endpoint, uri_path))
-        http_redirect_uri_to_dict(url)
         logger.info(f"Starting Authz request to {url}")
         return HttpResponseRedirect(url)
 
 
 class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant):
     """
-    View which processes an Authorization Response
-    https://tools.ietf.org/html/rfc6749#section-4.1.2
+        View which processes an Authorization Response
+        https://tools.ietf.org/html/rfc6749#section-4.1.2
 
-    eg:
-    /redirect_uri?code=tYkP854StRqBVcW4Kg4sQfEN5Qz&state=R9EVqaazGsj3wg5JgxIgm8e8U4BMvf7W
-
-
+        eg:
+        /redirect_uri?code=tYkP854StRqBVcW4Kg4sQfEN5Qz&state=R9EVqaazGsj3wg5JgxIgm8e8U4BMvf7W
     """
 
     error_template = "rp_error.html"
 
-    def user_reunification(self, user_attrs: dict, client_conf: dict):
+    def user_reunification(self, user_attrs: dict):
         user_model = get_user_model()
         lookup = {
             f"attributes__{RP_USER_LOOKUP_FIELD}": user_attrs[RP_USER_LOOKUP_FIELD]
@@ -277,6 +296,9 @@ class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant
             return user
 
     def get_jwk_from_jwt(self, jwt: str, provider_jwks: dict) -> dict:
+        """
+            docs here
+        """
         head = unpad_jwt_head(jwt)
         kid = head["kid"]
         for jwk in provider_jwks:
@@ -286,7 +308,7 @@ class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant
 
     def get(self, request, *args, **kwargs):
         """
-        docs here
+            The Authorization callback, the redirect uri where the auth code lands
         """
         request_args = {k: v for k, v in request.GET.items()}
         if "error" in request_args:
@@ -309,22 +331,22 @@ class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant
                     "error_description": "Authn response object validation failed ",
                 }
             )
+
         if not authz:
             # TODO: verify error message and status
             context = {
-                "error": _("Request unauthorized"),
+                "error": "unauthorized request",
                 "error_description": _("Authentication not found"),
             }
             return render(request, self.error_template, context, status=401)
         else:
             authz = authz.last()
 
-        authz_data = json.loads(authz.data)
         code = request.GET.get("code")
         if not code:
             # TODO: verify error message and status
             context = {
-                "error": _("Invalid request"),
+                "error": "invalid request",
                 "error_description": _("Request MUST contain code"),
             }
             return render(request, self.error_template, context, status=400)
@@ -338,11 +360,12 @@ class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant
         if not self.rp_conf:
             # TODO: verify error message and status
             context = {
-                "error": _("Invalid request"),
+                "error": "invalid request",
                 "error_description": _("Relay party not found"),
             }
             return render(request, self.error_template, context, status=400)
 
+        authz_data = json.loads(authz.data)
         client_conf = self.rp_conf.metadata["openid_relying_party"]
         token_response = self.access_token_request(
             redirect_uri=authz_data["redirect_uri"],
@@ -357,10 +380,11 @@ class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant
         if not token_response:
             # TODO: verify error message
             context = {
-                "error": _("Not valid token response"),
+                "error": "invalid token response",
                 "error_description": _("Token response seems not to be valid"),
             }
             return render(request, self.error_template, context, status=400)
+        
         entity_conf = FederationEntityConfiguration.objects.filter(
             entity_type="openid_provider",
         ).first()
@@ -371,31 +395,38 @@ class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant
         id_token = token_response["id_token"]
         op_ac_jwk = self.get_jwk_from_jwt(access_token, jwks)
         op_id_jwk = self.get_jwk_from_jwt(id_token, jwks)
+
         if not op_ac_jwk or not op_id_jwk:
             # TODO: verify error message and status
             context = {
-                "error": _("Not valid authentication token"),
+                "error": "invalid token",
                 "error_description": _("Authentication token seems not to be valid."),
             }
             return render(request, self.error_template, context, status=403)
-        if not verify_jws(access_token, op_ac_jwk):
-            pass
-            # Actually AgID Login have a non-JWT access token!
-            # return HttpResponseBadRequest(
-            # _('Authentication response validation error.')
-            # )
-        if not verify_jws(access_token, op_id_jwk):
+
+        try:
+            verify_jws(access_token, op_ac_jwk)
+        except Exception as e:
             # TODO: verify error message
             context = {
-                "error": _("Not valid authentication token"),
+                "error": "token verification failed",
                 "error_description": _("Authentication token validation error."),
             }
             return render(request, self.error_template, context, status=403)
 
-        # just for debugging purpose ...
-        # sost
+        try:
+            verify_jws(id_token, op_id_jwk)
+        except Exception as e:
+            # TODO: verify error message
+            context = {
+                "error": "token verification failed",
+                "error_description": _("ID token validation error."),
+            }
+            return render(request, self.error_template, context, status=403)
+
         decoded_id_token = unpad_jwt_payload(id_token)
         logger.debug(decoded_id_token)
+
         decoded_access_token = unpad_jwt_payload(access_token)
         logger.debug(decoded_access_token)
 
@@ -405,6 +436,7 @@ class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant
         authz_token.token_type = token_response["token_type"]
         authz_token.expires_in = token_response["expires_in"]
         authz_token.save()
+
         userinfo = self.get_userinfo(
             authz.state,
             authz_token.access_token,
@@ -414,10 +446,11 @@ class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant
         if not userinfo:
             # TODO: verify error message
             context = {
-                "error": _("Not valid UserInfo response"),
+                "error": "invalid userinfo response",
                 "error_description": _("UserInfo response seems not to be valid"),
             }
             return render(request, self.error_template, context, status=400)
+
         # here django user attr mapping
         user_attrs = process_user_attributes(userinfo, RP_ATTR_MAP, authz.__dict__)
         if not user_attrs:
@@ -425,12 +458,12 @@ class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant
             logger.warning(f"{_msg}: {userinfo}")
             # TODO: verify error message and status
             context = {
-                "error": _("No user attributes have been processed"),
+                "error": "missing user attributes",
                 "error_description": _(f"{_msg}: {userinfo}"),
             }
             return render(request, self.error_template, context, status=403)
 
-        user = self.user_reunification(user_attrs, client_conf)
+        user = self.user_reunification(user_attrs)
         if not user:
             # TODO: verify error message and status
             context = {"error": _("No user found"), "error_description": _("")}
@@ -443,8 +476,8 @@ class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant
         authz_token.save()
         return HttpResponseRedirect(
             getattr(
-                settings, "LOGIN_REDIRECT_URL", reverse("spid_cie_rp_echo_attributes")
-            )
+                settings, "LOGIN_REDIRECT_URL", None
+            ) or reverse("spid_cie_rp_echo_attributes")
         )
 
 
@@ -467,47 +500,60 @@ def oidc_rpinitiated_logout(request):
     authz = auth_tokens.last().authz_request
 
     provider_conf = authz.provider_configuration
-    end_session_url = provider_conf.get("revocation_endpoint")
+    revocation_endpoint_url = provider_conf.get("revocation_endpoint")
 
     # first of all on RP side ...
     logout(request)
-    if not end_session_url:
-        logger.warning(f"{authz.issuer_url} does not support end_session_endpoint !")
-        return HttpResponseRedirect(settings.LOGOUT_REDIRECT_URL)
+
+    default_logout_url = getattr(
+        settings, "LOGOUT_REDIRECT_URL", None
+    ) or reverse("spid_cie_rp_landing")
+
+    if not revocation_endpoint_url:
+        logger.warning(
+            f"{authz.issuer_url} doesn't expose the token revocation endpoint."
+        )
+        return HttpResponseRedirect(default_logout_url)
     else:
         rp_conf = FederationEntityConfiguration.objects.filter(
             sub= authz.client_id,
             is_active=True,
         ).first()
+
+        # private_key_jwt
         client_assertion = create_jws(
             {
                 "iss": authz.client_id,
                 "sub": authz.client_id,
-                "aud": [end_session_url],
+                "aud": [revocation_endpoint_url],
                 "iat": iat_now(),
                 "exp": exp_from_now(),
                 "jti": str(uuid.uuid4()),
             },
             jwk_dict=rp_conf.jwks[0],
         )
+
         auth_token = auth_tokens.last()
         auth_token.logged_out = timezone.localtime()
         auth_token.save()
-        data_request = dict(
+
+        revocation_request = dict(
             token = auth_token.id_token,
             client_id = authz.client_id,
             client_assertion = client_assertion,
             client_assertion_type = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
         )
         try:
-            requests.post(end_session_url, data = data_request)
+            requests.post(revocation_endpoint_url, data = revocation_request)
         except Exception as e:
             logger.warning(f"Token revocation failed: {e}")
-        return HttpResponseRedirect(getattr(settings, "LOGOUT_REDIRECT_URL", None) or "/")
+        return HttpResponseRedirect(default_logout_url)
 
 
 def oidc_rp_landing(request):
-    trust_chains = TrustChain.objects.filter(type="openid_provider")
+    trust_chains = TrustChain.objects.filter(
+        type="openid_provider", is_active=True
+    )
     providers = []
     for tc in trust_chains:
         if tc.is_valid:

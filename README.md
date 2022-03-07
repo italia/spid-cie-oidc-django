@@ -59,7 +59,7 @@ In this repository we have three example projects for demo purpose:
 ![RP Auth demo](docs/images/rp_auth_demo.gif)
 An onboarded Relying Party with a succesful authentication.
 
-### Summary
+## Summary
 
 * [Features](#features)
 * [Setup](#setup)

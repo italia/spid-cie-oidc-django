@@ -16,7 +16,7 @@ try:
 except AttributeError:
     OIDCFED_TRUST_ANCHORS = []
     logger.warning(
-        "OIDCFED_TRUST_ANCHOR not configured in your settings file."
+        "OIDCFED_TRUST_ANCHORS not configured in your settings file."
     )
 
 
