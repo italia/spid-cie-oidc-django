@@ -433,7 +433,7 @@ class SpidCieOidcRpCallbackEchoAttributes(View):
     template = "echo_attributes.html"
 
     def get(self, request):
-        data = {"oidc_rp_user_attrs": request.session["oidc_rp_user_attrs"]}
+        data = {"oidc_rp_user_attrs": request.session.get("oidc_rp_user_attrs", {})}
         return render(request, self.template, data)
 
 
