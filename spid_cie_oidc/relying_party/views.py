@@ -450,7 +450,7 @@ def oidc_rpinitiated_logout(request):
         Q(logged_out__iexact="") | Q(logged_out__isnull=True)
     )
     authz = auth_tokens.last().authz_request
-    provider_conf = authz.get_provider_configuration()
+    provider_conf = authz.provider_configuration
     end_session_url = provider_conf.get("end_session_endpoint")
 
     # first of all on RP side ...

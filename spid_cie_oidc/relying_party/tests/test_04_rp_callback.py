@@ -25,7 +25,7 @@ class RpCallBack(TestCase):
             provider_id=op_conf["sub"],
             data=json.dumps(data),
             state=STATE,
-            provider_configuration=json.dumps(op_conf["metadata"]["openid_provider"]),
+            provider_configuration=op_conf["metadata"]["openid_provider"],
         )
         self.rp_config = deepcopy(rp_conf)
         self.rp_config["sub"] = rp_conf["metadata"]["openid_relying_party"]["client_id"]
