@@ -13,7 +13,7 @@ from django.http import (
     HttpResponseBadRequest,
     HttpResponseForbidden,
     HttpResponseRedirect,
-    JsonResponse,
+    JsonResponse
 )
 from django.shortcuts import render
 from django.urls import reverse
@@ -29,13 +29,20 @@ from spid_cie_oidc.entity.jwtse import (
     encrypt_dict,
     unpad_jwt_head,
     unpad_jwt_payload,
-    verify_jws,
+    verify_jws
 )
-from spid_cie_oidc.entity.models import FederationEntityConfiguration, TrustChain
+from spid_cie_oidc.entity.models import (
+    FederationEntityConfiguration,
+    TrustChain
+)
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.tests.settings import *
 from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
-from spid_cie_oidc.entity.utils import datetime_from_timestamp, exp_from_now, iat_now
+from spid_cie_oidc.entity.utils import (
+    datetime_from_timestamp,
+    exp_from_now,
+    iat_now
+)
 from spid_cie_oidc.provider.models import IssuedToken, OidcSession
 
 from .exceptions import AuthzRequestReplay, InvalidSession, RevokedSession
@@ -542,24 +549,108 @@ class TokenEndpoint(OpBase, View):
 
     def grant_refresh_token(self, request, *args, **kwargs):
         """
-            client_id=https://rp.cie.it& 
+            client_id=https://rp.cie.it&
             client_assertion=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IlNQSUQiLCJhZG1pbiI6dHJ1ZX0.LVyRDPVJm0S9q7oiXcYVIIqGWY0wWQlqxvFGYswL...&
-            client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer& 
-            refresh_token=8xLOxBtZp8 &  
-            grant_type=refresh_token 
+            client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&
+            refresh_token=8xLOxBtZp8 &
+            grant_type=refresh_token
         """
 
         # 1. get the IssuedToken refresh one, revoked = None
         # 2. create a new instance of issuedtoken linked to the same sessions and revoke the older
         # 3. response with a new refresh, access and id_token
+        issuedToken = IssuedToken.objects.filter(
+            refresh_token = request.POST['refresh_token'],
+            revoked = False
+        ).first()
 
-        raise NotImplementedError()
+        if not issuedToken:
+            return JsonResponse(
+                {
+                    "error": "Invalid request",
+                    "error_description": "Refresh token not found",
+
+                },
+                status = 400
+            )
+
+        session = issuedToken.session
+        _sub = self.authz.pairwised_sub()
+        refresh_token = {
+            "iss": self.issuer.sub,
+            "sub": _sub,
+            "aud": [self.authz.client_id],
+            "client_id": self.authz.client_id,
+            "scope": self.authz.authz_request["scope"],
+        }
+        refresh_token.update(self.commons)
+        jwt_rt = create_jws(refresh_token, self.issuer.jwks[0], typ="at+jwt")
+
+        access_token = {
+            "iss": self.issuer.sub,
+            "sub": _sub,
+            "aud": [self.authz.client_id],
+            "client_id": self.authz.client_id,
+            "scope": self.authz.authz_request["scope"],
+        }
+        access_token.update(self.commons)
+        jwt_at = create_jws(access_token, self.issuer.jwks[0], typ="at+jwt")
+
+        id_token = {
+            "sub": _sub,
+            "nonce": self.authz.authz_request["nonce"],
+            "at_hash": left_hash(jwt_at, "HS256"),
+            "c_hash": left_hash(self.authz.auth_code, "HS256"),
+            "aud": [self.authz.client_id],
+            "iss": self.issuer.sub,
+        }
+        id_token.update(self.commons)
+        jwt_id = create_jws(id_token, self.issuer.jwks[0])
+
+        iss_token_data = dict(
+            session=session,
+            access_token=jwt_at,
+            refresh_token=jwt_rt,
+            id_token = jwt_id,
+            expires=datetime_from_timestamp(self.commons["exp"])
+        )
+        IssuedToken.objects.create(**iss_token_data)
+
+        expires_in = timezone.timedelta(
+            seconds = access_token['exp'] - access_token['iat']
+        ).seconds
+
+        issuedToken.update(revoked=True)
+        return JsonResponse(
+            {
+                "access_token": jwt_at,
+                "token_type": "bearer",
+                "refresh_token": jwt_at,
+                "id_token": jwt_id,
+                "expires_in": expires_in,
+                "scope": self.authz.authz_request["scope"],
+            }
+        )
 
     def post(self, request, *args, **kwargs):
 
         logger.debug(f"{request.headers}: {request.POST}")
 
         # TODO: Francesca - please apply token request json validator on request.POST
+        try:
+            schema = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
+            schema["token_request"](**request.POST.dict())
+        except ValidationError as e:
+            logger.error(
+                "Token request object validation failed "
+                f"for {request.POST.get('client_id', None)}: {e} "
+            )
+            return JsonResponse(
+                {
+                    "error": "invalid_request",
+                    "error_description": "Token request object validation failed ",
+                }
+            )
 
         self.commons = self.get_jwt_common_data()
         self.issuer = self.get_issuer()
@@ -640,6 +731,37 @@ class UserInfoEndpoint(OpBase, View):
         # encrypt the data
         jwe = encrypt_dict(jws, rp_tc.metadata["jwks"]["keys"][0])
         return HttpResponse(jwe, content_type="application/jose")
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class RevocationEndpoint(OpBase,View):
+
+    def post(self, request, *args, **kwargs):
+        try:
+            self.check_client_assertion(
+                request.POST['client_id'],
+                request.POST['client_assertion']
+            )
+        except Exception:
+            return HttpResponseForbidden()
+
+        access_token = request.POST.get('token', None)
+        if not access_token:
+            return HttpResponseBadRequest()
+
+        token = IssuedToken.objects.filter(
+            access_token= access_token,
+            revoked = False
+        ).first()
+
+        if not token or token.expired:
+            return HttpResponseForbidden()
+
+        if access_token.is_revoked:
+            return HttpResponseForbidden()
+
+        access_token.session.revoke()
+        return HttpResponse()
 
 
 class IntrospectionEndpoint(View):

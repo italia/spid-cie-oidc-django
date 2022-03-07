@@ -2,6 +2,7 @@ import json
 import logging
 from copy import deepcopy
 
+import requests
 from django.conf import settings
 from django.contrib.auth import get_user_model, login, logout
 from django.contrib.auth.decorators import login_required
@@ -18,9 +19,10 @@ from spid_cie_oidc.entity.jwtse import (
     create_jws,
     unpad_jwt_head,
     unpad_jwt_payload,
-    verify_jws,
+    verify_jws
 )
-from spid_cie_oidc.entity.models import FederationEntityConfiguration, TrustChain
+from spid_cie_oidc.entity.models import (FederationEntityConfiguration,
+                                         TrustChain)
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.statements import get_http_url
 from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
@@ -205,7 +207,6 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
         pkce_values = pkce_func(**RP_PKCE_CONF["kwargs"])
         authz_data.update(pkce_values)
         #
-
         authz_entry = dict(
             client_id=client_conf["client_id"],
             state=authz_data["state"],
@@ -315,7 +316,6 @@ class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant
         self.rp_conf = FederationEntityConfiguration.objects.get(
             sub=authz_token.authz_request.client_id
         )
-
         if not self.rp_conf:
             # TODO: verify error message and status
             context = {
@@ -342,14 +342,12 @@ class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant
                 "error_description": _("Token response seems not to be valid"),
             }
             return render(request, self.error_template, context, status=400)
-        # da verificare
         entity_conf = FederationEntityConfiguration.objects.filter(
             entity_type="openid_provider",
         ).first()
 
         op_conf = entity_conf.metadata["openid_provider"]
         jwks = op_conf["jwks"]["keys"]
-        ###################
         access_token = token_response["access_token"]
         id_token = token_response["id_token"]
         op_ac_jwk = self.get_jwk_from_jwt(access_token, jwks)
@@ -401,7 +399,6 @@ class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant
                 "error_description": _("UserInfo response seems not to be valid"),
             }
             return render(request, self.error_template, context, status=400)
-
         # here django user attr mapping
         user_attrs = process_user_attributes(userinfo, RP_ATTR_MAP, authz.__dict__)
         if not user_attrs:
@@ -425,7 +422,6 @@ class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant
         request.session["oidc_rp_user_attrs"] = user_attrs
         authz_token.user = user
         authz_token.save()
-
         return HttpResponseRedirect(
             getattr(
                 settings, "LOGIN_REDIRECT_URL", reverse("spid_cie_rp_echo_attributes")
@@ -450,21 +446,46 @@ def oidc_rpinitiated_logout(request):
         Q(logged_out__iexact="") | Q(logged_out__isnull=True)
     )
     authz = auth_tokens.last().authz_request
+
     provider_conf = authz.provider_configuration
-    end_session_url = provider_conf.get("end_session_endpoint")
+    end_session_url = provider_conf.get("revocation_endpoint")
 
     # first of all on RP side ...
     logout(request)
-
     if not end_session_url:
         logger.warning(f"{authz.issuer_url} does not support end_session_endpoint !")
         return HttpResponseRedirect(settings.LOGOUT_REDIRECT_URL)
+
     else:
+        rp_conf = FederationEntityConfiguration.objects.filter(
+            sub= authz.client_id,
+            is_active=True,
+        ).first()
+        client_assertion = create_jws(
+            {
+                "iss": authz.client_id,
+                "sub": authz.client_id,
+                "aud": [end_session_url],
+                "iat": iat_now(),
+                "exp": exp_from_now(),
+                "jti": str(uuid.uuid4()),
+            },
+            jwk_dict=rp_conf.jwks[0],
+        )
         auth_token = auth_tokens.last()
-        url = f"{end_session_url}?id_token_hint={auth_token.id_token}"
         auth_token.logged_out = timezone.localtime()
         auth_token.save()
-        return HttpResponseRedirect(url)
+        data_request = dict(
+            token = auth_token.id_token,
+            client_id = authz.client_id,
+            client_assertion = client_assertion,
+            client_assertion_type = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
+        )
+        try:
+            requests.post(end_session_url, data = data_request)
+        except Exception as e:
+            logger.warning(f"Token revocation failed: {e}")
+        return HttpResponseRedirect(getattr(settings, "LOGOUT_REDIRECT_URL", None) or "/")
 
 
 def oidc_rp_landing(request):
