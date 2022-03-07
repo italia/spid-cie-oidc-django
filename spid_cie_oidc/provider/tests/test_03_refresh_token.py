@@ -29,7 +29,7 @@ from spid_cie_oidc.provider.views import TokenEndpoint
 RP_SUB = rp_conf["sub"]
 RP_CLIENT_ID = rp_conf["metadata"]["openid_relying_party"]["client_id"]
 
-class GrantRefreshToken(TestCase):
+class RefreshTokenTest(TestCase):
 
 
     def setUp(self): 
