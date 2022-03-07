@@ -1,5 +1,6 @@
 import json
 import logging
+import uuid
 
 from django.contrib.auth import get_user_model
 from django.db import models
@@ -11,15 +12,17 @@ logger = logging.getLogger(__name__)
 
 class OidcAuthentication(models.Model):
     client_id = models.CharField(max_length=255)
-    state = models.CharField(max_length=255, unique=True, default="state-is-unique")
+    state = models.CharField(max_length=255, unique=True, default=uuid.uuid4)
     endpoint = models.URLField(blank=True, null=True)
     data = models.TextField(blank=True, null=True)
     successful = models.BooleanField(default=False)
 
     provider = models.CharField(max_length=255, blank=True, null=True)
     provider_id = models.CharField(max_length=255, blank=True, null=True)
-    provider_jwks = models.TextField(blank=True, null=True)
-    provider_configuration = models.TextField(blank=True, null=True)
+    provider_jwks = models.JSONField(blank=True, null=True, default=dict)
+    provider_configuration = models.JSONField(
+        blank=True, null=True, default=dict
+    )
 
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
@@ -30,10 +33,6 @@ class OidcAuthentication(models.Model):
 
     def __str__(self):
         return f"{self.client_id} {self.state} to {self.endpoint}"
-
-    @property
-    def provider_configuration_as_json(self):
-        return json.loads(self.provider_configuration)
 
 
 class OidcAuthenticationToken(models.Model):

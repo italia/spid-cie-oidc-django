@@ -215,7 +215,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             provider_id=tc.sub,
             data=json.dumps(authz_data),
             provider_jwks=json.dumps(jwks_dict),
-            provider_configuration=json.dumps(provider_metadata),
+            provider_configuration=provider_metadata,
         )
 
         # TODO: Prune the old or unbounded authz ...
@@ -300,8 +300,6 @@ class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant
             authz = authz.last()
 
         authz_data = json.loads(authz.data)
-        provider_conf = authz.get_provider_configuration()
-
         code = request.GET.get("code")
         if not code:
             # TODO: verify error message and status
@@ -333,7 +331,7 @@ class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant
             code=code,
             issuer_id=authz.provider_id,
             client_conf=self.rp_conf,
-            token_endpoint_url=provider_conf["token_endpoint"],
+            token_endpoint_url=authz.provider_configuration["token_endpoint"],
             audience=[authz.provider_id],
             code_verifier=authz_data.get("code_verifier"),
         )
@@ -393,7 +391,7 @@ class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant
         userinfo = self.get_userinfo(
             authz.state,
             authz_token.access_token,
-            provider_conf,
+            authz.provider_configuration,
             verify=HTTPC_PARAMS,
         )
         if not userinfo:

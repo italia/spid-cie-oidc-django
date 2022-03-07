@@ -77,7 +77,7 @@ class OpBase:
         rp_trust_chain = TrustChain.objects.filter(
             type="openid_relying_party",
             sub=self.payload["iss"],
-            trust_anchor__sub=settings.OIDCFED_TRUST_ANCHOR,
+            trust_anchor__sub=settings.OIDCFED_TRUST_ANCHOR
         ).first()
         if rp_trust_chain and not rp_trust_chain.is_active:
             state = self.payload["state"]
@@ -88,7 +88,7 @@ class OpBase:
             )
             raise Exception()
 
-        elif not rp_trust_chain or not rp_trust_chain.is_valid:
+        elif not rp_trust_chain or rp_trust_chain.is_expired:
             rp_trust_chain = get_or_create_trust_chain(
                 subject=self.payload["iss"],
                 trust_anchor=settings.OIDCFED_TRUST_ANCHOR,
