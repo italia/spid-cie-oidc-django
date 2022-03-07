@@ -25,7 +25,7 @@ urlpatterns += (
 )
 urlpatterns += (
     path(
-        "echo_attributes",
+        "oidc/rp/echo_attributes",
         SpidCieOidcRpCallbackEchoAttributes.as_view(),
         name="spid_cie_rp_echo_attributes",
     ),

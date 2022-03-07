@@ -459,11 +459,11 @@ class SpidCieOidcRpCallbackEchoAttributes(View):
 @login_required
 def oidc_rpinitiated_logout(request):
     """
-    http://localhost:8000/end-session/?id_token_hint=
+        Call the token revocation endpoint of the op
     """
-    auth_tokens = OidcAuthenticationToken.objects.filter(user=request.user).filter(
-        revoked__isnull=True
-    )
+    auth_tokens = OidcAuthenticationToken.objects.filter(
+        user=request.user
+    ).filter(revoked__isnull=True)
     authz = auth_tokens.last().authz_request
 
     provider_conf = authz.provider_configuration
@@ -474,7 +474,6 @@ def oidc_rpinitiated_logout(request):
     if not end_session_url:
         logger.warning(f"{authz.issuer_url} does not support end_session_endpoint !")
         return HttpResponseRedirect(settings.LOGOUT_REDIRECT_URL)
-
     else:
         rp_conf = FederationEntityConfiguration.objects.filter(
             sub= authz.client_id,

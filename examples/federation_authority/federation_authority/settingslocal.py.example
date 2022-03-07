@@ -28,6 +28,8 @@ HTTPC_PARAMS = {
     "session": {"timeout": aiohttp.ClientTimeout(total=4)},
 }
 
+LOGIN_REDIRECT_URL = "/oidc/rp/echo_attributes"
+LOGOUT_REDIRECT_URL = "/oidc/rp/landing"
 
 FEDERATION_DEFAULT_METADATA_POLICY = {
     "openid_relying_party": {
@@ -209,6 +211,3 @@ LOGGING = {
         }
     }
 }
-
-LOGIN_REDIRECT_URL = "/echo_attributes"
-LOGOUT_REDIRECT_URL = "/oidc/rp/landing"
