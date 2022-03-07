@@ -17,8 +17,8 @@ from django.conf import settings
 from django.urls import path
 
 from .views import (
-    onboarding_landing, 
-    onboarding_registration, 
+    onboarding_landing,
+    onboarding_registration,
     onboarding_entities,
     onboarding_create_jwk,
     onboarding_convert_jwk,
