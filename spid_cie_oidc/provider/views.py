@@ -172,6 +172,18 @@ class OpBase:
             entity_type="openid_provider"
         ).first()
 
+    def check_client_assertion(self, client_id: str, client_assertion: str) -> bool:
+        head = unpad_jwt_head(client_assertion)
+        payload = unpad_jwt_payload(client_assertion)
+        if payload['sub'] != client_id:
+            # TODO Specialize exceptions
+            raise Exception()
+        
+        tc = TrustChain.objects.get(sub=client_id, is_active=True)
+        jwk = self.find_jwk(head, tc.metadata['jwks']['keys'])
+        verify_jws(client_assertion, jwk)
+
+        return True
 
 class AuthzRequestView(OpBase, View):
     """
@@ -544,11 +556,29 @@ class TokenEndpoint(OpBase, View):
         self.issuer = self.get_issuer()
 
         self.authz = OidcSession.objects.filter(
-            auth_code=request.POST["code"], revoked=False
+            auth_code=request.POST["code"], 
+            revoked=False
         ).first()
 
         if not self.authz:
             return HttpResponseBadRequest()
+
+        # check client_assertion and client ownership
+        try:
+            self.check_client_assertion(
+                request.POST['client_id'], 
+                request.POST['client_assertion']
+            )
+        except Exception:
+            # TODO: coverage test
+            return JsonResponse(
+                # TODO: error message here
+                {
+                    'error': "...",
+                    'error_description': "..."
+                
+                }, status = 403
+            )
 
         if request.POST.get("grant_type") == 'authorization_code':
             return self.grant_auth_code(request)
@@ -576,7 +606,9 @@ class UserInfoEndpoint(OpBase, View):
             return HttpResponseForbidden()
 
         rp_tc = TrustChain.objects.filter(
-            sub=token.session.client_id, type="openid_relying_party", is_active=True
+            sub=token.session.client_id, 
+            type="openid_relying_party", 
+            is_active=True
         ).first()
         if not rp_tc:
             return HttpResponseForbidden()
