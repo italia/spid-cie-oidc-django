@@ -327,7 +327,12 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
         """
         request_args = {k: v for k, v in request.GET.items()}
         if "error" in request_args:
-            return render(request, self.error_template, request_args, status=401)
+            return render(
+                request, 
+                self.error_template, 
+                request_args, 
+                status=401
+            )
         authz = OidcAuthentication.objects.filter(
             state=request_args.get("state"),
         )

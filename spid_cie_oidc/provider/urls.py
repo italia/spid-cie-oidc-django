@@ -39,7 +39,7 @@ urlpatterns = [
         name="end_session_endpoint",
     ),
     path(
-        f"notconsent/",
+        f"{_PREF}/notconsent/",
         oidc_provider_not_consent,
         name="oidc_provider_not_consent",
     ),
