@@ -391,7 +391,7 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
                 "error_description": _("Token response seems not to be valid"),
             }
             return render(request, self.error_template, context, status=400)
-            
+
         else:
             result = self.validate_json_schema(
                 token_response,
