@@ -2,6 +2,7 @@ from django.conf import settings
 from django.urls import path
 
 from .views import (
+    oidc_provider_not_consent,
     AuthzRequestView,
     ConsentPageView,
     RevocationEndpoint,
@@ -36,5 +37,10 @@ urlpatterns = [
         f"{_PREF}/revocation/",
         RevocationEndpoint.as_view(),
         name="end_session_endpoint",
+    ),
+    path(
+        f"notconsent/",
+        oidc_provider_not_consent,
+        name="oidc_provider_not_consent",
     ),
 ]

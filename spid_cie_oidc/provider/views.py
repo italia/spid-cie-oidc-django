@@ -439,6 +439,10 @@ class ConsentPageView(OpBase, View):
             iss=issuer.sub if issuer else "",
         )
 
+def oidc_provider_not_consent(request):
+    urlrp = reverse("spid_cie_rp_callback")
+    url = f'{urlrp}?error=invalid_request&error_description=Authz request failed'
+    return HttpResponseRedirect(url)
 
 @method_decorator(csrf_exempt, name="dispatch")
 class TokenEndpoint(OpBase, View):
