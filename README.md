@@ -6,39 +6,34 @@
 
 > ⚠️ __This project is a WiP, please wait for the first stable release v0.6.0.__
 
-OpenID Connect 1.0 is a simple identity layer on top of the OAuth 2.0 protocol.
-It enables Clients to verify the identity of the End-User based on the authentication
-performed by an Authorization Server, as well as to obtain basic profile information
-about the End-User in an interoperable and REST-like manner.
-
 SPID/CIE OIDC Federation is a suite of Django applications designed to
 make it easy to build an [Openid Connect Federation](https://openid.net/specs/openid-connect-federation-1_0.html), 
 each of these can be installed separately within a django project:
 
-### spid_cie_oidc.accounts
+__spid_cie_oidc.accounts__ customizable app that extends the Django User model.
 
-customizable app that extends the Django User model.
+__spid_cie_oidc.entity__ OIDC Federation django app that implements OIDC Federation 1.0 Entity Statements, metadata discovery, Trust Chain, Trust Marks and Metadata policy. Technical specifications: [__OIDC Federation Entity__](docs/technical_specifications/ENTITY.md)
 
-### spid_cie_oidc.entity
+__spid_cie_oidc.authority__ OIDC Federation API and models for [__OIDC Federation Authority/Intermediary__](docs/technical_specifications/AUTHORITY.md). 
 
-OIDC Federation django app that implements OIDC Federation 1.0 Entity Statements, metadata discovery, Trust Chain, Trust Marks and Metadata policy.
-Technical specifications: [__OIDC Federation Entity__](docs/technical_specifications/ENTITY.md)
+__spid_cie_oidc.onboarding__ [__OIDC Federation onboarding demo service__](docs/technical_specifications/ONBOARDING.md).
 
-### spid_cie_oidc.authority
+__spid_cie_oidc.relying_party__ [__Openid Connect Relying Party__](docs/technical_specifications/RELYING_PARTY.md) and test suite for OIDC Providers.
 
-OIDC Federation API and models for [__OIDC Federation Authority/Intermediary__](docs/technical_specifications/AUTHORITY.md). 
+__spid_cie_oidc.provider__ [__Openid Connect Provider__](docs/technical_specifications/PROVIDER.md)and test suite for OIDC Relying Parties.
 
-### spid_cie_oidc.onboarding
+## Summary
 
-[__OIDC Federation onboarding demo service__](docs/technical_specifications/ONBOARDING.md).
-
-### spid_cie_oidc.relying_party
-
-[__Openid Connect Relying Party__](docs/technical_specifications/RELYING_PARTY.md) and test suite for OIDC Providers.
-
-### spid_cie_oidc.provider
-
-[__Openid Connect Provider__](docs/technical_specifications/PROVIDER.md)and test suite for OIDC Relying Parties.
+* [Contents](#contents)
+* [Features](#features)
+* [Setup](#setup)
+* [Docker compose](#docker-compose)
+* [Usage](#usage)
+* [Contribute](#contribute)
+    * [Contribute as end user](#contribute-as-end-user)
+    * [Contribute as developer](#contribute-as-developer)
+* [License and Authors](#license-and-authors)
+* [Implementations notes](#implementation-notes)
 
 ## Contents
 
@@ -58,21 +53,6 @@ In this repository we have three example projects for demo purpose:
 
 ![RP Auth demo](docs/images/rp_auth_demo.gif)
 An onboarded Relying Party with a succesful authentication.
-
-## Summary
-
-* [Features](#features)
-* [Setup](#setup)
-    * [Install as Django application](#install-as-django-application)
-    * [Configure the example projects](#configure-the-example-projects)
-    * [Docker compose](#docker-compose)
-* [Usage](#usage)
-* [Contribute](#contribute)
-    * [Contribute as end user](#contribute-as-end-user)
-    * [Contribute as developer](#contribute-as-developer)
-* [License and Authors](#license-and-authors)
-* [Implementations notes](#implementation-notes)
-
 
 ## Features
 
@@ -104,7 +84,7 @@ An onboarded Relying Party with a succesful authentication.
 
 ## Setup
 
-Consult the [setup documentation](docs/SETUP.md). 
+Read the [setup documentation](docs/SETUP.md). 
 
 ## Docker compose
 
