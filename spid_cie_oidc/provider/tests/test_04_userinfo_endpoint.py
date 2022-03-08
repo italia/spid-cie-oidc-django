@@ -1,5 +1,4 @@
 from copy import deepcopy
-from django.http import HttpResponseBadRequest
 
 from django.test import Client, TestCase
 from django.urls import reverse

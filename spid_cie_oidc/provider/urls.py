@@ -4,6 +4,7 @@ from django.urls import path
 from .views import (
     AuthzRequestView,
     ConsentPageView,
+    IntrospectionEndpoint,
     RevocationEndpoint,
     TokenEndpoint,
     UserInfoEndpoint
@@ -36,5 +37,10 @@ urlpatterns = [
         f"{_PREF}/revocation/",
         RevocationEndpoint.as_view(),
         name="end_session_endpoint",
+    ),
+    path(
+        f"{_PREF}/intospection/",
+        IntrospectionEndpoint.as_view(),
+        name="introspection_endpoint",
     ),
 ]

@@ -7,6 +7,7 @@ import uuid
 from cryptojwt.jws.utils import left_hash
 from django.conf import settings
 from django.contrib.auth import authenticate, login
+from django.db.models import Q
 from django.forms.utils import ErrorList
 from django.http import (
     HttpResponse,
@@ -192,6 +193,21 @@ class OpBase:
 
         return True
 
+    def validate_json_schema(self, request, schema_type, error_description):
+        try:
+            schema = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
+            schema[schema_type](**request)
+        except ValidationError as e:
+            logger.error(
+                f"{error_description} "
+                f"for {request.get('client_id', None)}: {e} "
+            )
+            return JsonResponse(
+                {
+                    "error": "invalid_request",
+                    "error_description": f"{error_description} ",
+                }
+            )
 
 class AuthzRequestView(OpBase, View):
     """
@@ -776,9 +792,50 @@ class RevocationEndpoint(OpBase,View):
         return HttpResponse()
 
 
-class IntrospectionEndpoint(View):
+class IntrospectionEndpoint(OpBase, View):
     def get(self, request, *args, **kwargs):
-        pass
+        return HttpResponseBadRequest()
 
     def post(self, request, *args, **kwargs):
-        pass
+        self.validate_json_schema(
+            request.POST.dict(),
+            "introspection_request",
+            "Introspection request object validation failed"
+        )
+        client_id = request.POST['client_id']
+        try:
+            self.check_client_assertion(
+                client_id,
+                request.POST['client_assertion']
+            )
+        except Exception:
+            return HttpResponseForbidden()
+        required_token = request.POST['token']
+        # query con client_id, access token
+        token = IssuedToken.objects.filter(
+            access_token=required_token
+        ).first()
+        session = token.session
+        if session.client_id != client_id:
+            return JsonResponse(
+                error = "invalid_client",
+                error_description = "Client not recognized"
+            )
+        active = token and not token.is_revoked and not token.expired
+        exp = token.expires
+        sub = token.session.client_id
+        issuer = self.get_issuer()
+        iss = issuer.sub
+        authz_request = session.authz_request
+        scope = authz_request["scope"]
+        response = {
+            "active": active,
+            "exp": exp,
+            "sub" : sub,
+            "iss": iss,
+            "client_id": client_id,
+            "aud": [client_id],
+            "scope": scope
+        }
+        return JsonResponse(response)
+
