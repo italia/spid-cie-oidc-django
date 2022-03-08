@@ -2,6 +2,7 @@ from django.conf import settings
 from django.urls import path
 
 from .views import (
+    oidc_provider_not_consent,
     AuthzRequestView,
     ConsentPageView,
     IntrospectionEndpoint,
@@ -42,5 +43,10 @@ urlpatterns = [
         f"{_PREF}/intospection/",
         IntrospectionEndpoint.as_view(),
         name="introspection_endpoint",
+    ),
+    path(
+        f"{_PREF}/notconsent/",
+        oidc_provider_not_consent,
+        name="oidc_provider_not_consent",
     ),
 ]
