@@ -3,44 +3,44 @@
 ![CI build](https://github.com/peppelinux/spid-cie-oidc-django/workflows/spid_cie_oidc/badge.svg)
 ![Python version](https://img.shields.io/badge/license-Apache%202-blue.svg)
 ![py-versions](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9-blue.svg)
+[![GitHub issues](https://img.shields.io/github/issues/italia/spid-cie-oidc-django.svg)](https://github.com/italia/spid-cie-oidc-django/issues)
+[![Get invited](https://slack.developers.italia.it/badge.svg)](https://slack.developers.italia.it/)
+[![Join the #spid openid](https://img.shields.io/badge/Slack%20channel-%23spid%20openid-blue.svg)](https://developersitalia.slack.com/archives/C7E85ED1N/)
 
-> ⚠️ __This project is a WiP, please wait for the first stable release v0.6.0.__
 
-OpenID Connect 1.0 is a simple identity layer on top of the OAuth 2.0 protocol.
-It enables Clients to verify the identity of the End-User based on the authentication
-performed by an Authorization Server, as well as to obtain basic profile information
-about the End-User in an interoperable and REST-like manner.
+> ⚠️ __This project is a WiP, the first stable release for production use will be the v0.6.0.__
 
 SPID/CIE OIDC Federation is a suite of Django applications designed to
 make it easy to build an [Openid Connect Federation](https://openid.net/specs/openid-connect-federation-1_0.html), 
-each of these can be installed separately within a django project:
+each of these can be installed separately within a django project. These are the following:
 
-### spid_cie_oidc.accounts
+| Application | Description |
+| :--- | --- |
+| __spid_cie_oidc.accounts__ | Customizable application that extends the django User model. |
+| __spid_cie_oidc.entity__ | Openid Connect Federation django app that implements OIDC Federation 1.0 Entity Statements, metadata discovery, Trust Chain, Trust Marks and Metadata policy. Technical specifications: [__OIDC Federation Entity__](docs/technical_specifications/ENTITY.md) |
+| __spid_cie_oidc.authority__ | Openid Connect Federation API and models for __OIDC Federation Authority/Intermediary__, [Technical specifications](docs/technical_specifications/AUTHORITY.md) and [tutorial](docs/CREATE_A_FEDERATION_AUTHORITY.md). 
+| __spid_cie_oidc.onboarding__ | [__Openid Connect Federation onboarding demo service__](docs/technical_specifications/ONBOARDING.md) |
+| __spid_cie_oidc.relying_party__ | [__Openid Connect Relying Party__](docs/technical_specifications/RELYING_PARTY.md) and test suite for OIDC Providers |
+| __spid_cie_oidc.provider__ | [__Openid Connect Provider__](docs/technical_specifications/PROVIDER.md) and test suite for OIDC Relying Parties |
 
-customizable app that extended the Django User model.
+## Summary
 
-### spid_cie_oidc.entity
+* [Features](#features)
+* [Setup](#setup)
+* [Docker compose](#docker-compose)
+* [Usage](#usage)
+* [Contribute](#contribute)
+    * [Contribute as end user](#contribute-as-end-user)
+    * [Contribute as developer](#contribute-as-developer)
+* [Implementations notes](#implementation-notes)
+* [License and Authors](#license-and-authors)
 
-OIDC Federation django app that implements OIDC Federation 1.0 Entity Statements, metadata discovery, Trust Chain, Trust Marks and Metadata policy.
-Technical specifications: [__OIDC Federation Entity__](docs/technical_specifications/ENTITY.md)
+------------------------------------------------
 
-### spid_cie_oidc.authority
+![RP Auth demo](docs/images/rp_auth_demo.gif)
+An onboarded Relying Party with a succesful authentication.
 
-OIDC Federation API and models for [__OIDC Federation Authority/Intermediary__](docs/technical_specifications/AUTHORITY.md). 
-
-### spid_cie_oidc.onboarding
-
-[__OIDC Federation onboarding demo service__](docs/technical_specifications/ONBOARDING.md).
-
-### spid_cie_oidc.relying_party
-
-[__Openid Connect Relying Party__](docs/technical_specifications/RELYING_PARTY.md) and test suite for OIDC Providers.
-
-### spid_cie_oidc.provider
-
-[__Openid Connect Provider__](docs/technical_specifications/PROVIDER.md)and test suite for OIDC Relying Parties.
-
-## Contents
+## Setup
 
 All the Django apps are available in the folder `spid_cie_oidc/`.
 The examples projects are available in the folder `examples/`.
@@ -50,61 +50,19 @@ The app is installed using a common python package manager, such as _poetry_ or 
 and can be used, inherited, and integrated into other projects.
 
 A project is a service configuration that integrates one or more applications.
-In this repository we have three example projects for demo purpose:
+In this repository we have three example projects:
 
  - federation_authority
  - relying_party
  - provider
 
-![RP Auth demo](docs/images/rp_auth_demo.gif)
-An onboarded Relying Party with a succesful authentication.
+> Federation Authority loads all the applications for development needs, acting as both authority, RP and OP.
+This allows us to make a demo by starting a single service.
 
-## Summary
+relying party and provider are examples that only integrate
+__spid_cie_oidc.entity__ and __spid_cie_oidc.provider__ or __.relying_party__.
 
-* [Features](#features)
-* [Setup](#setup)
-    * [Install as Django application](#install-as-django-application)
-    * [Configure the example projects](#configure-the-example-projects)
-    * [Docker compose](#docker-compose)
-* [Usage](#usage)
-* [Contribute](#contribute)
-    * [Contribute as end user](#contribute-as-end-user)
-    * [Contribute as developer](#contribute-as-developer)
-* [License and Authors](#license-and-authors)
-* [Implementations notes](#implementation-notes)
-
-
-## Features
-
-- SPID and CIE OpenID Connect Provider
-- SPID and CIE OpenID Connect Relying Party
-- OIDC Federation onboarding demo service
-- OIDC Federation 1.0
-  - Trust Anchor and Intermediary
-  - Automatic client registration
-  - Entity profiles and Trust marks
-  - Trust chain storage and discovery
-  - Entity statement resolve endpoint
-  - Fetch statement endpoing
-  - List entities endpoint
-  - Federation CLI
-    - RP: build trust chains for all the available OPs
-    - OP: build trust chains for all the available RPs
-- OIDC Federation web tools:
-  - Create a JWK
-  - Convert a private jwk to PEM certificate/key
-  - Convert a public jwk to PEM certificate/key
-  - Decode a jwt and verify the signature
-  - Resolve entity statement web UI
-  - Validating a trust mark web UI
-- Multitenancy, a single service can configure many entities like RPs, OP, Trust Anchors and intermediaries
-- gettext compliant (i18n)
-- Bootstrap Italia Design templates
-
-
-## Setup
-
-Consult the [setup documentation](docs/SETUP.md). 
+Read the [setup documentation](docs/SETUP.md) to get started.
 
 ## Docker compose
 
@@ -139,7 +97,6 @@ Please consider the following branches:
  - __dev__: where we push our code during development.
  - __other-custom-name__: where a new feature/contribution/bugfix will be handled, revisioned and then merged to dev branch.
 
-
 Backup and share your demo data
 ````
 # backup your data (upgrade example data), -e excludes.
@@ -148,16 +105,6 @@ Backup and share your demo data
 
 In this project we adopt [Semver](https://semver.org/lang/it/) and
 [Conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) specifications.
-
-## License and Authors
-
-This software is released under the Apache 2 License by:
-
-- Giuseppe De Marco <giuseppe.demarco@teamdigitale.governo.it>.
-
-In this project we use the 
-[metadata policy code](https://github.com/peppelinux/spid-cie-oidc-django/blob/main/spid_cie_oidc/entity/policy.py)
-written by Roland Hedberg and licensed under the same Apache 2 license.
 
 ## Implementation notes
 
@@ -170,3 +117,40 @@ __automatic_client_registration__ and the adoption of the trust marks as mandato
 If you're looking for a fully compliant implementation of OIDC Federation 1.0,
 with a full support of explicit client registration, please look at idpy's
 [fedservice](https://github.com/rohe/fedservice).
+
+#### General Features
+
+- SPID and CIE OpenID Connect Provider
+- SPID and CIE OpenID Connect Relying Party
+- OIDC Federation onboarding demo service
+- OIDC Federation 1.0
+  - Trust Anchor and Intermediary
+  - Automatic client registration
+  - Entity profiles and Trust marks
+  - Trust chain storage and discovery
+  - Entity statement resolve endpoint
+  - Fetch statement endpoing
+  - List entities endpoint
+  - Federation CLI
+    - RP: build trust chains for all the available OPs
+    - OP: build trust chains for all the available RPs
+- OIDC Federation web tools:
+  - Create a JWK
+  - Convert a private jwk to PEM certificate/key
+  - Convert a public jwk to PEM certificate/key
+  - Decode a jwt and verify the signature
+  - Resolve entity statement web UI
+  - Validating a trust mark web UI
+- Multitenancy, a single service can configure many entities like RPs, OP, Trust Anchors and intermediaries
+- gettext compliant (i18n)
+- Bootstrap Italia Design templates
+
+## License and Authors
+
+This software is released under the Apache 2 License by:
+
+- Giuseppe De Marco <giuseppe.demarco@teamdigitale.governo.it>.
+
+In this project we use the 
+[metadata policy code](https://github.com/peppelinux/spid-cie-oidc-django/blob/main/spid_cie_oidc/entity/policy.py)
+written by Roland Hedberg and licensed under the same Apache 2 license.

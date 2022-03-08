@@ -13,8 +13,17 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
 from django.contrib import admin
-from django.urls import path
+
+from django.views.static import serve
+from django.urls import path, re_path
+
+from spid_cie_oidc.entity.urls import urlpatterns as entity_urlpatterns
+
+admin.site.site_header = "OIDC Federation Provider Administration"
+admin.site.site_title = "OIDC Federation"
+admin.site.index_title = "Welcome to OIDC Federation Provider Admin backend"
 
 ADMIN_PATH = getattr(settings, 'ADMIN_PATH', 'admin/')
 
@@ -27,3 +36,21 @@ urlpatterns = [
         }
     ),
 ]
+
+urlpatterns.extend(entity_urlpatterns)
+
+if 'spid_cie_oidc.provider' in settings.INSTALLED_APPS:
+    from spid_cie_oidc.provider.urls import urlpatterns as op_urlpatterns
+    urlpatterns.extend(op_urlpatterns)
+
+    from spid_cie_oidc.entity.views import entity_configuration
+
+    urlpatterns.extend(
+        [
+            path(
+                f"oidc/op/.well-known/openid-federation",
+                entity_configuration,
+                name="op_entity_configuration",
+            ),
+        ]
+    )

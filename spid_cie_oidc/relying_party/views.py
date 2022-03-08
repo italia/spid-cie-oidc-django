@@ -340,6 +340,7 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
         if result:
             return result
 
+
         if not authz:
             # TODO: verify error message and status
             context = {
