@@ -45,7 +45,7 @@ class MockedTokenEndPointResponse:
         res = {
                 "access_token": jwt_at,
                 "id_token": jwt_id,
-                "token_type": "bearer",
+                "token_type": "Bearer",
                 "expires_in": 3600,
                 "scope": "openid",
             }

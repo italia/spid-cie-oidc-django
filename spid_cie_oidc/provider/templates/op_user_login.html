@@ -73,7 +73,7 @@
                                                         {% endfor %}
 
                                                         <div class="col-sm-12 mt-2">
-                                                            <a href="{{client_redirect_uri}}"
+                                                            <a href="{% url 'oidc_provider_not_consent' %}"
                                                                 class="italia-it-button italia-it-button-cancel-s button-cancel">
                                                                 <span class="italia-it-buttons-text">{% trans "Cancel" %}</span>
                                                             </a>
@@ -85,7 +85,8 @@
                                                                     <img src="{% static 'svg/spid-ico-circle-bb.svg' %}"
                                                                         alt="">
                                                                 </span>
-                                                                <span class="italia-it-buttons-text">{% trans "Login" %}</span></button>
+                                                                <span class="italia-it-buttons-text">{% trans "Login" %}</span>
+                                                            </button>
                                                         </div>
 
                                                     </div>

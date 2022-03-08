@@ -18,10 +18,10 @@ each of these can be installed separately within a django project. These are the
 | :--- | --- |
 | __spid_cie_oidc.accounts__ | Customizable application that extends the django User model. |
 | __spid_cie_oidc.entity__ | Openid Connect Federation django app that implements OIDC Federation 1.0 Entity Statements, metadata discovery, Trust Chain, Trust Marks and Metadata policy. Technical specifications: [__OIDC Federation Entity__](docs/technical_specifications/ENTITY.md) |
-| __spid_cie_oidc.authority__ | Openid Connect Federation API and models for [__OIDC Federation Authority/Intermediary__](docs/technical_specifications/AUTHORITY.md). 
+| __spid_cie_oidc.authority__ | Openid Connect Federation API and models for __OIDC Federation Authority/Intermediary__, [Technical specifications](docs/technical_specifications/AUTHORITY.md) and [tutorial](docs/CREATE_A_FEDERATION_AUTHORITY.md). 
 | __spid_cie_oidc.onboarding__ | [__Openid Connect Federation onboarding demo service__](docs/technical_specifications/ONBOARDING.md) |
 | __spid_cie_oidc.relying_party__ | [__Openid Connect Relying Party__](docs/technical_specifications/RELYING_PARTY.md) and test suite for OIDC Providers |
-| __spid_cie_oidc.provider__ | [__Openid Connect Provider__](docs/technical_specifications/PROVIDER.md)and test suite for OIDC Relying Parties |
+| __spid_cie_oidc.provider__ | [__Openid Connect Provider__](docs/technical_specifications/PROVIDER.md) and test suite for OIDC Relying Parties |
 
 ## Summary
 
@@ -50,11 +50,17 @@ The app is installed using a common python package manager, such as _poetry_ or 
 and can be used, inherited, and integrated into other projects.
 
 A project is a service configuration that integrates one or more applications.
-In this repository we have three example projects for demo purpose:
+In this repository we have three example projects:
 
  - federation_authority
  - relying_party
  - provider
+
+> Federation Authority loads all the applications for development needs, acting as both authority, RP and OP.
+This allows us to make a demo by starting a single service.
+
+relying party and provider are examples that only integrate
+__spid_cie_oidc.entity__ and __spid_cie_oidc.provider__ or __.relying_party__.
 
 Read the [setup documentation](docs/SETUP.md) to get started.
 

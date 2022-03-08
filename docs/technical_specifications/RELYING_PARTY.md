@@ -22,7 +22,6 @@ Regarding OIDC
  - CodeFlowAuth: [openid-connect-core-1_0](https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth)
  - OIDC Federation 1.0: [openid-connect-federation-1_0](https://openid.net/specs/openid-connect-federation-1_0.html)
  - UserInfo endpoint: [UserInfo](https://openid.net/specs/openid-connect-core-1_0.html#UserInfo)
- 
 
 Regarding django user management
 
@@ -37,13 +36,13 @@ Regarding django user management
 
 Example
 ````
-OIDCFED_IDENTITY_PROVIDERS = [
-    "http://127.0.0.1:8000/oidc/op/",
-    "http://127.0.0.1:8002/"
-]
+OIDCFED_IDENTITY_PROVIDERS = {
+    "http://127.0.0.1:8000/oidc/op/" : OIDCFED_DEFAULT_TRUST_ANCHOR,
+    "http://127.0.0.1:8002/" : OIDCFED_DEFAULT_TRUST_ANCHOR
+}
 ````
 
-Please see `example/example/spid_oidc_rp_settings.py` as example.
+Please see `example/relying_party/settingslocal.py` as example.
 
 - `RP_PREFS`: General informations, default parameters during authentication requests, like the `scope` attribute
 - `RP_ATTR_MAP`: defines how oidc claims should be mapped to User model. You can even use a function to do rewrite or create new attributes (feel free to contribute with new processors in `processors.py`)
@@ -59,9 +58,28 @@ Please see `example/example/spid_oidc_rp_settings.py` as example.
     Otherwise a multiple OR sequence: `('firstname', 'lastname'),`. This will check for the first occourrence
 - `RP_PKCE_CONF`: function and general paramenters for PKCE creation
 
-TODO:
-- `user_lookup_field`: the django user field, where the reunification lookup happens, eg: `('username'),`
-- `user_create`: creates a new user if the reunification lookup fails
+- `RP_PROVIDER_PROFILES`
+
+````
+RP_PROVIDER_PROFILES = getattr(
+    settings,
+    "RP_PROVIDER_PROFILES",
+    {
+        "spid": {
+            "authorization_request": {"acr_values": AcrValuesSpid.l2.value},
+            "rp_metadata": RPMetadataSpid,
+            "authn_response": AuthenticationResponse
+        },
+        "cie": {
+            "authorization_request": {"acr_values": AcrValuesCie.l2.value},
+            "rp_metadata": RPMetadataCie,
+            "authn_response": AuthenticationResponseCie
+        },
+    },
+)
+````
+- `RP_USER_LOOKUP_FIELD`, which user attribute will be used to link to a preexisting account, example: `RP_USER_LOOKUP_FIELD = "fiscal_number"`.
+- `RP_USER_CREATE`, if a newly logged user can be created, example: `RP_USER_CREATE = True`
 
 
 ## OIDC Federation CLI
