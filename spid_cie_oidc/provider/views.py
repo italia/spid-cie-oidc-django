@@ -540,7 +540,7 @@ class TokenEndpoint(OpBase, View):
             {
                 "access_token": jwt_at,
                 "id_token": jwt_id,
-                "token_type": "bearer",
+                "token_type": "Bearer",
                 "expires_in": expires_in,
                 # TODO: remove unsupported scope
                 "scope": self.authz.authz_request["scope"],
@@ -625,7 +625,7 @@ class TokenEndpoint(OpBase, View):
         return JsonResponse(
             {
                 "access_token": jwt_at,
-                "token_type": "bearer",
+                "token_type": "Bearer",
                 "refresh_token": jwt_at,
                 "id_token": jwt_id,
                 "expires_in": expires_in,
