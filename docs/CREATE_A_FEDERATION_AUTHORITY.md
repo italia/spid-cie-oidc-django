@@ -22,11 +22,11 @@ __configure descendants entities__
 3. Click on _Federation Entity Descendant Assigned Profile_ and assing at least a profile to the new descendant
 
 
-![profile](docs/images/profiles.png)
+![profile](images/profiles.png)
 A profile that may be assigned to a Relying Party.
 
 
-![profile](docs/images/assigned_profile.png)
+![profile](images/assigned_profile.png)
 An assigned profile to a Relying Party.
 
 
