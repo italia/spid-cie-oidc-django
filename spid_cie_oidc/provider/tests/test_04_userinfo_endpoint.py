@@ -38,7 +38,7 @@ class UserInfoEndpointTest(TestCase):
             iat=datetime_from_timestamp(iat_now()),
         )
 
-    def define_base(self):
+    def define_db(self):
         session = OidcSession.objects.create(
             user=User.objects.create(username = "username"),
             user_uid="",
@@ -83,14 +83,14 @@ class UserInfoEndpointTest(TestCase):
         self.assertTrue(res.status_code == 403)
 
     def test_userinfo_endpoint_no_tc(self):
-        headers = self.define_base()
+        headers = self.define_db()
         client = Client()
         url = reverse("oidc_provider_userinfo_endpoint")
         res = client.get(url, data  = {}, **headers)
         self.assertTrue(res.status_code == 403)
 
     def test_userinfo_endpoint_ok(self):
-        headers = self.define_base()
+        headers = self.define_db()
         self.trust_chain = TrustChain.objects.create(
             sub=self.RP_SUB,
             type="openid_relying_party",
