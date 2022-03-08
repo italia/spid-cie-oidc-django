@@ -365,7 +365,6 @@ class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant
             return render(request, self.error_template, context, status=400)
 
         authz_data = json.loads(authz.data)
-        self.rp_conf.metadata["openid_relying_party"]
         token_response = self.access_token_request(
             redirect_uri=authz_data["redirect_uri"],
             state=authz.state,
