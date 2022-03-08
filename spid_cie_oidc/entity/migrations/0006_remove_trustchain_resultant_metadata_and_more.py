@@ -7,36 +7,50 @@ import django.utils.timezone
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('spid_cie_oidc_entity', '0005_alter_federationentityconfiguration_constraints'),
+        (
+            "spid_cie_oidc_entity",
+            "0005_alter_federationentityconfiguration_constraints",
+        ),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='trustchain',
-            name='resultant_metadata',
+            model_name="trustchain",
+            name="resultant_metadata",
         ),
         migrations.RemoveField(
-            model_name='trustchain',
-            name='status_log',
+            model_name="trustchain",
+            name="status_log",
         ),
         migrations.AddField(
-            model_name='trustchain',
-            name='log',
-            field=models.TextField(blank=True, default='', help_text='status log'),
+            model_name="trustchain",
+            name="log",
+            field=models.TextField(blank=True, default="", help_text="status log"),
         ),
         migrations.AddField(
-            model_name='trustchain',
-            name='metadata',
-            field=models.JSONField(blank=True, default=dict, help_text='The final metadata applied with the metadata policy built over the chain', null=True),
+            model_name="trustchain",
+            name="metadata",
+            field=models.JSONField(
+                blank=True,
+                default=dict,
+                help_text="The final metadata applied with the metadata policy built over the chain",
+                null=True,
+            ),
         ),
         migrations.AddField(
-            model_name='trustchain',
-            name='processing_start',
-            field=models.DateTimeField(default=django.utils.timezone.localtime, help_text='When the metadata discovery started for this Trust Chain. It should prevent concurrent processing for the same sub/type.'),
+            model_name="trustchain",
+            name="processing_start",
+            field=models.DateTimeField(
+                default=django.utils.timezone.localtime,
+                help_text="When the metadata discovery started for this Trust Chain. It should prevent concurrent processing for the same sub/type.",
+            ),
         ),
         migrations.AlterField(
-            model_name='trustchain',
-            name='is_active',
-            field=models.BooleanField(default=True, help_text='If you need to disable the trust to this subject, uncheck this'),
+            model_name="trustchain",
+            name="is_active",
+            field=models.BooleanField(
+                default=True,
+                help_text="If you need to disable the trust to this subject, uncheck this",
+            ),
         ),
     ]

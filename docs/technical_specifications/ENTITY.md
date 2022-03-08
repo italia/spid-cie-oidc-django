@@ -24,3 +24,16 @@ Examples of requests to this endpoint are:
 
 - `http://127.0.0.1:8000/.well-known/openid-federation?format=json`
 - `http://127.0.0.1:8000/.well-known/openid-federation`
+
+
+### API
+
+WiP
+
+#### Entity Statements and Configuration
+
+WiP
+
+#### TrustChain
+
+WiP

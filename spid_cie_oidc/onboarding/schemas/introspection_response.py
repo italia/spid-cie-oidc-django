@@ -19,8 +19,16 @@ class IntrospectionErrorResponse(BaseModel):
 
 
 class IntrospectionErrorResponseSpid(IntrospectionErrorResponse):
-    error: Literal["invalid_client", "invalid_request", "server_error", "temporarily_unavailable"]
+    error: Literal[
+        "invalid_client", "invalid_request", "server_error", "temporarily_unavailable"
+    ]
 
 
 class IntrospectionErrorResponseCie(IntrospectionErrorResponse):
-    error: Literal["invalid_client", "invalid_request", "invalid_token", "server_error", "temporarily_unavailable"]
+    error: Literal[
+        "invalid_client",
+        "invalid_request",
+        "invalid_token",
+        "server_error",
+        "temporarily_unavailable",
+    ]

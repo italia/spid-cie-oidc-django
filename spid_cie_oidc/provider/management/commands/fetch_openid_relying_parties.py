@@ -17,33 +17,37 @@ logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
-    help = 'Attribute release query'
+    help = "Attribute release query"
 
     def add_arguments(self, parser):
-        parser.epilog = 'Example: ./manage.py fetch_openid_providers'
+        parser.epilog = "Example: ./manage.py fetch_openid_providers"
         parser.add_argument(
-            '--from', nargs='*', default=[],
+            "--from",
+            nargs="*",
+            default=[],
             help=_(
                 "A list of url of authorities, separated by space where "
                 "download the list of OPs"
-            )
+            ),
         )
         parser.add_argument(
-            '-f', "--force", action="store_true", required=False,
-            help=_(
-                "Don't use already cached statements and chains"
-            )
+            "-f",
+            "--force",
+            action="store_true",
+            required=False,
+            help=_("Don't use already cached statements and chains"),
         )
-        parser.add_argument('-debug', required=False, action="store_true",
-                            help="see debug message")
+        parser.add_argument(
+            "-debug", required=False, action="store_true", help="see debug message"
+        )
 
     def handle(self, *args, **options):
-        if not options['from']:
+        if not options["from"]:
             return
 
         res = []
         rp_subs = []
-        jwts = get_entity_configurations(options['from'])
+        jwts = get_entity_configurations(options["from"])
         auth_ecs = []
         for i in jwts:
             ec = EntityConfiguration(i)
@@ -63,12 +67,16 @@ class Command(BaseCommand):
 
         list_urls = []
         for i in auth_ecs:
-            endpoint = i.payload.get("metadata", {}).get('federation_entity', {}).get("federation_list_endpoint", "")
+            endpoint = (
+                i.payload.get("metadata", {})
+                .get("federation_entity", {})
+                .get("federation_list_endpoint", "")
+            )
             if endpoint:
                 list_urls.append(f"{endpoint}?type=openid_relying_party")
 
         rp_subs = []
-        for rp_sub in get_http_url(list_urls, httpc_params = settings.HTTPC_PARAMS):
+        for rp_sub in get_http_url(list_urls, httpc_params=settings.HTTPC_PARAMS):
 
             try:
                 urls = json.loads(rp_sub)
@@ -80,23 +88,19 @@ class Command(BaseCommand):
         for rp_sub in rp_subs:
             try:
                 tc = get_or_create_trust_chain(
-                    subject = rp_sub,
-                    trust_anchor = settings.OIDCFED_FEDERATION_TRUST_ANCHOR,
-                    metadata_type = 'openid_relying_party',
-                    httpc_params = settings.HTTPC_PARAMS,
-                    required_trust_marks = getattr(
-                        settings, 'OIDCFED_REQUIRED_TRUST_MARKS', []
+                    subject=rp_sub,
+                    trust_anchor=settings.OIDCFED_TRUST_ANCHOR,
+                    metadata_type="openid_relying_party",
+                    httpc_params=settings.HTTPC_PARAMS,
+                    required_trust_marks=getattr(
+                        settings, "OIDCFED_REQUIRED_TRUST_MARKS", []
                     ),
-                    force=options['force']
+                    force=options["force"],
                 )
                 if tc.is_valid:
                     res.append(tc)
 
-                logger.info(
-                    f"Final Metadata for {tc.sub}:\n\n{tc.metadata}"
-                )
+                logger.info(f"Final Metadata for {tc.sub}:\n\n{tc.metadata}")
 
             except Exception as e:
-                logger.exception(
-                    f"Failed to download {rp_sub} due to: {e}"
-                )
+                logger.exception(f"Failed to download {rp_sub} due to: {e}")

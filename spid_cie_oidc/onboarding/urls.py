@@ -16,7 +16,16 @@ Including another URLconf
 from django.conf import settings
 from django.urls import path
 
-from .views import onboarding_landing, onboarding_registration, onboarding_entities
+from .views import (
+    onboarding_landing,
+    onboarding_registration,
+    onboarding_entities,
+    onboarding_create_jwk,
+    onboarding_convert_jwk,
+    onboarding_resolve_statement,
+    onboarding_validating_trustmark,
+    onboarding_decode_jwt
+)
 
 _PREF = getattr(settings, "OIDC_PREFIX", "")
 
@@ -35,5 +44,30 @@ urlpatterns = [
         f"{_PREF}onboarding/entities/",
         onboarding_entities,
         name="oidc_onboarding_entities",
+    ),
+    path(
+        f"{_PREF}onboarding/create-jwk/",
+        onboarding_create_jwk,
+        name="oidc_onboarding_create_jwk",
+    ),
+    path(
+        f"{_PREF}onboarding/convert-jwk/",
+        onboarding_convert_jwk,
+        name="oidc_onboarding_convert_jwk",
+    ),
+    path(
+        f"{_PREF}onboarding/resolve-statement/",
+        onboarding_resolve_statement,
+        name="oidc_onboarding_resolve_statement",
+    ),
+    path(
+        f"{_PREF}onboarding/tools/validating-trustmark",
+        onboarding_validating_trustmark,
+        name="oidc_onboarding_tools_validating_trustmark",
+    ),
+    path(
+        f"{_PREF}onboarding/tools/decode-jwt",
+        onboarding_decode_jwt,
+        name="oidc_onboarding_tools_decode_jwt",
     ),
 ]

@@ -29,7 +29,12 @@ ADMIN_PATH = getattr(settings, 'ADMIN_PATH', 'admin/')
 
 urlpatterns = [
     path(f"{ADMIN_PATH}", admin.site.urls),
-    re_path('^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
+    re_path('^static/(?P<path>.*)$',
+        serve, {
+            'document_root': settings.STATIC_ROOT,
+            'show_indexes': True
+        }
+    ),
 ]
 
 urlpatterns.extend(ta_urlpatterns)

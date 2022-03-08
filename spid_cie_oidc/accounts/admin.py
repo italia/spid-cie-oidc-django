@@ -41,7 +41,7 @@ class CustomUserAdmin(UserAdmin):
         ),
         (
             _("Anagrafica"),
-            {"fields": (("first_name", "last_name"), "email", ("taxpayer_id",))},
+            {"fields": (("first_name", "last_name"), "email", ("attributes",))},
         ),
         (
             _("Permissions"),
