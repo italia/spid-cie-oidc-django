@@ -13,7 +13,7 @@
                     <div class="card card-bg no-after">
                         <div class="card-body pl-lg-0">
                             <div class="row h-100">
-                                <div class="col-12 col-lg-6 pl-lg-4">
+                                <div class="col-12 pl-lg-4">
                                     <h3 class="text-left">
                                         {% trans "Welcome" %}
                                     </h3>
@@ -36,10 +36,14 @@
                                                     style="display: none; left: 56.5px; top: 46.05px;">
                                                     <ul id="spid-idp-list-medium-root-get" class="spid-idp-button-menu"
                                                         aria-labelledby="spid-idp">
-                                                        <li class="spid-idp-button-link" data-idp="intesaid"><a
-                                                                href="#">
-                                                                <span class="spid-sr-only">Openid Provider</span>
-                                                            </a></li>
+                                                        {% for provider in providers %}
+                                                            <li class="spid-idp-button-link">
+                                                                <a href="{% url 'spid_cie_rp_begin' %}?provider={{provider.sub}}">
+                                                                    <span class="spid-sr-only">{{ provider.metadata.organization_name }}</span>
+                                                                    <img src="{% static 'images/logo-it.svg' %}" alt="{{ provider.metadata.organization_name }}">
+                                                                </a>
+                                                            </li>
+                                                        {% endfor %}
                                                     </ul>
                                                 </div>
 

@@ -66,6 +66,48 @@ https://www.spid.gov.it/
         <span>{% trans 'Register your entity' %}</span>
     </a>
 </li>
+
+
+<li class="nav-item dropdown megamenu">
+    <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="true">
+        <span>Tools</span>
+        <svg class="icon icon-m">
+            <use xlink:href="/static/svg/sprite.svg#it-expand"></use>
+        </svg>
+    </a>
+    <div class="dropdown-menu">
+        <div class="row">
+            <div class="col-12 col-lg-6">
+                <div class="link-list-wrapper">
+                    <ul class="link-list">
+                        <li>
+                            <h3 class="no_toc">JWK</h3>
+                        </li>  
+                        <li><a class="list-item" href="{% url 'oidc_onboarding_create_jwk'%}">
+                            <span>Create a jwk</span></a></li>
+                        <li><a class="list-item" href="{% url 'oidc_onboarding_convert_jwk'%}?type=private">
+                            <span>Convert a private jwk to PEM certificate/key</span></a></li>
+                        <li><a class="list-item" href="{% url 'oidc_onboarding_convert_jwk'%}?type=public">
+                            <span>Convert a public jwk to PEM certificate/key</span></a></li>
+                        <li><a class="list-item" href="{% url 'oidc_onboarding_tools_decode_jwt' %}">
+                            <span>Decode a jwt and verify if a jwk is also submitted</span></a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-12 col-lg-6">
+                <div class="link-list-wrapper">
+                    <ul class="link-list">
+                        <li>
+                            <h3 class="no_toc">Trust Chain/ Trust mark</h3>
+                        </li>        
+                        <li><a class="list-item" href="{% url 'oidc_onboarding_resolve_statement' %}"><span>Resolve entity statement</span></a></li>
+                        <li><a class="list-item" href="{% url 'oidc_onboarding_tools_validating_trustmark' %}"><span>Validating a trust mark</span></a></li> 
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</li>
 {% endblock menu_links %}
 
 <!-- Logo in Footer -->

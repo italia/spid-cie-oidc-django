@@ -4,5 +4,11 @@ from pydantic import BaseModel
 
 
 class RevocationErrorResponseCie(BaseModel):
-    error: Literal["invalid_request", "invalid_client", "unauthorized_client", "invalid_scope", "unsupported_token_type"]
+    error: Literal[
+        "invalid_request",
+        "invalid_client",
+        "unauthorized_client",
+        "invalid_scope",
+        "unsupported_token_type",
+    ]
     error_description: str

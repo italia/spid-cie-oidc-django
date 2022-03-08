@@ -7,23 +7,29 @@ import django.utils.timezone
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('spid_cie_oidc_onboarding', '0001_initial'),
+        ("spid_cie_oidc_onboarding", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='onboardingregistration',
-            options={'ordering': ['created'], 'verbose_name': 'OnBoarding Registration', 'verbose_name_plural': 'OnBoarding Registrations'},
+            name="onboardingregistration",
+            options={
+                "ordering": ["created"],
+                "verbose_name": "OnBoarding Registration",
+                "verbose_name_plural": "OnBoarding Registrations",
+            },
         ),
         migrations.AddField(
-            model_name='onboardingregistration',
-            name='created',
-            field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now),
+            model_name="onboardingregistration",
+            name="created",
+            field=models.DateTimeField(
+                auto_now_add=True, default=django.utils.timezone.now
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='onboardingregistration',
-            name='modified',
+            model_name="onboardingregistration",
+            name="modified",
             field=models.DateTimeField(auto_now=True),
         ),
     ]

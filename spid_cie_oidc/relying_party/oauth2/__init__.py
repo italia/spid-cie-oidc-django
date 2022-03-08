@@ -1,48 +1,30 @@
 import json
 import logging
 import requests
+import uuid
 
-from requests.auth import HTTPBasicAuth
-
+from spid_cie_oidc.entity.models import FederationEntityConfiguration
+from spid_cie_oidc.entity.jwtse import create_jws
+from spid_cie_oidc.entity.settings import HTTPC_PARAMS, HTTPC_TIMEOUT
+from spid_cie_oidc.entity.utils import iat_now, exp_from_now
 
 logger = logging.getLogger(__name__)
 
 
 class OAuth2AuthorizationCodeGrant(object):
     """
-    https://tools.ietf.org/html/rfc6749#section-1.3.1
-    https://tools.ietf.org/html/rfc6749#section-4.1
+    https://tools.ietf.org/html/rfc6749
     """
-
-    def get_token_endpoint_auth_method(
-        self, client_conf: dict, grant_data: dict = {}, method: str = None
-    ):
-        method = (
-            method or client_conf["client_preferences"]["token_endpoint_auth_method"][0]
-        )
-
-        if all((method == "client_secret_basic", "client_secret" in client_conf)):
-            auth = HTTPBasicAuth(client_conf["client_id"], client_conf["client_secret"])
-            data = {"auth": auth, "data": grant_data}
-            return data
-        elif method == "client_secret_post":
-            grant_data.update(
-                {
-                    "client_id": client_conf["client_id"],
-                    "client_secret": client_conf["client_secret"],
-                }
-            )
-            return grant_data
 
     def access_token_request(
         self,
         redirect_uri: str,
-        client_id: str,
         state: str,
         code: str,
         issuer_id: str,
-        client_conf: dict,
+        client_conf: FederationEntityConfiguration,
         token_endpoint_url: str,
+        audience: list,
         code_verifier: str = None,
     ):
         """
@@ -52,30 +34,41 @@ class OAuth2AuthorizationCodeGrant(object):
         grant_data = dict(
             grant_type="authorization_code",
             redirect_uri=redirect_uri,
-            client_id=client_id,
+            client_id=client_conf.sub,
             state=state,
             code=code,
+            code_verifier=code_verifier,
+            # here private_key_jwt
+            client_assertion_type="urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+            client_assertion=create_jws(
+                {
+                    "iss": client_conf.sub,
+                    "sub": client_conf.sub,
+                    "aud": [token_endpoint_url],
+                    "iat": iat_now(),
+                    "exp": exp_from_now(),
+                    "jti": str(uuid.uuid4()),
+                },
+                jwk_dict=client_conf.jwks[0],
+            ),
         )
 
-        if code_verifier:
-            grant_data.update({"code_verifier": code_verifier})
-
-        issuer_id = issuer_id
-        token_req_data = self.get_token_endpoint_auth_method(client_conf, grant_data)
-        logger.debug(f"Access Token Request for {state}: {token_req_data} ")
+        logger.debug(f"Access Token Request for {state}: {grant_data} ")
 
         token_request = requests.post(
             token_endpoint_url,
-            **token_req_data,
-            verify=client_conf["httpc_params"]["verify"],
+            data=grant_data,
+            verify=HTTPC_PARAMS["connection"]["ssl"],
+            timeout=HTTPC_TIMEOUT,
         )
 
         if token_request.status_code != 200:
-            logger.error(f"Something went wrong with {state}: {token_request.content}")
+            logger.error(
+                f"Something went wrong with {state}: {token_request.status_code}"
+            )
         else:
             try:
                 token_request = json.loads(token_request.content.decode())
-                return token_request
             except Exception as e:  # pragma: no cover
                 logger.error(f"Something went wrong with {state}: {e}")
         return token_request

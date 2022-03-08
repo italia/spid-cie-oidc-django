@@ -16,6 +16,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+ADMIN_PATH = getattr(settings, 'ADMIN_PATH', 'admin/')
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path(f"{ADMIN_PATH}", admin.site.urls),
+    re_path('^static/(?P<path>.*)$',
+        serve, {
+            'document_root': settings.STATIC_ROOT,
+            'show_indexes': True
+        }
+    ),
 ]

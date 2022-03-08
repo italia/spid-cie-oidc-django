@@ -5,21 +5,17 @@ from django.utils.translation import gettext_lazy as _
 
 
 class User(AbstractUser):
-    GENDER = (("male", _("Male")), ("female", _("Female")), ("other", _("Other")))
-
     first_name = models.CharField(_("Name"), max_length=96, blank=True, null=True)
     last_name = models.CharField(_("Surname"), max_length=96, blank=True, null=True)
     is_active = models.BooleanField(_("active"), default=True)
     email = models.EmailField("email address", blank=True, null=True)
-    taxpayer_id = models.CharField(
-        _("Taxpayer's identification number"), max_length=32, blank=True, null=True
-    )
     origin = models.CharField(
         _("from which connector this user come from"),
         max_length=254,
         blank=True,
         null=True,
     )
+    attributes = models.JSONField(default=dict, blank=True, null=True)
 
     class Meta:
         ordering = ["username"]
@@ -33,4 +29,8 @@ class User(AbstractUser):
         return Session.objects.filter(pk__in=user_sessions).delete()
 
     def __str__(self):  # pragma: no cover
-        return "{} {}".format(self.first_name, self.last_name)
+        return "{} - {} {}".format(
+            self.username,
+            self.first_name or self.attributes.get('given_name'),
+            self.last_name or self.attributes.get('family_name', "")
+        )

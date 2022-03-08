@@ -6,12 +6,19 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('spid_cie_oidc_onboarding', '0002_alter_onboardingregistration_options_and_more'),
+        (
+            "spid_cie_oidc_onboarding",
+            "0002_alter_onboardingregistration_options_and_more",
+        ),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='onboardingregistration',
-            options={'ordering': ['-created'], 'verbose_name': 'OnBoarding Registration', 'verbose_name_plural': 'OnBoarding Registrations'},
+            name="onboardingregistration",
+            options={
+                "ordering": ["-created"],
+                "verbose_name": "OnBoarding Registration",
+                "verbose_name_plural": "OnBoarding Registrations",
+            },
         ),
     ]

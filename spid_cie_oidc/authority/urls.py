@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf import settings
 from django.urls import path
 
-from .views import *
+from .views import entity_list, fetch, resolve_entity_statement, trust_mark_status
 
 _PREF = getattr(settings, "OIDC_PREFIX", "")
 
@@ -24,5 +24,9 @@ urlpatterns = [
     path(f"{_PREF}fetch/", fetch, name="oidcfed_fetch"),
     path(f"{_PREF}list/", entity_list, name="oidcfed_list"),
     path(f"{_PREF}resolve/", resolve_entity_statement, name="oidcfed_resolve"),
-    path(f"{_PREF}trust_mark_status/", trust_mark_status, name="oidcfed_trust_mark_status")
+    path(
+        f"{_PREF}trust_mark_status/",
+        trust_mark_status,
+        name="oidcfed_trust_mark_status",
+    ),
 ]

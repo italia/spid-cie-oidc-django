@@ -1,23 +1,24 @@
 from django.contrib import admin
 
-from . models import IssuedToken, OidcSession
+from .models import IssuedToken, OidcSession
 
 
 @admin.register(OidcSession)
 class OidcSessionAdmin(admin.ModelAdmin):
-    list_display = ("user_id", "client_id", "created", "revoked")
+    list_display = ("user_uid", "client_id", "created", "revoked")
     list_filter = ("created", "revoked")
-    search_fields = ("client_id", "user_id")
+    search_fields = ("client_id", "user_uid")
     readonly_fields = (
+        "nonce",
+        "auth_code",
         "user_uid",
         "user",
+        "sid",
         "client_id",
         "created",
         "revoked",
-        "sub",
-        "userinfo_claims",
-        "user_id",
-        "authz_request"
+        "user_uid",
+        "authz_request",
     )
 
 
@@ -31,5 +32,5 @@ class IssuedTokenAdmin(admin.ModelAdmin):
         "id_token",
         "refresh_token",
         "created",
-        "session"
+        "session",
     )

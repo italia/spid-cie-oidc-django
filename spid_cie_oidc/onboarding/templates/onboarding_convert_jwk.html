@@ -1,0 +1,65 @@
+<!-- Extends default Bootstrap Unical Italia template -->
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block container %}
+
+<div>
+   <div class="container pt-2 p-3">
+
+      <div class="row d-lg-flex">
+         <div class="col-12">
+            <div class="card-wrapper card-space">
+               <div class="card card-bg no-after">
+                  <div class="card-body pl-lg-0">
+                     <div class="row h-100">
+                        <div class="col-12 pl-lg-4">
+                           
+                           <h4 class="text-left">
+                              {% trans "Convert jwk to pem" %}
+                           </h4>
+                           
+                           <p class="card-title">
+                              {% trans "enter a jwk in the field below to encrypt in PEM" %}
+                           </p>
+                           <form method="post" action="">
+                              {% csrf_token %}
+                              <div class="form-row">
+                                 <div class="col-12 form-group my-3">
+                                    <label for="id_jwt">
+                                       <span class="form-label-content">
+                                          Jwk
+                                       </span>
+                                    </label>
+                                    <textarea id="id_jwk" rows="12"
+                                       name="jwk">{{ jwk }}</textarea>
+                                 </div>
+                              </div>
+                                 {% if pem %}
+                                    <h4 class="text-left">
+                                       {% if jwk_type == 'private' %}
+                                          {% trans "Private key" %}
+                                       {% else %}
+                                          {% trans "Public key" %}
+                                       {% endif %}
+                                    </h4>
+                                    <div class="form-row">
+                                       <div class="col-12 form-group my-3">
+                                          <textarea id="private_pem" rows="13"
+                                             name="private_pem">{{ pem }}</textarea>
+                                       </div>
+                                    </div>
+                                 {% endif %}
+                                 <input type="submit" name="confirm" class="btn btn-lg btn-success btn-block"
+                                 value="{% trans 'Convert to pem' %}" />
+                           </form>
+
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+{% endblock container %}

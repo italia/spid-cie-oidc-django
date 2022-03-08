@@ -31,20 +31,19 @@ class OidcAuthenticationAdmin(admin.ModelAdmin):
     list_filter = ("created", "endpoint")
     inlines = (OidcAuthenticationTokenInline,)
     readonly_fields = (
-        "issuer",
+        "provider",
         "client_id",
         "state",
         "endpoint",
         "successful",
         "json_preview",
-        "jwks_preview",
-        "provider_configuration_preview",
+        "provider_configuration",
         "created",
         "modified",
     )
     exclude = ("issuer_id", "data", "provider_configuration", "provider_jwks")
     fieldsets = (
-        (None, {"fields": ("issuer", "client_id", "state", "endpoint")}),
+        (None, {"fields": ("provider_id", "client_id", "state", "endpoint")}),
         (
             "Status",
             {
@@ -60,7 +59,6 @@ class OidcAuthenticationAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "json_preview",
-                    "jwks_preview",
                 ),
                 "classes": ("collapse",),
             },
@@ -68,7 +66,7 @@ class OidcAuthenticationAdmin(admin.ModelAdmin):
         (
             "Provider Discovery result",
             {
-                "fields": ("provider_configuration_preview",),
+                "fields": ("provider_configuration",),
                 "classes": ("collapse",),
             },
         ),
@@ -78,13 +76,3 @@ class OidcAuthenticationAdmin(admin.ModelAdmin):
         return html_json_preview(obj.data)
 
     json_preview.short_description = "Authentication Request data"
-
-    def provider_configuration_preview(self, obj):
-        return html_json_preview(obj.provider_configuration)
-
-    provider_configuration_preview.short_description = "provider configuration"
-
-    def jwks_preview(self, obj):
-        return html_json_preview(obj.provider_jwks)
-
-    jwks_preview.short_description = "jwks"
