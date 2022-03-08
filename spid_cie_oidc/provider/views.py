@@ -7,7 +7,6 @@ import uuid
 from cryptojwt.jws.utils import left_hash
 from django.conf import settings
 from django.contrib.auth import authenticate, login
-from django.db.models import Q
 from django.forms.utils import ErrorList
 from django.http import (
     HttpResponse,
@@ -208,6 +207,7 @@ class OpBase:
                     "error_description": f"{error_description} ",
                 }
             )
+
 
 class AuthzRequestView(OpBase, View):
     """
@@ -652,8 +652,8 @@ class TokenEndpoint(OpBase, View):
         logger.debug(f"{request.headers}: {request.POST}")
 
         result = self.validate_json_schema(
-            request.POST.dict(), 
-            request.POST["grant_type"], 
+            request.POST.dict(),
+            request.POST["grant_type"],
             "Token request object validation failed "
         )
         if result:
@@ -745,8 +745,8 @@ class RevocationEndpoint(OpBase,View):
 
     def post(self, request, *args, **kwargs):
         result = self.validate_json_schema(
-            request.POST.dict(), 
-            "revocation_request", 
+            request.POST.dict(),
+            "revocation_request",
             "Revocation request object validation failed ")
         if result:
             return result
