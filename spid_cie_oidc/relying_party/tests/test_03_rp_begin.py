@@ -36,7 +36,7 @@ class RPBeginTest(TestCase):
             is_active=True,
         )
 
-    @override_settings(OIDCFED_TRUST_ANCHOR=TA_SUB, OIDCFED_TRUST_ANCHORS=[TA_SUB])
+    @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB, OIDCFED_TRUST_ANCHORS=[TA_SUB])
     def test_rp_begin(self):
         client = Client()
         url = reverse("spid_cie_rp_begin")
@@ -48,29 +48,30 @@ class RPBeginTest(TestCase):
         url = reverse("spid_cie_rp_begin")
         res = client.get(url, {"request": {}})
         self.assertTrue(res.status_code == 200)
-        self.assertTrue("Request rejected" in res.content.decode())
+        self.assertTrue("request rejected" in res.content.decode())
         self.assertTrue("Missing provider url" in res.content.decode())
 
-    @override_settings(OIDCFED_TRUST_ANCHOR=TA_SUB)
+    # I changed the code to get a smarter solution
+    @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB)
     def test_no_unallowed_tc(self):
         client = Client()
         url = reverse("spid_cie_rp_begin")
         res = client.get(url, {"provider": "provider"})
         self.assertTrue(res.status_code == 200)
-        self.assertTrue("Request rejected" in res.content.decode())
+        self.assertTrue("request rejected" in res.content.decode())
         self.assertTrue("Unallowed Trust Anchor" in res.content.decode())
 
-    @override_settings(OIDCFED_TRUST_ANCHOR=TA_SUB, OIDCFED_TRUST_ANCHORS=[TA_SUB])
+    @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB, OIDCFED_TRUST_ANCHORS=[TA_SUB])
     def test_no_rp_entity_conf(self):
         FederationEntityConfiguration.objects.all().delete()
         client = Client()
         url = reverse("spid_cie_rp_begin")
         res = client.get(url, {"provider": op_conf["sub"], "trust_anchor": TA_SUB})
         self.assertTrue(res.status_code == 200)
-        self.assertTrue("Request rejected" in res.content.decode())
+        self.assertTrue("request rejected" in res.content.decode())
         self.assertTrue("Missing configuration" in res.content.decode())
 
-    @override_settings(OIDCFED_TRUST_ANCHOR=TA_SUB, OIDCFED_TRUST_ANCHORS=[TA_SUB])
+    @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB, OIDCFED_TRUST_ANCHORS=[TA_SUB])
     def test_invalid_provider_metadata(self):
         metadata = deepcopy(op_conf["metadata"]["openid_provider"])
         self.trust_chain.metadata = metadata.pop("jwks")
@@ -79,10 +80,10 @@ class RPBeginTest(TestCase):
         url = reverse("spid_cie_rp_begin")
         res = client.get(url, {"provider": op_conf["sub"], "trust_anchor": TA_SUB})
         self.assertTrue(res.status_code == 200)
-        self.assertTrue("Request rejected" in res.content.decode())
+        self.assertTrue("request rejected" in res.content.decode())
         self.assertTrue("Invalid provider Metadata" in res.content.decode())
 
-    @override_settings(OIDCFED_TRUST_ANCHOR=TA_SUB, OIDCFED_TRUST_ANCHORS=[TA_SUB])
+    @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB, OIDCFED_TRUST_ANCHORS=[TA_SUB])
     def test_tc_no_active(self):
         self.trust_chain.is_active = False
         self.trust_chain.save()
@@ -90,10 +91,10 @@ class RPBeginTest(TestCase):
         url = reverse("spid_cie_rp_begin")
         res = client.get(url, {"provider": op_conf["sub"], "trust_anchor": TA_SUB})
         self.assertTrue(res.status_code == 200)
-        self.assertTrue("Request rejected" in res.content.decode())
+        self.assertTrue("request rejected" in res.content.decode())
         self.assertTrue("found but DISABLED at" in res.content.decode())
 
-    @override_settings(OIDCFED_TRUST_ANCHOR=TA_SUB, OIDCFED_TRUST_ANCHORS=[TA_SUB])
+    @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB, OIDCFED_TRUST_ANCHORS=[TA_SUB])
     def test_failed_to_get_jwks(self):
         metadata = deepcopy(op_conf["metadata"]["openid_provider"])
         metadata.pop("jwks")
@@ -104,5 +105,5 @@ class RPBeginTest(TestCase):
         url = reverse("spid_cie_rp_begin")
         res = client.get(url, {"provider": op_conf["sub"], "trust_anchor": TA_SUB})
         self.assertTrue(res.status_code == 200)
-        self.assertTrue("Request rejected" in res.content.decode())
+        self.assertTrue("request rejected" in res.content.decode())
         self.assertTrue("Failed to get jwks from " in res.content.decode())

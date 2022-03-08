@@ -118,6 +118,10 @@ The demo propose a small federation composed by the following entities:
  - OpenID Relying Party, available at `http://127.0.0.1:8001/`
  - OpenID Provider, available at `http://127.0.0.1:8002/`
 
+Examples User, Password:
+
+ - admin oidcadmin
+
 ## Contribute
 
 Your contribution is welcome, no question is useless and no answer is obvious, we need you.

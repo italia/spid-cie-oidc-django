@@ -106,6 +106,7 @@ class SpidCieOidcRp:
         elif not tc.is_active:
             logger.warning(f"{tc} found but DISABLED at {tc.modified}")
             raise InvalidTrustchain(f"{tc} found but DISABLED at {tc.modified}")
+
         elif tc.is_expired:
             logger.warning(f"{tc} found but expired at {tc.exp}")
             logger.warning("Try to renew the trust chain")
@@ -113,7 +114,7 @@ class SpidCieOidcRp:
         
         if discover_trust:
             tc = get_or_create_trust_chain(
-                subject=tc.sub,
+                subject=request.GET["provider"],
                 trust_anchor=trust_anchor,
                 # TODO - not sure that it's required for a RP that fetches OP directly from TA
                 # required_trust_marks = [],
@@ -138,24 +139,24 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
         """
         try:
             tc = self.get_oidc_op(request)
+            if not tc:
+                context = {
+                    "error": "request rejected",
+                    "error_description": "Trust Chain is unavailable.",
+                }
+                return render(request, self.error_template, context)
+        
         except InvalidTrustchain as exc:
             context = {
-                "error": _("Request rejected"),
+                "error": "request rejected",
                 "error_description": _(str(exc.args)),
-            }
-            return render(request, self.error_template, context)
-
-        if not tc:
-            context = {
-                "error": _("Request rejected"),
-                "error_description": "Trust Chain is unavailable.",
             }
             return render(request, self.error_template, context)
 
         provider_metadata = tc.metadata
         if not provider_metadata:
             context = {
-                "error": _("Request rejected"),
+                "error": "request rejected",
                 "error_description": _("provider metadata not found"),
             }
             return render(request, self.error_template, context)
@@ -168,7 +169,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
 
         if not entity_conf:
             context = {
-                "error": _("Request rejected"),
+                "error": "request rejected",
                 "error_description": _("Missing configuration."),
             }
             return render(request, self.error_template, context)
@@ -179,7 +180,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             or provider_metadata.get("jwks", None)
         ):
             context = {
-                "error": _("Request rejected"),
+                "error": "request rejected",
                 "error_description": _("Invalid provider Metadata."),
             }
             return render(request, self.error_template, context)
@@ -192,7 +193,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             _msg = f"Failed to get jwks from {tc.sub}"
             logger.error(f"{_msg}:")
             context = {
-                "error": _("Request rejected"),
+                "error": "request rejected",
                 "error_description": _(f"{_msg}:"),
             }
             return render(request, self.error_template, context)
