@@ -19,6 +19,7 @@ class OidcAuthenticationTokenInline(admin.StackedInline):
         "code",
         "access_token",
         "id_token",
+        "refresh_token",
         "access_token_preview",
         "id_token_preview",
     )
