@@ -298,7 +298,6 @@ class AuthzRequestView(OpBase, View):
             "client_organization_name": tc.metadata.get(
                 "client_name", self.payload["client_id"]
             ),
-            "client_redirect_uri": self.payload.get("redirect_uri", "#"),
             "form": form,
         }
         return render(request, self.template, context)
@@ -439,10 +438,6 @@ class ConsentPageView(OpBase, View):
             iss=issuer.sub if issuer else "",
         )
 
-def oidc_provider_not_consent(request):
-    urlrp = reverse("spid_cie_rp_callback")
-    url = f'{urlrp}?error=invalid_request&error_description=Authz request failed'
-    return HttpResponseRedirect(url)
 
 @method_decorator(csrf_exempt, name="dispatch")
 class TokenEndpoint(OpBase, View):
@@ -786,3 +781,15 @@ class IntrospectionEndpoint(View):
 
     def post(self, request, *args, **kwargs):
         pass
+
+
+def oidc_provider_not_consent(request):
+    urlrp = reverse("spid_cie_rp_callback")
+    kwargs = dict(
+        error = "invalid_request",
+        error_description = _(
+            "Authentication request rejected by user"
+        )
+    )
+    url = f'{urlrp}?{urllib.parse.urlencode(kwargs)}'
+    return HttpResponseRedirect(url)
