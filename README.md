@@ -50,11 +50,17 @@ The app is installed using a common python package manager, such as _poetry_ or 
 and can be used, inherited, and integrated into other projects.
 
 A project is a service configuration that integrates one or more applications.
-In this repository we have three example projects for demo purpose:
+In this repository we have three example projects:
 
  - federation_authority
  - relying_party
  - provider
+
+> Federation Authority loads all the applications for development needs, acting as both authority, RP and OP.
+This allows us to make a demo by starting a single service.
+
+relying party and provider are examples that only integrate
+__spid_cie_oidc.entity__ and __spid_cie_oidc.provider__ or __.relying_party__.
 
 Read the [setup documentation](docs/SETUP.md) to get started.
 

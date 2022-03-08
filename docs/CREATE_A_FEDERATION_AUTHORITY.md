@@ -1,7 +1,36 @@
-## Create a Trust Anchor
+## Tutorial
 
 We can create our entity though the Admin backend or via API.
-In the following example we create a Trust Anchor Entity.
+
+### Create a Federation Authority via web
+
+__setup__
+1. add `spid_cie_oidc.entity` and `spid_cie_oidc.authority` in settings.INSTALLED_APPS
+2. do migrations `./manage.py migrate`
+3. create superuser `./manage.py createsuperuser`
+4. log in the `/admin` interface
+
+__configure the federation entity__
+1. Click on _Federation Entity Configuration_ and create your entity see `federation_authority` example
+
+
+### Create a Federation Descendant via web
+
+__configure descendants entities__
+1. Click on _Federation Entity Descendant_ and configure a descendant
+2. Click on _Federation Entity Profile_ and create the desidered profiles and trust marks template
+3. Click on _Federation Entity Descendant Assigned Profile_ and assing at least a profile to the new descendant
+
+
+![profile](docs/images/profiles.png)
+A profile that may be assigned to a Relying Party.
+
+
+![profile](docs/images/assigned_profile.png)
+An assigned profile to a Relying Party.
+
+
+### Create a Federation Authority via API
 
 The JWKS if not submitted will be created automatically.
 
@@ -48,6 +77,6 @@ Just rememeber, for these latter, to add also the authority_hints value as follo
 authority_hints = ["http://testserver/"]
 ````
 
-## Register descendants
+### Create a Federation Descendant via API
 
 see [unit tests](https://github.com/peppelinux/spid-cie-oidc-django/blob/main/spid_cie_oidc/authority/tests/test_02_trust_anchor_intermediary.py#L32).
