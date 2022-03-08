@@ -17,7 +17,7 @@ each of these can be installed separately within a django project:
 
 ### spid_cie_oidc.accounts
 
-customizable app that extended the Django User model.
+customizable app that extends the Django User model.
 
 ### spid_cie_oidc.entity
 
