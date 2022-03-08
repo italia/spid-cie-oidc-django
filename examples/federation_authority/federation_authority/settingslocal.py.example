@@ -40,6 +40,8 @@ HTTPC_PARAMS = {
 
 LOGIN_REDIRECT_URL = "/oidc/rp/echo_attributes"
 LOGOUT_REDIRECT_URL = "/oidc/rp/landing"
+LOGIN_URL = "/oidc/rp/landing"
+
 
 OIDCFED_DEFAULT_METADATA_POLICY = {
     "openid_relying_party": {

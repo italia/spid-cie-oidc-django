@@ -324,11 +324,14 @@ class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant
                 "Authn response object validation failed "
                 f"for {request.POST.get('client_id', None)}: {e} "
             )
-            return JsonResponse(
+            return render(
+                request, 
+                self.error_template, 
                 {
                     "error": "invalid_request",
                     "error_description": "Authn response object validation failed ",
-                }
+                },
+                status = 401
             )
 
         if not authz:
