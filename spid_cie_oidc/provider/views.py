@@ -192,6 +192,22 @@ class OpBase:
 
         return True
 
+    def validate_json_schema(self, request, schema_type, error_description):
+        try:
+            schema = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
+            schema[schema_type](**request)
+        except ValidationError as e:
+            logger.error(
+                f"{error_description} "
+                f"for {request.get('client_id', None)}: {e} "
+            )
+            return JsonResponse(
+                {
+                    "error": "invalid_request",
+                    "error_description": f"{error_description} ",
+                }
+            )
+
 
 class AuthzRequestView(OpBase, View):
     """
@@ -634,20 +650,14 @@ class TokenEndpoint(OpBase, View):
 
     def post(self, request, *args, **kwargs):
         logger.debug(f"{request.headers}: {request.POST}")
-        try:
-            schema = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
-            schema[request.POST["grant_type"]](**request.POST.dict())
-        except ValidationError as e:
-            logger.error(
-                "Token request object validation failed "
-                f"for {request.POST.get('client_id', None)}: {e} "
-            )
-            return JsonResponse(
-                {
-                    "error": "invalid_request",
-                    "error_description": "Token request object validation failed ",
-                }
-            )
+
+        result = self.validate_json_schema(
+            request.POST.dict(),
+            request.POST["grant_type"],
+            "Token request object validation failed "
+        )
+        if result:
+            return result
 
         self.commons = self.get_jwt_common_data()
         self.issuer = self.get_issuer()
@@ -734,20 +744,12 @@ class UserInfoEndpoint(OpBase, View):
 class RevocationEndpoint(OpBase,View):
 
     def post(self, request, *args, **kwargs):
-        try:
-            schema = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
-            schema["revocation_request"](**request.POST.dict())
-        except ValidationError as e:
-            logger.error(
-                "Revocation request object validation failed "
-                f"for {request.POST.get('client_id', None)}: {e} "
-            )
-            return JsonResponse(
-                {
-                    "error": "invalid_request",
-                    "error_description": "Revocation request object validation failed ",
-                }
-            )
+        result = self.validate_json_schema(
+            request.POST.dict(),
+            "revocation_request",
+            "Revocation request object validation failed ")
+        if result:
+            return result
         try:
             self.check_client_assertion(
                 request.POST['client_id'],
@@ -775,11 +777,55 @@ class RevocationEndpoint(OpBase,View):
         return HttpResponse()
 
 
-class IntrospectionEndpoint(View):
+class IntrospectionEndpoint(OpBase, View):
     def get(self, request, *args, **kwargs):
-        pass
+        return HttpResponseBadRequest()
 
     def post(self, request, *args, **kwargs):
+        result = self.validate_json_schema(
+            request.POST.dict(),
+            "introspection_request",
+            "Introspection request object validation failed"
+        )
+        if result:
+            return result
+        client_id = request.POST['client_id']
+        try:
+            self.check_client_assertion(
+                client_id,
+                request.POST['client_assertion']
+            )
+        except Exception:
+            return HttpResponseForbidden()
+        required_token = request.POST['token']
+        # query con client_id, access token
+        token = IssuedToken.objects.filter(
+            access_token=required_token
+        ).first()
+        session = token.session
+        if session.client_id != client_id:
+            return JsonResponse(
+                error = "invalid_client",
+                error_description = "Client not recognized"
+            )
+        active = token and not token.is_revoked and not token.expired
+        exp = token.expires
+        sub = token.session.client_id
+        issuer = self.get_issuer()
+        iss = issuer.sub
+        authz_request = session.authz_request
+        scope = authz_request["scope"]
+        response = {
+            "active": active,
+            "exp": exp,
+            "sub" : sub,
+            "iss": iss,
+            "client_id": client_id,
+            "aud": [client_id],
+            "scope": scope
+        }
+        return JsonResponse(response)
+
         pass
 
 

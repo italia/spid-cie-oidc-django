@@ -5,6 +5,7 @@ from .views import (
     oidc_provider_not_consent,
     AuthzRequestView,
     ConsentPageView,
+    IntrospectionEndpoint,
     RevocationEndpoint,
     TokenEndpoint,
     UserInfoEndpoint
@@ -37,6 +38,11 @@ urlpatterns = [
         f"{_PREF}/revocation/",
         RevocationEndpoint.as_view(),
         name="end_session_endpoint",
+    ),
+    path(
+        f"{_PREF}/intospection/",
+        IntrospectionEndpoint.as_view(),
+        name="introspection_endpoint",
     ),
     path(
         f"{_PREF}/notconsent/",
