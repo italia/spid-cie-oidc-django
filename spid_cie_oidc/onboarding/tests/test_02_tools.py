@@ -2,15 +2,12 @@ from django.test import TestCase, Client
 from django.urls import reverse
 import json
 
-from spid_cie_oidc.entity.models import *
-from spid_cie_oidc.onboarding.urls import *
 from spid_cie_oidc.onboarding.tests.tools_settings import jwk_priv, jwt
 from spid_cie_oidc.entity.tests.settings import ta_conf_data
 from spid_cie_oidc.authority.models import (
     FederationEntityConfiguration,
     FederationEntityProfile,
-    FederationDescendant,
-    FederationEntityAssignedProfile
+    FederationDescendant
 )
 from spid_cie_oidc.authority.tests.settings import (
     rp_conf,

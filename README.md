@@ -15,12 +15,30 @@ SPID/CIE OIDC Federation is a suite of Django applications designed to
 make it easy to build an [Openid Connect Federation](https://openid.net/specs/openid-connect-federation-1_0.html), 
 each of these can be installed separately within a django project:
 
-- __spid_cie_oidc.accounts__: customizable app that extended the Django User model.
-- __spid_cie_oidc.entity__: OIDC Federation django app, with models and API that implements OIDC Federation 1.0 Entity Statements, metadata discovery, Trust Chain, Trust Marks and Metadata policy.
-- __spid_cie_oidc.authority__: OIDC Federation API and models for Trust Anchors and Intermediaries.
-- __spid_cie_oidc.onboarding__: OIDC Federation OnBoarding demo application.
-- __spid_cie_oidc.relying_party__: OIDC Relying Party and test suite for OIDC Providers.
-- __spid_cie_oidc.provider__: OIDC Provider and test suite for OIDC Relying Parties.
+### spid_cie_oidc.accounts
+
+customizable app that extended the Django User model.
+
+### spid_cie_oidc.entity
+
+OIDC Federation django app that implements OIDC Federation 1.0 Entity Statements, metadata discovery, Trust Chain, Trust Marks and Metadata policy.
+Technical specifications: [__OIDC Federation Entity__](docs/technical_specifications/ENTITY.md)
+
+### spid_cie_oidc.authority
+
+OIDC Federation API and models for [__OIDC Federation Authority/Intermediary__](docs/technical_specifications/AUTHORITY.md). 
+
+### spid_cie_oidc.onboarding
+
+[__OIDC Federation onboarding demo service__](docs/technical_specifications/ONBOARDING.md).
+
+### spid_cie_oidc.relying_party
+
+[__Openid Connect Relying Party__](docs/technical_specifications/RELYING_PARTY.md) and test suite for OIDC Providers.
+
+### spid_cie_oidc.provider
+
+[__Openid Connect Provider__](docs/technical_specifications/PROVIDER.md)and test suite for OIDC Relying Parties.
 
 ## Contents
 
@@ -38,15 +56,10 @@ In this repository we have three example projects for demo purpose:
  - relying_party
  - provider
 
-The Technical specifications of these SDKs are available here:
+![RP Auth demo](docs/images/rp_auth_demo.gif)
+An onboarded Relying Party with a succesful authentication.
 
-1. [__OIDC Federation Entity__](docs/technical_specifications/ENTITY.md)
-2. [__OIDC Federation Authority/Intermediary__](docs/technical_specifications/AUTHORITY.md)
-3. [__OIDC Federation Onboarding service DEMO__](docs/technical_specifications/ONBOARDING.md)
-4. [__Openid Connect Provider__](docs/technical_specifications/PROVIDER.md)
-5. [__Openid Connect Relying Party__](docs/technical_specifications/RELYING_PARTY.md)
-
-### Summary
+## Summary
 
 * [Features](#features)
 * [Setup](#setup)
@@ -104,6 +117,10 @@ The demo propose a small federation composed by the following entities:
  - Federation Authority, acts as trust anchor and onboarding system. It's available at `http://127.0.0.1:8000/`
  - OpenID Relying Party, available at `http://127.0.0.1:8001/`
  - OpenID Provider, available at `http://127.0.0.1:8002/`
+
+Examples User, Password:
+
+ - admin oidcadmin
 
 ## Contribute
 

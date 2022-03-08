@@ -1,4 +1,3 @@
-import uuid
 from copy import deepcopy
 
 from django.test import Client, TestCase
@@ -24,7 +23,6 @@ from spid_cie_oidc.entity.utils import (
 )
 from spid_cie_oidc.provider.models import IssuedToken, OidcSession
 from spid_cie_oidc.provider.tests.settings import op_conf, op_conf_priv_jwk
-from spid_cie_oidc.provider.views import TokenEndpoint
 
 RP_SUB = rp_conf["sub"]
 RP_CLIENT_ID = rp_conf["metadata"]["openid_relying_party"]["client_id"]

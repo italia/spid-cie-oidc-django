@@ -15,15 +15,14 @@ Regarding OAuth2
 
  - Authorization Code Grant: [rfc6749](https://tools.ietf.org/html/rfc6749#section-4.1)
  - PKCE: [rfc7636](https://tools.ietf.org/html/rfc7636)
+ - [OAuth 2.0 Token Revocation](https://datatracker.ietf.org/doc/html/rfc7009)
 
 Regarding OIDC
 
  - CodeFlowAuth: [openid-connect-core-1_0](https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth)
  - OIDC Federation 1.0: [openid-connect-federation-1_0](https://openid.net/specs/openid-connect-federation-1_0.html)
  - UserInfo endpoint: [UserInfo](https://openid.net/specs/openid-connect-core-1_0.html#UserInfo)
-
-TODO:
- - Token Revocation / RP Initiated logout: [openid-connect-rpinitiated-1_0](https://openid.net/specs/openid-connect-rpinitiated-1_0.html)
+ 
 
 Regarding django user management
 
@@ -32,7 +31,7 @@ Regarding django user management
 
 ## General Settings Paramenters
 
-- `OIDCFED_TRUST_ANCHOR` defines the default Trust Anchor.
+- `OIDCFED_DEFAULT_TRUST_ANCHOR` defines the default Trust Anchor.
 - `OIDCFED_TRUST_ANCHORS` defines the allowed Trust Anchors. 
 - `OIDCFED_IDENTITY_PROVIDERS` defines the list of OPs to enable in Trust Chain operations.
 
@@ -103,7 +102,7 @@ The request is of type GET and supports the following parameters:
 - __redirect_uri__, OPTIONAL. Selects one of the redirect_uri available in RP's metadata.
 - __scope__, OPTIONAL. Selects one or more of the scopes, default is `openid`.
 - __consent__, OPTIONAL. Sets SPID or CIE extended consent values.
-- __trust_anchor__, OPTIONAL. Sets the Trust Anchor to resolve the Federation. Default is `settings.OIDCFED_TRUST_ANCHOR`.
+- __trust_anchor__, OPTIONAL. Sets the Trust Anchor to resolve the Federation. Default is `settings.OIDCFED_DEFAULT_TRUST_ANCHOR`.
 - __acr_values__, OPTIONAL.
 - __profile__, OPTIONAL. Default: spid. Set (spid, cie)
 

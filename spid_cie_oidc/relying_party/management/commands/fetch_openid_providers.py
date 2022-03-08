@@ -41,12 +41,12 @@ class Command(BaseCommand):
             return
 
         res = []
-        for op_sub in settings.OIDCFED_IDENTITY_PROVIDERS:
+        for op_sub, ta in settings.OIDCFED_IDENTITY_PROVIDERS.items():
             logger.info(f"Fetching Entity Configuration for {op_sub}")
             try:
                 tc = get_or_create_trust_chain(
                     subject=op_sub,
-                    trust_anchor=settings.OIDCFED_TRUST_ANCHOR,
+                    trust_anchor=ta,
                     metadata_type="openid_provider",
                     httpc_params=HTTPC_PARAMS,
                     required_trust_marks=getattr(

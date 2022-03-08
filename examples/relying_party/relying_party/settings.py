@@ -178,10 +178,13 @@ LOGGING = {
     }
 }
 
-OIDCFED_TRUST_ANCHOR = "http://127.0.0.1:8000/"
-OIDCFED_TRUST_ANCHORS = [OIDCFED_TRUST_ANCHOR]
-OIDCFED_IDENTITY_PROVIDERS = [
-    "http://127.0.0.1:8000/oidc/op/",
-    "http://127.0.0.1:8002/"
-]
+# only for the project settings file:
+# required for onboarding checks and also for all the leafs
+# OIDCFED_DEFAULT_TRUST_ANCHOR = "http://127.0.0.1:8000/"
+# OIDCFED_TRUST_ANCHORS = [OIDCFED_DEFAULT_TRUST_ANCHOR]
+# for RP only
+# OIDCFED_IDENTITY_PROVIDERS = {
+    # "http://127.0.0.1:8000/oidc/op/" : OIDCFED_DEFAULT_TRUST_ANCHOR,
+    # "http://127.0.0.1:8002/" : OIDCFED_DEFAULT_TRUST_ANCHOR
+# }
 

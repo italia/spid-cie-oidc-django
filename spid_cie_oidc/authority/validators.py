@@ -17,7 +17,7 @@ try:
     OIDCFED_TRUST_ANCHORS = getattr(settings, "OIDCFED_TRUST_ANCHORS")
 except AttributeError:
     OIDCFED_TRUST_ANCHORS = []
-    logger.warning("OIDCFED_TRUST_ANCHOR not configured in your settings file.")
+    logger.warning("OIDCFED_TRUST_ANCHORS not configured in your settings file.")
 
 
 def validate_entity_configuration(value):
@@ -34,7 +34,7 @@ def validate_entity_configuration(value):
     authority_hints = ec.payload.get("authority_hints", [])
     if not authority_hints:
         raise MissingAuthorityHintsClaim(
-            "authority_hints must be present " "in a descendant entity configuration"
+            "authority_hints must be present in a descendant entity configuration"
         )
     proper_descendant = False
     for i in authority_hints:
