@@ -5,7 +5,8 @@ import uuid
 from django.contrib.auth import get_user_model
 from django.db import models
 
-from .utils import decode_token
+from spid_cie_oidc.entity.jwtse import unpad_jwt_payload
+
 
 logger = logging.getLogger(__name__)
 
@@ -57,13 +58,15 @@ class OidcAuthenticationToken(models.Model):
         return f"{self.authz_request} {self.code}"
 
     def token_preview(self, token):
-        keyjar = self.authz_request.get_provider_keyjar()
-        try:
-            msg = decode_token(token, keyjar)
-            dumps = json.dumps(msg, indent=2)
-            return dumps  # mark_safe(dumps.replace("\n", "<br>").replace(" ", "&nbsp"))
-        except Exception as e:
-            logger.error(e)
+        if token:
+            try:
+                data = unpad_jwt_payload(token)
+                dumps = json.dumps(data, indent=2)
+                return dumps  # mark_safe(dumps.replace("\n", "<br>").replace(" ", "&nbsp"))
+            except Exception as e:
+                logger.error(e)
+        else:
+            return '--'
 
     @property
     def access_token_preview(self):
