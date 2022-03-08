@@ -650,20 +650,14 @@ class TokenEndpoint(OpBase, View):
 
     def post(self, request, *args, **kwargs):
         logger.debug(f"{request.headers}: {request.POST}")
-        try:
-            schema = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
-            schema[request.POST["grant_type"]](**request.POST.dict())
-        except ValidationError as e:
-            logger.error(
-                "Token request object validation failed "
-                f"for {request.POST.get('client_id', None)}: {e} "
-            )
-            return JsonResponse(
-                {
-                    "error": "invalid_request",
-                    "error_description": "Token request object validation failed ",
-                }
-            )
+
+        result = self.validate_json_schema(
+            request.POST.dict(), 
+            request.POST["grant_type"], 
+            "Token request object validation failed "
+        )
+        if result:
+            return result
 
         self.commons = self.get_jwt_common_data()
         self.issuer = self.get_issuer()
@@ -750,20 +744,12 @@ class UserInfoEndpoint(OpBase, View):
 class RevocationEndpoint(OpBase,View):
 
     def post(self, request, *args, **kwargs):
-        try:
-            schema = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
-            schema["revocation_request"](**request.POST.dict())
-        except ValidationError as e:
-            logger.error(
-                "Revocation request object validation failed "
-                f"for {request.POST.get('client_id', None)}: {e} "
-            )
-            return JsonResponse(
-                {
-                    "error": "invalid_request",
-                    "error_description": "Revocation request object validation failed ",
-                }
-            )
+        result = self.validate_json_schema(
+            request.POST.dict(), 
+            "revocation_request", 
+            "Revocation request object validation failed ")
+        if result:
+            return result
         try:
             self.check_client_assertion(
                 request.POST['client_id'],
@@ -796,11 +782,13 @@ class IntrospectionEndpoint(OpBase, View):
         return HttpResponseBadRequest()
 
     def post(self, request, *args, **kwargs):
-        self.validate_json_schema(
+        result = self.validate_json_schema(
             request.POST.dict(),
             "introspection_request",
             "Introspection request object validation failed"
         )
+        if result:
+            return result
         client_id = request.POST['client_id']
         try:
             self.check_client_assertion(
