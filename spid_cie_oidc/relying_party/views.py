@@ -6,7 +6,6 @@ import requests
 from django.conf import settings
 from django.contrib.auth import get_user_model, login, logout
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
@@ -45,7 +44,6 @@ from .settings import (
 )
 from .utils import (
     http_dict_to_redirect_uri_path,
-    http_redirect_uri_to_dict,
     process_user_attributes,
     random_string,
 )
@@ -82,9 +80,9 @@ class SpidCieOidcRp:
             )
 
         trust_anchor = request.GET.get(
-            "trust_anchor", 
+            "trust_anchor",
             settings.OIDCFED_IDENTITY_PROVIDERS.get(
-                request.GET["provider"], 
+                request.GET["provider"],
                 settings.OIDCFED_DEFAULT_TRUST_ANCHOR
             )
         )
@@ -102,7 +100,7 @@ class SpidCieOidcRp:
         if not tc:
             logger.info(f'Trust Chain not found for {request.GET["provider"]}')
             discover_trust = True
-        
+
         elif not tc.is_active:
             logger.warning(f"{tc} found but DISABLED at {tc.modified}")
             raise InvalidTrustchain(f"{tc} found but DISABLED at {tc.modified}")
@@ -111,7 +109,7 @@ class SpidCieOidcRp:
             logger.warning(f"{tc} found but expired at {tc.exp}")
             logger.warning("Try to renew the trust chain")
             discover_trust = True
-        
+
         if discover_trust:
             tc = get_or_create_trust_chain(
                 subject=request.GET["provider"],
@@ -145,7 +143,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
                     "error_description": "Trust Chain is unavailable.",
                 }
                 return render(request, self.error_template, context)
-        
+
         except InvalidTrustchain as exc:
             context = {
                 "error": "request rejected",
@@ -254,7 +252,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
         authz_data_obj = deepcopy(authz_data)
         authz_data_obj["iss"] = client_conf["client_id"]
         authz_data_obj["sub"] = client_conf["client_id"]
-        
+
         request_obj = create_jws(authz_data_obj, entity_conf.jwks[0])
         authz_data["request"] = request_obj
         uri_path = http_dict_to_redirect_uri_path(authz_data)
@@ -367,7 +365,7 @@ class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant
             return render(request, self.error_template, context, status=400)
 
         authz_data = json.loads(authz.data)
-        client_conf = self.rp_conf.metadata["openid_relying_party"]
+        self.rp_conf.metadata["openid_relying_party"]
         token_response = self.access_token_request(
             redirect_uri=authz_data["redirect_uri"],
             state=authz.state,
@@ -385,7 +383,7 @@ class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant
                 "error_description": _("Token response seems not to be valid"),
             }
             return render(request, self.error_template, context, status=400)
-        
+
         entity_conf = FederationEntityConfiguration.objects.filter(
             entity_type="openid_provider",
         ).first()
@@ -407,7 +405,7 @@ class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant
 
         try:
             verify_jws(access_token, op_ac_jwk)
-        except Exception as e:
+        except Exception:
             # TODO: verify error message
             context = {
                 "error": "token verification failed",
@@ -417,7 +415,7 @@ class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant
 
         try:
             verify_jws(id_token, op_id_jwk)
-        except Exception as e:
+        except Exception:
             # TODO: verify error message
             context = {
                 "error": "token verification failed",

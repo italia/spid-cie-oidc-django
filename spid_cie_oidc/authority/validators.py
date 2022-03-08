@@ -14,10 +14,10 @@ from spid_cie_oidc.entity.exceptions import MissingAuthorityHintsClaim, NotDesce
 logger = logging.getLogger(__name__)
 HTTPC_PARAMS = getattr(settings, "HTTPC_PARAMS", entity_settings.HTTPC_PARAMS)
 try:
-    OIDCFED_DEFAULT_TRUST_ANCHOR = getattr(settings, "OIDCFED_DEFAULT_TRUST_ANCHOR")
+    OIDCFED_TRUST_ANCHORS = getattr(settings, "OIDCFED_TRUST_ANCHORS")
 except AttributeError:
-    OIDCFED_DEFAULT_TRUST_ANCHOR = []
-    logger.warning("OIDCFED_DEFAULT_TRUST_ANCHOR not configured in your settings file.")
+    OIDCFED_TRUST_ANCHORS = []
+    logger.warning("OIDCFED_TRUST_ANCHORS not configured in your settings file.")
 
 
 def validate_entity_configuration(value):
