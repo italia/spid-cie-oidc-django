@@ -21,7 +21,7 @@ each of these can be installed separately within a django project. These are the
 | __spid_cie_oidc.authority__ | Openid Connect Federation API and models for [__OIDC Federation Authority/Intermediary__](docs/technical_specifications/AUTHORITY.md). 
 | __spid_cie_oidc.onboarding__ | [__Openid Connect Federation onboarding demo service__](docs/technical_specifications/ONBOARDING.md) |
 | __spid_cie_oidc.relying_party__ | [__Openid Connect Relying Party__](docs/technical_specifications/RELYING_PARTY.md) and test suite for OIDC Providers |
-| __spid_cie_oidc.provider__ | [__Openid Connect Provider__](docs/technical_specifications/PROVIDER.md)and test suite for OIDC Relying Parties |
+| __spid_cie_oidc.provider__ | [__Openid Connect Provider__](docs/technical_specifications/PROVIDER.md) and test suite for OIDC Relying Parties |
 
 ## Summary
 
