@@ -31,3 +31,12 @@ class AuthLoginForm(forms.Form):
 
 class ConsentPageForm(forms.Form):
     agree = forms.BooleanField(initial=True, widget=forms.HiddenInput())
+
+
+class TestingPageForm(forms.Form):
+        
+    type = forms.ChoiceField(
+        choices=[(1,1), (2,2)],
+        label="select",
+        error_messages={"required": _("Select a item")},
+    )
