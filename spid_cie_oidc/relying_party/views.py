@@ -140,7 +140,7 @@ class SpidCieOidcRp:
 
 class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
     """
-        View which processes the actual Authz request and 
+        View which processes the actual Authz request and
         returns a Http Redirect
     """
 
