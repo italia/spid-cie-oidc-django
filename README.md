@@ -57,7 +57,7 @@ In this repository we have three example projects:
  - provider
 
 > Federation Authority loads all the applications for development needs, acting as both authority, RP and OP.
-This allows us to make a demo by starting a single service.
+This allows us to make a demo by starting a single service. See admin page `http://127.0.0.1:8000/admin/` and user login page `http://127.0.0.1:8000/oidc/rp/landing`.
 
 relying party and provider are examples that only integrate
 __spid_cie_oidc.entity__ and __spid_cie_oidc.provider__ or __.relying_party__.
