@@ -65,3 +65,10 @@ class MockedUserInfoResponse:
         jws = create_jws(jwt, op_conf_priv_jwk)
         jwe = encrypt_dict(jws, rp_conf["metadata"]["openid_relying_party"]["jwks"]["keys"][0])
         return jwe.encode()
+
+class MockedLogout:
+
+    @property
+    def content(self):
+        pass
+    

@@ -30,6 +30,7 @@ op_conf = {
             "token_endpoint": "http://op-test/oidc/op/token/",
             "userinfo_endpoint": "http://op-test/oidc/op/userinfo/",
             "introspection_endpoint": "http://op-test/oidc/op/introspection/",
+            "revocation_endpoint": "http://op-test/oidc/op/revocation/",
             "claims_parameter_supported": True,
             "contacts": ["ops@op-test.it"],
             "client_registration_types_supported": ["automatic"],
