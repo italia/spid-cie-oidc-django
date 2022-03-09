@@ -45,5 +45,9 @@ class InvalidTrustchain(ValidationError):
     pass
 
 
+class TrustchainMissingMetadata(ValidationError):
+    pass
+
+
 class InvalidEntityConfiguration(ValidationError):
     pass
