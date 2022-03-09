@@ -1,0 +1,45 @@
+<!-- Extends default Bootstrap Unical Italia template -->
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block container %}
+<div>
+   <div class="container p-3">
+
+<div class="row d-lg-flex">
+    <div class="col-12">
+        <div class="card-wrapper card-space">
+            <div class="card card-bg no-after">
+                <div class="card-body">
+                    <div class="row h-100">
+                        
+                        <div class="col-12 col-lg-12">
+                            <div class="ml-2">
+                                <h4 class="text-left">
+                                    {% trans "Schemas jwt" %}
+                                </h4>
+                            </div>
+                            <div class="row">
+                                
+                                <div class="m-3">
+                                    <h5 class="text-left">
+                                        {% trans "jwt client assertion" %}
+                                    </h5>
+                                    <pre class="card-title">
+                                        {{jwt_client_asser | linebreaks}}
+                                    </pre>
+
+                                </div>
+                            </div>
+                        </div>
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+{% endblock container %}

@@ -1,0 +1,78 @@
+<!-- Extends default Bootstrap Unical Italia template -->
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block container %}
+<div>
+   <div class="container p-3">
+
+<div class="row d-lg-flex">
+    <div class="col-12">
+        <div class="card-wrapper card-space">
+            <div class="card card-bg no-after">
+                <div class="card-body">
+                    <div class="row h-100">
+                        
+                        <div class="col-12 col-lg-12">
+                            <div class="ml-2">
+                                <h4 class="text-left">
+                                    {% trans "Schemas introspection endpoint" %}
+                                </h4>
+                            </div>
+                            <div class="row">
+                                
+                                <div class="m-3">
+                                    <h5 class="text-left">
+                                        {% trans "introspection request" %}
+                                    </h5>
+                                    <div>
+                                        <pre class="card-title">
+                                            {{intro_request | linebreaks}}
+                                        </pre>
+                                    </div>
+                                    <h5 class="text-left">
+                                        {% trans "introspection successful response" %}
+                                    </h5>
+                                    <pre class="card-title">
+                                        {{intro_res_succ | linebreaks}}
+                                    </pre>
+
+                                    <h5 class="text-left">
+                                        {% trans "introspection error response" %}
+                                    </h5>
+                                    <pre class="card-title">
+                                        {{intro_res_err | linebreaks}}
+                                    </pre>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="col-12 col-lg-6">
+                            
+                            <div class="row mt-5 pt-1 border">
+                                <div class="m-4">
+                                    <h5 class="text-left">
+                                        {% trans "introspection successful response" %}
+                                    </h5>
+                                    <pre class="card-title">
+                                        {{intro_res_succ | linebreaks}}
+                                    </pre>
+
+                                    <h5 class="text-left">
+                                        {% trans "introspection error response" %}
+                                    </h5>
+                                    <pre class="card-title">
+                                        {{intro_res_err | linebreaks}}
+                                    </pre>
+                                </div>
+                            </div>
+                        </div>   -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+{% endblock container %}

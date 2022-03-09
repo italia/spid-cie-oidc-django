@@ -132,8 +132,8 @@ TokenErrorResponse(**TOKEN_ERROR_RESPONSE)
 
 ````
 ./manage.py shell
-from spid_cie_oidc.onboarding.schemas.token_requests import JwtClientAssertionStructureSpid
-print(JwtClientAssertionStructureSpid.schema_json(indent=2))
+from spid_cie_oidc.onboarding.schemas.jwt import JwtStructure
+print(JwtStructure.schema_json(indent=2))
 ````
 
 
@@ -144,10 +144,10 @@ print(JwtClientAssertionStructureSpid.schema_json(indent=2))
 ````
 Import a jwt example
 ````
-from spid_cie_oidc.onboarding.tests.token_request_settings import JWT_CLIENT_ASSERTION_SPID
+from spid_cie_oidc.onboarding.tests.token_request_settings import JWT_CLIENT_ASSERTION
 ````
 Then to validate
 ````
-from spid_cie_oidc.onboarding.schemas.token_requests import JwtClientAssertionStructureSpid
-JwtClientAssertionStructureSpid(**JWT_CLIENT_ASSERTION_SPID)
+from spid_cie_oidc.onboarding.schemas.jwt import JwtStructure
+JwtStructure(**JWT_CLIENT_ASSERTION)
 ````
