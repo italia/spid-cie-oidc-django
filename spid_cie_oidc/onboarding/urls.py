@@ -24,7 +24,13 @@ from .views import (
     onboarding_convert_jwk,
     onboarding_resolve_statement,
     onboarding_validating_trustmark,
-    onboarding_decode_jwt
+    onboarding_decode_jwt,
+    onboarding_schemas_authorization,
+    onboarding_schemas_introspection,
+    onboarding_schemas_metadata,
+    onboarding_schemas_revocation,
+    onboarding_schemas_token,
+    onboarding_schemas_jwt_client_assertion,
 )
 
 _PREF = getattr(settings, "OIDC_PREFIX", "")
@@ -69,5 +75,35 @@ urlpatterns = [
         f"{_PREF}onboarding/tools/decode-jwt",
         onboarding_decode_jwt,
         name="oidc_onboarding_tools_decode_jwt",
+    ),
+    path(
+        f"{_PREF}onboarding/schemas/authorization",
+        onboarding_schemas_authorization,
+        name="oidc_onboarding_schemas_Authorization",
+    ),
+    path(
+        f"{_PREF}onboarding/schemas/introspection",
+        onboarding_schemas_introspection,
+        name="oidc_onboarding_schemas_introspection",
+    ),
+    path(
+        f"{_PREF}onboarding/schemas/metadata",
+        onboarding_schemas_metadata,
+        name="oidc_onboarding_schemas_metadata",
+    ),
+    path(
+        f"{_PREF}onboarding/schemas/revocation",
+        onboarding_schemas_revocation,
+        name="oidc_onboarding_schemas_revocation",
+    ),
+    path(
+        f"{_PREF}onboarding/schemas/token",
+        onboarding_schemas_token,
+        name="oidc_onboarding_schemas_token",
+    ),
+    path(
+        f"{_PREF}onboarding/schemas/jwt/client/assertion",
+        onboarding_schemas_jwt_client_assertion,
+        name="oidc_onboarding_schemas_jwt_client_assertion",
     ),
 ]
