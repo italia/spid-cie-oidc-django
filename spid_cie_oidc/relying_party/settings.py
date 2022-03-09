@@ -2,6 +2,7 @@ from django.conf import settings
 from spid_cie_oidc.onboarding.schemas.authn_requests import AcrValuesCie, AcrValuesSpid
 from spid_cie_oidc.entity.schemas.rp_metadata import RPMetadataSpid, RPMetadataCie
 from spid_cie_oidc.onboarding.schemas.authn_response import AuthenticationResponse, AuthenticationResponseCie
+from spid_cie_oidc.onboarding.schemas.token_response import TokenResponse
 
 
 RP_PREFS = {
@@ -21,12 +22,14 @@ RP_PROVIDER_PROFILES = getattr(
         "spid": {
             "authorization_request": {"acr_values": AcrValuesSpid.l2.value},
             "rp_metadata": RPMetadataSpid,
-            "authn_response": AuthenticationResponse
+            "authn_response": AuthenticationResponse,
+            "token_response": TokenResponse
         },
         "cie": {
             "authorization_request": {"acr_values": AcrValuesCie.l2.value},
             "rp_metadata": RPMetadataCie,
-            "authn_response": AuthenticationResponseCie
+            "authn_response": AuthenticationResponseCie,
+            "token_response": TokenResponse
         },
     },
 )

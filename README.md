@@ -1,4 +1,4 @@
-# SPID/CIE OIDC Federation SDKs
+# SPID/CIE OIDC Federation SDK
 
 ![CI build](https://github.com/peppelinux/spid-cie-oidc-django/workflows/spid_cie_oidc/badge.svg)
 ![Python version](https://img.shields.io/badge/license-Apache%202-blue.svg)
@@ -57,7 +57,7 @@ In this repository we have three example projects:
  - provider
 
 > Federation Authority loads all the applications for development needs, acting as both authority, RP and OP.
-This allows us to make a demo by starting a single service.
+This allows us to make a demo by starting a single service. See admin page `http://127.0.0.1:8000/admin/` and user login page `http://127.0.0.1:8000/oidc/rp/landing`.
 
 relying party and provider are examples that only integrate
 __spid_cie_oidc.entity__ and __spid_cie_oidc.provider__ or __.relying_party__.
@@ -100,7 +100,7 @@ Please consider the following branches:
 Backup and share your demo data
 ````
 # backup your data (upgrade example data), -e excludes.
-./manage.py dumpdata -e admin -e auth -e contenttypes -e sessions > dumps/example.json
+./manage.py dumpdata -e admin -e spid_cie_oidc_relying_party spid_cie_oidc_provider -e auth -e contenttypes -e sessions > dumps/example.json
 ````
 
 In this project we adopt [Semver](https://semver.org/lang/it/) and

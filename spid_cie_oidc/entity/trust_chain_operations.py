@@ -2,7 +2,7 @@ import logging
 
 from typing import Union
 
-from .exceptions import InvalidTrustchain
+from .exceptions import InvalidTrustchain, TrustchainMissingMetadata
 from .models import FetchedEntityStatement, TrustChain
 from .statements import EntityConfiguration, get_entity_configurations
 from .settings import HTTPC_PARAMS
@@ -161,12 +161,18 @@ def get_or_create_trust_chain(
             subject=subject,
             trust_anchor=ta_conf,
             required_trust_marks=required_trust_marks,
-            metadata_type=metadata_type,
+            metadata_type=metadata_type
         )
         if not trust_chain or not trust_chain.is_valid:
             raise InvalidTrustchain(
                 f"Trust chain for subject {subject} and "
                 f"trust_anchor {trust_anchor} is not valid"
+            )
+        elif not trust_chain.final_metadata:
+            raise TrustchainMissingMetadata(
+                f"Trust chain for subject {subject} and "
+                f"trust_anchor {trust_anchor} doesn't have any "
+                f"metadata of type '{metadata_type}'"
             )
         dumps_statements_from_trust_chain_to_db(trust_chain)
 

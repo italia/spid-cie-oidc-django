@@ -13,33 +13,36 @@
                         <div class="card-body pl-lg-0">
                             <div class="row h-100">
 
-                                    <div class="col-12 pl-lg-4">
+                                <div class="col-12 pl-lg-4">
 
-                                        <div class="row row-header border-bottom no-border-bottom-xs">
-                                            <div class="wrap-container">
-                                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                                                    <h1>
-                                                        <a href="/" title="torna alla home">
-                                                            <img src="{% static 'image/logoSpid.png' %}" alt="SPID"
-                                                                class="img-responsive">
-                                                        </a>
-                                                    </h1>
-                                                </div>
-                                                <div class="clear"></div>
+                                    <div class="row row-header border-bottom no-border-bottom-xs">
+                                        <div class="wrap-container">
+                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                                <h1>
+                                                    <a href="/" title="torna alla home">
+                                                        <img src="{% static 'image/logoSpid.png' %}" alt="SPID"
+                                                            class="img-responsive">
+                                                    </a>
+                                                </h1>
                                             </div>
+                                            <div class="clear"></div>
                                         </div>
-                                        
-                                        <div class="col-12 row">
-                                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                                <div class="row mt-4 ml-1">
-                                                    <div>
-                                                        <div class="pb-2">
-                                                            <h4 class="text-muted">{% trans 'SPID access request from' %}</h4>
-                                                            <h3>{{ client_organization_name }}</h3>
-                                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="row mt-4 ml-1">
+                                                <div>
+                                                    <div class="pb-2">
+                                                        <h4 class="text-muted">{% trans 'SPID access request from' %}
+                                                        </h4>
+                                                        <h3>{{ client_organization_name }}</h3>
                                                     </div>
                                                 </div>
-
+                                            </div>
+                                        </div>
+                                        <div class="col-12 row" >
+                                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                                 <form method="POST" action='{% url "oidc_provider_authnrequest" %}'>
                                                     <fieldset>
                                                         <div class="row">
@@ -68,12 +71,8 @@
                                                                     </div>
                                                                     {% endfor %}
 
-                                                                    {% for hidden in form.hidden_fields %}
-                                                                    {{ hidden }}
-                                                                    {% endfor %}
-
                                                                     <div class="col-sm-12 mt-2">
-                                                                        <a href="{{client_redirect_uri}}"
+                                                                        <a href="{% url 'oidc_provider_not_consent' %}"
                                                                             class="italia-it-button italia-it-button-cancel-s button-cancel">
                                                                             <span class="italia-it-buttons-text">{% trans "Cancel" %}</span>
                                                                         </a>
@@ -85,36 +84,39 @@
                                                                                 <img src="{% static 'svg/spid-ico-circle-bb.svg' %}"
                                                                                     alt="">
                                                                             </span>
-                                                                            <span class="italia-it-buttons-text">{% trans "Login" %}</span></button>
+                                                                            <span class="italia-it-buttons-text">{% trans "Login" %}</span>
+                                                                        </button>
                                                                     </div>
-
                                                                 </div>
+
                                                             </div>
-
-
                                                         </div>
                                                     </fieldset>
                                                 </form>
                                             </div>
+
                                             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                                <div class="row mt-4 ml-5"></div>
-                                                <div class="row mt-5 ml-5">
-                                                    <h4>
-                                                        {% trans "If you are the staff user, you will be redirected to the test page"%}
-                                                    </h4>
+                                                <div class="mt-5 ml-4">
+                                                    <div class="row callout">
+                                                        <p>
+                                                            {% trans "If you are the staff user, you will be redirected to the test page"%}
+                                                        </p>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-
-                                    </div>
+                                    
+                                </div>
 
                             </div>
+
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <script src="{% static 'js/spid-sp-access-button.js' %}"></script>
-        <script src="{% static 'js/spid_button.js' %}"></script>
-        {% endblock container %}
+    <script src="{% static 'js/spid-sp-access-button.js' %}"></script>
+    <script src="{% static 'js/spid_button.js' %}"></script>
+    {% endblock container %}

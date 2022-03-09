@@ -12,6 +12,10 @@ from spid_cie_oidc.entity.models import TrustChain
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 def fetch(request):
     if request.GET.get("iss"):
@@ -80,24 +84,42 @@ def resolve_entity_statement(request, format: str = "jose"):
     else:
         iss = get_first_self_trust_anchor()
 
-    _q = dict(sub=request.GET["sub"], trust_anchor__sub=request.GET["anchor"])
-    if request.GET.get("type", None):
-        _q["type"] = request.GET["type"]
+    _q = dict(
+        sub=request.GET["sub"], 
+        trust_anchor__sub=request.GET["anchor"],
+        is_active=True
+    )
+    entity = TrustChain.objects.filter(**_q)
 
-    entity = TrustChain.objects.filter(**_q).first()
-    if entity and not entity.is_active:
+    if not entity:
         raise Http404("entity not found.")
-    else:
-        get_or_create_trust_chain(
+    elif entity and request.GET.get("type", None):
+        _q["type"] = request.GET["type"]
+        typed_entity = entity.filter(type=request.GET["type"]).first()
+        if not typed_entity:
+            logger.warning(
+                f'Resolve statement endpoint not found for {request.GET["sub"]} '
+                f'with metadata_type {request.GET["type"]}.'
+            )
+            raise Http404("entity metadata type not found.")
+        else:
+            entity = typed_entity
+    
+    try:
+        tc_data = dict(
             httpc_params=HTTPC_PARAMS,
             # TODO
             # required_trust_marks = [],
             subject=_q["sub"],
-            trust_anchor=_q["trust_anchor__sub"],
+            trust_anchor=_q["trust_anchor__sub"]
         )
-        entity = TrustChain.objects.filter(**_q).first()
-
-    if not entity:
+        if _q.get('type', None):
+            tc_data["metadata_type"] = _q['type']
+        entity = get_or_create_trust_chain(**tc_data)
+    except Exception as e:
+        logger.error(
+            f"Failed Trust Chain on resolve statement endpoint: {e}"
+        )
         raise Http404("entity not found.")
 
     res = {
@@ -106,7 +128,7 @@ def resolve_entity_statement(request, format: str = "jose"):
         # "aud": [],
         "iat": entity.iat_as_timestamp,
         "exp": entity.exp_as_timestamp,
-        "trust_marks": [],
+        "trust_marks": entity.trust_marks,
         "metadata": entity.metadata,
     }
 

@@ -121,6 +121,22 @@ class SpidCieOidcRp:
             )
         return tc
 
+    def validate_json_schema(self, request, schema_type, error_description):
+        try:
+            schema = RP_PROVIDER_PROFILES[RP_DEFAULT_PROVIDER_PROFILES]
+            schema[schema_type](**request)
+        except ValidationError as e:
+            logger.error(
+                f"{error_description} "
+                f"for {request.get('client_id', None)}: {e} "
+            )
+            return JsonResponse(
+                {
+                    "error": "invalid_request",
+                    "error_description": f"{error_description} ",
+                }
+            )
+
 
 class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
     """
@@ -261,7 +277,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
         return HttpResponseRedirect(url)
 
 
-class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant):
+class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2AuthorizationCodeGrant):
     """
         View which processes an Authorization Response
         https://tools.ietf.org/html/rfc6749#section-4.1.2
@@ -311,27 +327,22 @@ class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant
         """
         request_args = {k: v for k, v in request.GET.items()}
         if "error" in request_args:
-            return render(request, self.error_template, request_args, status=401)
+            return render(
+                request,
+                self.error_template,
+                request_args,
+                status=401
+            )
         authz = OidcAuthentication.objects.filter(
             state=request_args.get("state"),
         )
-        try:
-            schema = RP_PROVIDER_PROFILES[RP_DEFAULT_PROVIDER_PROFILES]
-            schema["authn_response"](**request.GET.dict())
-        except ValidationError as e:
-            logger.error(
-                "Authn response object validation failed "
-                f"for {request.POST.get('client_id', None)}: {e} "
-            )
-            return render(
-                request, 
-                self.error_template, 
-                {
-                    "error": "invalid_request",
-                    "error_description": "Authn response object validation failed ",
-                },
-                status = 401
-            )
+        result = self.validate_json_schema(
+            request.GET.dict(),
+            "authn_response",
+            "Authn response object validation failed"
+        )
+        if result:
+            return result
 
         if not authz:
             # TODO: verify error message and status
@@ -384,6 +395,15 @@ class SpidCieOidcRpCallbackView(View, OidcUserInfo, OAuth2AuthorizationCodeGrant
                 "error_description": _("Token response seems not to be valid"),
             }
             return render(request, self.error_template, context, status=400)
+
+        else:
+            result = self.validate_json_schema(
+                token_response,
+                "token_response",
+                "Token response object validation failed"
+            )
+            if result:
+                return result
 
         entity_conf = FederationEntityConfiguration.objects.filter(
             entity_type="openid_provider",
