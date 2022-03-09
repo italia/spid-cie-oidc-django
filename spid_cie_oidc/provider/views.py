@@ -226,7 +226,7 @@ class AuthzRequestView(OpBase, View):
         redirect_uri = payload.get("redirect_uri", "")
         p = urllib.parse.urlparse(redirect_uri)
         scheme_fqdn = f"{p.scheme}://{p.hostname}"
-        if payload["client_id"] in scheme_fqdn:
+        if payload.get("client_id", None) in scheme_fqdn:
             return JsonResponse(
                 {
                     "error": "invalid_request",
