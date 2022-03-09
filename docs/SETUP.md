@@ -68,7 +68,7 @@ cp $project_name/settingslocal.py.example $project_name/settingslocal.py
 # load the demo configuration
 ./manage.py loaddata dumps/example.json
 
-# create a super user
+# create a super user NOTE: it work for loggin in to the admin, to use it for open-connect login "attributes" column in "auth_permission" table must be filled in
 ./manage.py createsuperuser
 
 # run the web server
