@@ -7,6 +7,7 @@ from spid_cie_oidc.onboarding.schemas.authn_requests import (
     AuthenticationRequestCie,
     AuthenticationRequestSpid
 )
+from spid_cie_oidc.onboarding.schemas.introspection_request import IntrospectionRequest
 from spid_cie_oidc.onboarding.schemas.revocation_request import RevocationRequest
 from spid_cie_oidc.onboarding.schemas.token_requests import TokenAuthnCodeRequest, TokenRefreshRequest
 
@@ -19,14 +20,16 @@ OIDCFED_PROVIDER_PROFILES = getattr(
             "op_metadata": OPMetadataSpid,
             "authorization_code": TokenAuthnCodeRequest,
             "refresh_token": TokenRefreshRequest,
-            "revocation_request": RevocationRequest
+            "revocation_request": RevocationRequest,
+            "introspection_request" : IntrospectionRequest
         },
         "cie": {
             "authorization_request": AuthenticationRequestCie,
             "op_metadata": OPMetadataCie,
             "authorization_code": TokenAuthnCodeRequest,
             "refresh_token": TokenRefreshRequest,
-            "revocation_request": RevocationRequest
+            "revocation_request": RevocationRequest,
+            "introspection_request" : IntrospectionRequest
         },
     },
 )
