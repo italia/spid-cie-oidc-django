@@ -1,3 +1,7 @@
+from cProfile import label
+from tkinter import Widget
+from turtle import width
+from attr import attributes
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
@@ -35,8 +39,18 @@ class ConsentPageForm(forms.Form):
 
 class TestingPageForm(forms.Form):
 
-    type = forms.ChoiceField(
-        choices=[(1,1), (2,2)],
+    attributes = forms.JSONField(
+        initial=dict,
+        label="attributes"
+    )
+
+
+    CHOICES=[('test1','test 1'),
+         ('test2','test 2')]
+
+    test = forms.ChoiceField(
+        choices=CHOICES,
+        widget=forms.RadioSelect,
         label="select",
         error_messages={"required": _("Select a item")},
     )

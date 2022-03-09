@@ -3,6 +3,7 @@ import hashlib
 import logging
 import urllib.parse
 import uuid
+import json
 
 from cryptojwt.jws.utils import left_hash
 from django.conf import settings
@@ -379,10 +380,9 @@ class AuthzRequestView(OpBase, View):
             auth_code=auth_code,
         )
         session.set_sid(request)
-
         url = reverse("oidc_provider_consent")
-        if user.is_staff:
-            url = reverse("oidc_provider_staff_testing")
+        # if user.is_staff:
+        #     url = reverse("oidc_provider_staff_testing")
         return HttpResponseRedirect(url)
 
 
@@ -394,9 +394,17 @@ class StaffTestingPageView(OpBase, View):
         return TestingPageForm
 
     def get(self, request):
+        try:
+            session = self.check_session(request)
+        except Exception:
+            logger.warning("Invalid session")
+            return HttpResponseForbidden()
 
+        user = session.user
+        attributes = user.attributes
         content = {
-            "form": self.get_testing_form
+            "form": self.get_testing_form()(),
+            "attributes": json.dumps(attributes, indent=4)
         }
         return render(request, self.template, content)
 
