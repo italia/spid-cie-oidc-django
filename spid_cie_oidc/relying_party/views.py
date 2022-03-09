@@ -517,7 +517,7 @@ def oidc_rpinitiated_logout(request):
     auth_tokens = OidcAuthenticationToken.objects.filter(
         user=request.user
     ).filter(revoked__isnull=True)
-    
+
     default_logout_url = getattr(
         settings, "LOGOUT_REDIRECT_URL", None
     ) or reverse("spid_cie_rp_landing")
@@ -527,7 +527,7 @@ def oidc_rpinitiated_logout(request):
             "Token revocation failed: not found any authentication session"
         )
         return HttpResponseRedirect(default_logout_url)
-    
+
     auth_token = auth_tokens.last()
     authz = auth_token.authz_request
     provider_conf = authz.provider_configuration

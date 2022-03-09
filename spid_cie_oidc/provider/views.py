@@ -234,8 +234,8 @@ class AuthzRequestView(OpBase, View):
                 }
             )
         result = self.validate_json_schema(
-            payload, 
-            "authorization_request", 
+            payload,
+            "authorization_request",
             "Authen request object validation failed "
         )
         if result:
