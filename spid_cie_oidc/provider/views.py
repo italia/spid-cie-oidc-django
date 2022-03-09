@@ -247,7 +247,7 @@ class AuthzRequestView(OpBase, View):
         # FIXME: invalid check: if not request-> no payload-> no redirect_uri
         if not req:
             logger.error(
-                f"Missing Authz request object in {dict(request.GET)}"
+                f"Missing Authz request object in {dict(request.GET)} "
                 f"error=invalid_request"
             )
             return self.redirect_response_data(
@@ -309,7 +309,9 @@ class AuthzRequestView(OpBase, View):
             )
 
         # stores the authz request in a hidden field in the form
-        form = self.get_login_form()(dict(authz_request_object=req))
+        form = self.get_login_form()(
+            dict(authz_request_object=req)
+        )
         context = {
             "client_organization_name": tc.metadata.get(
                 "client_name", self.payload["client_id"]
