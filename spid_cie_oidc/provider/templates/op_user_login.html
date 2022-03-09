@@ -70,6 +70,10 @@
                                                                             class="text-danger">{{ form_field.errors }}</span>
                                                                     </div>
                                                                     {% endfor %}
+                                                                    
+                                                                    {% for hidden in form.hidden_fields %}
+                                                                    {{ hidden }}
+                                                                    {% endfor %}
 
                                                                     <div class="col-sm-12 mt-2">
                                                                         <a href="{% url 'oidc_provider_not_consent' %}"
