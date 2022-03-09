@@ -1,7 +1,6 @@
 import base64
 import hashlib
 import logging
-from re import template
 import urllib.parse
 import uuid
 
@@ -380,25 +379,27 @@ class AuthzRequestView(OpBase, View):
             auth_code=auth_code,
         )
         session.set_sid(request)
-        
+
         url = reverse("oidc_provider_consent")
         if user.is_staff:
             url = reverse("oidc_provider_staff_testing")
         return HttpResponseRedirect(url)
+
 
 class StaffTestingPageView(OpBase, View):
 
     template = "op_user_staff_test.html"
 
     def get_testing_form(self):
-            return TestingPageForm
+        return TestingPageForm
 
-    def get (self, request):
-        
+    def get(self, request):
+
         content = {
             "form": self.get_testing_form
         }
         return render(request, self.template, content)
+
 
 class ConsentPageView(OpBase, View):
 
@@ -843,7 +844,6 @@ class IntrospectionEndpoint(OpBase, View):
         }
         return JsonResponse(response)
 
-        pass
 
 
 def oidc_provider_not_consent(request):

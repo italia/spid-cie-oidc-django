@@ -34,7 +34,7 @@ class ConsentPageForm(forms.Form):
 
 
 class TestingPageForm(forms.Form):
-        
+
     type = forms.ChoiceField(
         choices=[(1,1), (2,2)],
         label="select",

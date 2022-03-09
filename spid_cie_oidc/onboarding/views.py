@@ -1,5 +1,4 @@
 import json
-from textwrap import indent
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -37,6 +36,7 @@ from spid_cie_oidc.onboarding.schemas.token_requests import TokenRefreshRequest
 from spid_cie_oidc.onboarding.schemas.token_response import TokenRefreshResponse
 
 from spid_cie_oidc.onboarding.schemas.jwt import JwtStructure
+
 
 def onboarding_landing(request):
     return render(request, "onboarding_landing.html")
@@ -177,6 +177,7 @@ def onboarding_decode_jwt(request):
                 render(request, 'onboarding_decode_jwt.html', context)
     return render(request, 'onboarding_decode_jwt.html', context)
 
+
 def onboarding_schemas_authorization(request):
     auth_request = AuthenticationRequestSpid.schema_json(indent=2)
     auth_res_succ = AuthenticationResponse.schema_json(indent=2)
@@ -186,7 +187,8 @@ def onboarding_schemas_authorization(request):
         auth_res_succ = auth_res_succ,
         auth_res_err = auth_res_err
     )
-    return render (request, "onboarding_schemas_authorization.html", content)
+    return render(request, "onboarding_schemas_authorization.html", content)
+
 
 def onboarding_schemas_introspection(request):
     intro_request = IntrospectionRequest.schema_json(indent=2)
@@ -197,7 +199,8 @@ def onboarding_schemas_introspection(request):
         intro_res_succ = intro_res_succ,
         intro_res_err = intro_res_err
     )
-    return render (request, "onboarding_schemas_introspection.html", content)
+    return render(request, "onboarding_schemas_introspection.html", content)
+
 
 def onboarding_schemas_metadata(request):
     op_meta_spid = OPMetadataSpid.schema_json(indent=2)
@@ -210,14 +213,16 @@ def onboarding_schemas_metadata(request):
         rp_meta_spid = rp_meta_spid,
         rp_meta_cie = rp_meta_cie
     )
-    return render (request, "onboarding_schemas_metadata.html", content)
+    return render(request, "onboarding_schemas_metadata.html", content)
+
 
 def onboarding_schemas_revocation(request):
     revoc_request = RevocationRequest.schema_json(indent=2)
     content = dict(
         revoc_request = revoc_request,
     )
-    return render (request, "onboarding_schemas_revocation.html", content)
+    return render(request, "onboarding_schemas_revocation.html", content)
+
 
 def onboarding_schemas_token(request):
     auth_code_req = TokenAuthnCodeRequest.schema_json(indent=2)
@@ -232,11 +237,12 @@ def onboarding_schemas_token(request):
         refr_res = refr_res,
         err_res = err_res
     )
-    return render (request, "onboarding_schemas_token.html", content)
+    return render(request, "onboarding_schemas_token.html", content)
+
 
 def onboarding_schemas_jwt_client_assertion(request):
     jwt_client_asser = JwtStructure.schema_json(indent=2)
     content = dict(
         jwt_client_asser = jwt_client_asser,
     )
-    return render (request, "onboarding_schemas_jwt_client_assertion.html", content)
+    return render(request, "onboarding_schemas_jwt_client_assertion.html", content)
