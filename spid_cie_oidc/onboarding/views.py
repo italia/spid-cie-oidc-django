@@ -123,7 +123,6 @@ def onboarding_validating_trustmark(request):
     context = {"form": form}
 
     if form.is_valid():
-
         res = trust_mark_status(request)
         content = json.loads(res.content.decode())
         context = {'form': form}
