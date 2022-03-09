@@ -1,4 +1,4 @@
-# SPID/CIE OIDC Federation SDKs
+# SPID/CIE OIDC Federation SDK
 
 ![CI build](https://github.com/peppelinux/spid-cie-oidc-django/workflows/spid_cie_oidc/badge.svg)
 ![Python version](https://img.shields.io/badge/license-Apache%202-blue.svg)
