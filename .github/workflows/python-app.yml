@@ -5,9 +5,9 @@ name: spid_cie_oidc
 
 on:
   push:
-    branches: [ main, dev ]
+    branches: '*'
   pull_request:
-    branches: [ main, dev ]
+    branches: '*'
 
 jobs:
   build:
@@ -52,6 +52,12 @@ jobs:
         coverage erase
         coverage run examples/federation_authority/manage.py test spid_cie_oidc
         coverage report -m --skip-covered
+    - name: spid_cie_oidc example data imports
+      run: |
+        cp examples/federation_authority/federation_authority/settingslocal.py.example examples/federation_authority/federation_authority/settingslocal.py
+        cd examples/federation_authority/
+        ./manage.py migrate
+        ./manage.py loaddata dumps/example.json
     #- name: Upload coverage to Codecov
       #uses: codecov/codecov-action@v1
       #with:
