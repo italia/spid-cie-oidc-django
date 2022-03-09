@@ -85,7 +85,7 @@ def resolve_entity_statement(request, format: str = "jose"):
         iss = get_first_self_trust_anchor()
 
     _q = dict(
-        sub=request.GET["sub"], 
+        sub=request.GET["sub"],
         trust_anchor__sub=request.GET["anchor"],
         is_active=True
     )
@@ -104,7 +104,7 @@ def resolve_entity_statement(request, format: str = "jose"):
             raise Http404("entity metadata type not found.")
         else:
             entity = typed_entity
-    
+
     try:
         tc_data = dict(
             httpc_params=HTTPC_PARAMS,

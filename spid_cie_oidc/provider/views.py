@@ -218,7 +218,6 @@ class AuthzRequestView(OpBase, View):
     template = "op_user_login.html"
 
     def validate_authz(self, payload: dict):
-
         must_list = ("scope", "acr_values")
         for i in must_list:
             if isinstance(payload.get(i, None), str):
@@ -228,12 +227,19 @@ class AuthzRequestView(OpBase, View):
         p = urllib.parse.urlparse(redirect_uri)
         scheme_fqdn = f"{p.scheme}://{p.hostname}"
         if payload["client_id"] in scheme_fqdn:
-            raise ValidationError(
-                f"{payload.get('client_id', None)} not in {redirect_uri}"
+            return JsonResponse(
+                {
+                    "error": "invalid_request",
+                    "error_description": "Authen request object validation failed ",
+                }
             )
-
-        schema = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
-        schema["authorization_request"](**payload)
+        result = self.validate_json_schema(
+            payload,
+            "authorization_request",
+            "Authen request object validation failed "
+        )
+        if result:
+            return result
 
     def get_login_form(self):
         return AuthLoginForm
@@ -291,22 +297,9 @@ class AuthzRequestView(OpBase, View):
                 error_description=_("Authorization request not valid"),
             )
 
-        try:
-            self.validate_authz(self.payload)
-        except ValidationError as e:
-            logger.error(
-                "Authz request object validation failed "
-                f"for {self.payload['iss']}: {e} "
-            )
-            return self.redirect_response_data(
-                # TODO: check error
-                error="invalid_request",
-                error_description=_(
-                    "Authz request object validation failed "
-                    f"for {self.payload['iss']}: {e} "
-                ),
-                state=self.payload["state"],
-            )
+        result = self.validate_authz(self.payload)
+        if result:
+            return result
 
         # stores the authz request in a hidden field in the form
         form = self.get_login_form()(
