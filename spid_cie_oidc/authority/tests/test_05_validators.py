@@ -1,13 +1,13 @@
 
 from unittest.mock import patch
-from django.conf import settings
+
 from django.test import TestCase, override_settings
-from spid_cie_oidc.authority.validators import validate_entity_configuration
 from spid_cie_oidc.authority.tests.settings import RP_CONF, RP_METADATA_JWK1
-from spid_cie_oidc.entity.exceptions import NotDescendant
+from spid_cie_oidc.authority.validators import validate_entity_configuration
 from spid_cie_oidc.entity.jwtse import create_jws
 
 JWS = create_jws(RP_CONF, RP_METADATA_JWK1)
+
 class ValidatorTest(TestCase):
 
     def setUp(self):
