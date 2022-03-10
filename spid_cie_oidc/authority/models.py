@@ -236,6 +236,7 @@ class FederationDescendant(TimeStampedModel):
             self.entity_statement_as_dict(iss, aud),
             issuer.jwks[0],
             alg=issuer.default_signature_alg,
+            typ="entity-statement+jwt"
         )
 
     def __str__(self):
@@ -271,11 +272,15 @@ class FederationEntityAssignedProfile(TimeStampedModel):
             self.trust_mark_as_dict,
             self.issuer.jwks[0],
             alg=self.issuer.default_signature_alg,
+            typ="trust-mark+jwt"
         )
 
     @property
     def trust_mark(self):
-        return {"id": self.profile.profile_id, "trust_mark": self.trust_mark_as_jws}
+        return {
+            "id": self.profile.profile_id, 
+            "trust_mark": self.trust_mark_as_jws
+        }
 
     def __str__(self):
         return f"{self.profile} [{self.descendant}]"

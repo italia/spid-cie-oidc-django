@@ -29,7 +29,7 @@ def fetch(request):
             return JsonResponse(conf.entity_configuration_as_dict, safe=False)
         else:
             return HttpResponse(
-                conf.entity_configuration_as_jws, content_type="application/jose"
+                conf.entity_configuration_as_jws, content_type="application/entity-statement+jwt"
             )
 
     sub = FederationDescendant.objects.filter(
@@ -45,7 +45,7 @@ def fetch(request):
     else:
         return HttpResponse(
             sub.entity_statement_as_jws(iss.sub, request.GET.get("aud")),
-            content_type="application/jose",
+            content_type="application/entity-statement+jwt",
         )
 
 
