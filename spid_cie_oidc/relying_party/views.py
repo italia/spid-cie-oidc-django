@@ -166,6 +166,13 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
                 "error_description": _(str(exc.args)),
             }
             return render(request, self.error_template, context)
+        
+        except Exception as exc:
+            context = {
+                "error": "request rejected",
+                "error_description": _(str(exc.args)),
+            }
+            return render(request, self.error_template, context)
 
         provider_metadata = tc.metadata
         if not provider_metadata:
