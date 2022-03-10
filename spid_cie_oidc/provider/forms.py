@@ -45,8 +45,8 @@ class TestingPageForm(forms.Form):
     )
 
 
-    CHOICES=[('test1','test 1'),
-         ('test2','test 2')]
+    CHOICES=[('send_correct_request','send a correct request',),
+         ('wrong_jwk','send a request with wrong signature',)]
 
     test = forms.ChoiceField(
         choices=CHOICES,
