@@ -557,19 +557,11 @@ class TokenEndpoint(OpBase, View):
             }
         )
 
-    def check_number_refresh(self, session):
+    def is_token_renewable(self, session) -> bool:
         issuedToken = IssuedToken.objects.filter(
-                    session = session
+            session = session
         )
-        if (len(issuedToken)-1) >= getattr(settings, "OIDCFED_PROVIDER_MAX_REFRESH", 1):
-            return JsonResponse(
-                {
-                    "error": "Invalid request",
-                    "error_description": "Refresh Token can no longer be updated",
-
-                },
-                status = 400
-            )
+        return (issuedToken.count() - 1) < getattr(settings, "OIDCFED_PROVIDER_MAX_REFRESH", 1)
 
     def grant_refresh_token(self, request, *args, **kwargs):
         """
@@ -598,9 +590,15 @@ class TokenEndpoint(OpBase, View):
             )
 
         session = issuedToken.session
-        check = self.check_number_refresh(session)
-        if check:
-            return check
+        if not self.is_token_renewable(session):
+            return JsonResponse(
+                    {
+                        "error": "Invalid request",
+                        "error_description": "Refresh Token can no longer be updated",
+
+                    },
+                    status = 400
+            )
         _sub = self.authz.pairwised_sub()
         refresh_token = {
             "iss": self.issuer.sub,
