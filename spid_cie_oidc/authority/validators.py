@@ -13,7 +13,7 @@ from spid_cie_oidc.entity.exceptions import MissingAuthorityHintsClaim, NotDesce
 
 logger = logging.getLogger(__name__)
 HTTPC_PARAMS = getattr(settings, "HTTPC_PARAMS", entity_settings.HTTPC_PARAMS)
-try:
+try:  # pragma: no cover
     OIDCFED_TRUST_ANCHORS = getattr(settings, "OIDCFED_TRUST_ANCHORS")
 except AttributeError:
     OIDCFED_TRUST_ANCHORS = []
