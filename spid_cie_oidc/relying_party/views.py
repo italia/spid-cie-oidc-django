@@ -163,6 +163,13 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
         except InvalidTrustchain as exc:
             context = {
                 "error": "request rejected",
+                "error_description": str(exc.args),
+            }
+            return render(request, self.error_template, context)
+        
+        except Exception as exc:
+            context = {
+                "error": "request rejected",
                 "error_description": _(str(exc.args)),
             }
             return render(request, self.error_template, context)
@@ -205,10 +212,10 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             jwks_dict = self.get_jwks_from_jwks_uri(provider_metadata["jwks_uri"])
         if not jwks_dict:
             _msg = f"Failed to get jwks from {tc.sub}"
-            logger.error(f"{_msg}:")
+            logger.error(_msg)
             context = {
                 "error": "request rejected",
-                "error_description": _(f"{_msg}:"),
+                "error_description": _msg
             }
             return render(request, self.error_template, context)
 

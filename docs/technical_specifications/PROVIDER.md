@@ -34,6 +34,9 @@ OIDCFED_DEFAULT_PROVIDER_PROFILE = getattr(
 )
 ````
 
+`OIDCFED_PROVIDER_MAX_REFRESH = 1` How many times a token can be refreshed.
+
+
 ## Endpoints
 
 the webpath where the provider serve its features are the followins.
