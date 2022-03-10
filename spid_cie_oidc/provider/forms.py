@@ -1,7 +1,3 @@
-from cProfile import label
-from tkinter import Widget
-from turtle import width
-from attr import attributes
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
