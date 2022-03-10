@@ -37,6 +37,58 @@ rp_conf = {
     "is_active": True,
 }
 
+RP_CONF = {
+  "iss": "http://127.0.0.1:8000/oidc/rp/",
+  "sub": "http://127.0.0.1:8000/oidc/rp/",
+  "jwks": {
+    "keys": [RP_METADATA_JWK1_pub]
+  },
+  "metadata": {
+    "openid_relying_party": {
+      "application_type": "web",
+      "client_id": "http://127.0.0.1:8000/oidc/rp/",
+      "client_registration_types": [
+        "automatic"
+      ],
+      "jwks": {
+        "keys": [
+          {
+            "kty": "RSA",
+            "use": "sig",
+            "n": "5s4qi1Ta-sEuKb5rJ8TzHmyGKaSu89pIXIi6w4Ekx6GL56mJDNE_MWJHsFjWXajfMdMQmZrSXAvLtXxmbhUui9Mq_IormhmEyyEJS0SyE9UKTxWzi0yd_n_C7OjFBhM-0ZyUlgl81E_sr-35P1A6b5WSYwMvRSR-P9yx_NI-XBQ48G_zdmk3CbuuzZsXZqqgj5U7OGWH-4Huosn9nH3FVkwX0OlWkgWM-J9DEWzGBjl9hfbbrMtM_obljHL2NfT6RJYER2IpdI8RCyQS3sMPt6ZHDskmuNlyMDNATCChXQJLnltwEjxcgvzjw_G9J25DwfdfVEhDF_0kCp44UMmS3Q",
+            "e": "AQAB",
+            "kid": "2HnoFS3YnC9tjiCaivhWLVUJ3AxwGGz_98uRFaqMEEs"
+          }
+        ]
+      },
+      "client_name": "Name of this service called https://rp.example.it/",
+      "contacts": [
+        "ops@rp.example.it"
+      ],
+      "grant_types": [
+        "refresh_token",
+        "authorization_code"
+      ],
+      "redirect_uris": [
+        "http://127.0.0.1:8000/oidc/rp/callback"
+      ],
+      "response_types": [
+        "code"
+      ],
+      "subject_type": "pairwise"
+    }
+  },
+  "trust_marks": [
+    {
+      "id": "https://www.spid.gov.it/openid-federation/agreement/sp-public/",
+      "trust_mark": "eyJhbGciOiJSUzI1NiIsImtpZCI6IkZpZll4MDNibm9zRDhtNmdZUUlmTkhOUDljTV9TYW05VGM1bkxsb0lJcmMifQ.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvIiwic3ViIjoiaHR0cDovLzEyNy4wLjAuMTo4MDAwL29pZGMvcnAvIiwiaWF0IjoxNjQ1NjEyNDAxLCJpZCI6Imh0dHBzOi8vd3d3LnNwaWQuZ292Lml0L2NlcnRpZmljYXRpb24vcnAiLCJtYXJrIjoiaHR0cHM6Ly93d3cuYWdpZC5nb3YuaXQvdGhlbWVzL2N1c3RvbS9hZ2lkL2xvZ28uc3ZnIiwicmVmIjoiaHR0cHM6Ly9kb2NzLml0YWxpYS5pdC9pdGFsaWEvc3BpZC9zcGlkLXJlZ29sZS10ZWNuaWNoZS1vaWRjL2l0L3N0YWJpbGUvaW5kZXguaHRtbCJ9.mSPNR0AOPBn3UNJAIbrWUMQ8vGTetQajpa3i59JDKDXYWqo2TUGh4AQBghCiG3qqV9cl-hleLtuwoeZ1InKHeslTLftVdcR3meeMLs3mLobHYr26Mi7pC7-jx1ZFVyk4GXl7mn9WVSQGEUOiuhL01tdlUfxf0TJSFSOMEZGpCA3hXroLOnEl3FjkAw7sPvjfImsbadbHVusb72HTTs1n5Xo7z3As3fDWHcxD-fvvq0beu9cx-L2sT4YaNC-ELd1M3m5r0NIjjEUAt4Gnot-l5Z3-C_bA41uvh2hX34U_fGZ6jpmuluJo1Lqi26N8LTB-Rbu0UMaZnkRg9E72_YRZig"
+    }
+  ],
+  "authority_hints": [
+    "http://127.0.0.1:8000/"
+  ]
+}
+
 intermediary_conf = {
     "sub": "http://intermediary-test",
     "metadata": {
