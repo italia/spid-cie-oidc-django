@@ -264,6 +264,7 @@ class FederationEntityConfiguration(TimeStampedModel):
             self.entity_configuration_as_dict,
             self.jwks[0],
             alg=self.default_signature_alg,
+            typ="entity-statement+jwt",
             **kwargs,
         )
 
