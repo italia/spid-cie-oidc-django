@@ -53,10 +53,14 @@ class FetchProviderTest(TestCase):
             *args,
             **kwargs,
         )
-    
-    @patch("spid_cie_oidc.entity.trust_chain_operations.get_or_create_trust_chain", return_value = create_tc())
-    @override_settings(OIDCFED_IDENTITY_PROVIDERS = {"http://127.0.0.1:8000/oidc/op/" :"http://testserver/"})
-    def test_fetch_provider(self, mocked):
-        out = self.exec('fetch_openid_providers', '--start')
 
+    @override_settings(OIDCFED_IDENTITY_PROVIDERS = {"http://127.0.0.1:8000/oidc/op/" :"http://testserver/"})
+    def test_fetch_provider(self):
+        self.patcher = patch(
+            "spid_cie_oidc.entity.trust_chain_operations.get_or_create_trust_chain", 
+            return_value = create_tc()
+        )
+        self.patcher.start()
+        out = self.exec('fetch_openid_providers', '--start')
+        self.patcher.stop()
 
