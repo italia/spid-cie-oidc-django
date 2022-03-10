@@ -37,6 +37,16 @@ rp_conf = {
     "is_active": True,
 }
 
+RP_CONF_AS_JSON = {
+  "iss": rp_conf["sub"],
+  "sub": rp_conf["sub"],
+  "jwks": {
+    "keys": [RP_METADATA_JWK1_pub]
+  },
+  "metadata": rp_conf["metadata"],
+  "authority_hints":rp_conf["authority_hints"]
+}
+
 intermediary_conf = {
     "sub": "http://intermediary-test",
     "metadata": {
