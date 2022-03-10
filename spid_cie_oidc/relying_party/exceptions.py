@@ -1,2 +1,0 @@
-class MisconfiguredClientIssuer(Exception):
-    pass

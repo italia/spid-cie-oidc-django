@@ -29,7 +29,7 @@ def fetch(request):
             return JsonResponse(conf.entity_configuration_as_dict, safe=False)
         else:
             return HttpResponse(
-                conf.entity_configuration_as_jws, content_type="application/jose"
+                conf.entity_configuration_as_jws, content_type="application/entity-statement+jwt"
             )
 
     sub = FederationDescendant.objects.filter(
@@ -45,7 +45,7 @@ def fetch(request):
     else:
         return HttpResponse(
             sub.entity_statement_as_jws(iss.sub, request.GET.get("aud")),
-            content_type="application/jose",
+            content_type="application/entity-statement+jwt",
         )
 
 
@@ -85,7 +85,7 @@ def resolve_entity_statement(request, format: str = "jose"):
         iss = get_first_self_trust_anchor()
 
     _q = dict(
-        sub=request.GET["sub"], 
+        sub=request.GET["sub"],
         trust_anchor__sub=request.GET["anchor"],
         is_active=True
     )
@@ -104,7 +104,7 @@ def resolve_entity_statement(request, format: str = "jose"):
             raise Http404("entity metadata type not found.")
         else:
             entity = typed_entity
-    
+
     try:
         tc_data = dict(
             httpc_params=HTTPC_PARAMS,
