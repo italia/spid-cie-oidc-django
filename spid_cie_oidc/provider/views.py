@@ -3,6 +3,7 @@ import hashlib
 import logging
 import urllib.parse
 import uuid
+import json
 
 from cryptojwt.jws.utils import left_hash
 from django.conf import settings
@@ -208,6 +209,38 @@ class OpBase:
                 }
             )
 
+    def get_jwt_common_data(self):
+            return {
+                "jti": str(uuid.uuid4()),
+                "exp": exp_from_now(),
+                "iat": iat_now()
+        }
+
+    def get_access_token(self):
+        
+        access_token = {
+            "iss": self.issuer.sub,
+            "sub": self.authz.pairwised_sub(),
+            "aud": [self.authz.client_id],
+            "client_id": self.authz.client_id,
+            "scope": self.authz.authz_request["scope"],
+        }
+        access_token.update(self.commons)
+        
+        return access_token
+
+    def get_id_token(self, jwt_at):
+
+        id_token = {
+            "sub": self.authz.pairwised_sub(),
+            "nonce": self.authz.authz_request["nonce"],
+            "at_hash": left_hash(jwt_at, "HS256"),
+            "c_hash": left_hash(self.authz.auth_code, "HS256"),
+            "aud": [self.authz.client_id],
+            "iss": self.issuer.sub,
+        }
+        id_token.update(self.commons)
+        return id_token
 
 class AuthzRequestView(OpBase, View):
     """
@@ -322,7 +355,6 @@ class AuthzRequestView(OpBase, View):
             return render(request, self.template, {"form": form})
 
         authz_request = form.cleaned_data.get("authz_request_object")
-
         try:
             self.validate_authz_request_object(authz_request)
         except Exception as e:
@@ -359,7 +391,6 @@ class AuthzRequestView(OpBase, View):
                 )
             ).encode()
         ).hexdigest()
-
         # put the auth_code in the user web session
         request.session["oidc"] = {"auth_code": auth_code}
 
@@ -373,9 +404,42 @@ class AuthzRequestView(OpBase, View):
             auth_code=auth_code,
         )
         session.set_sid(request)
+        url = reverse("oidc_provider_consent")
+        if user.is_staff:
+            url = reverse("oidc_provider_staff_testing")
+        return HttpResponseRedirect(url)
 
-        consent_url = reverse("oidc_provider_consent")
-        return HttpResponseRedirect(consent_url)
+
+class StaffTestingPageView(OpBase, View):
+
+    template = "op_user_staff_test.html"
+
+    def get_testing_form(self):
+        return TestingPageForm
+
+    def get(self, request):
+        try:
+            session = self.check_session(request)
+        except Exception:
+            logger.warning("Invalid session")
+            return HttpResponseForbidden()
+
+        user = session.user
+        attributes = user.attributes
+        content = {
+            "form": self.get_testing_form()(),
+            "attributes": json.dumps(attributes, indent=4)
+        }
+        return render(request, self.template, content)
+
+    def post(self, request):
+
+        try:
+            session = self.check_session(request)
+        except Exception:
+            logger.warning("Invalid session")
+            return HttpResponseForbidden()
+        
 
 
 class ConsentPageView(OpBase, View):
@@ -452,13 +516,7 @@ class ConsentPageView(OpBase, View):
 
 @method_decorator(csrf_exempt, name="dispatch")
 class TokenEndpoint(OpBase, View):
-    def get_jwt_common_data(self):
-        return {
-            "jti": str(uuid.uuid4()),
-            "exp": exp_from_now(),
-            "iat": iat_now()
-        }
-
+    
     def get(self, request, *args, **kwargs):
         return HttpResponseBadRequest()
 
@@ -495,27 +553,12 @@ class TokenEndpoint(OpBase, View):
         if code_challenge != self.authz.authz_request["code_challenge"]:
             return HttpResponseForbidden()
         #
-
         _sub = self.authz.pairwised_sub()
-        access_token = {
-            "iss": self.issuer.sub,
-            "sub": _sub,
-            "aud": [self.authz.client_id],
-            "client_id": self.authz.client_id,
-            "scope": self.authz.authz_request["scope"],
-        }
-        access_token.update(self.commons)
+
+        access_token = self.get_access_token()
         jwt_at = create_jws(access_token, self.issuer.jwks[0], typ="at+jwt")
 
-        id_token = {
-            "sub": _sub,
-            "nonce": self.authz.authz_request["nonce"],
-            "at_hash": left_hash(jwt_at, "HS256"),
-            "c_hash": left_hash(self.authz.auth_code, "HS256"),
-            "aud": [self.authz.client_id],
-            "iss": self.issuer.sub,
-        }
-        id_token.update(self.commons)
+        id_token = self.get_id_token(jwt_at)
         jwt_id = create_jws(id_token, self.issuer.jwks[0])
 
         iss_token_data = dict(
@@ -834,7 +877,6 @@ class IntrospectionEndpoint(OpBase, View):
         }
         return JsonResponse(response)
 
-        pass
 
 
 def oidc_provider_not_consent(request):
@@ -848,3 +890,10 @@ def oidc_provider_not_consent(request):
     )
     url = f'{urlrp}?{urllib.parse.urlencode(kwargs)}'
     return HttpResponseRedirect(url)
+
+
+
+
+
+
+        

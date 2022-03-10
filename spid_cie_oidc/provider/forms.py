@@ -31,3 +31,22 @@ class AuthLoginForm(forms.Form):
 
 class ConsentPageForm(forms.Form):
     agree = forms.BooleanField(initial=True, widget=forms.HiddenInput())
+
+
+class TestingPageForm(forms.Form):
+
+    attributes = forms.JSONField(
+        initial=dict,
+        label="attributes"
+    )
+
+
+    CHOICES=[('send_correct_request','send a correct request',),
+         ('wrong_jwk','send a request with wrong signature',)]
+
+    test = forms.ChoiceField(
+        choices=CHOICES,
+        widget=forms.RadioSelect,
+        label="select",
+        error_messages={"required": _("Select a item")},
+    )

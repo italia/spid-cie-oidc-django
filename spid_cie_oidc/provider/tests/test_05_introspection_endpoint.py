@@ -1,5 +1,4 @@
 from copy import deepcopy
-from shelve import Shelf
 
 from django.test import Client, TestCase
 from django.urls import reverse
