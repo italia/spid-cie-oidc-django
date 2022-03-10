@@ -6,7 +6,7 @@ import uuid
 
 from cryptojwt.jws.utils import left_hash
 from django.conf import settings
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.forms.utils import ErrorList
 from django.http import (
     HttpResponse,
@@ -838,6 +838,7 @@ class IntrospectionEndpoint(OpBase, View):
 
 
 def oidc_provider_not_consent(request):
+    logout(request)
     urlrp = reverse("spid_cie_rp_callback")
     kwargs = dict(
         error = "invalid_request",
