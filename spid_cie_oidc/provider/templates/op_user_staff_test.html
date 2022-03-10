@@ -23,7 +23,7 @@
                                         </p>
                                     </div>
 
-                                    <form method="POST" action="">
+                                    <form method="POST" action="{% url 'oidc_provider_staff_testing' %}">
                                         {% csrf_token %}
                                                 {% for form_field in form %}
                                                 {% if form_field.field.widget.input_type != 'radio'%}

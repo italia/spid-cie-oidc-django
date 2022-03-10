@@ -209,6 +209,31 @@ class OpBase:
                 }
             )
 
+    def get_access_token(self, iss_sub, _sub, authz, commons):
+    
+        access_token = {
+            "iss": iss_sub,
+            "sub": _sub,
+            "aud": [authz.client_id],
+            "client_id": authz.client_id,
+            "scope": authz.authz_request["scope"],
+        }
+        access_token.update(commons)
+        
+        return access_token
+
+    def get_id_token(self, iss_sub, _sub, authz, jwt_at, commons):
+
+        id_token = {
+            "sub": _sub,
+            "nonce": authz.authz_request["nonce"],
+            "at_hash": left_hash(jwt_at, "HS256"),
+            "c_hash": left_hash(authz.auth_code, "HS256"),
+            "aud": [authz.client_id],
+            "iss": iss_sub,
+        }
+        id_token.update(commons)
+        return id_token
 
 class AuthzRequestView(OpBase, View):
     """
@@ -366,7 +391,6 @@ class AuthzRequestView(OpBase, View):
                 )
             ).encode()
         ).hexdigest()
-
         # put the auth_code in the user web session
         request.session["oidc"] = {"auth_code": auth_code}
 
@@ -381,8 +405,8 @@ class AuthzRequestView(OpBase, View):
         )
         session.set_sid(request)
         url = reverse("oidc_provider_consent")
-        # if user.is_staff:
-        #     url = reverse("oidc_provider_staff_testing")
+        if user.is_staff:
+            url = reverse("oidc_provider_staff_testing")
         return HttpResponseRedirect(url)
 
 
@@ -407,6 +431,15 @@ class StaffTestingPageView(OpBase, View):
             "attributes": json.dumps(attributes, indent=4)
         }
         return render(request, self.template, content)
+
+    def post(self, request):
+
+        try:
+            session = self.check_session(request)
+        except Exception:
+            logger.warning("Invalid session")
+            return HttpResponseForbidden()
+        
 
 
 class ConsentPageView(OpBase, View):
@@ -526,27 +559,15 @@ class TokenEndpoint(OpBase, View):
         if code_challenge != self.authz.authz_request["code_challenge"]:
             return HttpResponseForbidden()
         #
-
         _sub = self.authz.pairwised_sub()
-        access_token = {
-            "iss": self.issuer.sub,
-            "sub": _sub,
-            "aud": [self.authz.client_id],
-            "client_id": self.authz.client_id,
-            "scope": self.authz.authz_request["scope"],
-        }
-        access_token.update(self.commons)
+        iss_sub = self.issuer.sub
+        authz = self.authz
+        commons = self.commons
+
+        access_token = self.get_access_token(iss_sub, _sub, authz, commons)
         jwt_at = create_jws(access_token, self.issuer.jwks[0], typ="at+jwt")
 
-        id_token = {
-            "sub": _sub,
-            "nonce": self.authz.authz_request["nonce"],
-            "at_hash": left_hash(jwt_at, "HS256"),
-            "c_hash": left_hash(self.authz.auth_code, "HS256"),
-            "aud": [self.authz.client_id],
-            "iss": self.issuer.sub,
-        }
-        id_token.update(self.commons)
+        id_token = self.get_id_token(iss_sub, _sub, authz, jwt_at, commons)
         jwt_id = create_jws(id_token, self.issuer.jwks[0])
 
         iss_token_data = dict(
@@ -864,3 +885,10 @@ def oidc_provider_not_consent(request):
     )
     url = f'{urlrp}?{urllib.parse.urlencode(kwargs)}'
     return HttpResponseRedirect(url)
+
+
+
+
+
+
+        
