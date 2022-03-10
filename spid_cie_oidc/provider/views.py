@@ -209,30 +209,37 @@ class OpBase:
                 }
             )
 
-    def get_access_token(self, iss_sub, _sub, authz, commons):
-    
-        access_token = {
-            "iss": iss_sub,
-            "sub": _sub,
-            "aud": [authz.client_id],
-            "client_id": authz.client_id,
-            "scope": authz.authz_request["scope"],
+    def get_jwt_common_data(self):
+            return {
+                "jti": str(uuid.uuid4()),
+                "exp": exp_from_now(),
+                "iat": iat_now()
         }
-        access_token.update(commons)
+
+    def get_access_token(self):
+        
+        access_token = {
+            "iss": self.issuer.sub,
+            "sub": self.authz.pairwised_sub(),
+            "aud": [self.authz.client_id],
+            "client_id": self.authz.client_id,
+            "scope": self.authz.authz_request["scope"],
+        }
+        access_token.update(self.commons)
         
         return access_token
 
-    def get_id_token(self, iss_sub, _sub, authz, jwt_at, commons):
+    def get_id_token(self, jwt_at):
 
         id_token = {
-            "sub": _sub,
-            "nonce": authz.authz_request["nonce"],
+            "sub": self.authz.pairwised_sub(),
+            "nonce": self.authz.authz_request["nonce"],
             "at_hash": left_hash(jwt_at, "HS256"),
-            "c_hash": left_hash(authz.auth_code, "HS256"),
-            "aud": [authz.client_id],
-            "iss": iss_sub,
+            "c_hash": left_hash(self.authz.auth_code, "HS256"),
+            "aud": [self.authz.client_id],
+            "iss": self.issuer.sub,
         }
-        id_token.update(commons)
+        id_token.update(self.commons)
         return id_token
 
 class AuthzRequestView(OpBase, View):
@@ -516,13 +523,7 @@ class ConsentPageView(OpBase, View):
 
 @method_decorator(csrf_exempt, name="dispatch")
 class TokenEndpoint(OpBase, View):
-    def get_jwt_common_data(self):
-        return {
-            "jti": str(uuid.uuid4()),
-            "exp": exp_from_now(),
-            "iat": iat_now()
-        }
-
+    
     def get(self, request, *args, **kwargs):
         return HttpResponseBadRequest()
 
@@ -560,14 +561,11 @@ class TokenEndpoint(OpBase, View):
             return HttpResponseForbidden()
         #
         _sub = self.authz.pairwised_sub()
-        iss_sub = self.issuer.sub
-        authz = self.authz
-        commons = self.commons
 
-        access_token = self.get_access_token(iss_sub, _sub, authz, commons)
+        access_token = self.get_access_token()
         jwt_at = create_jws(access_token, self.issuer.jwks[0], typ="at+jwt")
 
-        id_token = self.get_id_token(iss_sub, _sub, authz, jwt_at, commons)
+        id_token = self.get_id_token(jwt_at)
         jwt_id = create_jws(id_token, self.issuer.jwks[0])
 
         iss_token_data = dict(
