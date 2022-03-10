@@ -83,3 +83,5 @@ OIDCFED_PROVIDER_ATTRIBUTES_MAP = {
     # "e_delivery_service":  ,
     "physical_phone_number": ("mobile_phone", "phone", "telephone"),
 }
+
+OIDCFED_PROVIDER_MAX_REFRESH = 1

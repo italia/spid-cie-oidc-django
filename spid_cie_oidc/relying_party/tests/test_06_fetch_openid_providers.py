@@ -43,10 +43,10 @@ class FetchProviderTest(TestCase):
         )
         return out.getvalue()
     
-    @patch("spid_cie_oidc.entity.statements.get_entity_configurations", return_value = [JWS])
-    @override_settings(OIDCFED_IDENTITY_PROVIDERS = {"http://127.0.0.1:8000/oidc/op/" :"http://testserver/"})
-    def test_fetch_provider(self, mocked):
-        out = self.call_command('fetch_openid_providers', '--start')
-        self.assertEqual(out.splitlines()[0], "Found")
+    # @patch("spid_cie_oidc.entity.statements.get_entity_configurations", return_value = [JWS])
+    # @override_settings(OIDCFED_IDENTITY_PROVIDERS = {"http://127.0.0.1:8000/oidc/op/" :"http://testserver/"})
+    # def test_fetch_provider(self, mocked):
+    #     out = self.call_command('fetch_openid_providers', '--start')
+    #     self.assertEqual(out.splitlines()[0], "Found")
 
 
