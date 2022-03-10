@@ -23,11 +23,11 @@ It also can takes `filter_by_allowed_trust_marks` as a list of allowed trust mar
 
 Once we have an EntityConfiguration object we can use its methods to validate it in many several ways:
 
-- validate_by_itself, validate the self-signed JWT
-- validate_by_allowed_trust_marks, if passed in its object constructor it will look for at least one allowed trust mark.
+- __validate_by_itself__, validate the self-signed JWT
+- __validate_by_allowed_trust_marks__, if passed in its object constructor it will look for at least one allowed trust mark.
 It will fetches the trust anchor entity configuation and trust mark issuers entity configurations to achieve this.
-- validate_by_superior_statement, fetches the entity statement of its superiors and validate itself.
-- validate_descendant_statement, if a entity statement of a descendant of itself is submitted, it also validate it
+- __validate_by_superior_statement__, fetches the entity statement of its superiors and validate itself.
+- __validate_descendant_statement__, if a entity statement of a descendant of itself is submitted, it also validate it
 
 ## TrustChain
 
