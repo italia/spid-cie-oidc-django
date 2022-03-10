@@ -20,7 +20,7 @@ INSTALL_REQUIRES = [
     "pydantic[email]"
 ]
 
-with open(os.path.join(os.path.dirname(__file__), 'README.md')) as readme:
+with open(os.path.join(os.path.dirname(__file__), 'README.md'), encoding='utf-8') as readme:
     README = readme.read()
 
 with open(f'{SRC_FOLDER}{os.path.sep}{PKG_NAME}/__init__.py', 'r') as fd:

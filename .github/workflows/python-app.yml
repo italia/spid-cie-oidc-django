@@ -5,9 +5,9 @@ name: spid_cie_oidc
 
 on:
   push:
-    branches: [ main, dev ]
+    branches: '*'
   pull_request:
-    branches: [ main, dev ]
+    branches: '*'
 
 jobs:
   build:
@@ -20,6 +20,7 @@ jobs:
         python-version:
           - '3.8'
           - '3.9'
+          - '3.10'
 
     steps:
     - uses: actions/checkout@v2
@@ -46,12 +47,18 @@ jobs:
         flake8 ./spid_cie_oidc  --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 ./spid_cie_oidc --count --exit-zero --statistics --max-line-length 120
-    - name: spid_cie_oidc onboarding and entity test
+    - name: spid_cie_oidc unit tests
       run: |
         cp examples/federation_authority/federation_authority/settingslocal.py.example examples/federation_authority/federation_authority/settingslocal.py
         coverage erase
         coverage run examples/federation_authority/manage.py test spid_cie_oidc
         coverage report -m --skip-covered
+    - name: spid_cie_oidc example data imports
+      run: |
+        cp examples/federation_authority/federation_authority/settingslocal.py.example examples/federation_authority/federation_authority/settingslocal.py
+        cd examples/federation_authority/
+        ./manage.py migrate
+        ./manage.py loaddata dumps/example.json
     #- name: Upload coverage to Codecov
       #uses: codecov/codecov-action@v1
       #with:

@@ -124,11 +124,9 @@ def combine_claim_policy(superior, child):
     :param superior: Superior policy
     :param child: Intermediates policy
     """
-
     # weed out everything I don't recognize
     superior_set = set(superior).intersection(POLICY_FUNCTIONS)
     child_set = set(child).intersection(POLICY_FUNCTIONS)
-
     if "value" in superior_set:  # An exact value can not be restricted.
         if child_set:
             if "essential" in child_set:

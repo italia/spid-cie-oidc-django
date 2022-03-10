@@ -65,7 +65,6 @@ class RefreshTokenTest(TestCase):
             "client_id": RP_CLIENT_ID,
             "scope": "openid",
         }
-        User.objects.create()
         session = OidcSession.objects.create(
             user=User.objects.create(username = "username"),
             user_uid="",
