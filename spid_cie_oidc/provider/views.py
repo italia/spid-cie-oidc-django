@@ -500,7 +500,9 @@ class ConsentPageView(OpBase, View):
             return HttpResponseForbidden()
 
         tc = TrustChain.objects.filter(
-            sub=session.client_id, type="openid_relying_party"
+            sub=session.client_id, 
+            type="openid_relying_party",
+            is_active = True
         ).first()
 
         # if this auth code has already been used ... forbidden
