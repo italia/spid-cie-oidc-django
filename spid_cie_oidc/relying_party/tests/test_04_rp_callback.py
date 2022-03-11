@@ -57,3 +57,13 @@ class RpCallBack(TestCase):
         self.assertTrue(
             user.attributes['fiscal_number'] == "sdfsfs908df09s8df90s8fd0"
         )
+
+    @override_settings(HTTP_CLIENT_SYNC=True)
+    @patch("spid_cie_oidc.relying_party.views.process_user_attributes", return_value=None)
+    @patch("requests.post", return_value=MockedTokenEndPointResponse())
+    @patch("requests.get", return_value=MockedUserInfoResponse())
+    def test_rp_callback_no_rp_attr_map(self, mocked, mocked_2, mocked_3):
+        client = Client()
+        url = reverse("spid_cie_rp_callback")
+        res = client.get(url, {"state": STATE, "code": CODE})
+        self.assertTrue(res.status_code == 403)
