@@ -13,7 +13,12 @@ RP_METADATA = {
     "client_id": "https://rp.example.it/spid",
     "client_name": "Nome RP",
     "contacts": ["ops@rp.example.it"],
-    "subject_type": "pairwise",
+    "subject_type": "pairwise", 
+    "logo_uri": [
+          "https://rp.example.it/logo_small.jpg",
+          "https://rp.example.it/logo_big.jpg"
+    ],
+    "scopes" : ["openid", "offline_access", "profile"],
 }
 
 RP_METADATA_CIE = deepcopy(RP_METADATA)
