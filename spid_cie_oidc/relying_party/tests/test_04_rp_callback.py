@@ -67,3 +67,33 @@ class RpCallBack(TestCase):
         url = reverse("spid_cie_rp_callback")
         res = client.get(url, {"state": STATE, "code": CODE})
         self.assertTrue(res.status_code == 403)
+
+    @override_settings(HTTP_CLIENT_SYNC=True)
+    @patch("spid_cie_oidc.relying_party.views.process_user_attributes", return_value=None)
+    @patch("requests.post", return_value=MockedTokenEndPointResponse())
+    @patch("requests.get", return_value=MockedUserInfoResponse())
+    def test_rp_callback_incorret_request(self, mocked, mocked_2, mocked_3):
+        client = Client()
+        url = reverse("spid_cie_rp_callback")
+        res = client.get(url, {})
+        self.assertTrue("error" in res.json())
+
+    @override_settings(HTTP_CLIENT_SYNC=True)
+    @patch("spid_cie_oidc.relying_party.views.process_user_attributes", return_value=None)
+    @patch("requests.post", return_value=MockedTokenEndPointResponse())
+    @patch("spid_cie_oidc.relying_party.views.SpidCieOidcRpCallbackView.get_userinfo", return_value=None)
+    def test_rp_callback_no_userinfo(self, mocked, mocked_2, mocked_3):
+        client = Client()
+        url = reverse("spid_cie_rp_callback")
+        res = client.get(url, {"state": STATE, "code": CODE})
+        self.assertTrue(res.status_code == 400)
+        
+    @override_settings(HTTP_CLIENT_SYNC=True)
+    @patch("spid_cie_oidc.relying_party.views.process_user_attributes", return_value=None)
+    @patch("spid_cie_oidc.relying_party.views.SpidCieOidcRpCallbackView.access_token_request", return_value=None)
+    def test_rp_callback_no_token_response(self, mocked, mocked_2):
+        client = Client()
+        url = reverse("spid_cie_rp_callback")
+        res = client.get(url, {"state": STATE, "code": CODE})
+        self.assertTrue(res.status_code == 400)
+        self.assertTrue("invalid token response" in res.content.decode())
