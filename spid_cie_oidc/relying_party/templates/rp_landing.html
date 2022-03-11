@@ -3,94 +3,80 @@
 {% load i18n %}
 {% load static %}
 
-{% block container %}
-<div>
-    <div class="container pt-2 p-3">
+{% block centered_container %}
 
-        <div class="row d-lg-flex">
-            <div class="col-12">
-                <div class="card-wrapper card-space">
-                    <div class="card card-bg no-after">
-                        <div class="card-body">
-                            <div class="row h-100">
-                                <div class="col-12 pl-lg-4">
+<div class="col-12 pl-lg-4">
 
-                                    <div class="row p-3">
-                                    <h3 class="text-left">
-                                        {% trans "Welcome" %}
-                                    </h3>
+    <div class="row p-3">
+    <h3 class="text-left">
+        {% trans "Welcome" %}
+    </h3>
 
-                                    <p class="card-title">
-                                        
-                                        {% blocktrans %}
-                                        SPID is the access system that allows you to use online services with a unique digital identity. 
-                                        If you already have a digital identity, login with your Identity Provider. 
-                                        If you don’t have a digital identity yet, choose an Identity Provider where obtain your SPID Digital Identity.
-                                        {% endblocktrans %}
+    <p class="card-title">
+        
+        {% blocktrans %}
+        SPID is the access system that allows you to use online services with a unique digital identity. 
+        If you already have a digital identity, login with your Identity Provider. 
+        If you don’t have a digital identity yet, choose an Identity Provider where obtain your SPID Digital Identity.
+        {% endblocktrans %}
 
-                                    </p>
+    </p>
 
-                                    <p class="card-title"></p>
+    <p class="card-title"></p>
 
-                                        {% blocktrans %}
-                                        If you have the new Electronic Identity Card (CIE) you can use it to access the services
-                                        online Public Administration. You need the PIN and PUK codes:
-                                        the first part of the two codes is in the receipt of the CIE request, the second part is delivered
-                                        together with the CIE. Visit the official site of CIE id to get the software, documentation and tutorial.
-                                        {% endblocktrans %}
+        {% blocktrans %}
+        If you have the new Electronic Identity Card (CIE) you can use it to access the services
+        online Public Administration. You need the PIN and PUK codes:
+        the first part of the two codes is in the receipt of the CIE request, the second part is delivered
+        together with the CIE. Visit the official site of CIE id to get the software, documentation and tutorial.
+        {% endblocktrans %}
 
-                                    </p>
-                                    </div>
+    </p>
+    </div>
 
-                                    <div class="row mt-3">
-                                        <div class="col">
-                                            <span
-                                                class="badge badge-grey-unical square-corners mb-3 mr-2 ml-0 pr-10 p-2 mw-100">
-                                                <a href="#" class="italia-it-button italia-it-button-size-m button-spid"
-                                                    spid-idp-button="#spid-idp-button-medium-get" aria-expanded="false">
-                                                    <span class="italia-it-button-icon"><img
-                                                            src="{% static 'svg/spid-ico-circle-bb.svg' %}"
-                                                            alt=""></span>
-                                                    <span class="italia-it-button-text">{% trans "Entra con SPID" %}</span>
-                                                </a>
-                                                <div id="spid-idp-button-medium-get"
-                                                    class="spid-idp-button spid-idp-button-tip spid-idp-button-relative"
-                                                    style="display: none; left: 56.5px; top: 46.05px;">
-                                                    <ul id="spid-idp-list-medium-root-get" class="spid-idp-button-menu"
-                                                        aria-labelledby="spid-idp">
-                                                        {% for provider in providers %}
-                                                            <li class="spid-idp-button-link">
-                                                                <a href="{% url 'spid_cie_rp_begin' %}?provider={{provider.sub}}">
-                                                                    <span class="spid-sr-only">{{ provider.metadata.organization_name }}</span>
-                                                                    <img src="{% static 'images/logo-it.svg' %}" alt="{{ provider.metadata.organization_name }}">
-                                                                </a>
-                                                            </li>
-                                                        {% endfor %}
-                                                    </ul>
-                                                </div>
-
-                                            </span>
-                                            <span
-                                                class="badge badge-grey-unical square-corners mb-3 mr-2 ml-0 pr-10 p-2 mw-100"
-                                                style="font-size: 100%">
-                                                <a href="#" class="italia-it-button italia-it-button-size-m button-cie">
-                                                    <span class="italia-it-button-icon"><img
-                                                            src="{% static 'svg/cie-ico-circle-bb.svg' %}"
-                                                            alt=""></span>
-                                                    <span class="italia-it-button-text">{% trans "Entra con CIE" %}</span>
-                                                </a>
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                </div>
-                        </div>
-                    </div>
+    <div class="row mt-3">
+        <div class="col">
+            <span
+                class="badge badge-grey-unical square-corners mb-3 mr-2 ml-0 pr-10 p-2 mw-100">
+                <a href="#" class="italia-it-button italia-it-button-size-m button-spid"
+                    spid-idp-button="#spid-idp-button-medium-get" aria-expanded="false">
+                    <span class="italia-it-button-icon"><img
+                            src="{% static 'svg/spid-ico-circle-bb.svg' %}"
+                            alt=""></span>
+                    <span class="italia-it-button-text">{% trans "Entra con SPID" %}</span>
+                </a>
+                <div id="spid-idp-button-medium-get"
+                    class="spid-idp-button spid-idp-button-tip spid-idp-button-relative"
+                    style="display: none; left: 56.5px; top: 46.05px;">
+                    <ul id="spid-idp-list-medium-root-get" class="spid-idp-button-menu"
+                        aria-labelledby="spid-idp">
+                        {% for provider in providers %}
+                            <li class="spid-idp-button-link">
+                                <a href="{% url 'spid_cie_rp_begin' %}?provider={{provider.sub}}">
+                                    <span class="spid-sr-only">{{ provider.metadata.organization_name }}</span>
+                                    <img src="{% static 'images/logo-it.svg' %}" alt="{{ provider.metadata.organization_name }}">
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
                 </div>
-            </div>
+
+            </span>
+            <span
+                class="badge badge-grey-unical square-corners mb-3 mr-2 ml-0 pr-10 p-2 mw-100"
+                style="font-size: 100%">
+                <a href="#" class="italia-it-button italia-it-button-size-m button-cie">
+                    <span class="italia-it-button-icon"><img
+                            src="{% static 'svg/cie-ico-circle-bb.svg' %}"
+                            alt=""></span>
+                    <span class="italia-it-button-text">{% trans "Entra con CIE" %}</span>
+                </a>
+            </span>
         </div>
     </div>
-    <script src="{% static 'js/spid-sp-access-button.js' %}"></script>
-    <script src="{% static 'js/spid_button.js' %}"></script>
 
-{% endblock container %}
+</div>
+<script src="{% static 'js/spid-sp-access-button.js' %}"></script>
+<script src="{% static 'js/spid_button.js' %}"></script>
+
+{% endblock %}

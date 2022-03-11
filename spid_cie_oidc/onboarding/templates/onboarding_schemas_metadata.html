@@ -3,84 +3,71 @@
 {% load i18n %}
 {% load static %}
 
-{% block container %}
-<div>
-   <div class="container p-3">
+{% block centered_container %}
 
-<div class="row d-lg-flex">
-    <div class="col-12">
-        <div class="card-wrapper card-space">
-            <div class="card card-bg no-after">
-                <div class="card-body">
-                    <div class="row h-100">
-                        
-                        <div class="col-12 col-lg-12">
-                            <div class="ml-2 mb-5">
-                                <h4 class="text-left">
-                                    {% trans "Schemas metadata Spid/Cie" %}
-                                </h4>
-                            </div>
-                            <div id="collapseDiv1-sc1" class="collapse-div collapse-background-active" role="tablist">
-                                <div class="collapse-header" id="heading1-sc1">
-                                    <button data-toggle="collapse" data-target="#collapse1-sc1" aria-expanded="false" aria-controls="collapse1-sc1">
-                                        {% trans "metadata OP Spid" %}
-                                    </button>
-                                </div>
-                                <div id="collapse1-sc1" class="collapse" role="tabpanel" aria-labelledby="heading1-sc1">
-                                    <div class="collapse-body">
-                                        <pre>
-                                            {{op_meta_spid | linebreaks}}
-                                        </pre>
-                                    </div>
-                                </div>
-                                <div class="collapse-header" id="heading2-sc2">
-                                    <button data-toggle="collapse" data-target="#collapse2-sc2" aria-expanded="false" aria-controls="collapse2-sc2">
-                                        {% trans "metadata OP Cie" %}
-                                    </button>
-                                </div>
-                                <div id="collapse2-sc2" class="collapse" role="tabpanel" aria-labelledby="heading2-sc2">
-                                    <div class="collapse-body">
-                                        <pre>
-                                            {{op_meta_cie | linebreaks}}
-                                        </pre>
-                                    </div>
-                                </div>
-                                <div class="collapse-header" id="heading3-sc3">
-                                    <button data-toggle="collapse" data-target="#collapse3-sc3" aria-expanded="false" aria-controls="collapse3-sc3">
-                                        {% trans "metadata RP Spid" %}
-                                    </button>
-                                </div>
-                                <div id="collapse3-sc3" class="collapse" role="tabpanel" aria-labelledby="heading3-sc3">
-                                    <div class="collapse-body">
-                                        <pre>
-                                            {{rp_meta_spid | linebreaks}}
-                                        </pre>
-                                    </div>
-                                </div>
-                                <div class="collapse-header" id="heading4-sc4">
-                                    <button data-toggle="collapse" data-target="#collapse4-sc4" aria-expanded="false" aria-controls="collapse4-sc4">
-                                        {% trans "metadata RP Cie" %}
-                                    </button>
-                                </div>
-                                <div id="collapse4-sc4" class="collapse" role="tabpanel" aria-labelledby="heading4-sc4">
-                                    <div class="collapse-body">
-                                        <pre>
-                                            {{rp_meta_cie | linebreaks}}
-                                        </pre>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                            </div>
-                        </div>
-
-                    </div>
+<div class="col-12 col-lg-12">
+    <div class="ml-4 mb-4">
+        <h4 class="text-left">
+            {% trans "Schemas metadata Spid/Cie" %}
+        </h4>
+    </div>
+    <div class="pl-lg-3">
+        <div id="collapseDiv1-sc1" class="collapse-div collapse-background-active" role="tablist">
+            <div class="collapse-header" id="heading1-sc1">
+                <button data-toggle="collapse" data-target="#collapse1-sc1" aria-expanded="false"
+                    aria-controls="collapse1-sc1">
+                    {% trans "metadata OP Spid" %}
+                </button>
+            </div>
+            <div id="collapse1-sc1" class="collapse" role="tabpanel" aria-labelledby="heading1-sc1">
+                <div class="collapse-body">
+                    <pre>
+                        {{op_meta_spid | linebreaks}}
+                    </pre>
+                </div>
+            </div>
+            <div class="collapse-header" id="heading2-sc2">
+                <button data-toggle="collapse" data-target="#collapse2-sc2" aria-expanded="false"
+                    aria-controls="collapse2-sc2">
+                    {% trans "metadata OP Cie" %}
+                </button>
+            </div>
+            <div id="collapse2-sc2" class="collapse" role="tabpanel" aria-labelledby="heading2-sc2">
+                <div class="collapse-body">
+                    <pre>
+                        {{op_meta_cie | linebreaks}}
+                    </pre>
+                </div>
+            </div>
+            <div class="collapse-header" id="heading3-sc3">
+                <button data-toggle="collapse" data-target="#collapse3-sc3" aria-expanded="false"
+                    aria-controls="collapse3-sc3">
+                    {% trans "metadata RP Spid" %}
+                </button>
+            </div>
+            <div id="collapse3-sc3" class="collapse" role="tabpanel" aria-labelledby="heading3-sc3">
+                <div class="collapse-body">
+                    <pre>
+                        {{rp_meta_spid | linebreaks}}
+                    </pre>
+                </div>
+            </div>
+            <div class="collapse-header" id="heading4-sc4">
+                <button data-toggle="collapse" data-target="#collapse4-sc4" aria-expanded="false"
+                    aria-controls="collapse4-sc4">
+                    {% trans "metadata RP Cie" %}
+                </button>
+            </div>
+            <div id="collapse4-sc4" class="collapse" role="tabpanel" aria-labelledby="heading4-sc4">
+                <div class="collapse-body">
+                    <pre>
+                        {{rp_meta_cie | linebreaks}}
+                    </pre>
                 </div>
             </div>
         </div>
+
     </div>
 </div>
 
-</div>
-{% endblock container %}
+{% endblock %}

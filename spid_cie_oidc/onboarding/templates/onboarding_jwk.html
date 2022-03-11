@@ -2,49 +2,30 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
-{% block container %}
+{% block centered_container %}
+<div class="col-12 pl-lg-4">
+    <h4 class="text-left">
+        {% trans "Create a JWT" %}
+    </h4>
 
-<div>
-   <div class="container pt-2 p-3">
+    <p class="pt-4 mb-0">
+        {% trans "In this page you have a brand new JWK. Refresh the page to gent another one." %}
+    </p>
 
-      <div class="row d-lg-flex">
-         <div class="col-12">
-            <div class="card-wrapper card-space">
-               <div class="card card-bg no-after">
-                  <div class="card-body pl-lg-0">
-                     <div class="row h-100">
-                        <div class="col-12 pl-lg-4">
-                           <h4 class="text-left">
-                              {% trans "Create a JWT" %}
-                           </h4>
-                           
-                           <p class="pt-4 mb-0">
-                              {% trans "In this page you have a brand new JWK. Refresh the page to gent another one." %}
-                           </p>
+    <div class="form-row">
+        <div class="col-12 form-group my-3">
+            <textarea id="jwk" rows="14" name="jwk">{{ private_jwk }}</textarea>
+        </div>
+    </div>
 
-                              <div class="form-row">
-                                 <div class="col-12 form-group my-3">
-                                    <textarea id="jwk" rows="14"
-                                       name="jwk">{{ private_jwk }}</textarea>
-                                 </div>
-                              </div>
+    <p class="pt-4 mb-0">
+        {% trans "Here the public version of the previous private JWK." %}
+    </p>
+    <div class="form-row">
+        <div class="col-12 form-group my-3">
+            <textarea id="jwk" rows="14" name="jwk">{{ public_jwk }}</textarea>
+        </div>
+    </div>
 
-                              <p class="pt-4 mb-0">
-                                 {% trans "Here the public version of the previous private JWK." %}
-                              </p>
-                              <div class="form-row">
-                                 <div class="col-12 form-group my-3">
-                                    <textarea id="jwk" rows="14"
-                                       name="jwk">{{ public_jwk }}</textarea>
-                                 </div>
-                              </div>
-
-                        </div>
-                     </div>
-                  </div>
-               </div>
-            </div>
-         </div>
-      </div>
-   </div>
-{% endblock container %}
+</div>
+{% endblock %}

@@ -2,128 +2,109 @@
 {% load i18n %}
 {% load static %}
 
-{% block container %}
-<div>
-    <div class="container pt-2 p-4">
+{% block centered_container %}
 
-        <div class="row d-lg-flex">
-            <div class="col-12">
-                <div class="card-wrapper card-space">
-                    <div class="card card-bg no-after">
-                        <div class="card-body">
-                            <div class="row h-100 px-4 pb-4">
+<div class="col-12">
+    <div class="row row-header border-bottom no-border-bottom-xs">
+        <div class="wrap-container">
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                <h1>
+                    <a href="/" title="torna alla home">
+                        <img src="{% static 'image/logoSpid.png' %}" alt="SPID"
+                            class="img-responsive">
+                    </a>
+                </h1>
+            </div>
+            <div class="clear"></div>
+        </div>
+    </div>
 
-                                <div class="col-12">
-
-                                    <div class="row row-header border-bottom no-border-bottom-xs">
-                                        <div class="wrap-container">
-                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                                                <h1>
-                                                    <a href="/" title="torna alla home">
-                                                        <img src="{% static 'image/logoSpid.png' %}" alt="SPID"
-                                                            class="img-responsive">
-                                                    </a>
-                                                </h1>
-                                            </div>
-                                            <div class="clear"></div>
+    <div class="col-12">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="row mt-4 ml-1">
+                <div>
+                    <div class="pb-2">
+                        <h4 class="text-muted">{% trans 'SPID access request from' %}
+                        </h4>
+                        <h3>{{ client_organization_name }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 row" >
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <form method="POST" action='{% url "oidc_provider_authnrequest" %}'>
+                    <fieldset>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 ">
+                                <div>
+                                    {% csrf_token %}
+                                    {% for form_field in form.visible_fields %}
+                                    <div class="form-row pr-4">
+                                        <div class="col-12 form-group my-3">
+                                            <label for="id_{{ form_field.html_name }}">
+                                                <span class="form-label-content">
+                                                    {{ form_field.label }}
+                                                </span>
+                                            </label>
+                                            {% if form_field.field.widget.input_type%}
+                                            <input
+                                                type="{{ form_field.field.widget.input_type }}"
+                                                class="form-control"
+                                                id="id_{{ form_field.html_name }}"
+                                                name="{{ form_field.name }}"
+                                                value="{{form_field.value|default_if_none:''}}">
+                                            {% endif %}
                                         </div>
+                                        <span for="id_{{ form_field.html_name }}"
+                                            class="text-danger">{{ form_field.errors }}</span>
                                     </div>
-
-                                    <div class="col-12">
-                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                            <div class="row mt-4 ml-1">
-                                                <div>
-                                                    <div class="pb-2">
-                                                        <h4 class="text-muted">{% trans 'SPID access request from' %}
-                                                        </h4>
-                                                        <h3>{{ client_organization_name }}</h3>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-12 row" >
-                                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                                <form method="POST" action='{% url "oidc_provider_authnrequest" %}'>
-                                                    <fieldset>
-                                                        <div class="row">
-                                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 ">
-                                                                <div>
-                                                                    {% csrf_token %}
-                                                                    {% for form_field in form.visible_fields %}
-                                                                    <div class="form-row pr-4">
-                                                                        <div class="col-12 form-group my-3">
-                                                                            <label for="id_{{ form_field.html_name }}">
-                                                                                <span class="form-label-content">
-                                                                                    {{ form_field.label }}
-                                                                                </span>
-                                                                            </label>
-                                                                            {% if form_field.field.widget.input_type%}
-                                                                            <input
-                                                                                type="{{ form_field.field.widget.input_type }}"
-                                                                                class="form-control"
-                                                                                id="id_{{ form_field.html_name }}"
-                                                                                name="{{ form_field.name }}"
-                                                                                value="{{form_field.value|default_if_none:''}}">
-                                                                            {% endif %}
-                                                                        </div>
-                                                                        <span for="id_{{ form_field.html_name }}"
-                                                                            class="text-danger">{{ form_field.errors }}</span>
-                                                                    </div>
-                                                                    {% endfor %}
-                                                                    
-                                                                    {% for hidden in form.hidden_fields %}
-                                                                    {{ hidden }}
-                                                                    {% endfor %}
-
-                                                                    <div class="col-sm-12 mt-2">
-                                                                        <a href="{% url 'oidc_provider_not_consent' %}"
-                                                                            class="italia-it-button italia-it-button-cancel-s button-cancel mb-4 mr-4">
-                                                                            <span class="italia-it-buttons-text">{% trans "Cancel" %}</span>
-                                                                        </a>
-
-                                                                        <button
-                                                                            class="italia-it-button italia-it-button-size-m button-login"
-                                                                            type="submit">
-                                                                            <span class="italia-it-button-icon">
-                                                                                <img src="{% static 'svg/spid-ico-circle-bb.svg' %}"
-                                                                                    alt="">
-                                                                            </span>
-                                                                            <span class="italia-it-buttons-text">{% trans "Login" %}</span>
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-
-                                                            </div>
-                                                        </div>
-                                                    </fieldset>
-                                                </form>
-                                            </div>
-
-                                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                                <div class="mt-5 ml-4">
-                                                    <div class="row">
-                                                        <div class="alert alert-info mt-2" role="alert">
-                                                            {% blocktrans %} 
-                                                                If you login as a <b>staff user</b> you will be redirected to the test page.
-                                                                Otherwise there will be the traditional consent page.
-                                                            {% endblocktrans %} 
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                    {% endfor %}
                                     
+                                    {% for hidden in form.hidden_fields %}
+                                    {{ hidden }}
+                                    {% endfor %}
+
+                                    <div class="col-sm-12 mt-2">
+                                        <a href="{% url 'oidc_provider_not_consent' %}"
+                                            class="italia-it-button italia-it-button-cancel-s button-cancel mb-4 mr-4">
+                                            <span class="italia-it-buttons-text">{% trans "Cancel" %}</span>
+                                        </a>
+
+                                        <button
+                                            class="italia-it-button italia-it-button-size-m button-login"
+                                            type="submit">
+                                            <span class="italia-it-button-icon">
+                                                <img src="{% static 'svg/spid-ico-circle-bb.svg' %}"
+                                                    alt="">
+                                            </span>
+                                            <span class="italia-it-buttons-text">{% trans "Login" %}</span>
+                                        </button>
+                                    </div>
                                 </div>
 
                             </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
 
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="mt-5 ml-4">
+                    <div class="row">
+                        <div class="alert alert-info mt-2" role="alert">
+                            {% blocktrans %} 
+                                If you login as a <b>staff user</b> you will be redirected to the test page.
+                                Otherwise there will be the traditional consent page.
+                            {% endblocktrans %} 
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <script src="{% static 'js/spid-sp-access-button.js' %}"></script>
-    <script src="{% static 'js/spid_button.js' %}"></script>
-    {% endblock container %}
+<script src="{% static 'js/spid-sp-access-button.js' %}"></script>
+<script src="{% static 'js/spid_button.js' %}"></script>
+{% endblock %}
