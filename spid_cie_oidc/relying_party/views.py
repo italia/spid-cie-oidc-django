@@ -529,7 +529,6 @@ def oidc_rpinitiated_logout(request):
     default_logout_url = getattr(
         settings, "LOGOUT_REDIRECT_URL", None
     ) or reverse("spid_cie_rp_landing")
-    breakpoint()
     if not auth_tokens:
         logger.warning(
             "Token revocation failed: not found any authentication session"
