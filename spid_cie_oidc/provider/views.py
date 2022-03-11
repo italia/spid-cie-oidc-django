@@ -58,8 +58,8 @@ class OpBase:
     Baseclass with common methods for OPs
     """
 
-    def redirect_response_data(self, **kwargs) -> HttpResponseRedirect:
-        url = f'{self.payload["redirect_uri"]}?{urllib.parse.urlencode(kwargs)}'
+    def redirect_response_data(self, redirect_uri:str, **kwargs) -> HttpResponseRedirect:
+        url = f'{redirect_uri}?{urllib.parse.urlencode(kwargs)}'
         return HttpResponseRedirect(url)
 
     def find_jwk(self, header: dict, jwks: list) -> dict:
@@ -164,7 +164,10 @@ class OpBase:
 
         session = OidcSession.objects.filter(
             auth_code=request.session["oidc"]["auth_code"],
-            user=request.user
+            user=request.user,
+            created__lte = timezone.localtime() + timezone.timedelta(
+                minutes = OIDCFED_PROVIDER_AUTH_CODE_MAX_AGE
+            )
         ).first()
 
         if not session:
@@ -310,6 +313,7 @@ class AuthzRequestView(OpBase, View):
                 f"error=invalid_request"
             )
             return self.redirect_response_data(
+                self.payload["redirect_uri"],
                 error="invalid_request",
                 error_description=_("Missing Authz request object"),
                 # No req -> no payload -> no state
@@ -324,6 +328,7 @@ class AuthzRequestView(OpBase, View):
             # FIXME: to do test
             logger.error(f" {e}")
             return self.redirect_response_data(
+                self.payload["redirect_uri"],
                 error="invalid_request",
                 error_description=_("Failed to establish the Trust"),
             )
@@ -333,6 +338,7 @@ class AuthzRequestView(OpBase, View):
                 f"{request.GET.get('client_id', 'unknow')}: {e}"
             )
             return self.redirect_response_data(
+                self.payload["redirect_uri"],
                 error="invalid_request",
                 error_description=_(
                     "An Unknown error raised during validation of "
@@ -346,6 +352,7 @@ class AuthzRequestView(OpBase, View):
                 f"{request.GET.get('client_id', 'unknown')}: {e}"
             )
             return self.redirect_response_data(
+                self.payload["redirect_uri"],
                 error="invalid_request",
                 error_description=_("Authorization request not valid"),
             )
@@ -383,6 +390,7 @@ class AuthzRequestView(OpBase, View):
             )
             return self.redirect_response_data(
                 # TODO: check error
+                self.payload["redirect_uri"],
                 error="invalid_request",
                 error_description=_(
                     "Authz request object validation failed "
@@ -466,6 +474,7 @@ class StaffTestingPageView(OpBase, View):
         if not form.is_valid():
             return self.redirect_response_data(
                 # TODO: this is not normative -> check AgID/IPZS
+                self.payload["redirect_uri"],
                 error="rejected_by_user",
                 error_description=_("User rejected the release of attributes"),
             )
@@ -478,6 +487,7 @@ class StaffTestingPageView(OpBase, View):
         self.payload = session.authz_request
 
         return self.redirect_response_data(
+            self.payload["redirect_uri"],
             code=session.auth_code,
             state=session.authz_request["state"],
             iss=issuer.sub if issuer else "",
@@ -545,6 +555,7 @@ class ConsentPageView(OpBase, View):
         form = self.get_consent_form()(request.POST)
         if not form.is_valid():
             return self.redirect_response_data(
+                self.payload["redirect_uri"],
                 # TODO: this is not normative -> check AgID/IPZS
                 error="rejected_by_user",
                 error_description=_("User rejected the release of attributes"),
@@ -555,6 +566,7 @@ class ConsentPageView(OpBase, View):
         IssuedToken.objects.create(**iss_token_data)
 
         return self.redirect_response_data(
+            self.payload["redirect_uri"],
             code=session.auth_code,
             state=session.authz_request["state"],
             iss=issuer.sub if issuer else "",
