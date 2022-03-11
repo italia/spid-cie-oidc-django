@@ -90,7 +90,7 @@ class Migration(migrations.Migration):
                         default=dict,
                         help_text='federation_entity metadata, eg: {"federation_entity": { ... },"openid_provider": { ... },"openid_relying_party": { ... },"oauth_resource": { ... }}',
                         validators=[
-                            spid_cie_oidc.entity.models.FederationEntityConfiguration.validate_entity_metadata
+                            spid_cie_oidc.entity.validators.validate_entity_metadata
                         ],
                     ),
                 ),
