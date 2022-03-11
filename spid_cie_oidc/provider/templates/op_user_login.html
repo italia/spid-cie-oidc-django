@@ -24,14 +24,14 @@
             <div class="row mt-4 ml-1">
                 <div>
                     <div class="pb-2">
-                        <h4 class="text-muted">{% trans 'SPID access request from' %}
+                        <h4 class="text-muted">{% trans 'Authentication request from' %}
                         </h4>
                         <h3>{{ client_organization_name }}</h3>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-12 row" >
+        <div class="col-12 row mt-4" >
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <form method="POST" action='{% url "oidc_provider_authnrequest" %}'>
                     <fieldset>
@@ -61,7 +61,7 @@
                                     </div>
                                     {% endfor %}
                                     
-                                    {% for hidden in form.hidden_fields %}
+                                    {% for hidden in hidden_form.hidden_fields %}
                                     {{ hidden }}
                                     {% endfor %}
 

@@ -362,41 +362,35 @@ class AuthzRequestView(OpBase, View):
             return result
 
         # stores the authz request in a hidden field in the form
-        form = self.get_login_form()(
-            dict(authz_request_object=req)
-        )
+        form = self.get_login_form()()
         context = {
             "client_organization_name": tc.metadata.get(
                 "client_name", self.payload["client_id"]
             ),
-            "form": form,
+            "hidden_form": AuthzHiddenForm(dict(authz_request_object=req)),
+            "form": form
         }
         return render(request, self.template, context)
 
     def post(self, request, *args, **kwargs):
         """
-        When the User prompts his credentials
+            When the User prompts his credentials
         """
         form = self.get_login_form()(request.POST)
         if not form.is_valid():
             return render(request, self.template, {"form": form})
 
-        authz_request = form.cleaned_data.get("authz_request_object")
+        authz_form = AuthzHiddenForm(request.POST)
+        authz_form.is_valid()
+        authz_request = authz_form.cleaned_data.get("authz_request_object")
         try:
             self.validate_authz_request_object(authz_request)
         except Exception as e:
             logger.error(
                 "Authz request object validation failed " f"for {authz_request}: {e} "
             )
-            return self.redirect_response_data(
-                # TODO: check error
-                self.payload["redirect_uri"],
-                error="invalid_request",
-                error_description=_(
-                    "Authz request object validation failed "
-                    f"for {authz_request}: {e}"
-                ),
-            )
+            # we don't have a redirect_uri here
+            return HttpResponseForbidden()
 
         # autenticate the user
         username = form.cleaned_data.get("username")
@@ -796,8 +790,8 @@ class TokenEndpoint(OpBase, View):
             return JsonResponse(
                 # TODO: error message here
                 {
-                    'error': "...",
-                    'error_description': "..."
+                    'error': "unauthorized_client",
+                    'error_description': ""
 
                 }, status = 403
             )

@@ -18,8 +18,6 @@ class AuthLoginForm(forms.Form):
         error_messages={"required": _("Enter your password")},
         widget=forms.PasswordInput(),
     )
-    authz_request_object = forms.CharField(widget=forms.HiddenInput())
-
     # when a prue SSO will be enabled.
     # forget_agreement = forms.BooleanField(label=_("Delete previous agreement"),
     # required=False,
@@ -27,6 +25,13 @@ class AuthLoginForm(forms.Form):
     # forget_login = forms.BooleanField(label=_("Forget access"),
     # required=False,
     # localize=True)
+
+
+class AuthzHiddenForm(forms.Form):
+    """
+    A hidden form to carry the original authz request
+    """
+    authz_request_object = forms.CharField(widget=forms.HiddenInput())
 
 
 class ConsentPageForm(forms.Form):
