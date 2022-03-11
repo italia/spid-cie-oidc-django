@@ -6,6 +6,8 @@ from spid_cie_oidc.entity.tests.rp_metadata_settings import (
     RP_METADATA_SPID,
     RP_METADATA_SPID_JWKS_AND_JWKS_URI,
     RP_METADATA_SPID_NO_REDIRECT_URIS,
+    RP_METADATA_CIE_JWKS_AND_JWKS_URI,
+    RP_METADATA_CIE_NO_REDIRECT_URIS
 )
 
 
@@ -20,6 +22,14 @@ class RPMetadataTest(TestCase):
         with self.assertRaises(ValidationError):
             RPMetadataSpid(**RP_METADATA_SPID_NO_REDIRECT_URIS)
 
-    def test_rp_metadataSpid_no_jwks_and_jkws_uri(self):
+    def test_rp_metadataSpid_jwks_and_jkws_uri(self):
         with self.assertRaises(ValidationError):
             RPMetadataSpid(**RP_METADATA_SPID_JWKS_AND_JWKS_URI)
+
+    def test_rp_metadataCie_jwks_and_jkws_uri(self):
+        with self.assertRaises(ValidationError):
+            RPMetadataCie(**RP_METADATA_CIE_JWKS_AND_JWKS_URI)
+
+    def test_rp_metadataCie_no_redirect_uris(self):
+        with self.assertRaises(ValidationError):
+            RPMetadataCie(**RP_METADATA_CIE_NO_REDIRECT_URIS)

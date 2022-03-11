@@ -1,4 +1,5 @@
 from copy import deepcopy
+from unittest.mock import patch
 
 from django.http import HttpRequest
 from django.test import Client, TestCase, override_settings
@@ -42,6 +43,14 @@ class RPBeginTest(TestCase):
         url = reverse("spid_cie_rp_begin")
         res = client.get(url, {"provider": op_conf["sub"], "trust_anchor": TA_SUB})
         self.assertTrue(res.status_code == 302)
+
+    @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB, OIDCFED_TRUST_ANCHORS=[TA_SUB])
+    @patch("spid_cie_oidc.relying_party.views.SpidCieOidcRpBeginView.get_oidc_op", return_value=None)
+    def test_rp_begin_no_tc(self, mocked):
+        client = Client()
+        url = reverse("spid_cie_rp_begin")
+        res = client.get(url, {"provider": op_conf["sub"], "trust_anchor": TA_SUB})
+        self.assertTrue("request rejected" in res.content.decode())
 
     def test_no_request(self):
         client = Client()

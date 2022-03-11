@@ -689,7 +689,7 @@ class TokenEndpoint(OpBase, View):
         if not issuedToken:
             return JsonResponse(
                 {
-                    "error": "Invalid request",
+                    "error": "invalid_request",
                     "error_description": "Refresh token not found",
 
                 },
@@ -700,7 +700,7 @@ class TokenEndpoint(OpBase, View):
         if not self.is_token_renewable(session):
             return JsonResponse(
                     {
-                        "error": "Invalid request",
+                        "error": "invalid_request",
                         "error_description": "Refresh Token can no longer be updated",
 
                     }, status = 400
@@ -874,11 +874,25 @@ class RevocationEndpoint(OpBase,View):
                 request.POST['client_assertion']
             )
         except Exception:
-            return HttpResponseForbidden()
+            return JsonResponse(
+                {
+                    "error": "invalid_request",
+                    "error_description": "Validation of client assertion failed",
+
+                },
+                status = 400
+            )
 
         access_token = request.POST.get('token', None)
         if not access_token:
-            return HttpResponseBadRequest()
+            return JsonResponse(
+                {
+                    "error": "invalid_request",
+                    "error_description": "The request does not include Access Token",
+
+                },
+                status = 400
+            )
 
         token = IssuedToken.objects.filter(
             access_token= access_token,
@@ -886,10 +900,23 @@ class RevocationEndpoint(OpBase,View):
         ).first()
 
         if not token or token.expired:
-            return HttpResponseForbidden()
+            return JsonResponse(
+                {
+                    "error": "invalid_grant",
+                    "error_description": "Access Token not found or expired",
+
+                },
+                status = 400
+            )
 
         if token.is_revoked:
-            return HttpResponseForbidden()
+            return JsonResponse(
+                {
+                    "error": "invalid_grant",
+                    "error_description": "Access Token revoked",
+                },
+                status = 400
+            )
 
         token.session.revoke()
         return HttpResponse()
