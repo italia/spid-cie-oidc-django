@@ -78,10 +78,13 @@ The demo propose a small federation composed by the following entities:
 
 Examples User, Password:
 
- - admin oidcadmin
+ - __admin__ __oidcadmin__
+ - __user__ __oidcuser__
+
+### Tools
 
 ![OIDC Tools](docs/images/onboard_tools_jwt_debug.png)
-OIDC tools that facilitate the lives of developers and service operators, here a simple interface to decode and verify a JWT.
+OIDC tools facilitates the lives of developers and service operators, here a simple interface to decode and verify a JWT.
 
 ## Contribute
 
