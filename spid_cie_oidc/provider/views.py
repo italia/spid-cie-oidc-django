@@ -474,7 +474,7 @@ class StaffTestingPageView(OpBase, View):
         if not form.is_valid():
             return self.redirect_response_data(
                 # TODO: this is not normative -> check AgID/IPZS
-                self.payload["redirect_uri"],
+                session.authz_request['redirect_uri'],
                 error="rejected_by_user",
                 error_description=_("User rejected the release of attributes"),
             )
@@ -483,7 +483,6 @@ class StaffTestingPageView(OpBase, View):
         iss_token_data = self.get_iss_token_data(session, issuer)
 
         IssuedToken.objects.create(**iss_token_data)
-
         self.payload = session.authz_request
 
         return self.redirect_response_data(
@@ -506,7 +505,7 @@ class ConsentPageView(OpBase, View):
         try:
             session = self.check_session(request)
         except Exception:
-            logger.warning("Invalid session")
+            logger.warning("Invalid session on Consent page")
             return HttpResponseForbidden()
 
         tc = TrustChain.objects.filter(
@@ -525,14 +524,18 @@ class ConsentPageView(OpBase, View):
         user_claims["email"] = user_claims.get("email", request.user.email)
         user_claims["username"] = request.user.username
 
-        # TODO: mapping with human names
         # filter on requested claims
         filtered_user_claims = []
         for target, claims in session.authz_request.get("claims", {}).items():
             for claim in claims:
                 if claim in user_claims:
                     filtered_user_claims.append(claim)
-        #
+        
+        # mapping with human names
+        i18n_user_claims = [
+            OIDCFED_ATTRNAME_I18N.get(i, i) 
+            for i in filtered_user_claims
+        ]
 
         context = {
             "form": self.get_consent_form()(),
@@ -540,7 +543,7 @@ class ConsentPageView(OpBase, View):
             "client_organization_name": tc.metadata.get(
                 "client_name", session.client_id
             ),
-            "user_claims": set(filtered_user_claims),
+            "user_claims": sorted(set(i18n_user_claims),)
         }
         return render(request, self.template, context)
 
@@ -700,8 +703,7 @@ class TokenEndpoint(OpBase, View):
                         "error": "Invalid request",
                         "error_description": "Refresh Token can no longer be updated",
 
-                    },
-                    status = 400
+                    }, status = 400
             )
         _sub = self.authz.pairwised_sub()
         refresh_token = {
@@ -804,6 +806,7 @@ class TokenEndpoint(OpBase, View):
         elif request.POST.get("grant_type") == 'refresh_token':
             return self.grant_refresh_token(request)
         else:
+            # Token exchange? :-)
             raise NotImplementedError()
 
 
@@ -839,7 +842,9 @@ class UserInfoEndpoint(OpBase, View):
         # TODO: user claims
         jwt = {"sub": access_token_data["sub"]}
         for claim in (
-            token.session.authz_request.get("claims", {}).get("userinfo", {}).keys()
+            token.session.authz_request.get(
+                "claims", {}
+            ).get("userinfo", {}).keys()
         ):
             if claim in token.session.user.attributes:
                 jwt[claim] = token.session.user.attributes[claim]

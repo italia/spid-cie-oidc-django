@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.utils.translation import gettext as _
 from spid_cie_oidc.entity.schemas.op_metadata import (
     OPMetadataCie,
     OPMetadataSpid
@@ -10,6 +11,7 @@ from spid_cie_oidc.onboarding.schemas.authn_requests import (
 from spid_cie_oidc.onboarding.schemas.introspection_request import IntrospectionRequest
 from spid_cie_oidc.onboarding.schemas.revocation_request import RevocationRequest
 from spid_cie_oidc.onboarding.schemas.token_requests import TokenAuthnCodeRequest, TokenRefreshRequest
+
 
 OIDCFED_PROVIDER_PROFILES = getattr(
     settings,
@@ -43,7 +45,7 @@ OIDCFED_PROVIDER_ATTRIBUTES_MAP = {
     "https://attributes.spid.gov.it/spidCode": (
         {
             "func": "spid_cie_oidc.provider.processors.spidCode",
-            "kwargs": {"salt": "signiicusenza"},
+            "kwargs": {"salt": "signiicusenz"},
         },
     ),
     "https://attributes.spid.gov.it/name": ("name", "given_name"),
@@ -91,3 +93,39 @@ OIDCFED_PROVIDER_AUTH_CODE_MAX_AGE = getattr(
     "OIDCFED_PROVIDER_AUTH_CODE_MAX_AGE",
     10
 )
+
+OIDCFED_ATTRNAME_I18N = {
+    # SPID
+    "https://attributes.spid.gov.it/name": _("Name"),
+    "https://attributes.spid.gov.it/familyName": _("Family name"),
+    "https://attributes.spid.gov.it/placeOfBirth": _("Place of birth"),
+    "https://attributes.spid.gov.it/countyOfBirth": _("County of birth",),
+    "https://attributes.spid.gov.it/dateOfBirth": _("Date of birth"),
+    "https://attributes.spid.gov.it/gender": _("Gender"),
+    "https://attributes.spid.gov.it/companyName": _("Company Name"),
+    "https://attributes.spid.gov.it/registeredOffice": _("Registered Office"),
+    "https://attributes.spid.gov.it/fiscalNumber": _("Tax payer id"),
+    "https://attributes.spid.gov.it/ivaCode": _("Vat number"),
+    "https://attributes.spid.gov.it/idCard": _("Id card"),
+    "https://attributes.spid.gov.it/mobilePhone": _("Mobile phone"),
+    "https://attributes.spid.gov.it/email": _("Email"),
+    "https://attributes.spid.gov.it/address": _("Address"),
+    "https://attributes.spid.gov.it/expirationDate": _("Expiration date"),
+    "https://attributes.spid.gov.it/digitalAddress": _("Digital address"),
+    
+    # CIE
+    "given_name": _("Name"),
+    "family_name": _("Family name"),
+    "email": _("Email"),
+    "fiscal_number": _("Tax payer id"),
+    "email_verified": _("Email verified"),
+    "gender": _("Gender"),
+    "birthdate": _("Date of birth"),
+    "phone_number": _("Phone number"),
+    "phone_number_verified": _("Verified phone"),
+    "address": _("Address"),
+    "place_of_birth": _("Place of birth"),
+    # "document_details":  ,
+    # "e_delivery_service":  ,
+    "physical_phone_number": _("Phone number"),
+}
