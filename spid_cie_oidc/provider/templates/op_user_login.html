@@ -100,10 +100,14 @@
                                             </div>
 
                                             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                                <div class="mt-5 ml-4">
-                                                    <div class="row callout">
-                                                        <p>
-                                                            {% trans "If you are the staff user, you will be redirected to the test page"%}
+                                                <div class="pt-5 ml-4">
+                                                    <div class="row border p-3 mt-2 rounded">
+                                                        <p class="card-title">
+                                                            {% blocktrans%}
+                                                            this is the login page for users registered with the federation, 
+                                                            if you are a staff user, you will be redirected to the testing page,
+                                                            otherwise you will be sent to the consent page
+                                                            {% endblocktrans%}
                                                         </p>
                                                     </div>
                                                 </div>
