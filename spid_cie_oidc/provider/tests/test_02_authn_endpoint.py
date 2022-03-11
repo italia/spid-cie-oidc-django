@@ -105,7 +105,6 @@ class AuthnRequestTest(TestCase):
         res = client.get(consent_page_url)
         self.assertTrue("agree" in res.content.decode())
         self.assertFalse("error" in res.content.decode())
-        breakpoint()
         res = client.post(consent_page_url, {"agree": True})
         self.assertTrue(res.status_code == 302)
         self.assertTrue("code" in res.url)
