@@ -96,5 +96,5 @@ class IssuedToken(TimeStampedModel):
     def is_revoked(self):
         return self.session.revoked or self.revoked
 
-    # def __str__(self):
-    #     return "{} @ {}".format(self.session__user_uid, self.session__client_id)
+    def __str__(self):
+        return "{} @ {}".format(self.session.user_uid, self.session.client_id)
