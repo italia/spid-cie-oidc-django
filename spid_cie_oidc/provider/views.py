@@ -654,7 +654,7 @@ class TokenEndpoint(OpBase, View):
         iss_token_data = dict(
             access_token = issuedToken.access_token,
             id_token = issuedToken.access_token,
-            token_type = "Bearer",
+            token_type = "Bearer", #nosec B106
             expires_in = expires_in,
             # TODO: remove unsupported scope
             scope = self.authz.authz_request["scope"],
