@@ -804,7 +804,6 @@ class RevocationEndpoint(OpBase,View):
                 {
                     "error": "invalid_grant",
                     "error_description": "Access Token revoked",
-
                 },
                 status = 400
             )
