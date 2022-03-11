@@ -68,3 +68,45 @@ class OnboardingTest(TestCase):
         # self.assertEqual(res.status_code, 200)
         # self.assertIn(self.data["organization_name"], res.content.decode())
         # self.assertIn("aquired", res.content.decode())
+
+    def test_schema_authorization(self):
+        c = Client()
+        url = reverse("oidc_onboarding_schemas_Authorization")
+        res = c.get(url)
+        self.assertTrue(res.status_code == 200)
+        self.assertIn("Schemas authorization endpoint", res.content.decode())
+
+    def test_schema_introspection(self):
+        c = Client()
+        url = reverse("oidc_onboarding_schemas_introspection")
+        res = c.get(url)
+        self.assertTrue(res.status_code == 200)
+        self.assertIn("Schemas introspection endpoint", res.content.decode())
+
+    def test_schema_metadata(self):
+        c = Client()
+        url = reverse("oidc_onboarding_schemas_metadata")
+        res = c.get(url)
+        self.assertTrue(res.status_code == 200)
+        self.assertIn("Schemas metadata Spid/Cie", res.content.decode())
+
+    def test_schema_revocation(self):
+        c = Client()
+        url = reverse("oidc_onboarding_schemas_revocation")
+        res = c.get(url)
+        self.assertTrue(res.status_code == 200)
+        self.assertIn("Schemas revocation endpoint", res.content.decode())
+
+    def test_schema_token(self):
+        c = Client()
+        url = reverse("oidc_onboarding_schemas_token")
+        res = c.get(url)
+        self.assertTrue(res.status_code == 200)
+        self.assertIn("Schemas token endpoint", res.content.decode())
+        
+    def test_schema_client_assertion(self):
+        c = Client()
+        url = reverse("oidc_onboarding_schemas_jwt_client_assertion")
+        res = c.get(url)
+        self.assertTrue(res.status_code == 200)
+        self.assertIn("Schemas jwt", res.content.decode())
