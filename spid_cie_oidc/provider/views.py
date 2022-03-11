@@ -216,31 +216,51 @@ class OpBase:
                 "iat": iat_now()
         }
 
-    def get_access_token(self):
-        
+    def get_access_token(self, iss_sub, _sub, authz, commons):
+    
         access_token = {
-            "iss": self.issuer.sub,
-            "sub": self.authz.pairwised_sub(),
-            "aud": [self.authz.client_id],
-            "client_id": self.authz.client_id,
-            "scope": self.authz.authz_request["scope"],
+            "iss": iss_sub,
+            "sub": _sub,
+            "aud": [authz.client_id],
+            "client_id": authz.client_id,
+            "scope": authz.authz_request["scope"],
         }
-        access_token.update(self.commons)
+        access_token.update(commons)
         
         return access_token
 
-    def get_id_token(self, jwt_at):
+    def get_id_token(self, iss_sub, _sub, authz, jwt_at, commons):
 
         id_token = {
-            "sub": self.authz.pairwised_sub(),
-            "nonce": self.authz.authz_request["nonce"],
+            "sub": _sub,
+            "nonce": authz.authz_request["nonce"],
             "at_hash": left_hash(jwt_at, "HS256"),
-            "c_hash": left_hash(self.authz.auth_code, "HS256"),
-            "aud": [self.authz.client_id],
-            "iss": self.issuer.sub,
+            "c_hash": left_hash(authz.auth_code, "HS256"),
+            "aud": [authz.client_id],
+            "iss": iss_sub,
         }
-        id_token.update(self.commons)
+        id_token.update(commons)
         return id_token
+
+    def get_iss_token_data(self, session, issuer):
+        _sub = session.pairwised_sub()
+        iss_sub = issuer.sub
+        commons = self.get_jwt_common_data()
+        jwk = issuer.jwks[0]
+
+        access_token = self.get_access_token(iss_sub, _sub, session, commons)
+        jwt_at = create_jws(access_token, jwk, typ="at+jwt")
+        id_token = self.get_id_token(iss_sub, _sub, session, jwt_at, commons)
+        jwt_id = create_jws(id_token, jwk)
+
+        iss_token_data = dict(
+            session=session,
+            access_token=jwt_at,
+            id_token=jwt_id,
+            expires=datetime_from_timestamp(commons["exp"])
+        )
+
+        return iss_token_data
 
 class AuthzRequestView(OpBase, View):
     """
@@ -441,7 +461,28 @@ class StaffTestingPageView(OpBase, View):
         except Exception:
             logger.warning("Invalid session")
             return HttpResponseForbidden()
-        
+
+        form = self.get_testing_form()(request.POST)
+        if not form.is_valid():
+            return self.redirect_response_data(
+                # TODO: this is not normative -> check AgID/IPZS
+                error="rejected_by_user",
+                error_description=_("User rejected the release of attributes"),
+            )
+
+        issuer = self.get_issuer()
+        iss_token_data = self.get_iss_token_data(session, issuer)
+
+        IssuedToken.objects.create(**iss_token_data)
+
+        self.payload = session.authz_request
+
+        return self.redirect_response_data(
+            code=session.auth_code,
+            state=session.authz_request["state"],
+            iss=issuer.sub if issuer else "",
+        )
+
 
 
 class ConsentPageView(OpBase, View):
@@ -508,8 +549,10 @@ class ConsentPageView(OpBase, View):
                 error="rejected_by_user",
                 error_description=_("User rejected the release of attributes"),
             )
-
         issuer = self.get_issuer()
+        iss_token_data = self.get_iss_token_data(session, issuer)
+
+        IssuedToken.objects.create(**iss_token_data)
 
         return self.redirect_response_data(
             code=session.auth_code,
@@ -559,16 +602,18 @@ class TokenEndpoint(OpBase, View):
         #
         _sub = self.authz.pairwised_sub()
 
-        access_token = self.get_access_token()
-        jwt_at = create_jws(access_token, self.issuer.jwks[0], typ="at+jwt")
+        issuedToken = IssuedToken.objects.filter(
+            session= self.authz,
+            revoked = False
+        ).first()
 
-        id_token = self.get_id_token(jwt_at)
-        jwt_id = create_jws(id_token, self.issuer.jwks[0])
+        access_token = issuedToken.access_token
+        id_token = issuedToken.access_token
 
         iss_token_data = dict(
             session=self.authz,
-            access_token=jwt_at,
-            id_token=jwt_id,
+            access_token=access_token,
+            id_token=id_token,
             expires=datetime_from_timestamp(self.commons["exp"])
         )
 
@@ -579,7 +624,7 @@ class TokenEndpoint(OpBase, View):
         ):
             refresh_token = {
                 "sub": _sub,
-                "at_hash": left_hash(jwt_at, "HS256"),
+                "at_hash": left_hash(access_token, "HS256"),
                 "c_hash": left_hash(self.authz.auth_code, "HS256"),
                 "aud": [self.authz.client_id],
                 "iss": self.issuer.sub,
@@ -587,16 +632,16 @@ class TokenEndpoint(OpBase, View):
             id_token.update(self.commons)
             iss_token_data['refresh_token'] = refresh_token
 
-        IssuedToken.objects.create(**iss_token_data)
 
+        jwk_at = unpad_jwt_payload(access_token)
         expires_in = timezone.timedelta(
-            seconds = access_token['exp'] - access_token['iat']
+            seconds = jwk_at['exp'] - jwk_at['iat']
         ).seconds
 
         return JsonResponse(
             {
-                "access_token": jwt_at,
-                "id_token": jwt_id,
+                "access_token": access_token,
+                "id_token": id_token,
                 "token_type": "Bearer",
                 "expires_in": expires_in,
                 # TODO: remove unsupported scope

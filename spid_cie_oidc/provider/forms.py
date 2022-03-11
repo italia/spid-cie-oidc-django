@@ -40,7 +40,6 @@ class TestingPageAttributesForm(forms.Form):
         label="attributes"
     )
 
-
 class TestingPageChecksForm(forms.Form):
 
     CHOICES=(
