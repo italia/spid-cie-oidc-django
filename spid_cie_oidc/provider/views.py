@@ -651,10 +651,10 @@ class TokenEndpoint(OpBase, View):
             seconds = jwk_at['exp'] - jwk_at['iat']
         ).seconds
 
-        iss_token_data = dict(
+        iss_token_data = dict( # nosec B106
             access_token = issuedToken.access_token,
             id_token = issuedToken.access_token,
-            token_type = "Bearer", #nosec B106
+            token_type = "Bearer", # nosec B106
             expires_in = expires_in,
             # TODO: remove unsupported scope
             scope = self.authz.authz_request["scope"],
