@@ -547,7 +547,6 @@ class ConsentPageView(OpBase, View):
                 error="rejected_by_user",
                 error_description=_("User rejected the release of attributes"),
             )
-
         issuer = self.get_issuer()
         iss_token_data = self.get_iss_token_data(session, issuer)
 
