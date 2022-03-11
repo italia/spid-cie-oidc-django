@@ -415,7 +415,7 @@ class StaffTestingPageView(OpBase, View):
     template = "op_user_staff_test.html"
 
     def get_testing_form(self):
-        return TestingPageForm
+        return TestingPageChecksForm
 
     def get(self, request):
         try:
@@ -427,8 +427,10 @@ class StaffTestingPageView(OpBase, View):
         user = session.user
         attributes = user.attributes
         content = {
-            "form": self.get_testing_form()(),
-            "attributes": json.dumps(attributes, indent=4)
+            "form_checks": self.get_testing_form()(),
+            "form_attrs": TestingPageAttributesForm(),
+            "attributes": json.dumps(attributes, indent=4),
+            "session": session,
         }
         return render(request, self.template, content)
 

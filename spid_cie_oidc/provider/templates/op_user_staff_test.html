@@ -16,46 +16,60 @@
                                 <div class="col-12 pl-lg-4">
 
                                     <div class="mt-2 ml-1">
-                                        <h4 class="text-left">{% trans 'Testing' %}</h4>
-                                        <p class="card-title">
-                                            {% blocktrans %}
-                                            if you reach this page because you are a staff user,  this page allows you to test the RP
-                                            {% endblocktrans %}
-                                        </p>
+                                        <h4 class="bd-title">{% trans 'Relying Party test page' %}</h4>
+                                        <p>{% trans "You're a staff user and currently testing " %}<b>{{session.client_id}}</b>.</p>
                                     </div>
-
+                                    <br>
                                     <form method="POST" action="{% url 'oidc_provider_staff_testing' %}">
                                         {% csrf_token %}
-                                                {% for form_field in form %}
-                                                {% if form_field.field.widget.input_type != 'radio'%}
-                                                <div class="form-row">
+
+                                        <div class="container">
+                                            <div class="row">
+                                              <div class="col-sm">
+                                                
+                                                <h6>{% trans "Editable user attributes to be released" %}</h6>
+                                                {% for form_field in form_attrs %}
+                                                <div class="form-row" class=>
                                                     <div class="col-12 form-group my-2">
-                                                       <label for="id_{{ form_field.html_name }}">
-                                                          <span class="form-label-content">
-                                                             {{ form_field.label }}
-                                                          </span>
-                                                       </label>
-                                                       <textarea rows="15" type="{{ form_field.field.widget.input_type }}" 
-                                                          class="form-control border" id="id_{{ form_field.html_name }}" 
-                                                          name="{{ form_field.name }}" >{{attributes}}</textarea>
+                                                        <!-- <label for="id_{{ form_field.html_name }}">
+                                                            <span class="form-label-content">
+                                                                {{ form_field.label }}
+                                                            </span>
+                                                        </label> -->
+                                                        <textarea rows="15" type="{{ form_field.field.widget.input_type }}" 
+                                                            class="form-control border" id="id_{{ form_field.html_name }}" 
+                                                            name="{{ form_field.name }}" >{{attributes}}</textarea>
                                                     </div>
                                                     <span for="id_{{ form_field.html_name }}" class="text-danger">{{ form_field.errors }}</span>
-                                                 </div>
-                                                {% endif %}
-                                                <div class="col-6">
-                                                    {% for value, label in form_field.field.choices %}
-                                                        <div class="form-check form-check-group">
-                                                            <input type="{{ form_field.field.widget.input_type }}" 
-                                                                id="id_{{ label }}" name="{{ form_field.name }}" value="{{ value }}">
-                                                            <label for="id_{{ label }}">{{label}}</label>
-                                                        </div>   
-                                                    {% endfor %}
                                                 </div>
-                                                <span for="id_{{ form_field.html_name }}" class="text-danger">{{ form_field.errors }}</span>
-                                                    
                                                 {% endfor %}
-                                                <input type="submit" name="confirm" class="btn btn-lg btn-success btn-block"
-                                                    value="{% trans 'Submit' %}" />
+
+                                              </div>
+
+                                              <div class="col-sm">
+                                                  
+                                                <div class="pl-4">
+                                                    <h6 class="pb-2">{% trans "Auth code response and tokens modifiers" %}</h6>
+
+                                                    {% for form_field in form_checks %}
+                                                    <div class="">
+                                                        {% for value, label in form_field.field.choices %}
+                                                            <div class="form-check">
+                                                                <input type="{{ form_field.field.widget.input_type }}" 
+                                                                    id="id_{{ label }}" name="{{ form_field.name }}" value="{{ value }}">
+                                                                <label for="id_{{ label }}">{{label}}</label>
+                                                            </div>   
+                                                        {% endfor %}
+                                                    </div>
+                                                    <span for="id_{{ form_field.html_name }}" class="text-danger">{{ form_field.errors }}</span>
+                                                    {% endfor %}    
+                                                </div>
+                                              </div>
+                                            </div>
+                                        </div>
+
+                                        <input type="submit" name="confirm" class="btn btn-lg btn-success btn-block"
+                                            value="{% trans 'Submit' %}" />
                                     </form>
                                 </div>
                             </div>
