@@ -286,7 +286,7 @@ class AuthzRequestView(OpBase, View):
             return JsonResponse(
                 {
                     "error": "invalid_request",
-                    "error_description": "Authen request object validation failed ",
+                    "error_description": "Authn request object validation failed ",
                 }
             )
         result = self.validate_json_schema(
@@ -378,7 +378,14 @@ class AuthzRequestView(OpBase, View):
         """
         form = self.get_login_form()(request.POST)
         if not form.is_valid():
-            return render(request, self.template, {"form": form})
+            return render(
+                request, 
+                self.template, 
+                {
+                    "form": form,
+                    "hidden_form": AuthzHiddenForm(request.POST),
+                }
+            )
 
         authz_form = AuthzHiddenForm(request.POST)
         authz_form.is_valid()
@@ -387,7 +394,8 @@ class AuthzRequestView(OpBase, View):
             self.validate_authz_request_object(authz_request)
         except Exception as e:
             logger.error(
-                "Authz request object validation failed " f"for {authz_request}: {e} "
+                "Authz request object validation failed "
+                f"for {authz_request}: {e} "
             )
             # we don't have a redirect_uri here
             return HttpResponseForbidden()
@@ -399,7 +407,14 @@ class AuthzRequestView(OpBase, View):
         if not user:
             errors = form._errors.setdefault("username", ErrorList())
             errors.append(_("invalid username or password"))
-            return render(request, self.template, {"form": form})
+            return render(
+                request, 
+                self.template, 
+                {
+                    "form": form,
+                    "hidden_form": AuthzHiddenForm(request.POST),
+                }
+            )
         else:
             login(request, user)
 
@@ -860,7 +875,8 @@ class RevocationEndpoint(OpBase,View):
         result = self.validate_json_schema(
             request.POST.dict(),
             "revocation_request",
-            "Revocation request object validation failed ")
+            "Revocation request object validation failed "
+        )
         if result:
             return result
         try:
@@ -883,10 +899,10 @@ class RevocationEndpoint(OpBase,View):
         if not token or token.expired:
             return HttpResponseForbidden()
 
-        if access_token.is_revoked:
+        if token.is_revoked:
             return HttpResponseForbidden()
 
-        access_token.session.revoke()
+        token.session.revoke()
         return HttpResponse()
 
 

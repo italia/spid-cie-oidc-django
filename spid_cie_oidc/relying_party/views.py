@@ -542,6 +542,7 @@ def oidc_rpinitiated_logout(request):
     revocation_endpoint_url = provider_conf.get("revocation_endpoint")
 
     # first of all on RP side ...
+    logger.info(f"{request.user} logout")
     logout(request)
 
     if not revocation_endpoint_url:
