@@ -1,45 +1,32 @@
+import json
+import logging
+import uuid
+
 from cryptojwt.jwk.jwk import key_from_jwk_dict
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext as _
-
 from spid_cie_oidc.entity.abstract_models import TimeStampedModel
 from spid_cie_oidc.entity.jwks import (
     create_jwk,
-    serialize_rsa_key,
     private_pem_from_jwk,
     public_pem_from_jwk,
+    serialize_rsa_key
 )
 from spid_cie_oidc.entity.jwtse import create_jws
-from spid_cie_oidc.entity.settings import FEDERATION_DEFAULT_EXP
+from spid_cie_oidc.entity.settings import (
+    ENTITY_STATUS,
+    ENTITY_TYPE_LEAFS,
+    ENTITY_TYPES,
+    FEDERATION_DEFAULT_EXP
+)
 from spid_cie_oidc.entity.statements import EntityConfiguration
 from spid_cie_oidc.entity.utils import exp_from_now, iat_now
-
-from spid_cie_oidc.provider.settings import (
-    OIDCFED_PROVIDER_PROFILES,
-    OIDCFED_DEFAULT_PROVIDER_PROFILE,
+from spid_cie_oidc.entity.validators import (
+    validate_entity_metadata,
+    validate_metadata_algs
 )
-from spid_cie_oidc.relying_party.settings import (
-    RP_DEFAULT_PROVIDER_PROFILES,
-    RP_PROVIDER_PROFILES,
-)
-
-import json
-import logging
-import uuid
-
-
-ENTITY_TYPE_LEAFS = ["openid_relying_party", "openid_provider", "oauth_resource"]
-ENTITY_TYPES = ["federation_entity"] + ENTITY_TYPE_LEAFS
-ENTITY_STATUS = {
-    "unreachable": False,
-    "valid": True,
-    "signature_failed": False,
-    "not_valid": False,
-    "unknown": None,
-    "expired": None,
-}
 
 logger = logging.getLogger(__name__)
 
@@ -56,23 +43,6 @@ class FederationEntityConfiguration(TimeStampedModel):
 
     # TODO: validate metadata upon type field
     """
-
-    def validate_entity_metadata(value):
-        status = False
-        for i in ENTITY_TYPES:
-            if i in value:
-                status = True
-        if not status:
-            raise ValidationError(
-                _(f'Need to specify one of {", ".join(ENTITY_TYPES)}')
-            )
-
-        if "openid_provider" in value:
-            schema = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
-            schema["op_metadata"](**value["openid_provider"])
-        if "openid_relying_party" in value:
-            schema = RP_PROVIDER_PROFILES[RP_DEFAULT_PROVIDER_PROFILES]
-            schema["rp_metadata"](**value["openid_relying_party"])
 
     def _create_jwks():
         return [create_jwk()]
@@ -149,6 +119,7 @@ class FederationEntityConfiguration(TimeStampedModel):
         default=dict,
         validators=[
             validate_entity_metadata,
+            validate_metadata_algs
         ],
     )
     constraints = models.JSONField(

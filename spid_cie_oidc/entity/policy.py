@@ -11,19 +11,19 @@ class PolicyError(Exception):
     pass
 
 
-def combine_subset_of(s1, s2):
+def combine_subset_of(s1, s2): # pragma: no cover
     return list(set(s1).intersection(set(s2)))
 
 
-def combine_superset_of(s1, s2):
+def combine_superset_of(s1, s2): # pragma: no cover
     return list(set(s1).intersection(set(s2)))
 
 
-def combine_one_of(s1, s2):
+def combine_one_of(s1, s2): # pragma: no cover
     return list(set(s1).intersection(set(s2)))
 
 
-def combine_add(s1, s2):
+def combine_add(s1, s2): # pragma: no cover
     if isinstance(s1, list):
         set1 = set(s1)
     else:
@@ -53,7 +53,7 @@ OP2FUNC = {
 }
 
 
-def do_sub_one_super_add(superior, child, policy):
+def do_sub_one_super_add(superior, child, policy):  # pragma: no cover
     if policy in superior and policy in child:
         comb = OP2FUNC[policy](superior[policy], child[policy])
         if comb:
@@ -66,7 +66,7 @@ def do_sub_one_super_add(superior, child, policy):
         return child[policy]
 
 
-def do_value(superior, child, policy):
+def do_value(superior, child, policy):  # pragma: no cover
     if policy in superior and policy in child:
         if superior[policy] == child[policy]:
             return superior[policy]
@@ -78,7 +78,7 @@ def do_value(superior, child, policy):
         return child[policy]
 
 
-def do_default(superior, child, policy):
+def do_default(superior, child, policy):  # pragma: no cover
     # A child's default can not override a superiors
     if policy in superior and policy in child:
         if superior["default"] == child["default"]:
@@ -91,7 +91,7 @@ def do_default(superior, child, policy):
         return child[policy]
 
 
-def do_essential(superior, child, policy):
+def do_essential(superior, child, policy):  # pragma: no cover
     # essential: an child can make it True if a superior has states False
     # but not the other way around
 

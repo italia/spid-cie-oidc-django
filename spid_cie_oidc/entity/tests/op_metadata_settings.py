@@ -11,6 +11,7 @@ OP_METADATA = {
     "revocation_endpoint": "https://idserver.servizicie.interno.gov.it/op/revoke",
     "jwks_uri": "https://registry.cie.gov.it/.well-known/jwks.json",
     "subject_types_supported": ["pairwise"],
+    "token_endpoint_auth_signing_alg_values_supported" : ["ES256"],
     "id_token_encryption_alg_values_supported": ["RSA-OAEP"],
     "request_object_encryption_enc_values_supported": ["A256CBC-HS512"],
     "token_endpoint_auth_methods_supported": ["private_key_jwt"],

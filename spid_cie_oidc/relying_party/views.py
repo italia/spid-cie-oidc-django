@@ -1,3 +1,4 @@
+from bdb import Breakpoint
 import json
 import logging
 from copy import deepcopy
@@ -166,7 +167,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
                 "error_description": str(exc.args),
             }
             return render(request, self.error_template, context)
-        
+
         except Exception as exc:
             context = {
                 "error": "request rejected",
@@ -528,7 +529,6 @@ def oidc_rpinitiated_logout(request):
     default_logout_url = getattr(
         settings, "LOGOUT_REDIRECT_URL", None
     ) or reverse("spid_cie_rp_landing")
-
     if not auth_tokens:
         logger.warning(
             "Token revocation failed: not found any authentication session"
@@ -542,10 +542,9 @@ def oidc_rpinitiated_logout(request):
 
     # first of all on RP side ...
     logout(request)
-
     if not revocation_endpoint_url:
         logger.warning(
-            f"{authz.issuer_url} doesn't expose the token revocation endpoint."
+            f"{authz.provider_id} doesn't expose the token revocation endpoint."
         )
         return HttpResponseRedirect(default_logout_url)
     else:
