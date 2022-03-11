@@ -180,7 +180,6 @@ md = {
 }
 
 policy = {'contacts': {'add': ['ops@idp.it']},
-   'op_name': 'SPID OIDC Identity Provider',
    'organization_name': {'value': 'SPID OIDC Identity Provider'},
    'subject_types_supported': {'subset_of': ['pairwise']}}
 
