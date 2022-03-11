@@ -10,15 +10,15 @@
             <div class="col-12">
                 <div class="card-wrapper card-space">
                     <div class="card card-bg no-after">
-                        <div class="card-body pl-lg-0">
-                            <div class="row h-100">
-                                <div class="col-12 pl-lg-4">
+                        <div class="card-body">
+                            <div class="row h-100 p-2">
+                                <div class="col-12 p-4">
                                     {% csrf_token %}
                                   <h4 class="text-left">
-                                      {% trans "OIDC attributes" %}
+                                      {% trans "User attributes" %}
                                   </h4>
 
-                                  <dl>
+                                  <dl class="mt-4 mb-4">
                                     {% for attribute, value in oidc_rp_user_attrs.items %}
                                     <dt>{{ attribute }}:</dt>
                                     <dd>{{ value }}</dd>

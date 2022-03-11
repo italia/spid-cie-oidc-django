@@ -1,6 +1,6 @@
 from copy import deepcopy
 
-from django.test import Client, TestCase
+from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 from spid_cie_oidc.accounts.models import User
@@ -65,7 +65,6 @@ class RefreshTokenTest(TestCase):
             "client_id": RP_CLIENT_ID,
             "scope": "openid",
         }
-        User.objects.create()
         session = OidcSession.objects.create(
             user=User.objects.create(username = "username"),
             user_uid="",
@@ -94,4 +93,31 @@ class RefreshTokenTest(TestCase):
         )
         res = client.post(url, request)
         self.assertTrue(res.status_code == 200)
+
+    @override_settings(OIDCFED_PROVIDER_MAX_REFRESH = 1)
+    def test_grant_refresh_token_two_times(self):
+        client = Client()
+        url = reverse("oidc_provider_token_endpoint")
+        request = dict(
+            client_id = RP_CLIENT_ID,
+            client_assertion = self.ca_jws,
+            client_assertion_type = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+            refresh_token = str(self.refresh_token),
+            grant_type="refresh_token",
+            code = "code",
+            code_verifier = "code_verifier"
+        )
+        res = client.post(url, request)
+        self.assertTrue(res.status_code == 200)
+        request = dict(
+            client_id = RP_CLIENT_ID,
+            client_assertion = self.ca_jws,
+            client_assertion_type = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+            refresh_token = res.json()["refresh_token"],
+            grant_type="refresh_token",
+            code = "code",
+            code_verifier = "code_verifier"
+        )
+        res = client.post(url, request)
+        self.assertTrue(res.status_code == 400)
         

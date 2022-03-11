@@ -4,16 +4,16 @@
 
 {% block container %}
 <div>
-    <div class="container pt-2 p-3">
+    <div class="container pt-2 p-4">
 
         <div class="row d-lg-flex">
             <div class="col-12">
                 <div class="card-wrapper card-space">
                     <div class="card card-bg no-after">
-                        <div class="card-body pl-lg-0">
-                            <div class="row h-100">
+                        <div class="card-body">
+                            <div class="row h-100 px-4 pb-4">
 
-                                <div class="col-12 pl-lg-4">
+                                <div class="col-12">
 
                                     <div class="row row-header border-bottom no-border-bottom-xs">
                                         <div class="wrap-container">
@@ -50,7 +50,7 @@
                                                                 <div>
                                                                     {% csrf_token %}
                                                                     {% for form_field in form.visible_fields %}
-                                                                    <div class="form-row">
+                                                                    <div class="form-row pr-4">
                                                                         <div class="col-12 form-group my-3">
                                                                             <label for="id_{{ form_field.html_name }}">
                                                                                 <span class="form-label-content">
@@ -77,7 +77,7 @@
 
                                                                     <div class="col-sm-12 mt-2">
                                                                         <a href="{% url 'oidc_provider_not_consent' %}"
-                                                                            class="italia-it-button italia-it-button-cancel-s button-cancel">
+                                                                            class="italia-it-button italia-it-button-cancel-s button-cancel mb-4 mr-4">
                                                                             <span class="italia-it-buttons-text">{% trans "Cancel" %}</span>
                                                                         </a>
 
@@ -100,15 +100,14 @@
                                             </div>
 
                                             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                                                <div class="pt-5 ml-4">
-                                                    <div class="row border p-3 mt-2 rounded">
-                                                        <p class="card-title">
-                                                            {% blocktrans%}
-                                                            this is the login page for users registered with the federation, 
-                                                            if you are a staff user, you will be redirected to the testing page,
-                                                            otherwise you will be sent to the consent page
-                                                            {% endblocktrans%}
-                                                        </p>
+                                                <div class="mt-5 ml-4">
+                                                    <div class="row">
+                                                        <div class="alert alert-info mt-2" role="alert">
+                                                            {% blocktrans %} 
+                                                                If you login as a <b>staff user</b> you will be redirected to the test page.
+                                                                Otherwise there will be the traditional consent page.
+                                                            {% endblocktrans %} 
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

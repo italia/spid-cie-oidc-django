@@ -7,7 +7,7 @@ import json
 
 from cryptojwt.jws.utils import left_hash
 from django.conf import settings
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.forms.utils import ErrorList
 from django.http import (
     HttpResponse,
@@ -271,7 +271,6 @@ class AuthzRequestView(OpBase, View):
     template = "op_user_login.html"
 
     def validate_authz(self, payload: dict):
-
         must_list = ("scope", "acr_values")
         for i in must_list:
             if isinstance(payload.get(i, None), str):
@@ -280,13 +279,20 @@ class AuthzRequestView(OpBase, View):
         redirect_uri = payload.get("redirect_uri", "")
         p = urllib.parse.urlparse(redirect_uri)
         scheme_fqdn = f"{p.scheme}://{p.hostname}"
-        if payload["client_id"] in scheme_fqdn:
-            raise ValidationError(
-                f"{payload.get('client_id', None)} not in {redirect_uri}"
+        if payload.get("client_id", None) in scheme_fqdn:
+            return JsonResponse(
+                {
+                    "error": "invalid_request",
+                    "error_description": "Authen request object validation failed ",
+                }
             )
-
-        schema = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
-        schema["authorization_request"](**payload)
+        result = self.validate_json_schema(
+            payload,
+            "authorization_request",
+            "Authen request object validation failed "
+        )
+        if result:
+            return result
 
     def get_login_form(self):
         return AuthLoginForm
@@ -344,22 +350,9 @@ class AuthzRequestView(OpBase, View):
                 error_description=_("Authorization request not valid"),
             )
 
-        try:
-            self.validate_authz(self.payload)
-        except ValidationError as e:
-            logger.error(
-                "Authz request object validation failed "
-                f"for {self.payload['iss']}: {e} "
-            )
-            return self.redirect_response_data(
-                # TODO: check error
-                error="invalid_request",
-                error_description=_(
-                    "Authz request object validation failed "
-                    f"for {self.payload['iss']}: {e} "
-                ),
-                state=self.payload["state"],
-            )
+        result = self.validate_authz(self.payload)
+        if result:
+            return result
 
         # stores the authz request in a hidden field in the form
         form = self.get_login_form()(
@@ -442,7 +435,7 @@ class StaffTestingPageView(OpBase, View):
     template = "op_user_staff_test.html"
 
     def get_testing_form(self):
-        return TestingPageForm
+        return TestingPageChecksForm
 
     def get(self, request):
         try:
@@ -454,8 +447,10 @@ class StaffTestingPageView(OpBase, View):
         user = session.user
         attributes = user.attributes
         content = {
-            "form": self.get_testing_form()(),
-            "attributes": json.dumps(attributes, indent=4)
+            "form_checks": self.get_testing_form()(),
+            "form_attrs": TestingPageAttributesForm(),
+            "attributes": json.dumps(attributes, indent=4),
+            "session": session,
         }
         return render(request, self.template, content)
 
@@ -653,6 +648,12 @@ class TokenEndpoint(OpBase, View):
             }
         )
 
+    def is_token_renewable(self, session) -> bool:
+        issuedToken = IssuedToken.objects.filter(
+            session = session
+        )
+        return (issuedToken.count() - 1) < getattr(settings, "OIDCFED_PROVIDER_MAX_REFRESH", 1)
+
     def grant_refresh_token(self, request, *args, **kwargs):
         """
             client_id=https://rp.cie.it&
@@ -661,7 +662,6 @@ class TokenEndpoint(OpBase, View):
             refresh_token=8xLOxBtZp8 &
             grant_type=refresh_token
         """
-
         # 1. get the IssuedToken refresh one, revoked = None
         # 2. create a new instance of issuedtoken linked to the same sessions and revoke the older
         # 3. response with a new refresh, access and id_token
@@ -681,6 +681,15 @@ class TokenEndpoint(OpBase, View):
             )
 
         session = issuedToken.session
+        if not self.is_token_renewable(session):
+            return JsonResponse(
+                    {
+                        "error": "Invalid request",
+                        "error_description": "Refresh Token can no longer be updated",
+
+                    },
+                    status = 400
+            )
         _sub = self.authz.pairwised_sub()
         refresh_token = {
             "iss": self.issuer.sub,
@@ -777,7 +786,6 @@ class TokenEndpoint(OpBase, View):
 
                 }, status = 403
             )
-
         if request.POST.get("grant_type") == 'authorization_code':
             return self.grant_auth_code(request)
         elif request.POST.get("grant_type") == 'refresh_token':
@@ -920,6 +928,7 @@ class IntrospectionEndpoint(OpBase, View):
 
 
 def oidc_provider_not_consent(request):
+    logout(request)
     urlrp = reverse("spid_cie_rp_callback")
     kwargs = dict(
         error = "invalid_request",

@@ -117,18 +117,17 @@ DO_POLICY = {
 }
 
 
-def combine_claim_policy(superior, child):
+def combine_claim_policy(superior, child):  # pragma: no cover
     """
     Combine policy rules.
     Applying the child policy can only make the combined policy more restrictive.
     :param superior: Superior policy
     :param child: Intermediates policy
     """
-
     # weed out everything I don't recognize
+
     superior_set = set(superior).intersection(POLICY_FUNCTIONS)
     child_set = set(child).intersection(POLICY_FUNCTIONS)
-
     if "value" in superior_set:  # An exact value can not be restricted.
         if child_set:
             if "essential" in child_set:
@@ -261,7 +260,6 @@ def apply_policy(metadata, policy):
     :param policy: A metadata policy
     :return: A metadata statement that adheres to a metadata policy
     """
-
     metadata_set = set(metadata.keys())
     policy_set = set(policy.keys())
 

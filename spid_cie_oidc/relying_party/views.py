@@ -140,7 +140,7 @@ class SpidCieOidcRp:
 
 class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
     """
-        View which processes the actual Authz request and 
+        View which processes the actual Authz request and
         returns a Http Redirect
     """
 
@@ -161,6 +161,13 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
                 return render(request, self.error_template, context)
 
         except InvalidTrustchain as exc:
+            context = {
+                "error": "request rejected",
+                "error_description": str(exc.args),
+            }
+            return render(request, self.error_template, context)
+        
+        except Exception as exc:
             context = {
                 "error": "request rejected",
                 "error_description": _(str(exc.args)),
@@ -205,10 +212,10 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             jwks_dict = self.get_jwks_from_jwks_uri(provider_metadata["jwks_uri"])
         if not jwks_dict:
             _msg = f"Failed to get jwks from {tc.sub}"
-            logger.error(f"{_msg}:")
+            logger.error(_msg)
             context = {
                 "error": "request rejected",
-                "error_description": _(f"{_msg}:"),
+                "error_description": _msg
             }
             return render(request, self.error_template, context)
 
@@ -517,17 +524,24 @@ def oidc_rpinitiated_logout(request):
     auth_tokens = OidcAuthenticationToken.objects.filter(
         user=request.user
     ).filter(revoked__isnull=True)
-    authz = auth_tokens.last().authz_request
 
+    default_logout_url = getattr(
+        settings, "LOGOUT_REDIRECT_URL", None
+    ) or reverse("spid_cie_rp_landing")
+
+    if not auth_tokens:
+        logger.warning(
+            "Token revocation failed: not found any authentication session"
+        )
+        return HttpResponseRedirect(default_logout_url)
+
+    auth_token = auth_tokens.last()
+    authz = auth_token.authz_request
     provider_conf = authz.provider_configuration
     revocation_endpoint_url = provider_conf.get("revocation_endpoint")
 
     # first of all on RP side ...
     logout(request)
-
-    default_logout_url = getattr(
-        settings, "LOGOUT_REDIRECT_URL", None
-    ) or reverse("spid_cie_rp_landing")
 
     if not revocation_endpoint_url:
         logger.warning(
@@ -553,7 +567,6 @@ def oidc_rpinitiated_logout(request):
             jwk_dict=rp_conf.jwks[0],
         )
 
-        auth_token = auth_tokens.last()
         auth_token.logged_out = timezone.localtime()
         auth_token.save()
 
@@ -567,6 +580,7 @@ def oidc_rpinitiated_logout(request):
             requests.post(revocation_endpoint_url, data = revocation_request)
         except Exception as e:
             logger.warning(f"Token revocation failed: {e}")
+        auth_tokens.update(revoked = timezone.localtime())
         return HttpResponseRedirect(default_logout_url)
 
 
