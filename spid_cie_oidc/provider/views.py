@@ -219,11 +219,13 @@ class OpBase:
                 "iat": iat_now()
         }
 
-    def get_access_token(self, iss_sub, _sub, authz, commons):
+    def get_access_token(
+            self, iss_sub:str, sub:str, authz: OidcSession, commons:dict
+    ) -> dict:
     
         access_token = {
             "iss": iss_sub,
-            "sub": _sub,
+            "sub": sub,
             "aud": [authz.client_id],
             "client_id": authz.client_id,
             "scope": authz.authz_request["scope"],
@@ -232,10 +234,17 @@ class OpBase:
         
         return access_token
 
-    def get_id_token(self, iss_sub, _sub, authz, jwt_at, commons):
+    def get_id_token(
+            self, 
+            iss_sub:str, 
+            sub:str, 
+            authz:OidcSession, 
+            jwt_at:str, 
+            commons:dict
+        ) -> dict:
 
         id_token = {
-            "sub": _sub,
+            "sub": sub,
             "nonce": authz.authz_request["nonce"],
             "at_hash": left_hash(jwt_at, "HS256"),
             "c_hash": left_hash(authz.auth_code, "HS256"),
@@ -244,6 +253,29 @@ class OpBase:
         }
         id_token.update(commons)
         return id_token
+
+    def get_refresh_token(
+            self, 
+            iss_sub:str, 
+            sub:str, 
+            authz:OidcSession, 
+            jwt_at:str, 
+            commons:dict
+    ) -> dict:
+        # refresh token is scope offline_access and prompt == consent
+        if (
+            "offline_access" in authz.authz_request['scope'] and
+            'consent' in authz.authz_request['prompt']
+        ):
+            refresh_token = {
+                "sub": sub,
+                "at_hash": left_hash(jwt_at, "HS256"),
+                "c_hash": left_hash(authz.auth_code, "HS256"),
+                "aud": [authz.client_id],
+                "iss": iss_sub,
+            }
+            refresh_token.update(commons)
+            return refresh_token
 
     def get_iss_token_data(self, session, issuer):
         _sub = session.pairwised_sub()
@@ -262,6 +294,10 @@ class OpBase:
             id_token=jwt_id,
             expires=datetime_from_timestamp(commons["exp"])
         )
+
+        _refresh_token = self.get_refresh_token(iss_sub, _sub, session, jwt_at, commons)
+        if _refresh_token:
+            iss_token_data["refresh_token"] = _refresh_token
 
         return iss_token_data
 
@@ -575,8 +611,8 @@ class ConsentPageView(OpBase, View):
                 error_description=_("User rejected the release of attributes"),
             )
         issuer = self.get_issuer()
-        iss_token_data = self.get_iss_token_data(session, issuer)
 
+        iss_token_data = self.get_iss_token_data(session, issuer)
         IssuedToken.objects.create(**iss_token_data)
 
         return self.redirect_response_data(
@@ -595,29 +631,7 @@ class TokenEndpoint(OpBase, View):
 
     def grant_auth_code(self, request, *args, **kwargs):
         """
-        Example of a Token request:
-
-        {
-            'grant_type': ['authorization_code'],
-            'redirect_uri': ['http://127.0.0.1:8000/oidc/rp/callback'],
-            'client_id': ['http://127.0.0.1:8000/oidc/rp/'],
-            'state': ['tiIjdMSE20tuIWwruFhYaDROadKxKO9x'],
-            'code': [
-                '7348f5dd913e96e6db480662d4717b8a3669ba04b49f690773af693ae4d7'
-                '228f2fbeb6fbf418306192be27ed79c24ecb21a099308f9ec3337fd8e6433a5c5ccc'
-            ],
-            'code_verifier': ['WGzumG7gKBioHAWNc567YTPoLBQxRyrVqsl6TJPC8XmQ8flbPbUsHQ'],
-            'client_assertion_type': ['urn:ietf:params:oauth:client-assertion-type:jwt-bearer'],
-            'client_assertion': [
-                'eyJhbGciOiJSUzI1NiIsImtpZCI6IjJIbm9GUzNZbkM5dGppQ2FpdmhXTFZVSjNBeHdHR3pfOTh1UkZhcU1FRXMifQ.'
-                'eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvb2lkYy9ycC8iLCJzdWIiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvb2lkYy9ycC8iLC'
-                'JhdWQiOlsiaHR0cDovLzEyNy4wLjAuMTo4MDAwL29pZGMvb3AvdG9rZW4vIl0sImlhdCI6MTY0NjQzODQ2OCwiZXhwIjoxNjQ2NDQwNDQ'
-                '4LCJqdGkiOiJjODRjYjZkMy0wN2VjLTQxNjktODA3OC05MDQ3NTk0MzNiYzQifQ.u2uK3zN_UvsmWsPVuNlaD8VEaJTSOUg5_3Y7mufrZF'
-                '_-O-IwyZk3kfukgLWpxqIPJi531aVt4X5YSofgf3IhORmZqx7buUFP1LjlKC03-dSXTHlhhWqwtp2gyI4hjUPTQvRaNfIJ6icVRXiKuPUUJ0'
-                '0inqDQISxZtvIooGm3M7-GNtDroAx4aa3BSxxytG48v4-mDKJ_K04FOGI82JHmAIca1H_eHoC_vMoAGWwQNwvMbpS26F1J0s7bqWnmTE1JF_'
-                't--2FJZkVRRdOwzIxgZhEZsXIM6tUovDmHHIIh3K1QiTIwM-v_SuHpDO9sXi8IwhwAes8xiWAL2rwHyDkJgA'
-            ]
-        }
+            Token request for an authorization code grant
         """
         # PKCE check - based on authz.authz_request["code_challenge_method"] == S256
         code_challenge = hashlib.sha256(request.POST["code_verifier"].encode()).digest()
@@ -626,54 +640,29 @@ class TokenEndpoint(OpBase, View):
         if code_challenge != self.authz.authz_request["code_challenge"]:
             return HttpResponseForbidden()
         #
-        _sub = self.authz.pairwised_sub()
 
         issuedToken = IssuedToken.objects.filter(
             session= self.authz,
             revoked = False
         ).first()
 
-        access_token = issuedToken.access_token
-        id_token = issuedToken.access_token
-
-        iss_token_data = dict(
-            session=self.authz,
-            access_token=access_token,
-            id_token=id_token,
-            expires=datetime_from_timestamp(self.commons["exp"])
-        )
-
-        # refresh token is scope offline_access and prompt == consent
-        if (
-            "offline_access" in self.authz.authz_request['scope'] and
-            'consent' in self.authz.authz_request['prompt']
-        ):
-            refresh_token = {
-                "sub": _sub,
-                "at_hash": left_hash(access_token, "HS256"),
-                "c_hash": left_hash(self.authz.auth_code, "HS256"),
-                "aud": [self.authz.client_id],
-                "iss": self.issuer.sub,
-            }
-            id_token.update(self.commons)
-            iss_token_data['refresh_token'] = refresh_token
-
-
-        jwk_at = unpad_jwt_payload(access_token)
+        jwk_at = unpad_jwt_payload(issuedToken.access_token)
         expires_in = timezone.timedelta(
             seconds = jwk_at['exp'] - jwk_at['iat']
         ).seconds
 
-        return JsonResponse(
-            {
-                "access_token": access_token,
-                "id_token": id_token,
-                "token_type": "Bearer",
-                "expires_in": expires_in,
-                # TODO: remove unsupported scope
-                "scope": self.authz.authz_request["scope"],
-            }
+        iss_token_data = dict(
+            access_token = issuedToken.access_token,
+            id_token = issuedToken.access_token,
+            token_type = "Bearer",
+            expires_in = expires_in,
+            # TODO: remove unsupported scope
+            scope = self.authz.authz_request["scope"],
         )
+        if issuedToken.refresh_token:
+            iss_token_data['refresh_token'] = issuedToken.refresh_token
+
+        return JsonResponse(iss_token_data)
 
     def is_token_renewable(self, session) -> bool:
         issuedToken = IssuedToken.objects.filter(
@@ -968,10 +957,3 @@ def oidc_provider_not_consent(request):
     )
     url = f'{urlrp}?{urllib.parse.urlencode(kwargs)}'
     return HttpResponseRedirect(url)
-
-
-
-
-
-
-        
