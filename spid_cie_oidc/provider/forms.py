@@ -45,9 +45,10 @@ class TestingPageAttributesForm(forms.Form):
         label="attributes"
     )
 
+
 class TestingPageChecksForm(forms.Form):
 
-    CHOICES=(
+    CHOICES = (
          ('send_auth_code_no_code', _('[auth code] send an auth code response without code')),
          ('send_auth_code_no_state', _('[auth code] send an auth code without state')),
          ('unsigned_access_token', _('[token endpoint] release an unsigned access token')),

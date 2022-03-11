@@ -167,7 +167,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
                 "error_description": str(exc.args),
             }
             return render(request, self.error_template, context)
-        
+
         except Exception as exc:
             context = {
                 "error": "request rejected",

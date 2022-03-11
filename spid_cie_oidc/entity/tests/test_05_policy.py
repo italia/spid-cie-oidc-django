@@ -3,9 +3,8 @@ from copy import deepcopy
 from django.test import TestCase
 from spid_cie_oidc.authority.settings import FEDERATION_DEFAULT_POLICY
 from spid_cie_oidc.entity.policy import (
-    PolicyError, 
-    apply_policy,
-    combine_claim_policy, diff2policy,
+    apply_policy, 
+    diff2policy,
     gather_policies
 )
 from spid_cie_oidc.entity.tests.rp_metadata_settings import RP_METADATA

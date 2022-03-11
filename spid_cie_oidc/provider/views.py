@@ -213,16 +213,16 @@ class OpBase:
             )
 
     def get_jwt_common_data(self):
-            return {
-                "jti": str(uuid.uuid4()),
-                "exp": exp_from_now(),
-                "iat": iat_now()
+        return {
+            "jti": str(uuid.uuid4()),
+            "exp": exp_from_now(),
+            "iat": iat_now()
         }
 
     def get_access_token(
             self, iss_sub:str, sub:str, authz: OidcSession, commons:dict
     ) -> dict:
-    
+
         access_token = {
             "iss": iss_sub,
             "sub": sub,
@@ -231,17 +231,17 @@ class OpBase:
             "scope": authz.authz_request["scope"],
         }
         access_token.update(commons)
-        
+
         return access_token
 
     def get_id_token(
-            self, 
-            iss_sub:str, 
-            sub:str, 
-            authz:OidcSession, 
-            jwt_at:str, 
-            commons:dict
-        ) -> dict:
+                self,
+                iss_sub:str,
+                sub:str,
+                authz:OidcSession,
+                jwt_at:str,
+                commons:dict
+    ) -> dict:
 
         id_token = {
             "sub": sub,
@@ -255,11 +255,11 @@ class OpBase:
         return id_token
 
     def get_refresh_token(
-            self, 
-            iss_sub:str, 
-            sub:str, 
-            authz:OidcSession, 
-            jwt_at:str, 
+            self,
+            iss_sub:str,
+            sub:str,
+            authz:OidcSession,
+            jwt_at:str,
             commons:dict
     ) -> dict:
         # refresh token is scope offline_access and prompt == consent
@@ -300,6 +300,7 @@ class OpBase:
             iss_token_data["refresh_token"] = _refresh_token
 
         return iss_token_data
+
 
 class AuthzRequestView(OpBase, View):
     """
@@ -415,8 +416,8 @@ class AuthzRequestView(OpBase, View):
         form = self.get_login_form()(request.POST)
         if not form.is_valid():
             return render(
-                request, 
-                self.template, 
+                request,
+                self.template,
                 {
                     "form": form,
                     "hidden_form": AuthzHiddenForm(request.POST),
@@ -444,8 +445,8 @@ class AuthzRequestView(OpBase, View):
             errors = form._errors.setdefault("username", ErrorList())
             errors.append(_("invalid username or password"))
             return render(
-                request, 
-                self.template, 
+                request,
+                self.template,
                 {
                     "form": form,
                     "hidden_form": AuthzHiddenForm(request.POST),
@@ -540,7 +541,6 @@ class StaffTestingPageView(OpBase, View):
         )
 
 
-
 class ConsentPageView(OpBase, View):
 
     template = "op_user_consent.html"
@@ -556,7 +556,7 @@ class ConsentPageView(OpBase, View):
             return HttpResponseForbidden()
 
         tc = TrustChain.objects.filter(
-            sub=session.client_id, 
+            sub=session.client_id,
             type="openid_relying_party",
             is_active = True
         ).first()
@@ -577,10 +577,10 @@ class ConsentPageView(OpBase, View):
             for claim in claims:
                 if claim in user_claims:
                     filtered_user_claims.append(claim)
-        
+
         # mapping with human names
         i18n_user_claims = [
-            OIDCFED_ATTRNAME_I18N.get(i, i) 
+            OIDCFED_ATTRNAME_I18N.get(i, i)
             for i in filtered_user_claims
         ]
 
@@ -625,7 +625,7 @@ class ConsentPageView(OpBase, View):
 
 @method_decorator(csrf_exempt, name="dispatch")
 class TokenEndpoint(OpBase, View):
-    
+
     def get(self, request, *args, **kwargs):
         return HttpResponseBadRequest()
 
@@ -943,7 +943,6 @@ class IntrospectionEndpoint(OpBase, View):
             "scope": scope
         }
         return JsonResponse(response)
-
 
 
 def oidc_provider_not_consent(request):

@@ -87,7 +87,7 @@ OIDCFED_PROVIDER_ATTRIBUTES_MAP = {
 
 OIDCFED_PROVIDER_MAX_REFRESH = 1
 
-# lifetime of validity of an auth code 
+# lifetime of validity of an auth code
 OIDCFED_PROVIDER_AUTH_CODE_MAX_AGE = getattr(
     settings,
     "OIDCFED_PROVIDER_AUTH_CODE_MAX_AGE",
@@ -112,7 +112,7 @@ OIDCFED_ATTRNAME_I18N = {
     "https://attributes.spid.gov.it/address": _("Address"),
     "https://attributes.spid.gov.it/expirationDate": _("Expiration date"),
     "https://attributes.spid.gov.it/digitalAddress": _("Digital address"),
-    
+
     # CIE
     "given_name": _("Name"),
     "family_name": _("Family name"),
