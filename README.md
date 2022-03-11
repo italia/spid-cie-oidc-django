@@ -76,7 +76,7 @@ The demo propose a small federation composed by the following entities:
  - OpenID Relying Party, available at `http://127.0.0.1:8001/`
  - OpenID Provider, available at `http://127.0.0.1:8002/`
 
-Examples User, Password:
+Examples Users and Passwords:
 
  - __admin__ __oidcadmin__
  - __user__ __oidcuser__

@@ -470,7 +470,9 @@ class StaffTestingPageView(OpBase, View):
                 # TODO: this is not normative -> check AgID/IPZS
                 session.authz_request['redirect_uri'],
                 error="rejected_by_user",
-                error_description=_("User rejected the release of attributes"),
+                error_description=_(
+                    "User rejected the release of attributes"
+                ),
             )
 
         issuer = self.get_issuer()

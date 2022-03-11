@@ -48,7 +48,7 @@ class TestingPageAttributesForm(forms.Form):
 class TestingPageChecksForm(forms.Form):
 
     CHOICES=(
-         ('send_auth_code', _('[auth code] send a correct auth code response')),
+         ('send_auth_code_no_code', _('[auth code] send an auth code response without code')),
          ('send_auth_code_no_state', _('[auth code] send an auth code without state')),
          ('unsigned_access_token', _('[token endpoint] release an unsigned access token')),
          ('access_token_with_wrong_signature', _('[token endpoint] release an access token with a wrong signature'))
@@ -58,5 +58,6 @@ class TestingPageChecksForm(forms.Form):
         choices=CHOICES,
         widget=forms.RadioSelect,
         label="select",
-        error_messages={"required": _("Select an item")},
+        # error_messages={"required": _("Select an item")},
+        required=False
     )
