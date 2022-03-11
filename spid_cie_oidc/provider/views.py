@@ -582,7 +582,7 @@ class TokenEndpoint(OpBase, View):
         if not issuedToken:
             return JsonResponse(
                 {
-                    "error": "Invalid request",
+                    "error": "invalid_request",
                     "error_description": "Refresh token not found",
 
                 },
@@ -593,7 +593,7 @@ class TokenEndpoint(OpBase, View):
         if not self.is_token_renewable(session):
             return JsonResponse(
                     {
-                        "error": "Invalid request",
+                        "error": "invalid_request",
                         "error_description": "Refresh Token can no longer be updated",
 
                     },
@@ -766,7 +766,7 @@ class RevocationEndpoint(OpBase,View):
         except Exception:
             return JsonResponse(
                 {
-                    "error": "Invalid request",
+                    "error": "invalid_request",
                     "error_description": "Validation of client assertion failed",
 
                 },
@@ -777,7 +777,7 @@ class RevocationEndpoint(OpBase,View):
         if not access_token:
             return JsonResponse(
                 {
-                    "error": "Invalid request",
+                    "error": "invalid_request",
                     "error_description": "The request does not include Access Token",
 
                 },
@@ -792,7 +792,7 @@ class RevocationEndpoint(OpBase,View):
         if not token or token.expired:
             return JsonResponse(
                 {
-                    "error": "Invalid request",
+                    "error": "invalid_grant",
                     "error_description": "Access Token not found or expired",
 
                 },
@@ -802,7 +802,7 @@ class RevocationEndpoint(OpBase,View):
         if access_token.is_revoked:
             return JsonResponse(
                 {
-                    "error": "Invalid request",
+                    "error": "invalid_grant",
                     "error_description": "Access Token revoked",
 
                 },
