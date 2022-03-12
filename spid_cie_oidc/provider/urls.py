@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.urls import path
 
-from .views import (
+from .views.views import (
     oidc_provider_not_consent,
     AuthzRequestView,
     ConsentPageView,
