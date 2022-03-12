@@ -2,37 +2,23 @@
 {% load i18n %}
 {% load static %}
 
-{% block container %}
-<div>
-    <div class="container pt-2 p-3">
+{% block centered_container %}
 
-        <div class="row d-lg-flex">
-            <div class="col-12">
-                <div class="card-wrapper card-space">
-                    <div class="card card-bg no-after">
-                        <div class="card-body pl-lg-0">
-                            <div class="row h-100">
-                                <div class="col-12 pl-lg-4">
-                                    {% csrf_token %}
-                                  <h4 class="text-left">
-                                      {% trans "OIDC attributes" %}
-                                  </h4>
+<div class="col-12 p-4">
+    {% csrf_token %}
+    <h4 class="text-left">
+        {% trans "User attributes" %}
+    </h4>
 
-                                  <dl>
-                                    {% for attribute, value in oidc_rp_user_attrs.items %}
-                                    <dt>{{ attribute }}:</dt>
-                                    <dd>{{ value }}</dd>
-                                    {% endfor %}
-                                  </dl>
-                                  
-                                  <a href="{% url 'spid_cie_rpinitiated_logout' %}" class="btn btn-secondary" role="button">Log out</a>
+    <dl class="mt-4 mb-4">
+        {% for attribute, value in oidc_rp_user_attrs.items %}
+        <dt>{{ attribute }}:</dt>
+        <dd>{{ value }}</dd>
+        {% endfor %}
+    </dl>
 
-                                </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <a href="{% url 'spid_cie_rpinitiated_logout' %}" class="btn btn-secondary" role="button">Log out</a>
 
-{% endblock container %}
+</div>
+
+{% endblock %}

@@ -30,7 +30,7 @@ class OnBoardingRegistration(TimeStampedModel):
     public_jwks = models.JSONField(
         blank=False,
         help_text=_("Public jwks of the Entities"),
-        default=dict,
+        default=list,
         validators=[validate_public_jwks],
     )
 

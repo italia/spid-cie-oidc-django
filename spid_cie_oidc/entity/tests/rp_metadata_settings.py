@@ -13,7 +13,12 @@ RP_METADATA = {
     "client_id": "https://rp.example.it/spid",
     "client_name": "Nome RP",
     "contacts": ["ops@rp.example.it"],
-    "subject_type": "pairwise",
+    "subject_type": "pairwise", 
+    "logo_uri": [
+          "https://rp.example.it/logo_small.jpg",
+          "https://rp.example.it/logo_big.jpg"
+    ],
+    "scopes" : ["openid", "offline_access", "profile"],
 }
 
 RP_METADATA_CIE = deepcopy(RP_METADATA)
@@ -28,3 +33,9 @@ RP_METADATA_SPID_NO_REDIRECT_URIS.pop("redirect_uris")
 
 RP_METADATA_SPID_JWKS_AND_JWKS_URI = deepcopy(RP_METADATA_SPID)
 RP_METADATA_SPID_JWKS_AND_JWKS_URI["jwks"] = JWKS
+
+RP_METADATA_CIE_JWKS_AND_JWKS_URI = deepcopy(RP_METADATA_CIE)
+RP_METADATA_CIE_JWKS_AND_JWKS_URI["jwks"] = JWKS
+
+RP_METADATA_CIE_NO_REDIRECT_URIS = deepcopy(RP_METADATA_CIE)
+RP_METADATA_CIE_NO_REDIRECT_URIS.pop("redirect_uris")

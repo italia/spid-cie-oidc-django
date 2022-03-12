@@ -13,14 +13,7 @@ op_conf = {
     "default_exp": 2880,
     "default_signature_alg": "RS256",
     "authority_hints": ["http://op-test/oidc/op/"],
-    "jwks": [
-        {
-            "kty": "RSA",
-            "n": "01_4aI2Lu5ggsElmRkE_S_a83V_szXU0txV4db2hmJ8HR1Y2s7PsZZ5-emGpnTydGrR3n-QExeEEIcFt_a06Ryiink34RQcKoGXUDBMBU0Bu8G7NcZ99YX6yeG9wFi4xs-WviTPmtPqijkz6jm1_ltWDcwbktfkraIRKKggZaEl9ldtsFr2wSpin3AXuGIdeJ0hZqhF92ODBLGjJlaIL9KlwopDy56adReVnraawSdrxmuPGj78IEADNAme2nQNvv9UCu0FkAn5St1bKds3Gpv26W0kjr1gZLsmQrj9lTcDk_KbAwfEY__P7se62kusoSuKMTQqUG1TQpUY7oFGSdw",
-            "e": "AQAB",
-            "kid": "dB67gL7ck3TFiIAf7N6_7SHvqk0MDYMEQcoGGlkUAAw",
-        }
-    ],
+    "jwks": [op_conf_priv_jwk],
     "trust_marks": [],
     "trust_marks_issuers": {},
     "entity_type": "openid_provider",

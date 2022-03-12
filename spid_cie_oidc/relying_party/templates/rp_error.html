@@ -3,38 +3,21 @@
 {% load i18n %}
 {% load static %}
 
-{% block container %}
-<div>
-    <div class="container pt-2 p-3">
+{% block centered_container %}
 
-        <div class="row d-lg-flex">
-            <div class="col-12">
-                <div class="card-wrapper card-space">
-                    <div class="card card-bg no-after">
-                        <div class="card-body pl-lg-0">
-                            <div class="row h-100">
-                                <div class="col-12 col-lg-6 pl-lg-4">
-                                    {% csrf_token %}
-                                    
-
-                                    <div class="callout danger">
-                                        <div class="callout-title">
-                                            {% trans error%} 
-                                          </div>
-
-                                        <p>
-                                            {% trans error_description%} 
-                                        </p>
-                                    </div>
-
-                                </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<div class="col-12 col-lg-6 pl-lg-4">
+    {% csrf_token %}
+    <div class="callout danger">
+        <div class="callout-title">
+            {% trans error%} 
         </div>
-    </div>
-    <script src="{% static 'js/spid-sp-access-button.js' %}"></script>
-    <script src="{% static 'js/spid_button.js' %}"></script>
 
-{% endblock container %}
+        <p>
+            {% trans error_description%} 
+        </p>
+    </div>
+</div>
+<script src="{% static 'js/spid-sp-access-button.js' %}"></script>
+<script src="{% static 'js/spid_button.js' %}"></script>
+
+{% endblock %}

@@ -37,7 +37,7 @@ each of these can be installed separately within a django project. These are the
 
 ------------------------------------------------
 
-![RP Auth demo](docs/images/rp_auth_demo.gif)
+![RP Auth demo](docs/images/rp_auth_demo_2.gif)
 An onboarded Relying Party with a succesful authentication.
 
 ## Setup
@@ -76,12 +76,15 @@ The demo propose a small federation composed by the following entities:
  - OpenID Relying Party, available at `http://127.0.0.1:8001/`
  - OpenID Provider, available at `http://127.0.0.1:8002/`
 
-Examples User, Password:
+Examples Users and Passwords:
 
- - admin oidcadmin
+ - __admin__ __oidcadmin__
+ - __user__ __oidcuser__
+
+### Tools
 
 ![OIDC Tools](docs/images/onboard_tools_jwt_debug.png)
-OIDC tools that facilitate the lives of developers and service operators, here a simple interface to decode and verify a JWT.
+OIDC tools facilitates the lives of developers and service operators, here a simple interface to decode and verify a JWT.
 
 ## Contribute
 

@@ -99,6 +99,7 @@ class OPMetadata(BaseModel):
     userinfo_endpoint: HttpUrl
     introspection_endpoint: HttpUrl
     revocation_endpoint: HttpUrl
+    token_endpoint_auth_signing_alg_values_supported: List[SigningAlgValuesSupported]
     id_token_encryption_alg_values_supported: List[EncryptionAlgValuesSupported]
     id_token_encryption_enc_values_supported: List[EncryptionEncValuesSupported]
     userinfo_encryption_alg_values_supported: List[EncryptionAlgValuesSupported]

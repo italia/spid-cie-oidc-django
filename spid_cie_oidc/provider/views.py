@@ -3,6 +3,7 @@ import hashlib
 import logging
 import urllib.parse
 import uuid
+import json
 
 from cryptojwt.jws.utils import left_hash
 from django.conf import settings
@@ -57,8 +58,8 @@ class OpBase:
     Baseclass with common methods for OPs
     """
 
-    def redirect_response_data(self, **kwargs) -> HttpResponseRedirect:
-        url = f'{self.payload["redirect_uri"]}?{urllib.parse.urlencode(kwargs)}'
+    def redirect_response_data(self, redirect_uri:str, **kwargs) -> HttpResponseRedirect:
+        url = f'{redirect_uri}?{urllib.parse.urlencode(kwargs)}'
         return HttpResponseRedirect(url)
 
     def find_jwk(self, header: dict, jwks: list) -> dict:
@@ -163,7 +164,10 @@ class OpBase:
 
         session = OidcSession.objects.filter(
             auth_code=request.session["oidc"]["auth_code"],
-            user=request.user
+            user=request.user,
+            created__lte = timezone.localtime() + timezone.timedelta(
+                minutes = OIDCFED_PROVIDER_AUTH_CODE_MAX_AGE
+            )
         ).first()
 
         if not session:
@@ -208,6 +212,95 @@ class OpBase:
                 }
             )
 
+    def get_jwt_common_data(self):
+        return {
+            "jti": str(uuid.uuid4()),
+            "exp": exp_from_now(),
+            "iat": iat_now()
+        }
+
+    def get_access_token(
+            self, iss_sub:str, sub:str, authz: OidcSession, commons:dict
+    ) -> dict:
+
+        access_token = {
+            "iss": iss_sub,
+            "sub": sub,
+            "aud": [authz.client_id],
+            "client_id": authz.client_id,
+            "scope": authz.authz_request["scope"],
+        }
+        access_token.update(commons)
+
+        return access_token
+
+    def get_id_token(
+                self,
+                iss_sub:str,
+                sub:str,
+                authz:OidcSession,
+                jwt_at:str,
+                commons:dict
+    ) -> dict:
+
+        id_token = {
+            "sub": sub,
+            "nonce": authz.authz_request["nonce"],
+            "at_hash": left_hash(jwt_at, "HS256"),
+            "c_hash": left_hash(authz.auth_code, "HS256"),
+            "aud": [authz.client_id],
+            "iss": iss_sub,
+        }
+        id_token.update(commons)
+        return id_token
+
+    def get_refresh_token(
+            self,
+            iss_sub:str,
+            sub:str,
+            authz:OidcSession,
+            jwt_at:str,
+            commons:dict
+    ) -> dict:
+        # refresh token is scope offline_access and prompt == consent
+        if (
+            "offline_access" in authz.authz_request['scope'] and
+            'consent' in authz.authz_request['prompt']
+        ):
+            refresh_token = {
+                "sub": sub,
+                "at_hash": left_hash(jwt_at, "HS256"),
+                "c_hash": left_hash(authz.auth_code, "HS256"),
+                "aud": [authz.client_id],
+                "iss": iss_sub,
+            }
+            refresh_token.update(commons)
+            return refresh_token
+
+    def get_iss_token_data(self, session, issuer):
+        _sub = session.pairwised_sub()
+        iss_sub = issuer.sub
+        commons = self.get_jwt_common_data()
+        jwk = issuer.jwks[0]
+
+        access_token = self.get_access_token(iss_sub, _sub, session, commons)
+        jwt_at = create_jws(access_token, jwk, typ="at+jwt")
+        id_token = self.get_id_token(iss_sub, _sub, session, jwt_at, commons)
+        jwt_id = create_jws(id_token, jwk)
+
+        iss_token_data = dict(
+            session=session,
+            access_token=jwt_at,
+            id_token=jwt_id,
+            expires=datetime_from_timestamp(commons["exp"])
+        )
+
+        _refresh_token = self.get_refresh_token(iss_sub, _sub, session, jwt_at, commons)
+        if _refresh_token:
+            iss_token_data["refresh_token"] = _refresh_token
+
+        return iss_token_data
+
 
 class AuthzRequestView(OpBase, View):
     """
@@ -230,7 +323,7 @@ class AuthzRequestView(OpBase, View):
             return JsonResponse(
                 {
                     "error": "invalid_request",
-                    "error_description": "Authen request object validation failed ",
+                    "error_description": "Authn request object validation failed ",
                 }
             )
         result = self.validate_json_schema(
@@ -257,6 +350,7 @@ class AuthzRequestView(OpBase, View):
                 f"error=invalid_request"
             )
             return self.redirect_response_data(
+                self.payload["redirect_uri"],
                 error="invalid_request",
                 error_description=_("Missing Authz request object"),
                 # No req -> no payload -> no state
@@ -271,6 +365,7 @@ class AuthzRequestView(OpBase, View):
             # FIXME: to do test
             logger.error(f" {e}")
             return self.redirect_response_data(
+                self.payload["redirect_uri"],
                 error="invalid_request",
                 error_description=_("Failed to establish the Trust"),
             )
@@ -280,6 +375,7 @@ class AuthzRequestView(OpBase, View):
                 f"{request.GET.get('client_id', 'unknow')}: {e}"
             )
             return self.redirect_response_data(
+                self.payload["redirect_uri"],
                 error="invalid_request",
                 error_description=_(
                     "An Unknown error raised during validation of "
@@ -293,6 +389,7 @@ class AuthzRequestView(OpBase, View):
                 f"{request.GET.get('client_id', 'unknown')}: {e}"
             )
             return self.redirect_response_data(
+                self.payload["redirect_uri"],
                 error="invalid_request",
                 error_description=_("Authorization request not valid"),
             )
@@ -302,41 +399,43 @@ class AuthzRequestView(OpBase, View):
             return result
 
         # stores the authz request in a hidden field in the form
-        form = self.get_login_form()(
-            dict(authz_request_object=req)
-        )
+        form = self.get_login_form()()
         context = {
             "client_organization_name": tc.metadata.get(
                 "client_name", self.payload["client_id"]
             ),
-            "form": form,
+            "hidden_form": AuthzHiddenForm(dict(authz_request_object=req)),
+            "form": form
         }
         return render(request, self.template, context)
 
     def post(self, request, *args, **kwargs):
         """
-        When the User prompts his credentials
+            When the User prompts his credentials
         """
         form = self.get_login_form()(request.POST)
         if not form.is_valid():
-            return render(request, self.template, {"form": form})
+            return render(
+                request,
+                self.template,
+                {
+                    "form": form,
+                    "hidden_form": AuthzHiddenForm(request.POST),
+                }
+            )
 
-        authz_request = form.cleaned_data.get("authz_request_object")
-
+        authz_form = AuthzHiddenForm(request.POST)
+        authz_form.is_valid()
+        authz_request = authz_form.cleaned_data.get("authz_request_object")
         try:
             self.validate_authz_request_object(authz_request)
         except Exception as e:
             logger.error(
-                "Authz request object validation failed " f"for {authz_request}: {e} "
+                "Authz request object validation failed "
+                f"for {authz_request}: {e} "
             )
-            return self.redirect_response_data(
-                # TODO: check error
-                error="invalid_request",
-                error_description=_(
-                    "Authz request object validation failed "
-                    f"for {authz_request}: {e}"
-                ),
-            )
+            # we don't have a redirect_uri here
+            return HttpResponseForbidden()
 
         # autenticate the user
         username = form.cleaned_data.get("username")
@@ -345,7 +444,14 @@ class AuthzRequestView(OpBase, View):
         if not user:
             errors = form._errors.setdefault("username", ErrorList())
             errors.append(_("invalid username or password"))
-            return render(request, self.template, {"form": form})
+            return render(
+                request,
+                self.template,
+                {
+                    "form": form,
+                    "hidden_form": AuthzHiddenForm(request.POST),
+                }
+            )
         else:
             login(request, user)
 
@@ -359,7 +465,6 @@ class AuthzRequestView(OpBase, View):
                 )
             ).encode()
         ).hexdigest()
-
         # put the auth_code in the user web session
         request.session["oidc"] = {"auth_code": auth_code}
 
@@ -373,9 +478,67 @@ class AuthzRequestView(OpBase, View):
             auth_code=auth_code,
         )
         session.set_sid(request)
+        url = reverse("oidc_provider_consent")
+        if user.is_staff:
+            url = reverse("oidc_provider_staff_testing")
+        return HttpResponseRedirect(url)
 
-        consent_url = reverse("oidc_provider_consent")
-        return HttpResponseRedirect(consent_url)
+
+class StaffTestingPageView(OpBase, View):
+
+    template = "op_user_staff_test.html"
+
+    def get_testing_form(self):
+        return TestingPageChecksForm
+
+    def get(self, request):
+        try:
+            session = self.check_session(request)
+        except Exception:
+            logger.warning("Invalid session")
+            return HttpResponseForbidden()
+
+        user = session.user
+        attributes = user.attributes
+        content = {
+            "form_checks": self.get_testing_form()(),
+            "form_attrs": TestingPageAttributesForm(),
+            "attributes": json.dumps(attributes, indent=4),
+            "session": session,
+        }
+        return render(request, self.template, content)
+
+    def post(self, request):
+
+        try:
+            session = self.check_session(request)
+        except Exception:
+            logger.warning("Invalid session")
+            return HttpResponseForbidden()
+
+        form = self.get_testing_form()(request.POST)
+        if not form.is_valid():
+            return self.redirect_response_data(
+                # TODO: this is not normative -> check AgID/IPZS
+                session.authz_request['redirect_uri'],
+                error="rejected_by_user",
+                error_description=_(
+                    "User rejected the release of attributes"
+                ),
+            )
+
+        issuer = self.get_issuer()
+        iss_token_data = self.get_iss_token_data(session, issuer)
+
+        IssuedToken.objects.create(**iss_token_data)
+        self.payload = session.authz_request
+
+        return self.redirect_response_data(
+            self.payload["redirect_uri"],
+            code=session.auth_code,
+            state=session.authz_request["state"],
+            iss=issuer.sub if issuer else "",
+        )
 
 
 class ConsentPageView(OpBase, View):
@@ -389,11 +552,13 @@ class ConsentPageView(OpBase, View):
         try:
             session = self.check_session(request)
         except Exception:
-            logger.warning("Invalid session")
+            logger.warning("Invalid session on Consent page")
             return HttpResponseForbidden()
 
         tc = TrustChain.objects.filter(
-            sub=session.client_id, type="openid_relying_party"
+            sub=session.client_id,
+            type="openid_relying_party",
+            is_active = True
         ).first()
 
         # if this auth code has already been used ... forbidden
@@ -406,14 +571,18 @@ class ConsentPageView(OpBase, View):
         user_claims["email"] = user_claims.get("email", request.user.email)
         user_claims["username"] = request.user.username
 
-        # TODO: mapping with human names
         # filter on requested claims
         filtered_user_claims = []
         for target, claims in session.authz_request.get("claims", {}).items():
             for claim in claims:
                 if claim in user_claims:
                     filtered_user_claims.append(claim)
-        #
+
+        # mapping with human names
+        i18n_user_claims = [
+            OIDCFED_ATTRNAME_I18N.get(i, i)
+            for i in filtered_user_claims
+        ]
 
         context = {
             "form": self.get_consent_form()(),
@@ -421,7 +590,7 @@ class ConsentPageView(OpBase, View):
             "client_organization_name": tc.metadata.get(
                 "client_name", session.client_id
             ),
-            "user_claims": set(filtered_user_claims),
+            "user_claims": sorted(set(i18n_user_claims),)
         }
         return render(request, self.template, context)
 
@@ -436,14 +605,18 @@ class ConsentPageView(OpBase, View):
         form = self.get_consent_form()(request.POST)
         if not form.is_valid():
             return self.redirect_response_data(
+                self.payload["redirect_uri"],
                 # TODO: this is not normative -> check AgID/IPZS
                 error="rejected_by_user",
                 error_description=_("User rejected the release of attributes"),
             )
-
         issuer = self.get_issuer()
 
+        iss_token_data = self.get_iss_token_data(session, issuer)
+        IssuedToken.objects.create(**iss_token_data)
+
         return self.redirect_response_data(
+            self.payload["redirect_uri"],
             code=session.auth_code,
             state=session.authz_request["state"],
             iss=issuer.sub if issuer else "",
@@ -452,41 +625,13 @@ class ConsentPageView(OpBase, View):
 
 @method_decorator(csrf_exempt, name="dispatch")
 class TokenEndpoint(OpBase, View):
-    def get_jwt_common_data(self):
-        return {
-            "jti": str(uuid.uuid4()),
-            "exp": exp_from_now(),
-            "iat": iat_now()
-        }
 
     def get(self, request, *args, **kwargs):
         return HttpResponseBadRequest()
 
     def grant_auth_code(self, request, *args, **kwargs):
         """
-        Example of a Token request:
-
-        {
-            'grant_type': ['authorization_code'],
-            'redirect_uri': ['http://127.0.0.1:8000/oidc/rp/callback'],
-            'client_id': ['http://127.0.0.1:8000/oidc/rp/'],
-            'state': ['tiIjdMSE20tuIWwruFhYaDROadKxKO9x'],
-            'code': [
-                '7348f5dd913e96e6db480662d4717b8a3669ba04b49f690773af693ae4d7'
-                '228f2fbeb6fbf418306192be27ed79c24ecb21a099308f9ec3337fd8e6433a5c5ccc'
-            ],
-            'code_verifier': ['WGzumG7gKBioHAWNc567YTPoLBQxRyrVqsl6TJPC8XmQ8flbPbUsHQ'],
-            'client_assertion_type': ['urn:ietf:params:oauth:client-assertion-type:jwt-bearer'],
-            'client_assertion': [
-                'eyJhbGciOiJSUzI1NiIsImtpZCI6IjJIbm9GUzNZbkM5dGppQ2FpdmhXTFZVSjNBeHdHR3pfOTh1UkZhcU1FRXMifQ.'
-                'eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvb2lkYy9ycC8iLCJzdWIiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvb2lkYy9ycC8iLC'
-                'JhdWQiOlsiaHR0cDovLzEyNy4wLjAuMTo4MDAwL29pZGMvb3AvdG9rZW4vIl0sImlhdCI6MTY0NjQzODQ2OCwiZXhwIjoxNjQ2NDQwNDQ'
-                '4LCJqdGkiOiJjODRjYjZkMy0wN2VjLTQxNjktODA3OC05MDQ3NTk0MzNiYzQifQ.u2uK3zN_UvsmWsPVuNlaD8VEaJTSOUg5_3Y7mufrZF'
-                '_-O-IwyZk3kfukgLWpxqIPJi531aVt4X5YSofgf3IhORmZqx7buUFP1LjlKC03-dSXTHlhhWqwtp2gyI4hjUPTQvRaNfIJ6icVRXiKuPUUJ0'
-                '0inqDQISxZtvIooGm3M7-GNtDroAx4aa3BSxxytG48v4-mDKJ_K04FOGI82JHmAIca1H_eHoC_vMoAGWwQNwvMbpS26F1J0s7bqWnmTE1JF_'
-                't--2FJZkVRRdOwzIxgZhEZsXIM6tUovDmHHIIh3K1QiTIwM-v_SuHpDO9sXi8IwhwAes8xiWAL2rwHyDkJgA'
-            ]
-        }
+            Token request for an authorization code grant
         """
         # PKCE check - based on authz.authz_request["code_challenge_method"] == S256
         code_challenge = hashlib.sha256(request.POST["code_verifier"].encode()).digest()
@@ -496,66 +641,28 @@ class TokenEndpoint(OpBase, View):
             return HttpResponseForbidden()
         #
 
-        _sub = self.authz.pairwised_sub()
-        access_token = {
-            "iss": self.issuer.sub,
-            "sub": _sub,
-            "aud": [self.authz.client_id],
-            "client_id": self.authz.client_id,
-            "scope": self.authz.authz_request["scope"],
-        }
-        access_token.update(self.commons)
-        jwt_at = create_jws(access_token, self.issuer.jwks[0], typ="at+jwt")
+        issuedToken = IssuedToken.objects.filter(
+            session= self.authz,
+            revoked = False
+        ).first()
 
-        id_token = {
-            "sub": _sub,
-            "nonce": self.authz.authz_request["nonce"],
-            "at_hash": left_hash(jwt_at, "HS256"),
-            "c_hash": left_hash(self.authz.auth_code, "HS256"),
-            "aud": [self.authz.client_id],
-            "iss": self.issuer.sub,
-        }
-        id_token.update(self.commons)
-        jwt_id = create_jws(id_token, self.issuer.jwks[0])
-
-        iss_token_data = dict(
-            session=self.authz,
-            access_token=jwt_at,
-            id_token=jwt_id,
-            expires=datetime_from_timestamp(self.commons["exp"])
-        )
-
-        # refresh token is scope offline_access and prompt == consent
-        if (
-            "offline_access" in self.authz.authz_request['scope'] and
-            'consent' in self.authz.authz_request['prompt']
-        ):
-            refresh_token = {
-                "sub": _sub,
-                "at_hash": left_hash(jwt_at, "HS256"),
-                "c_hash": left_hash(self.authz.auth_code, "HS256"),
-                "aud": [self.authz.client_id],
-                "iss": self.issuer.sub,
-            }
-            id_token.update(self.commons)
-            iss_token_data['refresh_token'] = refresh_token
-
-        IssuedToken.objects.create(**iss_token_data)
-
+        jwk_at = unpad_jwt_payload(issuedToken.access_token)
         expires_in = timezone.timedelta(
-            seconds = access_token['exp'] - access_token['iat']
+            seconds = jwk_at['exp'] - jwk_at['iat']
         ).seconds
 
-        return JsonResponse(
-            {
-                "access_token": jwt_at,
-                "id_token": jwt_id,
-                "token_type": "Bearer",
-                "expires_in": expires_in,
-                # TODO: remove unsupported scope
-                "scope": self.authz.authz_request["scope"],
-            }
+        iss_token_data = dict( # nosec B106
+            access_token = issuedToken.access_token,
+            id_token = issuedToken.access_token,
+            token_type = "Bearer", # nosec B106
+            expires_in = expires_in,
+            # TODO: remove unsupported scope
+            scope = self.authz.authz_request["scope"],
         )
+        if issuedToken.refresh_token:
+            iss_token_data['refresh_token'] = issuedToken.refresh_token
+
+        return JsonResponse(iss_token_data)
 
     def is_token_renewable(self, session) -> bool:
         issuedToken = IssuedToken.objects.filter(
@@ -582,7 +689,7 @@ class TokenEndpoint(OpBase, View):
         if not issuedToken:
             return JsonResponse(
                 {
-                    "error": "Invalid request",
+                    "error": "invalid_request",
                     "error_description": "Refresh token not found",
 
                 },
@@ -593,11 +700,10 @@ class TokenEndpoint(OpBase, View):
         if not self.is_token_renewable(session):
             return JsonResponse(
                     {
-                        "error": "Invalid request",
+                        "error": "invalid_request",
                         "error_description": "Refresh Token can no longer be updated",
 
-                    },
-                    status = 400
+                    }, status = 400
             )
         _sub = self.authz.pairwised_sub()
         refresh_token = {
@@ -690,8 +796,8 @@ class TokenEndpoint(OpBase, View):
             return JsonResponse(
                 # TODO: error message here
                 {
-                    'error': "...",
-                    'error_description': "..."
+                    'error': "unauthorized_client",
+                    'error_description': ""
 
                 }, status = 403
             )
@@ -700,6 +806,7 @@ class TokenEndpoint(OpBase, View):
         elif request.POST.get("grant_type") == 'refresh_token':
             return self.grant_refresh_token(request)
         else:
+            # Token exchange? :-)
             raise NotImplementedError()
 
 
@@ -735,7 +842,9 @@ class UserInfoEndpoint(OpBase, View):
         # TODO: user claims
         jwt = {"sub": access_token_data["sub"]}
         for claim in (
-            token.session.authz_request.get("claims", {}).get("userinfo", {}).keys()
+            token.session.authz_request.get(
+                "claims", {}
+            ).get("userinfo", {}).keys()
         ):
             if claim in token.session.user.attributes:
                 jwt[claim] = token.session.user.attributes[claim]
@@ -755,7 +864,8 @@ class RevocationEndpoint(OpBase,View):
         result = self.validate_json_schema(
             request.POST.dict(),
             "revocation_request",
-            "Revocation request object validation failed ")
+            "Revocation request object validation failed "
+        )
         if result:
             return result
         try:
@@ -764,11 +874,25 @@ class RevocationEndpoint(OpBase,View):
                 request.POST['client_assertion']
             )
         except Exception:
-            return HttpResponseForbidden()
+            return JsonResponse(
+                {
+                    "error": "invalid_request",
+                    "error_description": "Validation of client assertion failed",
+
+                },
+                status = 400
+            )
 
         access_token = request.POST.get('token', None)
         if not access_token:
-            return HttpResponseBadRequest()
+            return JsonResponse(
+                {
+                    "error": "invalid_request",
+                    "error_description": "The request does not include Access Token",
+
+                },
+                status = 400
+            )
 
         token = IssuedToken.objects.filter(
             access_token= access_token,
@@ -776,12 +900,25 @@ class RevocationEndpoint(OpBase,View):
         ).first()
 
         if not token or token.expired:
-            return HttpResponseForbidden()
+            return JsonResponse(
+                {
+                    "error": "invalid_grant",
+                    "error_description": "Access Token not found or expired",
 
-        if access_token.is_revoked:
-            return HttpResponseForbidden()
+                },
+                status = 400
+            )
 
-        access_token.session.revoke()
+        if token.is_revoked:
+            return JsonResponse(
+                {
+                    "error": "invalid_grant",
+                    "error_description": "Access Token revoked",
+                },
+                status = 400
+            )
+
+        token.session.revoke()
         return HttpResponse()
 
 
@@ -833,8 +970,6 @@ class IntrospectionEndpoint(OpBase, View):
             "scope": scope
         }
         return JsonResponse(response)
-
-        pass
 
 
 def oidc_provider_not_consent(request):
