@@ -5,7 +5,6 @@ import urllib.parse
 import uuid
 import json
 
-from cryptojwt.jws.utils import left_hash
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.forms import ValidationError
@@ -29,24 +28,15 @@ from spid_cie_oidc.entity.exceptions import InvalidEntityConfiguration
 from spid_cie_oidc.entity.jwtse import (
     create_jws,
     encrypt_dict,
-    unpad_jwt_head,
-    unpad_jwt_payload,
-    verify_jws
+    unpad_jwt_payload
 )
 from spid_cie_oidc.entity.models import (
-    FederationEntityConfiguration,
     TrustChain
 )
 from spid_cie_oidc.entity.tests.settings import *
-from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
-from spid_cie_oidc.entity.utils import (
-    datetime_from_timestamp,
-    exp_from_now,
-    iat_now
-)
 from spid_cie_oidc.provider.models import IssuedToken, OidcSession
 
-from spid_cie_oidc.provider.exceptions import AuthzRequestReplay, InvalidSession, RevokedSession
+from spid_cie_oidc.provider.exceptions import AuthzRequestReplay
 from spid_cie_oidc.provider.forms import *
 from spid_cie_oidc.provider.settings import *
 
@@ -63,7 +53,7 @@ class AuthzRequestView(OpBase, View):
     template = "op_user_login.html"
 
     def validate_authz(self, payload: dict) -> None:
-        
+
         must_list = ("scope", "acr_values")
         for i in must_list:
             if isinstance(payload.get(i, None), str):
@@ -138,7 +128,7 @@ class AuthzRequestView(OpBase, View):
                 error="invalid_request",
                 error_description=_("Authorization request not valid"),
             )
-        
+
         try:
             self.validate_authz(self.payload)
         except (Exception, pydantic_ValidationError) as e:

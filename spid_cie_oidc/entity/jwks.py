@@ -4,6 +4,7 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 from cryptojwt.jwk.rsa import RSAKey, import_public_key_from_pem_data
 
+
 import cryptography
 from django.conf import settings
 
@@ -15,8 +16,8 @@ DEFAULT_HASH_FUNC = getattr(
 )
 
 
-def create_jwk(hash_func=None):
-    key = new_rsa_key()
+def create_jwk(key = None, hash_func=None):
+    key = key or new_rsa_key()
     thumbprint = key.thumbprint(hash_function=hash_func or DEFAULT_HASH_FUNC)
     jwk = key.to_dict()
     jwk["kid"] = thumbprint.decode()
@@ -77,3 +78,15 @@ def serialize_rsa_key(rsa_key, kind="public", hash_func="SHA-256"):
     jwk = jwk_obj.to_dict()
     jwk["kid"] = thumbprint.decode()
     return jwk
+
+
+def private_jwk_from_pem(content:str, password:str = None):
+    content = content.encode() if isinstance(content, str) else content
+    key = serialization.load_pem_private_key(content, password=None)
+    return serialize_rsa_key(key, kind='private')
+
+
+def public_jwk_from_pem(content:str, password:str = None):
+    content = content.encode() if isinstance(content, str) else content
+    key = serialization.load_pem_public_key(content)
+    return serialize_rsa_key(key, kind='public')

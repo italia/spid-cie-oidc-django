@@ -3,11 +3,8 @@ import uuid
 from cryptojwt.jws.utils import left_hash
 from django.conf import settings
 from pydantic import ValidationError
-from django.http import HttpResponseRedirect, JsonResponse
-from django.urls import reverse
+from django.http import HttpResponseRedirect
 from django.utils import timezone
-from django.utils.decorators import method_decorator
-from django.utils.translation import gettext as _
 import urllib
 from spid_cie_oidc.entity.jwtse import create_jws, unpad_jwt_head, unpad_jwt_payload, verify_jws
 from spid_cie_oidc.entity.models import FederationEntityConfiguration, TrustChain
@@ -17,7 +14,11 @@ from spid_cie_oidc.entity.utils import datetime_from_timestamp, exp_from_now, ia
 from spid_cie_oidc.provider.exceptions import AuthzRequestReplay, InvalidSession, RevokedSession
 from spid_cie_oidc.provider.models import OidcSession
 
-from spid_cie_oidc.provider.settings import *
+from spid_cie_oidc.provider.settings import (
+    OIDCFED_DEFAULT_PROVIDER_PROFILE,
+    OIDCFED_PROVIDER_AUTH_CODE_MAX_AGE,
+    OIDCFED_PROVIDER_PROFILES
+)
 logger = logging.getLogger(__name__)
 
 
