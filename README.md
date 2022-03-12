@@ -37,7 +37,7 @@ each of these can be installed separately within a django project. These are the
 
 ------------------------------------------------
 
-![RP Auth demo](docs/images/rp_auth_demo.gif)
+![RP Auth demo](docs/images/rp_auth_demo_2.gif)
 An onboarded Relying Party with a succesful authentication.
 
 ## Setup
