@@ -27,8 +27,8 @@ from spid_cie_oidc.provider.tests.settings import op_conf, op_conf_priv_jwk
 RP_SUB = rp_conf["sub"]
 RP_CLIENT_ID = rp_conf["metadata"]["openid_relying_party"]["client_id"]
 
-class RefreshTokenTest(TestCase):
 
+class RefreshTokenTest(TestCase):
 
     def setUp(self): 
         self.op_local_conf = deepcopy(op_conf)
@@ -61,6 +61,8 @@ class RefreshTokenTest(TestCase):
         self.refresh_token = {
             "iss": self.op_local_conf["sub"],
             "sub": RP_SUB,
+            "exp": exp_from_now(),
+            "iat": iat_now(),
             "aud": [RP_CLIENT_ID],
             "client_id": RP_CLIENT_ID,
             "scope": "openid",
@@ -74,6 +76,7 @@ class RefreshTokenTest(TestCase):
             auth_code="code",
         )
         IssuedToken.objects.create(
+            access_token = create_jws(self.refresh_token, op_conf_priv_jwk),
             refresh_token = self.refresh_token,
             session = session,
             expires = timezone.localtime()
@@ -86,7 +89,6 @@ class RefreshTokenTest(TestCase):
             client_id = RP_CLIENT_ID,
             client_assertion = self.ca_jws,
             client_assertion_type = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-            refresh_token = str(self.refresh_token),
             grant_type="authorization_code",
             code = "code",
             code_verifier = "code_verifier"

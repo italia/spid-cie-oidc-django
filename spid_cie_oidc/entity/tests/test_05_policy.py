@@ -5,7 +5,8 @@ from spid_cie_oidc.authority.settings import FEDERATION_DEFAULT_POLICY
 from spid_cie_oidc.entity.policy import (
     apply_policy, 
     diff2policy,
-    gather_policies
+    gather_policies,
+    PolicyError
 )
 from spid_cie_oidc.entity.tests.rp_metadata_settings import RP_METADATA
 from spid_cie_oidc.authority.tests.settings import rp_onboarding_data
