@@ -82,7 +82,7 @@ def serialize_rsa_key(rsa_key, kind="public", hash_func="SHA-256"):
 
 def private_jwk_from_pem(content:str, password:str = None):
     content = content.encode() if isinstance(content, str) else content
-    key = serialization.load_pem_private_key(content, password=None)
+    key = serialization.load_pem_private_key(content, password=password)
     return serialize_rsa_key(key, kind='private')
 
 

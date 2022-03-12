@@ -12,6 +12,18 @@ from spid_cie_oidc.onboarding.schemas.introspection_request import Introspection
 from spid_cie_oidc.onboarding.schemas.revocation_request import RevocationRequest
 from spid_cie_oidc.onboarding.schemas.token_requests import TokenAuthnCodeRequest, TokenRefreshRequest
 
+OIDCFED_PROVIDER_PROFILES_MEDIA = getattr(
+    settings,
+    "OIDCFED_PROVIDER_PROFILES_MEDIA",
+    {
+        "spid": {
+            "logo": "svg/spid-logo-c-lb.svg"
+        },
+        "cie": {
+            "logo": "images/logo-cie-png"
+        },
+    },
+)
 
 OIDCFED_PROVIDER_PROFILES = getattr(
     settings,
