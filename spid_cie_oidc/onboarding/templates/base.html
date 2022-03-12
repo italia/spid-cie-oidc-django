@@ -131,6 +131,26 @@ https://www.spid.gov.it/
 </li>
 {% endblock menu_links %}
 
+{% block container %}
+<div>
+    <div class="container pt-2 p-3">
+       <div class="row d-lg-flex">
+            <div class="col-12">
+                <div class="card-wrapper card-space">
+                    <div class="card card-bg no-after">
+                        <div class="card-body pl-lg-0">
+                            <div class="row h-100">
+                                {% block centered_container %}{% endblock %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock container %}
+
 <!-- Logo in Footer -->
 {% block footer_logo %}
 {% endblock footer_logo %}

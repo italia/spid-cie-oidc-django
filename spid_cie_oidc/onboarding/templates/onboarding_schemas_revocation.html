@@ -3,43 +3,32 @@
 {% load i18n %}
 {% load static %}
 
-{% block container %}
-<div>
-   <div class="container p-3">
+{% block centered_container %}
 
-<div class="row d-lg-flex">
-    <div class="col-12">
-        <div class="card-wrapper card-space">
-            <div class="card card-bg no-after">
-                <div class="card-body">
-                    <div class="row h-100">
-                        
-                        <div class="col-12 col-lg-12">
-                            <div class="ml-2">
-                                <h4 class="text-left">
-                                    {% trans "Schemas revocation endpoint" %}
-                                </h4>
-                            </div>
-                            <div class="row">
-                                
-                                <div class="m-3">
-                                    <h5 class="text-left">
-                                        {% trans "revocation request" %}
-                                    </h5>
-                                    <pre class="card-title">
-                                        {{revoc_request | linebreaks}}
-                                    </pre>
-
-                                </div>
-                            </div>
-                        </div>
-                       
-                    </div>
+<div class="col-12 col-lg-12">
+    <div class="ml-4 mb-4">
+        <h4 class="text-left">
+            {% trans "Schemas revocation endpoint" %}
+        </h4>
+    </div>
+    <div class="pl-lg-3">
+        <div id="collapseDiv1-sc1" class="collapse-div collapse-background-active" role="tablist">
+            <div class="collapse-header" id="heading1-sc1">
+                <button data-toggle="collapse" data-target="#collapse1-sc1" aria-expanded="false"
+                    aria-controls="collapse1-sc1">
+                    {% trans "revocation request" %}
+                </button>
+            </div>
+            <div id="collapse1-sc1" class="collapse" role="tabpanel" aria-labelledby="heading1-sc1">
+                <div class="collapse-body">
+                    <pre>
+                        {{revoc_request | linebreaks}}
+                    </pre>
                 </div>
             </div>
+
         </div>
     </div>
 </div>
 
-</div>
-{% endblock container %}
+{% endblock %}

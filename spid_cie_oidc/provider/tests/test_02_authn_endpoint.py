@@ -51,6 +51,7 @@ class AuthnRequestTest(TestCase):
             first_name="test",
             last_name="test",
             email="test@test.it",
+            is_staff= False,
             attributes={
                 "username": "unique_value",
                 "fiscal_number": "a7s6da87d6a87sd6as78d",
@@ -59,7 +60,6 @@ class AuthnRequestTest(TestCase):
         )
         self.user.set_password("test")
         self.user.save()
-
         self.op_conf = FederationEntityConfiguration.objects.create(**op_conf)
         self.ta_fes = FetchedEntityStatement.objects.create(
             sub=TA_SUB,

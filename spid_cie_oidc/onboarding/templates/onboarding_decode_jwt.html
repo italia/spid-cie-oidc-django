@@ -2,84 +2,66 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
-{% block container %}
+{% block centered_container %}
 
-<div>
-   <div class="container pt-2 p-3">
+<div class="col-12 pl-lg-4">
 
-      <div class="row d-lg-flex">
-         <div class="col-12">
-            <div class="card-wrapper card-space">
-               <div class="card card-bg no-after">
-                  <div class="card-body pl-lg-0">
-                     <div class="row h-100">
-                        <div class="col-12 pl-lg-4">
-                           
-                           <h4 class="text-left">
-                              {% trans "JWT decode and verification" %}
-                           </h4>
-                           
-                           <p class="card-title">
-                              {% trans "Submit a jwt to decode it, if you submit also a jwk you'll decrypt or verify it." %}
-                           </p>
-                           <form method="post" action="">
-                              {% csrf_token %}
-                              <div class="row">
-                                 <div class="col-12 col-lg-7">
-                                    <div class="form-row">                                   
-                                       <div class="col-12 form-group my-3">
-                                          <label for="id_jwt">
-                                             <span class="form-label-content">
-                                                Jwt
-                                             </span>
-                                          </label>
-                                          <textarea id="id_jwt" rows="14" name="jwt">{{ jwt }}</textarea>
-                                       </div>
-                                    </div>
-                                    <div class="form-row">                        
-                                       <div class="col-12 form-group my-3">
-                                          <label for="id_jwk">
-                                             <span class="form-label-content">
-                                                Jwk
-                                             </span>
-                                          </label>
-                                          <textarea id="id_jwk" rows="6" name="jwk">{{ jwk }}</textarea>
-                                       </div>
-                                    </div>
-                                 </div>
-                                 <div class="col-12 col-lg-5">
-                                    <div class="form-row">   
-                                       <div class="col-12 form-group my-3">
-                                          <label for="id_head">
-                                             <span class="form-label-content">
-                                                Head
-                                             </span>
-                                          </label>
-                                          <textarea id="id_head" rows="6" 
-                                             name="head">{{ head }}</textarea>
-                                       </div>
-                                    </div>
-                                    <div class="form-row">
-                                       <div class="col-12 form-group my-2">
-                                          <label for="id_payload">
-                                             Payload
-                                          </label>
-                                          <textarea id="id_payload" rows="12"
-                                             name="payload">{{ payload }}</textarea>
-                                       </div>
-                                    </div>
-                                    <input type="submit" name="decode" class="btn btn-lg btn-success btn-block"
-                                    value="{% trans 'decode or verify' %}" />
-                                 </div>
-                              </div>
-                           </form>
+    <h4 class="text-left">
+        {% trans "JWT decode and verification" %}
+    </h4>
 
-                        </div>
-                     </div>
-                  </div>
-               </div>
+    <p class="card-title">
+        {% trans "Submit a jwt to decode it, if you submit also a jwk you'll decrypt or verify it." %}
+    </p>
+    <form method="post" action="">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-12 col-lg-7">
+                <div class="form-row">
+                    <div class="col-12 form-group my-3">
+                        <label for="id_jwt">
+                            <span class="form-label-content">
+                                Jwt
+                            </span>
+                        </label>
+                        <textarea id="id_jwt" rows="14" name="jwt">{{ jwt }}</textarea>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-12 form-group my-3">
+                        <label for="id_jwk">
+                            <span class="form-label-content">
+                                Jwk
+                            </span>
+                        </label>
+                        <textarea id="id_jwk" rows="6" name="jwk">{{ jwk }}</textarea>
+                    </div>
+                </div>
             </div>
-         </div>
-      </div>
-   </div>
-{% endblock container %}
+            <div class="col-12 col-lg-5">
+                <div class="form-row">
+                    <div class="col-12 form-group my-3">
+                        <label for="id_head">
+                            <span class="form-label-content">
+                                Head
+                            </span>
+                        </label>
+                        <textarea id="id_head" rows="6" name="head">{{ head }}</textarea>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-12 form-group my-2">
+                        <label for="id_payload">
+                            Payload
+                        </label>
+                        <textarea id="id_payload" rows="12" name="payload">{{ payload }}</textarea>
+                    </div>
+                </div>
+                <input type="submit" name="decode" class="btn btn-lg btn-success btn-block"
+                    value="{% trans 'decode or verify' %}" />
+            </div>
+        </div>
+    </form>
+
+</div>
+{% endblock %}

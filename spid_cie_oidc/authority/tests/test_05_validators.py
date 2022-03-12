@@ -2,7 +2,7 @@
 from copy import deepcopy
 from unittest.mock import patch
 
-from django.test import TestCase, override_settings
+from django.test import TestCase
 from spid_cie_oidc.authority.tests.settings import (
     RP_CONF_AS_JSON,
      RP_METADATA_JWK1

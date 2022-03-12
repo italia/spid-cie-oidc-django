@@ -4,7 +4,6 @@ from unittest.mock import patch
 
 from django.core.management import call_command
 from django.test import TestCase, override_settings
-from spid_cie_oidc.authority.tests.settings import RP_METADATA_JWK1
 from spid_cie_oidc.entity.models import FetchedEntityStatement, TrustChain
 from spid_cie_oidc.entity.tests.settings import TA_SUB
 from spid_cie_oidc.entity.utils import (
@@ -61,6 +60,6 @@ class FetchProviderTest(TestCase):
             return_value = create_tc()
         )
         self.patcher.start()
-        out = self.exec('fetch_openid_providers', '--start')
+        self.exec('fetch_openid_providers', '--start')
         self.patcher.stop()
 

@@ -8,7 +8,8 @@ from .views import (
     IntrospectionEndpoint,
     RevocationEndpoint,
     TokenEndpoint,
-    UserInfoEndpoint
+    UserInfoEndpoint,
+    StaffTestingPageView
 )
 
 _PREF = getattr(settings, "OIDC_PREFIX", "oidc/op")
@@ -48,5 +49,10 @@ urlpatterns = [
         f"{_PREF}/notconsent/",
         oidc_provider_not_consent,
         name="oidc_provider_not_consent",
+    ),
+    path(
+        f"{_PREF}/testing/",
+        StaffTestingPageView.as_view(),
+        name="oidc_provider_staff_testing",
     ),
 ]
