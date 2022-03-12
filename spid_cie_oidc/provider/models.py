@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 class OidcSession(TimeStampedModel):
     """
-    Store UserSessionInfo, ClientSessionInfo and Grant
+        Store UserSessionInfo, ClientSessionInfo and Grant
     """
 
     user_uid = models.CharField(max_length=120)

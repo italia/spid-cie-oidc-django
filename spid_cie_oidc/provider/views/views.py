@@ -278,7 +278,7 @@ class StaffTestingPageView(OpBase, View):
             self.payload["redirect_uri"],
             code=session.auth_code,
             state=session.authz_request["state"],
-            iss=issuer.sub if issuer else "",
+            iss=issuer.sub if issuer else ""
         )
 
 
