@@ -51,8 +51,8 @@ class TestingPageChecksForm(forms.Form):
     CHOICES = (
          ('send_auth_code_no_code', _('[auth code] send an auth code response without code')),
          ('send_auth_code_no_state', _('[auth code] send an auth code without state')),
-         ('unsigned_access_token', _('[token endpoint] release an unsigned access token')),
-         ('access_token_with_wrong_signature', _('[token endpoint] release an access token with a wrong signature'))
+         ('unsigned_id_token', _('[token endpoint] release an unsigned id token')),
+         ('id_token_with_wrong_signature', _('[token endpoint] release an id token with a wrong signature'))
     )
 
     test = forms.ChoiceField(

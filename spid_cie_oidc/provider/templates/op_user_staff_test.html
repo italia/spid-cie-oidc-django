@@ -7,8 +7,13 @@
 <div>
     <div class="container pt-2 p-3">
 
+
         <div class="d-lg-flex">
             <div class="col-12">
+                
+                <form method="POST" action="{% url 'oidc_provider_staff_testing' %}">
+                    {% csrf_token %}
+                
                 <div class="card-space card-wrapper">
                     <div class="card card-bg no-after">
                         <div class="card-body pl-lg-0 pb-0">
@@ -22,11 +27,6 @@
                         </div>
                     </div>
                 </div>
-
-               
-
-                <form method="POST" action="{% url 'oidc_provider_staff_testing' %}">
-                    {% csrf_token %}
                     
                     
                         <div class="row">
@@ -90,16 +90,34 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-12 pt-4 text-center">
-                            <a href="{% url 'oidc_provider_not_consent' %}"
-                                class="italia-it-button italia-it-button-cancel-m button-cancel mb-4 mr-4">
-                                <span class="italia-it-buttons-text">{% trans "Deny consent" %}</span>
-                            </a>
-                            <button class="italia-it-button italia-it-button-size-m button-login mb-4 mr-4" type="submit">
-                            <span class="italia-it-buttons-text">{% trans "Test" %}</span></button>
-                        </div>
-                </form>
             </div>
+
+            <div class="card-space card-wrapper">
+                <div class="card card-bg no-after">
+                    <div class="card-body pl-lg-0 pb-0">
+                        <div class="h-100">
+                            <div class="col-sm-12 pt-4 text-center">
+
+                                <a href="{% url 'oidc_provider_not_consent' %}"
+                                    class="italia-it-button italia-it-button-cancel-m button-cancel mb-4 mr-4">
+                                    <span class="italia-it-buttons-text">{% trans "Deny consent" %}</span>
+                                </a>
+
+                                <button class="italia-it-button italia-it-button-size-m button-login mb-4 mr-4" type="submit">
+                                    <span class="italia-it-buttons-text">{% trans "Submit" %}</span>
+                                </button>
+                                
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+
+            </form>
+
         </div>
     </div>
 </div>
