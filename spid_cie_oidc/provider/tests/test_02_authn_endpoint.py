@@ -264,8 +264,8 @@ class AuthnRequestTest(TestCase):
         client = Client()
         url = reverse("oidc_provider_authnrequest")
         res = client.get(url, {"request": jws})
-        self.assertTrue(res.status_code == 200)
-        self.assertIn("error", res.content.decode())
+        self.assertTrue(res.status_code == 302)
+        self.assertIn("error", res.url)
 
     @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB)
     def test_auth_request_invalid_session(self):
