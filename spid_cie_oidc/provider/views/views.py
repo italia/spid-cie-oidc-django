@@ -3,7 +3,6 @@ import hashlib
 import logging
 import urllib.parse
 import uuid
-import json
 
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
@@ -221,14 +220,14 @@ class AuthzRequestView(OpBase, View):
         session.set_sid(request)
         url = reverse("oidc_provider_consent")
         if (
-                user.is_staff and 
+                user.is_staff and
                 'spid_cie_oidc.relying_party_test' in settings.INSTALLED_APPS
         ):
             try:
                 url = reverse("oidc_provider_staff_testing")
             except Exception as e:
                 logger.error(f"testigng page url reverse failed: {e}")
-        
+
         return HttpResponseRedirect(url)
 
 

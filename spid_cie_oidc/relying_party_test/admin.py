@@ -16,7 +16,7 @@ class RelyingPartyReportAdmin(admin.ModelAdmin):
 class RelyingPartyTestAdmin(admin.ModelAdmin):
     search_fields = ("name", "report__client_id")
     list_display = (
-        "client_id", "status", 
+        "client_id", "status",
         "code", "http_status_code", "screenshot_as_html"
     )
     list_filter = ("created", "status")

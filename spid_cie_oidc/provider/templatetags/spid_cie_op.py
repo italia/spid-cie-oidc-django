@@ -9,9 +9,9 @@ from spid_cie_oidc.provider.settings import (
 
 register = template.Library()
 
+
 @register.simple_tag
 def oidc_provider_logo():
     return f"""{settings.STATIC_URL}{OIDCFED_PROVIDER_PROFILES_MEDIA.get(
         OIDCFED_DEFAULT_PROVIDER_PROFILE, {}
     ).get('logo', "")}"""
-    

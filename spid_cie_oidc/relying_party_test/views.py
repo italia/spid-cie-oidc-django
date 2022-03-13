@@ -6,7 +6,7 @@ from django.views import View
 from django.shortcuts import render
 from spid_cie_oidc.provider.models import IssuedToken
 from spid_cie_oidc.provider.views import OpBase
-from spid_cie_oidc.relying_party_test.forms import *
+from spid_cie_oidc.relying_party_test.forms import TestingPageAttributesForm, TestingPageChecksForm, _
 
 
 logger = logging.getLogger(__name__)

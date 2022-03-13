@@ -3,7 +3,6 @@ import logging
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import gettext as _
-from spid_cie_oidc.authority.models import FederationDescendant
 from spid_cie_oidc.entity.abstract_models import TimeStampedModel
 
 
@@ -17,6 +16,7 @@ TEST_STATUS = (
     ("error", _("Internal error"))
 )
 
+
 def context_media_path(instance, filename): # pragma: no cover
     # file will be uploaded to MEDIA_ROOT/...
     return (
@@ -24,6 +24,7 @@ def context_media_path(instance, filename): # pragma: no cover
         f'{instance.report.pk}/'
         f'{filename}'
     )
+
 
 class RelyingPartyReport(TimeStampedModel):
     """
