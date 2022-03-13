@@ -1,6 +1,7 @@
 {% extends 'op_base.html' %}
 {% load i18n %}
 {% load static %}
+{% load spid_cie_op %}
 
 {% block centered_container %}
 
@@ -11,9 +12,7 @@
             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                 <h1>
                     <a href="/" title="torna alla home">
-                        <img src="{% static 'image/logoSpid.png' %}"
-                            alt="SPID"
-                            class="img-responsive">
+                        <img src="{% oidc_provider_logo %}" alt="SPID" class="w-100 p-3">
                     </a>
                 </h1>
             </div>
