@@ -26,8 +26,11 @@ class StaffTestingPageView(OpBase, View):
             logger.warning("Invalid session")
             return HttpResponseForbidden()
 
-        user = session.user
-        attributes = user.attributes
+        session.user
+        attributes = self.attributes_names_to_release(
+            request, session
+        )['filtered_user_claims']
+
         content = {
             "form_checks": self.get_testing_form()(),
             "form_attrs": TestingPageAttributesForm(),

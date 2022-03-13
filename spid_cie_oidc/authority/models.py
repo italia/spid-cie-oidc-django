@@ -1,6 +1,5 @@
 from copy import deepcopy
 
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
 
@@ -20,7 +19,7 @@ from spid_cie_oidc.entity.utils import iat_now, exp_from_now
 from spid_cie_oidc.entity.settings import FEDERATION_DEFAULT_EXP
 from typing import Union
 
-from . settings import *
+from . settings import FEDERATION_DEFAULT_POLICY
 from .validators import validate_entity_configuration
 
 import json

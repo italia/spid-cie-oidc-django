@@ -251,28 +251,14 @@ class ConsentPageView(OpBase, View):
             is_active = True
         ).first()
 
-        # if this auth code has already been used ... forbidden
+        # if this auth code was already been used ... forbidden
         if IssuedToken.objects.filter(session=session):
             logger.warning(f"Auth code Replay {session}")
             return HttpResponseForbidden()
 
-        # get up fresh claims
-        user_claims = request.user.attributes
-        user_claims["email"] = user_claims.get("email", request.user.email)
-        user_claims["username"] = request.user.username
-
-        # filter on requested claims
-        filtered_user_claims = []
-        for target, claims in session.authz_request.get("claims", {}).items():
-            for claim in claims:
-                if claim in user_claims:
-                    filtered_user_claims.append(claim)
-
-        # mapping with human names
-        i18n_user_claims = [
-            OIDCFED_ATTRNAME_I18N.get(i, i)
-            for i in filtered_user_claims
-        ]
+        i18n_user_claims = self.attributes_names_to_release(
+            request, session
+        )['i18n_user_claims']
 
         context = {
             "form": self.get_consent_form()(),

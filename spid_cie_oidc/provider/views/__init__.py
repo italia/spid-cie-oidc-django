@@ -15,6 +15,7 @@ from spid_cie_oidc.provider.exceptions import AuthzRequestReplay, InvalidSession
 from spid_cie_oidc.provider.models import OidcSession
 
 from spid_cie_oidc.provider.settings import (
+    OIDCFED_ATTRNAME_I18N,
     OIDCFED_DEFAULT_PROVIDER_PROFILE,
     OIDCFED_PROVIDER_AUTH_CODE_MAX_AGE,
     OIDCFED_PROVIDER_PROFILES
@@ -272,3 +273,26 @@ class OpBase:
         return timezone.timedelta(
             seconds = exp - iat
         ).seconds
+
+    def attributes_names_to_release(self, request, session: OidcSession) -> dict:
+        # get up fresh claims
+        user_claims = request.user.attributes
+        user_claims["email"] = user_claims.get("email", request.user.email)
+        user_claims["username"] = request.user.username
+
+        # filter on requested claims
+        filtered_user_claims = {}
+        for target, claims in session.authz_request.get("claims", {}).items():
+            for claim in claims:
+                if claim in user_claims:
+                    filtered_user_claims[claim] = user_claims[claim]
+
+        # mapping with human names
+        i18n_user_claims = [
+            OIDCFED_ATTRNAME_I18N.get(i, i)
+            for i in filtered_user_claims.keys()
+        ]
+        return dict(
+            i18n_user_claims = i18n_user_claims,
+            filtered_user_claims = filtered_user_claims
+        )
