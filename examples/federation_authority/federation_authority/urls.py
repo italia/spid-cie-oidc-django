@@ -81,3 +81,6 @@ if 'spid_cie_oidc.provider' in settings.INSTALLED_APPS:
         ]
     )
 
+if 'spid_cie_oidc.relying_party_test' in settings.INSTALLED_APPS:
+    from spid_cie_oidc.relying_party_test.urls import urlpatterns as rp_urlpatterns_test
+    urlpatterns.extend(rp_urlpatterns_test)

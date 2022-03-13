@@ -220,66 +220,16 @@ class AuthzRequestView(OpBase, View):
         )
         session.set_sid(request)
         url = reverse("oidc_provider_consent")
-        if user.is_staff:
-            url = reverse("oidc_provider_staff_testing")
+        if (
+                user.is_staff and 
+                'spid_cie_oidc.relying_party_test' in settings.INSTALLED_APPS
+        ):
+            try:
+                url = reverse("oidc_provider_staff_testing")
+            except Exception as e:
+                logger.error(f"testigng page url reverse failed: {e}")
+        
         return HttpResponseRedirect(url)
-
-
-class StaffTestingPageView(OpBase, View):
-
-    template = "op_user_staff_test.html"
-
-    def get_testing_form(self):
-        return TestingPageChecksForm
-
-    def get(self, request):
-        try:
-            session = self.check_session(request)
-        except Exception:
-            logger.warning("Invalid session")
-            return HttpResponseForbidden()
-
-        user = session.user
-        attributes = user.attributes
-        content = {
-            "form_checks": self.get_testing_form()(),
-            "form_attrs": TestingPageAttributesForm(),
-            "attributes": json.dumps(attributes, indent=4),
-            "session": session,
-        }
-        return render(request, self.template, content)
-
-    def post(self, request):
-
-        try:
-            session = self.check_session(request)
-        except Exception:
-            logger.warning("Invalid session")
-            return HttpResponseForbidden()
-
-        form = self.get_testing_form()(request.POST)
-        if not form.is_valid():
-            return self.redirect_response_data(
-                # TODO: this is not normative -> check AgID/IPZS
-                session.authz_request['redirect_uri'],
-                error="rejected_by_user",
-                error_description=_(
-                    "User rejected the release of attributes"
-                ),
-            )
-
-        issuer = self.get_issuer()
-        iss_token_data = self.get_iss_token_data(session, issuer)
-
-        IssuedToken.objects.create(**iss_token_data)
-        self.payload = session.authz_request
-
-        return self.redirect_response_data(
-            self.payload["redirect_uri"],
-            code=session.auth_code,
-            state=session.authz_request["state"],
-            iss=issuer.sub if issuer else ""
-        )
 
 
 class ConsentPageView(OpBase, View):
