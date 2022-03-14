@@ -1,5 +1,6 @@
 import logging
 import math
+import urllib.parse
 
 from django.conf import settings
 from django.core.paginator import Paginator
@@ -8,6 +9,8 @@ from django.http import (
     HttpResponse,
     JsonResponse
 )
+from django.urls import reverse
+
 from spid_cie_oidc.authority.models import (
     FederationDescendant,
     FederationEntityAssignedProfile,
@@ -95,14 +98,17 @@ def advanced_entity_listing(request):
     entities = p.get_page(page)
     next_page_path = ""
     if entities.has_next():
-        next_page_path = f"advanced_entity_listing?page={entities.next_page_number()}"
+        param = {"page": entities.next_page_number()}
+        url = f'{reverse("oidcfed_advanced_entity_listing")}?{urllib.parse.urlencode(param)}'
+        next_page_path = f"{url}"
     prev_page_path = ""
     if entities.has_previous():
-        prev_page_path = f"advanced_entity_listing?page={entities.previous_page_number()}"
+        param = {"page": entities.previous_page_number()}
+        url = f'{reverse("oidcfed_advanced_entity_listing")}?{urllib.parse.urlencode(param)}'
+        prev_page_path = f"{url}"
     try:
         iss = get_first_self_trust_anchor().sub
     except Exception as e:
-        breakpoint()
         return JsonResponse(
             {
                 "error": "Missing trust anchor",
