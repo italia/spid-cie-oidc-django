@@ -179,6 +179,7 @@ def onboarding_decode_jwt(request):
                 render(request, 'onboarding_decode_jwt.html', context)
     return render(request, 'onboarding_decode_jwt.html', context)
 
+
 def onboarding_apply_policy(request):
     context = {
         "md": "",
@@ -190,9 +191,9 @@ def onboarding_apply_policy(request):
             md = json.loads(request.GET['md'])
             policy = json.loads(request.GET['policy'])
             context = {
-            "md": request.GET['md'],
-            "policy": request.GET['policy'],
-            "result": ""
+                "md": request.GET['md'],
+                "policy": request.GET['policy'],
+                "result": ""
             }
             reuslt = apply_policy(md, policy)
             context["result"] = json.dumps(reuslt, indent=4)
@@ -200,6 +201,7 @@ def onboarding_apply_policy(request):
             messages.error(request, {e})
             render(request, 'onboarding_apply_policy.html', context)
     return render(request, 'onboarding_apply_policy.html', context)
+
 
 def onboarding_schemas_authorization(request):
     auth_request = AuthenticationRequestSpid.schema_json(indent=2)

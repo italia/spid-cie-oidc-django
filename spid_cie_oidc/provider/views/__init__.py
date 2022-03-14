@@ -202,6 +202,24 @@ class OpBase:
 
         return access_token
 
+    def get_id_token_claims(
+        self,
+        authz:OidcSession
+    ) -> dict:
+        _provider_profile = getattr(settings, 'OIDCFED_DEFAULT_PROVIDER_PROFILE', OIDCFED_DEFAULT_PROVIDER_PROFILE)
+        claims = {}
+        allowed_id_token_claims = OIDCFED_PROVIDER_PROFILES[_provider_profile].get("id_token", [])
+        for claim in (
+                    authz.authz_request.get(
+                        "claims", {}
+                    ).get("id_token", {}).keys()
+        ):
+            #TODO: check
+            # if claim in allowed_id_token_claims and authz.user.attributes.get(claim, None):
+            if authz.user.attributes.get(claim, None):
+                claims[claim] = authz.user.attributes[claim]
+        return claims
+
     def get_id_token(
                 self,
                 iss_sub:str,
@@ -218,7 +236,12 @@ class OpBase:
             "c_hash": left_hash(authz.auth_code, "HS256"),
             "aud": [authz.client_id],
             "iss": iss_sub,
+
         }
+        claims = self.get_id_token_claims(authz)
+        if claims:
+            id_token.update(claims)
+
         id_token.update(commons)
         return id_token
 

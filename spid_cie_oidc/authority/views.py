@@ -85,7 +85,7 @@ def entity_list(request):
 def advanced_entity_listing(request):
     desecendants = FederationDescendant.objects.filter(
         is_active = True,
-    ).order_by("modified")
+    ).order_by("-modified")
     entities_list = []
     for descendant in desecendants:
         entity = {
