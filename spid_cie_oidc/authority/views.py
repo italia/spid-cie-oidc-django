@@ -207,7 +207,6 @@ def resolve_entity_statement(request, format: str = "jose"):
 
 def trust_mark_status(request):
     failed_data = {"active": False}
-
     if request.GET.get("sub", "") and request.GET.get("id", ""):
         sub = request.GET["sub"]
         _id = request.GET["id"]
