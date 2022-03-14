@@ -52,17 +52,17 @@ urlpatterns = [
         name="oidc_onboarding_entities",
     ),
     path(
-        f"{_PREF}onboarding/create-jwk/",
+        f"{_PREF}onboarding/tools/create-jwk/",
         onboarding_create_jwk,
         name="oidc_onboarding_create_jwk",
     ),
     path(
-        f"{_PREF}onboarding/convert-jwk/",
+        f"{_PREF}onboarding/tools/convert-jwk/",
         onboarding_convert_jwk,
         name="oidc_onboarding_convert_jwk",
     ),
     path(
-        f"{_PREF}onboarding/resolve-statement/",
+        f"{_PREF}onboarding/tools/resolve-statement/",
         onboarding_resolve_statement,
         name="oidc_onboarding_resolve_statement",
     ),

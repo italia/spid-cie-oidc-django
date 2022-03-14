@@ -36,6 +36,7 @@ class StaffTestingPageView(OpBase, View):
             "form_attrs": TestingPageAttributesForm(),
             "attributes": json.dumps(attributes, indent=4),
             "session": session,
+            "redirect_uri": session.authz_request.get('redirect_uri', "")
         }
         return render(request, self.template, content)
 
