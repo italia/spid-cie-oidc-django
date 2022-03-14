@@ -22,6 +22,7 @@ from .views import (
     onboarding_entities,
     onboarding_create_jwk,
     onboarding_convert_jwk,
+    onboarding_convert_pem,
     onboarding_resolve_statement,
     onboarding_validating_trustmark,
     onboarding_decode_jwt,
@@ -61,6 +62,11 @@ urlpatterns = [
         f"{_PREF}onboarding/convert-jwk/",
         onboarding_convert_jwk,
         name="oidc_onboarding_convert_jwk",
+    ),
+    path(
+        f"{_PREF}onboarding/convert-pem/",
+        onboarding_convert_pem,
+        name="oidc_onboarding_convert_pem",
     ),
     path(
         f"{_PREF}onboarding/resolve-statement/",
