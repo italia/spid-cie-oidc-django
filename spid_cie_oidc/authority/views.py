@@ -1,18 +1,26 @@
-from django.http import Http404
-from django.http import HttpResponse
-from django.http import JsonResponse
+import logging
+import math
 
+from django.conf import settings
+from django.core.paginator import Paginator
+from django.http import (
+    Http404,
+    HttpResponse,
+    JsonResponse
+)
 from spid_cie_oidc.authority.models import (
     FederationDescendant,
     FederationEntityAssignedProfile,
-    get_first_self_trust_anchor,
+    get_first_self_trust_anchor
 )
-from spid_cie_oidc.entity.jwtse import create_jws, unpad_jwt_payload, unpad_jwt_head
+from spid_cie_oidc.entity.jwtse import (
+    create_jws, unpad_jwt_head,
+    unpad_jwt_payload
+)
 from spid_cie_oidc.entity.models import TrustChain
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
-
-import logging
+from spid_cie_oidc.entity.utils import iat_now
 
 logger = logging.getLogger(__name__)
 
@@ -66,6 +74,42 @@ def entity_list(request):
         "descendant__sub", flat=True
     )
     return JsonResponse(list(set(entries)), safe=False)
+
+
+def advanced_entity_listing(request):
+    desecendants = FederationDescendant.objects.filter(
+        is_active = True,
+    ).order_by("modified")
+    entities_list = []
+    for descendant in desecendants:
+        entity = {
+            descendant.sub : {
+                "iat" : int(descendant.modified.timestamp())
+            }
+        }
+        entities_list.append(entity)
+    total_entries = desecendants.count()
+    max_entry_page = getattr(settings, "MAX_ENTRIES_PAGE", 100)
+    p = Paginator(entities_list, max_entry_page)
+    page = request.GET.get("page", 1)
+    entities = p.get_page(page)
+    next_page_path = ""
+    if entities.has_next():
+        next_page_path = f"advanced_entity_listing?page={entities.next_page_number()}"
+    prev_page_path = ""
+    if entities.has_previous():
+        prev_page_path = f"advanced_entity_listing?page={entities.previous_page_number()}"
+    res = {
+            "iss" : get_first_self_trust_anchor().sub,
+            "iat" : iat_now(),
+            "entities" : entities_list,
+            "page" : int(page),
+            "total_pages" : math.ceil(total_entries / max_entry_page),
+            "total_entries" : total_entries,
+            "next_page_path": next_page_path,
+            "prev_page_path": prev_page_path,
+    }
+    return JsonResponse(res, safe=False)
 
 
 def resolve_entity_statement(request, format: str = "jose"):
