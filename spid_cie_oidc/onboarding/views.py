@@ -36,6 +36,7 @@ from spid_cie_oidc.onboarding.schemas.token_requests import TokenRefreshRequest
 from spid_cie_oidc.onboarding.schemas.token_response import TokenRefreshResponse
 
 from spid_cie_oidc.onboarding.schemas.jwt import JwtStructure
+from spid_cie_oidc.entity.policy import apply_policy
 
 
 def onboarding_landing(request):
@@ -74,8 +75,8 @@ def onboarding_create_jwk(request):
     private_jwk = serialize_rsa_key(_rsa_key.priv_key, 'private')
     public_jwk = serialize_rsa_key(_rsa_key.pub_key)
     context = {
-        "private_jwk": private_jwk,
-        "public_jwk": public_jwk
+        "private_jwk": json.dumps(private_jwk, indent=4),
+        "public_jwk": json.dumps(public_jwk, indent=4)
     }
     return render(request, 'onboarding_jwk.html', context)
 
@@ -123,7 +124,8 @@ def onboarding_resolve_statement(request):
         }
         try:
             res = resolve_entity_statement(request, format="json")
-            context["resolved_statement"] = res.content.decode()
+            resultJson = json.loads(res.content.decode())
+            context["resolved_statement"] = json.dumps(resultJson, indent=4)
         except Exception:
             messages.error(request, _('Failed to resolve entity statement, Please check your inserted data'))
             render(request, 'onboarding_resolve_statement.html', context)
@@ -162,8 +164,8 @@ def onboarding_decode_jwt(request):
         head = unpad_jwt_head(jwt)
         payload = unpad_jwt_payload(jwt)
         context["jwt"] = jwt
-        context["head"] = head
-        context["payload"] = payload
+        context["head"] = json.dumps(head, indent=4)
+        context["payload"] = json.dumps(payload, indent=4)
         if request.POST.get('jwk'):
             jwk_str = request.POST['jwk']
             context["jwk"] = jwk_str
@@ -177,6 +179,27 @@ def onboarding_decode_jwt(request):
                 render(request, 'onboarding_decode_jwt.html', context)
     return render(request, 'onboarding_decode_jwt.html', context)
 
+def onboarding_apply_policy(request):
+    context = {
+        "md": "",
+        "policy": "",
+        "result": ""
+    }
+    if request.GET.get('md') and request.GET.get('policy'):
+        try:
+            md = json.loads(request.GET['md'])
+            policy = json.loads(request.GET['policy'])
+            context = {
+            "md": request.GET['md'],
+            "policy": request.GET['policy'],
+            "result": ""
+            }
+            reuslt = apply_policy(md, policy)
+            context["result"] = json.dumps(reuslt, indent=4)
+        except Exception as e:
+            messages.error(request, {e})
+            render(request, 'onboarding_apply_policy.html', context)
+    return render(request, 'onboarding_apply_policy.html', context)
 
 def onboarding_schemas_authorization(request):
     auth_request = AuthenticationRequestSpid.schema_json(indent=2)
