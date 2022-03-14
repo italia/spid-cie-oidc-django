@@ -25,6 +25,7 @@ from .views import (
     onboarding_resolve_statement,
     onboarding_validating_trustmark,
     onboarding_decode_jwt,
+    onboarding_apply_policy,
     onboarding_schemas_authorization,
     onboarding_schemas_introspection,
     onboarding_schemas_metadata,
@@ -75,6 +76,11 @@ urlpatterns = [
         f"{_PREF}onboarding/tools/decode-jwt",
         onboarding_decode_jwt,
         name="oidc_onboarding_tools_decode_jwt",
+    ),
+    path(
+        f"{_PREF}onboarding/tools/apply-policy",
+        onboarding_apply_policy,
+        name="oidc_onboarding_tools_apply_policy",
     ),
     path(
         f"{_PREF}onboarding/schemas/authorization",
