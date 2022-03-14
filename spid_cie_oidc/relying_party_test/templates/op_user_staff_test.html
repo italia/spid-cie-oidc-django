@@ -39,7 +39,10 @@
 
 
                                             <div class="col-12 col-lg-12">
-                                                <h5 class="p-2">&nbsp; Configuration</h5>
+                                                <h5 class="p-2">&nbsp; 
+                                                    <svg class="icon icon-secondary icon-sm"><use href="{% static 'svg/sprite.svg' %}#it-settings"></use></svg>
+                                                    Configuration
+                                                </h5>
                                                 <div class="p-0">
                                                     
                                                     <div id="collapseDiv1-sc1" class="collapse-div collapse-background-active" role="tablist">
@@ -103,7 +106,9 @@
                                             <div class="row">
 
                                                 <div class="col-12 col-lg-12">
-                                                    <h5 class="p-2">&nbsp; Tests</h5>
+                                                    <h5 class="p-2">&nbsp; 
+                                                        <svg class="icon icon-secondary icon-sm"><use href="{% static 'svg/sprite.svg' %}#it-tool"></use></svg>
+                                                        Tests</h5>
                                                     <div class="p-0">
                                                         <div id="collapseDiv11-sc11" class="collapse-div collapse-background-active" role="tablist">
                                                             
@@ -122,14 +127,13 @@
                                                                 <div class="collapse-body p-4">
                                                                     
                                                                     <div class="row">
-                                                                        
                                                                         <div class="col-sm it-list-wrapper w-25">
                                                                             <ul class="it-list pl-3">
                                                                                 <li><b class="text-secondary">{% trans "automatic test" %}</b></li>
                                                                                 <li><b>response code</b>: 200</li>                                                                                
                                                                                 <li><b>authz url</b>: url</li>
-                                                                                <li><b>redirect uri</b>: url</li>                                                                                
-
+                                                                                <li><b>redirect uri</b>: url</li>
+                                                                                <li><b>last </b>: datetime here</li> 
                                                                             </ul>
                                                                         
                                                                         </div>
@@ -139,27 +143,19 @@
                                                                     </div>
                                                                     <hr>
                                                                     <div class="row it-list-wrapper">
-                                                                        <ul class="it-list pl-3">
-                                                                            <li><b class="text-secondary">{% trans "manual test"%}</b></li>
-                                                                        </ul>
 
-                                                                        <div class="col-sm-12 text-center">
-
-                                                                            <a href="{% url 'oidc_provider_not_consent' %}"
-                                                                                class="btn btn-secondary btn-xs mb-4 mr-4">
-                                                                                {% trans "Deny consent" %}
-                                                                            </a>
+                                                                        <div class="col-sm-12 text-right">
                                             
-                                                                            <button class="btn btn-primary btn-xs mb-4 mr-4" type="submit">
-                                                                                {% trans "Submit" %}
-                                                                            </button>
-                                                                            
+                                                                            <a class="btn btn-primary btn-xs mb-4 mr-4" 
+                                                                               href="{% url 'oidc_provider_staff_testing' %}">
+                                                                                {% trans "Test manually with your browser" %}
+                                                                            </a>
+                                                                        
                                                                         </div>
-
                                                                     </div>
                                                                 </div>
                                                                       
-                                                                    <b>last </b>: datetime here
+                                                                   
                                                                 </div>
                                                                 
                                                             
