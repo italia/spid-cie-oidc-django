@@ -16,6 +16,7 @@ from spid_cie_oidc.authority.models import (
     FederationEntityAssignedProfile,
     get_first_self_trust_anchor
 )
+from spid_cie_oidc.authority.settings import MAX_ENTRIES_PAGE
 from spid_cie_oidc.entity.jwtse import (
     create_jws, unpad_jwt_head,
     unpad_jwt_payload
@@ -24,6 +25,7 @@ from spid_cie_oidc.entity.models import TrustChain
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
 from spid_cie_oidc.entity.utils import iat_now
+
 
 logger = logging.getLogger(__name__)
 
@@ -92,8 +94,7 @@ def advanced_entity_listing(request):
         }
         entities_list.append(entity)
     total_entries = desecendants.count()
-    max_entry_page = getattr(settings, "MAX_ENTRIES_PAGE", 100)
-    p = Paginator(entities_list, max_entry_page)
+    p = Paginator(entities_list, MAX_ENTRIES_PAGE)
     page = request.GET.get("page", 1)
     entities = p.get_page(page)
     next_page_path = ""
@@ -120,7 +121,7 @@ def advanced_entity_listing(request):
             "iat" : iat_now(),
             "entities" : entities_list,
             "page" : int(page),
-            "total_pages" : math.ceil(total_entries / max_entry_page),
+            "total_pages" : math.ceil(total_entries / MAX_ENTRIES_PAGE),
             "total_entries" : total_entries,
             "next_page_path": next_page_path,
             "prev_page_path": prev_page_path,
