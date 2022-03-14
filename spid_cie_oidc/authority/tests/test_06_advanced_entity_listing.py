@@ -41,3 +41,12 @@ class AdvanceEntityListing(TestCase):
         self.assertEqual(res.json().get("total_pages"), 2)
         self.assertEqual(res.json().get("page"), 1)
         self.assertEqual(res.json().get("next_page_path"), "advanced_entity_listing?page=2")
+
+    @override_settings(MAX_ENTRIES_PAGE=1)
+    def test_advanced_entity_listing_missing_trust_anchor(self):
+        FederationEntityConfiguration.objects.all().delete()
+        c = Client()
+        url = reverse("oidcfed_advanced_entity_listing")
+        res = c.get(url)
+        self.assertEqual(res.status_code, 500)
+        self.assertEqual(res.json().get("error"), "Missing trust anchor")

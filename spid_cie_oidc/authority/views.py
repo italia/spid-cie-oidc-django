@@ -99,8 +99,18 @@ def advanced_entity_listing(request):
     prev_page_path = ""
     if entities.has_previous():
         prev_page_path = f"advanced_entity_listing?page={entities.previous_page_number()}"
+    try:
+        iss = get_first_self_trust_anchor().sub
+    except Exception as e:
+        breakpoint()
+        return JsonResponse(
+            {
+                "error": "Missing trust anchor",
+            },
+            status = 500
+        )
     res = {
-            "iss" : get_first_self_trust_anchor().sub,
+            "iss" : iss,
             "iat" : iat_now(),
             "entities" : entities_list,
             "page" : int(page),
