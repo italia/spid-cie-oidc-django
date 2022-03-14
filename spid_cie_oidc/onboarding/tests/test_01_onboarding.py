@@ -67,7 +67,7 @@ class OnboardingTest(TestCase):
         # res = client.get(res.url)
         # self.assertEqual(res.status_code, 200)
         # self.assertIn(self.data["organization_name"], res.content.decode())
-        # self.assertIn("aquired", res.content.decode())
+        # self.assertIn("acquired", res.content.decode())
 
     def test_schema_authorization(self):
         c = Client()

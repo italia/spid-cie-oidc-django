@@ -51,7 +51,7 @@
                                                             </div>
                                                         </div>
                                                         <div id="collapse1-sc1" class="collapse" role="tabpanel" aria-labelledby="heading1-sc1">
-                                                            <div class="collapse-body p-0">
+                                                            <div class="collapse-body p-2">
                                                                 <p class="p-2 mb-0 text-secondary">{% trans "The callback url where the auth code will be sent" %}</p>
                                                                 <input type="text" value="{{ redirect_uri }}" class="form-control" id="id_redirect_uri">
                                                                 
@@ -64,7 +64,7 @@
                                                             </div>
                                                         </div>
                                                         <div id="collapse2-sc2" class="collapse" role="tabpanel" aria-labelledby="heading2-sc2">
-                                                            <div class="collapse-body p-0">
+                                                            <div class="collapse-body p-2">
                                                                 
                                                                 <textarea rows="10" type="text" 
                                                                     class="form-control border" id="id_attributes" 
@@ -80,7 +80,7 @@
                                                             </div>
                                                         </div>
                                                         <div id="collapse11-sc11" class="collapse" role="tabpanel" aria-labelledby="heading11-sc11">
-                                                            <div class="collapse-body p-0">
+                                                            <div class="collapse-body p-2">
                                                                 
                                                                 <input type="text" value="" placeholder="enter the url to use to batch the tests" class="form-control" id="id_authz_url">
                                                                 
@@ -138,22 +138,28 @@
                                                                         </div>
                                                                     </div>
                                                                     <hr>
-                                                                    <div class="row it-list-wrapper p-3">
+                                                                    <div class="row it-list-wrapper">
                                                                         <ul class="it-list pl-3">
                                                                             <li><b class="text-secondary">{% trans "manual test"%}</b></li>
-                                                                            <li>
-                                                                                <a href="#" class="italia-it-button italia-it-button-size-m button-spid" spid-idp-button="#spid-idp-button-medium-get" aria-expanded="false">
-                                                                                    <span class="italia-it-button-icon"><img src="/static/svg/spid-ico-circle-bb.svg" alt=""></span>
-                                                                                    <span class="italia-it-button-text">Entra con SPID</span>
-                                                                                </a>
-                                                                            </li>                                                                                
-                                                                            <li><b>last </b>: datetime here</li>                                                                              
                                                                         </ul>
+
+                                                                        <div class="col-sm-12 text-center">
+
+                                                                            <a href="{% url 'oidc_provider_not_consent' %}"
+                                                                                class="btn btn-secondary btn-xs mb-4 mr-4">
+                                                                                {% trans "Deny consent" %}
+                                                                            </a>
+                                            
+                                                                            <button class="btn btn-primary btn-xs mb-4 mr-4" type="submit">
+                                                                                {% trans "Submit" %}
+                                                                            </button>
+                                                                            
+                                                                        </div>
 
                                                                     </div>
                                                                 </div>
                                                                       
-
+                                                                    <b>last </b>: datetime here
                                                                 </div>
                                                                 
                                                             
