@@ -40,7 +40,7 @@ urlpatterns = [
         name="end_session_endpoint",
     ),
     path(
-        f"{_PREF}/intospection/",
+        f"{_PREF}/introspection/",
         IntrospectionEndpoint.as_view(),
         name="introspection_endpoint",
     ),
