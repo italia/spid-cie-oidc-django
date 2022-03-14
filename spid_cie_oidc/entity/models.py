@@ -3,7 +3,6 @@ import logging
 import uuid
 
 from cryptojwt.jwk.jwk import key_from_jwk_dict
-from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext as _

@@ -1,5 +1,6 @@
 import logging
 
+from django.utils import timezone
 from typing import Union
 
 from .exceptions import InvalidTrustchain, TrustchainMissingMetadata
@@ -182,6 +183,7 @@ def get_or_create_trust_chain(
 
         data = dict(
             exp=trust_chain.exp_datetime,
+            processing_start = timezone.localtime(),
             chain=trust_chain.serialize(),
             metadata=trust_chain.final_metadata,
             parties_involved=[i.sub for i in trust_chain.trust_path],

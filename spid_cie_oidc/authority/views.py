@@ -1,18 +1,32 @@
-from django.http import Http404
-from django.http import HttpResponse
-from django.http import JsonResponse
+import logging
+import math
+from tkinter.tix import MAX
+import urllib.parse
+
+from django.conf import settings
+from django.core.paginator import Paginator
+from django.http import (
+    Http404,
+    HttpResponse,
+    JsonResponse
+)
+from django.urls import reverse
 
 from spid_cie_oidc.authority.models import (
     FederationDescendant,
     FederationEntityAssignedProfile,
-    get_first_self_trust_anchor,
+    get_first_self_trust_anchor
 )
-from spid_cie_oidc.entity.jwtse import create_jws, unpad_jwt_payload, unpad_jwt_head
+from spid_cie_oidc.authority.settings import MAX_ENTRIES_PAGE
+from spid_cie_oidc.entity.jwtse import (
+    create_jws, unpad_jwt_head,
+    unpad_jwt_payload
+)
 from spid_cie_oidc.entity.models import TrustChain
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
+from spid_cie_oidc.entity.utils import iat_now
 
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -66,6 +80,56 @@ def entity_list(request):
         "descendant__sub", flat=True
     )
     return JsonResponse(list(set(entries)), safe=False)
+
+
+def advanced_entity_listing(request):
+    desecendants = FederationDescendant.objects.filter(
+        is_active = True,
+    ).order_by("-modified")
+    entities_list = []
+    for descendant in desecendants:
+        entity = {
+            descendant.sub : {
+                "iat" : int(descendant.modified.timestamp())
+            }
+        }
+        entities_list.append(entity)
+    total_entries = desecendants.count()
+
+    _max_entries = getattr(settings, 'MAX_ENTRIES_PAGE', MAX_ENTRIES_PAGE)
+    p = Paginator(entities_list, _max_entries)
+    page = request.GET.get("page", 1)
+    entities = p.get_page(page)
+    next_page_path = ""
+    if entities.has_next():
+        param = {"page": entities.next_page_number()}
+        url = f'{reverse("oidcfed_advanced_entity_listing")}?{urllib.parse.urlencode(param)}'
+        next_page_path = f"{url}"
+    prev_page_path = ""
+    if entities.has_previous():
+        param = {"page": entities.previous_page_number()}
+        url = f'{reverse("oidcfed_advanced_entity_listing")}?{urllib.parse.urlencode(param)}'
+        prev_page_path = f"{url}"
+    try:
+        iss = get_first_self_trust_anchor().sub
+    except Exception as e:
+        return JsonResponse(
+            {
+                "error": "Missing trust anchor",
+            },
+            status = 404
+        )
+    res = {
+            "iss" : iss,
+            "iat" : iat_now(),
+            "entities" : entities_list,
+            "page" : int(page),
+            "total_pages" : math.ceil(total_entries / MAX_ENTRIES_PAGE),
+            "total_entries" : total_entries,
+            "next_page_path": next_page_path,
+            "prev_page_path": prev_page_path,
+    }
+    return JsonResponse(res, safe=False)
 
 
 def resolve_entity_statement(request, format: str = "jose"):
@@ -143,7 +207,6 @@ def resolve_entity_statement(request, format: str = "jose"):
 
 def trust_mark_status(request):
     failed_data = {"active": False}
-
     if request.GET.get("sub", "") and request.GET.get("id", ""):
         sub = request.GET["sub"]
         _id = request.GET["id"]

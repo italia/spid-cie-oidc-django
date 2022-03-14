@@ -29,8 +29,7 @@ class User(AbstractUser):
         return Session.objects.filter(pk__in=user_sessions).delete()
 
     def __str__(self):  # pragma: no cover
-        return "{} - {} {}".format(
-            self.username,
+        return "{} {}".format(
             self.first_name or self.attributes.get('given_name'),
             self.last_name or self.attributes.get('family_name', "")
         )

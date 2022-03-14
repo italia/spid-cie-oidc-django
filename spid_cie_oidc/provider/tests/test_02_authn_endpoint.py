@@ -1,12 +1,14 @@
 from copy import deepcopy
-
+from unittest.mock import patch
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
+from spid_cie_oidc.accounts.models import User
 from spid_cie_oidc.authority.tests.settings import RP_METADATA, rp_onboarding_data, RP_METADATA_JWK1
 from django.utils import timezone
 
-from spid_cie_oidc.entity.jwtse import create_jws
+from spid_cie_oidc.entity.jwtse import create_jws, unpad_jwt_payload
 from spid_cie_oidc.entity.models import (
     FederationEntityConfiguration,
     FetchedEntityStatement,
@@ -53,6 +55,7 @@ class AuthnRequestTest(TestCase):
             email="test@test.it",
             is_staff= False,
             attributes={
+                "family_name": "rossi",
                 "username": "unique_value",
                 "fiscal_number": "a7s6da87d6a87sd6as78d",
                 "email": "test@test.it",
@@ -86,6 +89,32 @@ class AuthnRequestTest(TestCase):
         res = client.get(url, {"request": jws})
         self.assertTrue(res.status_code == 302)
         self.assertTrue("error=invalid_request" in res.url)
+
+    @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB)
+    @override_settings(OIDCFED_DEFAULT_PROVIDER_PROFILE="cie")
+    def test_auth_request_id_token_claim(self):
+        jws = create_jws(self.REQUEST_OBJECT_PAYLOAD, RP_METADATA_JWK1)
+        client = Client()
+        url = reverse("oidc_provider_authnrequest")
+        res = client.get(url, {"request": jws})
+        self.assertTrue(res.status_code == 200)
+        self.assertIn("username", res.content.decode())
+        self.assertIn("password", res.content.decode())
+        res = client.post(
+            url, {"username": "test", "password": "test", "authz_request_object": jws}
+        )
+        self.assertFalse("error" in res.content.decode())
+        self.assertTrue(res.status_code == 302)
+        consent_page_url = res.url
+        res = client.get(consent_page_url)
+        self.assertTrue("agree" in res.content.decode())
+        self.assertFalse("error" in res.content.decode())
+        res = client.post(consent_page_url, {"agree": True})
+        issued_token = IssuedToken.objects.all().first()
+        id_token = unpad_jwt_payload(issued_token.id_token)
+        self.assertEqual(id_token.get("family_name"), "rossi")
+        self.assertEqual(id_token.get("email"), "test@test.it")
+
 
     @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB)
     def test_auth_request_ok(self):

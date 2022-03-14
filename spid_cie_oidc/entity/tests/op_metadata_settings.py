@@ -18,12 +18,20 @@ OP_METADATA = {
     "userinfo_encryption_alg_values_supported": ["RSA-OAEP"],
     "id_token_encryption_enc_values_supported": ["A256CBC-HS512"],
     "id_token_signing_alg_values_supported": ["ES256"],
+    "userinfo_signing_alg_values_supported": ["ES256"],
     "request_object_encryption_alg_values_supported": ["RSA-OAEP"],
     "request_object_signing_alg_values_supported": ["ES256"],
     "userinfo_encryption_enc_values_supported": ["A256CBC-HS512"],
     "request_parameter_supported": True,
     "subject_types_supported": ["pairwise"],
     "token_endpoint_auth_methods_supported": ["private_key_jwt"],
+    "op_name": "Agenzia per l’Italia Digitale",
+    "op_uri": "https://www.agid.gov.it",
+    "acr_values_supported":[
+        "https://www.spid.gov.it/SpidL1",
+        "https://www.spid.gov.it/SpidL2",
+        "https://www.spid.gov.it/SpidL3"
+    ],
 }
 
 OP_METADATA_CIE = deepcopy(OP_METADATA)

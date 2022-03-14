@@ -6,12 +6,25 @@ from spid_cie_oidc.entity.schemas.op_metadata import (
 )
 from spid_cie_oidc.onboarding.schemas.authn_requests import (
     AuthenticationRequestCie,
-    AuthenticationRequestSpid
+    AuthenticationRequestSpid,
+    IdToken
 )
 from spid_cie_oidc.onboarding.schemas.introspection_request import IntrospectionRequest
 from spid_cie_oidc.onboarding.schemas.revocation_request import RevocationRequest
 from spid_cie_oidc.onboarding.schemas.token_requests import TokenAuthnCodeRequest, TokenRefreshRequest
 
+OIDCFED_PROVIDER_PROFILES_MEDIA = getattr(
+    settings,
+    "OIDCFED_PROVIDER_PROFILES_MEDIA",
+    {
+        "spid": {
+            "logo": "svg/spid-logo-c-lb.svg"
+        },
+        "cie": {
+            "logo": "images/logo-cie-png"
+        },
+    },
+)
 
 OIDCFED_PROVIDER_PROFILES = getattr(
     settings,
@@ -23,7 +36,7 @@ OIDCFED_PROVIDER_PROFILES = getattr(
             "authorization_code": TokenAuthnCodeRequest,
             "refresh_token": TokenRefreshRequest,
             "revocation_request": RevocationRequest,
-            "introspection_request" : IntrospectionRequest
+            "introspection_request" : IntrospectionRequest,
         },
         "cie": {
             "authorization_request": AuthenticationRequestCie,
@@ -31,7 +44,8 @@ OIDCFED_PROVIDER_PROFILES = getattr(
             "authorization_code": TokenAuthnCodeRequest,
             "refresh_token": TokenRefreshRequest,
             "revocation_request": RevocationRequest,
-            "introspection_request" : IntrospectionRequest
+            "introspection_request" : IntrospectionRequest,
+            "id_token": IdToken
         },
     },
 )

@@ -84,5 +84,5 @@ class FetchRPTest(TestCase):
             return_value = create_tc()
         )
         self.patcher.start()
-        out = self.exec('fetch_openid_relying_parties', '--from', 'url')
+        self.exec('fetch_openid_relying_parties', '--from', 'url')
 

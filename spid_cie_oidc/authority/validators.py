@@ -28,9 +28,11 @@ def validate_entity_configuration(value):
     try:
         jwt = get_entity_configurations(value)[0]
     except Exception as e:
-        raise ValidationError(f"Failed to fetch Entity Configuration for {value}: {e}")
+        raise ValidationError(
+            f"Failed to fetch Entity Configuration for {value}: {e}"
+        )
     if not jwt:
-        raise ValidationError(f"Entity Configuration is Null")
+        raise ValidationError("Entity Configuration is Null")
     ec = EntityConfiguration(jwt, httpc_params=HTTPC_PARAMS)
     ec.validate_by_itself()
 

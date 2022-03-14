@@ -11,13 +11,13 @@
     </h4>
 
     <p class="card-title">
-        {% trans "enter a jwk in the field below to encrypt in PEM" %}
+        {% trans "Enter a jwk in the field below to encode it in PEM format." %}
     </p>
     <form method="post" action="">
         {% csrf_token %}
         <div class="form-row">
             <div class="col-12 form-group my-3">
-                <label for="id_jwt">
+                <label for="id_jwk">
                     <span class="form-label-content">
                         Jwk
                     </span>
@@ -28,9 +28,9 @@
         {% if pem %}
         <h4 class="text-left">
             {% if jwk_type == 'private' %}
-            {% trans "Private key" %}
+                {% trans "Private key" %}
             {% else %}
-            {% trans "Public key" %}
+                {% trans "Public key" %}
             {% endif %}
         </h4>
         <div class="form-row">

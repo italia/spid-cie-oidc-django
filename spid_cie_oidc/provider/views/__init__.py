@@ -3,11 +3,8 @@ import uuid
 from cryptojwt.jws.utils import left_hash
 from django.conf import settings
 from pydantic import ValidationError
-from django.http import HttpResponseRedirect, JsonResponse
-from django.urls import reverse
+from django.http import HttpResponseRedirect
 from django.utils import timezone
-from django.utils.decorators import method_decorator
-from django.utils.translation import gettext as _
 import urllib
 from spid_cie_oidc.entity.jwtse import create_jws, unpad_jwt_head, unpad_jwt_payload, verify_jws
 from spid_cie_oidc.entity.models import FederationEntityConfiguration, TrustChain
@@ -17,7 +14,12 @@ from spid_cie_oidc.entity.utils import datetime_from_timestamp, exp_from_now, ia
 from spid_cie_oidc.provider.exceptions import AuthzRequestReplay, InvalidSession, RevokedSession
 from spid_cie_oidc.provider.models import OidcSession
 
-from spid_cie_oidc.provider.settings import *
+from spid_cie_oidc.provider.settings import (
+    OIDCFED_ATTRNAME_I18N,
+    OIDCFED_DEFAULT_PROVIDER_PROFILE,
+    OIDCFED_PROVIDER_AUTH_CODE_MAX_AGE,
+    OIDCFED_PROVIDER_PROFILES
+)
 logger = logging.getLogger(__name__)
 
 
@@ -200,6 +202,24 @@ class OpBase:
 
         return access_token
 
+    def get_id_token_claims(
+        self,
+        authz:OidcSession
+    ) -> dict:
+        _provider_profile = getattr(settings, 'OIDCFED_DEFAULT_PROVIDER_PROFILE', OIDCFED_DEFAULT_PROVIDER_PROFILE)
+        claims = {}
+        allowed_id_token_claims = OIDCFED_PROVIDER_PROFILES[_provider_profile].get("id_token", [])
+        for claim in (
+                    authz.authz_request.get(
+                        "claims", {}
+                    ).get("id_token", {}).keys()
+        ):
+            #TODO: check
+            # if claim in allowed_id_token_claims and authz.user.attributes.get(claim, None):
+            if authz.user.attributes.get(claim, None):
+                claims[claim] = authz.user.attributes[claim]
+        return claims
+
     def get_id_token(
                 self,
                 iss_sub:str,
@@ -215,8 +235,12 @@ class OpBase:
             "at_hash": left_hash(jwt_at, "HS256"),
             "c_hash": left_hash(authz.auth_code, "HS256"),
             "aud": [authz.client_id],
-            "iss": iss_sub,
+            "iss": iss_sub
         }
+        claims = self.get_id_token_claims(authz)
+        if claims:
+            id_token.update(claims)
+
         id_token.update(commons)
         return id_token
 
@@ -271,3 +295,26 @@ class OpBase:
         return timezone.timedelta(
             seconds = exp - iat
         ).seconds
+
+    def attributes_names_to_release(self, request, session: OidcSession) -> dict:
+        # get up fresh claims
+        user_claims = request.user.attributes
+        user_claims["email"] = user_claims.get("email", request.user.email)
+        user_claims["username"] = request.user.username
+
+        # filter on requested claims
+        filtered_user_claims = {}
+        for target, claims in session.authz_request.get("claims", {}).items():
+            for claim in claims:
+                if claim in user_claims:
+                    filtered_user_claims[claim] = user_claims[claim]
+
+        # mapping with human names
+        i18n_user_claims = [
+            OIDCFED_ATTRNAME_I18N.get(i, i)
+            for i in filtered_user_claims.keys()
+        ]
+        return dict(
+            i18n_user_claims = i18n_user_claims,
+            filtered_user_claims = filtered_user_claims
+        )

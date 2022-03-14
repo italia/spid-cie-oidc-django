@@ -37,7 +37,7 @@
     <div class="row mt-3">
         <div class="col">
             <span
-                class="badge badge-grey-unical square-corners mb-3 mr-2 ml-0 pr-10 p-2 mw-100">
+                class="badge square-corners mb-3 mr-2 ml-0 pr-10 p-2 mw-100">
                 <a href="#" class="italia-it-button italia-it-button-size-m button-spid"
                     spid-idp-button="#spid-idp-button-medium-get" aria-expanded="false">
                     <span class="italia-it-button-icon"><img
@@ -54,7 +54,11 @@
                             <li class="spid-idp-button-link">
                                 <a href="{% url 'spid_cie_rp_begin' %}?provider={{provider.sub}}">
                                     <span class="spid-sr-only">{{ provider.metadata.organization_name }}</span>
-                                    <img src="{% static 'images/logo-it.svg' %}" alt="{{ provider.metadata.organization_name }}">
+                                    {% if provider.metadata.logo_uri %}
+                                    <img src="{{ provider.metadata.logo_uri }}" alt="{{ provider.metadata.organization_name }}">
+                                    {% else %}
+                                    <img src="{% static 'svg/no_image_available.svg' %}" alt="{{ provider.metadata.organization_name }}">
+                                    {% endif %}
                                 </a>
                             </li>
                         {% endfor %}

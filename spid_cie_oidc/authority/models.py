@@ -1,6 +1,5 @@
 from copy import deepcopy
 
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
 
@@ -16,24 +15,16 @@ from spid_cie_oidc.entity.models import (
 
 from spid_cie_oidc.entity.jwtse import create_jws
 from spid_cie_oidc.entity.validators import validate_public_jwks
-from spid_cie_oidc.entity.utils import iat_now
-from spid_cie_oidc.entity.utils import exp_from_now
+from spid_cie_oidc.entity.utils import iat_now, exp_from_now
+from spid_cie_oidc.entity.settings import FEDERATION_DEFAULT_EXP
 from typing import Union
 
-from . import settings as local_settings
+from . settings import FEDERATION_DEFAULT_POLICY
 from .validators import validate_entity_configuration
 
 import json
 import logging
 import uuid
-
-
-FEDERATION_DEFAULT_POLICY = getattr(
-    settings, "FEDERATION_DEFAULT_POLICY", local_settings.FEDERATION_DEFAULT_POLICY
-)
-FEDERATION_DEFAULT_EXP = getattr(
-    settings, "FEDERATION_DEFAULT_EXP", local_settings.FEDERATION_DEFAULT_EXP
-)
 
 logger = logging.getLogger(__name__)
 
@@ -187,7 +178,7 @@ class FederationDescendant(TimeStampedModel):
     def entity_statement_as_dict(self, iss: str = None, aud: list = None) -> dict:
 
         policies = {
-            k: local_settings.FEDERATION_DEFAULT_POLICY[k] for k in self.entity_profiles
+            k: FEDERATION_DEFAULT_POLICY[k] for k in self.entity_profiles
         }
 
         # apply custom policies if defined

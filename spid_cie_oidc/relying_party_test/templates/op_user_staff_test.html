@@ -1,0 +1,203 @@
+
+{% extends 'op_base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block container %}
+<div>
+    <div class="container pt-2 p-3">
+
+
+        <div class="d-lg-flex">
+            <div class="col-12">
+                
+                <form method="POST" action="{% url 'oidc_provider_staff_testing' %}">
+                    {% csrf_token %}
+                
+                <div class="card-space card-wrapper">
+                    <div class="card card-bg no-after">
+                        <div class="card-body pl-lg-0 pb-0">
+                            <div class="h-100">
+                                <div class="col-12 pl-lg-4 ">
+                                        <h4 class="bd-title">{% trans 'Relying Party test page' %}</h4>
+                                        <p class="mb-0 text-secondary">{% trans "You're a staff user and currently testing " %}<b>{{session.client_id}}</b>.</p>
+                                    <br>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    
+                    
+                        <div class="row">
+                            <div class="col-sm">
+                            <div class="card-space card-wrapper">
+                                <div class="card card-bg no-after">
+                                    <div class="card-body p-0">
+                                        <div class="row h-100">
+
+
+
+                                            <div class="col-12 col-lg-12">
+                                                <h5 class="p-2">&nbsp; 
+                                                    <svg class="icon icon-secondary icon-sm"><use href="{% static 'svg/sprite.svg' %}#it-settings"></use></svg>
+                                                    Configuration
+                                                </h5>
+                                                <div class="p-0">
+                                                    
+                                                    <div id="collapseDiv1-sc1" class="collapse-div collapse-background-active" role="tablist">
+                                                        
+                                                        <div class="collapse-header" id="heading1-sc1">
+                                                            <div data-toggle="collapse" data-target="#collapse1-sc1" aria-expanded="false"
+                                                                aria-controls="collapse1-sc1">
+                                                                {% trans "Edit redirect uri" %}
+                                                            </div>
+                                                        </div>
+                                                        <div id="collapse1-sc1" class="collapse" role="tabpanel" aria-labelledby="heading1-sc1">
+                                                            <div class="collapse-body p-2">
+                                                                <p class="p-2 mb-0 text-secondary">{% trans "The callback url where the auth code will be sent" %}</p>
+                                                                <input type="text" value="{{ redirect_uri }}" class="form-control" id="id_redirect_uri">
+                                                                
+                                                            </div>
+                                                        </div>
+                                                        <div class="collapse-header" id="heading2-sc2">
+                                                            <div data-toggle="collapse" data-target="#collapse2-sc2" aria-expanded="false"
+                                                                aria-controls="collapse1-sc2">
+                                                                {% trans "Edit user attributes" %}
+                                                            </div>
+                                                        </div>
+                                                        <div id="collapse2-sc2" class="collapse" role="tabpanel" aria-labelledby="heading2-sc2">
+                                                            <div class="collapse-body p-2">
+                                                                
+                                                                <textarea rows="10" type="text" 
+                                                                    class="form-control border" id="id_attributes" 
+                                                                    name="attributes" >{{attributes}}
+                                                                </textarea>
+                                                                
+                                                            </div>
+                                                        </div>
+                                                        <div class="collapse-header" id="heading11-sc11">
+                                                            <div data-toggle="collapse" data-target="#collapse11-sc11" aria-expanded="false"
+                                                                aria-controls="collapse11-sc11">
+                                                                {% trans "Edit Authorization url" %}
+                                                            </div>
+                                                        </div>
+                                                        <div id="collapse11-sc11" class="collapse" role="tabpanel" aria-labelledby="heading11-sc11">
+                                                            <div class="collapse-body p-2">
+                                                                
+                                                                <input type="text" value="" placeholder="enter the url to use to batch the tests" class="form-control" id="id_authz_url">
+                                                                
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                            <div class="col-sm">
+                            
+                                <div class="card-space card-wrapper">
+                                    <div class="card card-bg no-after h-100">
+                                        <div class="card-body p-0">
+                                            <div class="row">
+
+                                                <div class="col-12 col-lg-12">
+                                                    <h5 class="p-2">&nbsp; 
+                                                        <svg class="icon icon-secondary icon-sm"><use href="{% static 'svg/sprite.svg' %}#it-tool"></use></svg>
+                                                        Tests</h5>
+                                                    <div class="p-0">
+                                                        <div id="collapseDiv11-sc11" class="collapse-div collapse-background-active" role="tablist">
+                                                            
+                                                            <div class="collapse-header" id="heading12-sc12">
+                                                                <div data-toggle="collapse" data-target="#collapse12-sc12" aria-expanded="false"
+                                                                    aria-controls="collapse12-sc12">
+                                                                    
+                                                                    <span class="badge badge-pill badge-secondary">&nbsp;</span>
+                                                                    <span class="badge badge-pill badge-success">Ok</span>
+                                                                    <span class="badge badge-pill badge-danger">Ko</span>
+                                                                    &nbsp;
+                                                                    {% trans "[auth code] send an auth code without state" %}
+                                                                </div>
+                                                            </div>
+                                                            <div id="collapse12-sc12" class="collapse" role="tabpanel" aria-labelledby="heading12-sc12">
+                                                                <div class="collapse-body p-4">
+                                                                    
+                                                                    <div class="row">
+                                                                        <div class="col-sm it-list-wrapper w-25">
+                                                                            <ul class="it-list pl-3">
+                                                                                <li><b class="text-secondary">{% trans "automatic test" %}</b></li>
+                                                                                <li><b>response code</b>: 200</li>                                                                                
+                                                                                <li><b>authz url</b>: url</li>
+                                                                                <li><b>redirect uri</b>: url</li>
+                                                                                <li><b>last </b>: datetime here</li> 
+                                                                            </ul>
+                                                                        
+                                                                        </div>
+                                                                        <div class="col-sm w-75">
+                                                                            <img class="img-fluid" src="{% static 'images/oops.webp' %}" />
+                                                                        </div>
+                                                                    </div>
+                                                                    <hr>
+                                                                    <div class="row it-list-wrapper">
+
+                                                                        <div class="col-sm-12 text-right">
+                                            
+                                                                            <a class="btn btn-primary btn-xs mb-4 mr-4" 
+                                                                               href="{% url 'oidc_provider_staff_testing' %}">
+                                                                                {% trans "Test manually with your browser" %}
+                                                                            </a>
+                                                                        
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                      
+                                                                   
+                                                                </div>
+                                                                
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+            </div>
+
+            <div class="card-space card-wrapper">
+                <div class="card card-bg no-after">
+                    <div class="card-body pl-lg-0 pb-0">
+                        <div class="h-100">
+                            <div class="col-sm-12 text-center">
+
+                                <a href="{% url 'oidc_provider_not_consent' %}"
+                                    class="italia-it-button italia-it-button-cancel-m button-cancel mb-4 mr-4">
+                                    <span class="italia-it-buttons-text">{% trans "Deny consent" %}</span>
+                                </a>
+
+                                <button class="italia-it-button italia-it-button-size-m button-login mb-4 mr-4" type="submit">
+                                    <span class="italia-it-buttons-text">{% trans "Submit" %}</span>
+                                </button>
+                                
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+{% endblock container %}

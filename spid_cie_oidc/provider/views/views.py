@@ -3,9 +3,7 @@ import hashlib
 import logging
 import urllib.parse
 import uuid
-import json
 
-from cryptojwt.jws.utils import left_hash
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.forms import ValidationError
@@ -29,24 +27,15 @@ from spid_cie_oidc.entity.exceptions import InvalidEntityConfiguration
 from spid_cie_oidc.entity.jwtse import (
     create_jws,
     encrypt_dict,
-    unpad_jwt_head,
-    unpad_jwt_payload,
-    verify_jws
+    unpad_jwt_payload
 )
 from spid_cie_oidc.entity.models import (
-    FederationEntityConfiguration,
     TrustChain
 )
 from spid_cie_oidc.entity.tests.settings import *
-from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
-from spid_cie_oidc.entity.utils import (
-    datetime_from_timestamp,
-    exp_from_now,
-    iat_now
-)
 from spid_cie_oidc.provider.models import IssuedToken, OidcSession
 
-from spid_cie_oidc.provider.exceptions import AuthzRequestReplay, InvalidSession, RevokedSession
+from spid_cie_oidc.provider.exceptions import AuthzRequestReplay
 from spid_cie_oidc.provider.forms import *
 from spid_cie_oidc.provider.settings import *
 
@@ -63,7 +52,7 @@ class AuthzRequestView(OpBase, View):
     template = "op_user_login.html"
 
     def validate_authz(self, payload: dict) -> None:
-        
+
         must_list = ("scope", "acr_values")
         for i in must_list:
             if isinstance(payload.get(i, None), str):
@@ -138,7 +127,7 @@ class AuthzRequestView(OpBase, View):
                 error="invalid_request",
                 error_description=_("Authorization request not valid"),
             )
-        
+
         try:
             self.validate_authz(self.payload)
         except (Exception, pydantic_ValidationError) as e:
@@ -230,66 +219,16 @@ class AuthzRequestView(OpBase, View):
         )
         session.set_sid(request)
         url = reverse("oidc_provider_consent")
-        if user.is_staff:
-            url = reverse("oidc_provider_staff_testing")
+        if (
+                user.is_staff and
+                'spid_cie_oidc.relying_party_test' in settings.INSTALLED_APPS
+        ):
+            try:
+                url = reverse("oidc_provider_staff_testing")
+            except Exception as e:
+                logger.error(f"testigng page url reverse failed: {e}")
+
         return HttpResponseRedirect(url)
-
-
-class StaffTestingPageView(OpBase, View):
-
-    template = "op_user_staff_test.html"
-
-    def get_testing_form(self):
-        return TestingPageChecksForm
-
-    def get(self, request):
-        try:
-            session = self.check_session(request)
-        except Exception:
-            logger.warning("Invalid session")
-            return HttpResponseForbidden()
-
-        user = session.user
-        attributes = user.attributes
-        content = {
-            "form_checks": self.get_testing_form()(),
-            "form_attrs": TestingPageAttributesForm(),
-            "attributes": json.dumps(attributes, indent=4),
-            "session": session,
-        }
-        return render(request, self.template, content)
-
-    def post(self, request):
-
-        try:
-            session = self.check_session(request)
-        except Exception:
-            logger.warning("Invalid session")
-            return HttpResponseForbidden()
-
-        form = self.get_testing_form()(request.POST)
-        if not form.is_valid():
-            return self.redirect_response_data(
-                # TODO: this is not normative -> check AgID/IPZS
-                session.authz_request['redirect_uri'],
-                error="rejected_by_user",
-                error_description=_(
-                    "User rejected the release of attributes"
-                ),
-            )
-
-        issuer = self.get_issuer()
-        iss_token_data = self.get_iss_token_data(session, issuer)
-
-        IssuedToken.objects.create(**iss_token_data)
-        self.payload = session.authz_request
-
-        return self.redirect_response_data(
-            self.payload["redirect_uri"],
-            code=session.auth_code,
-            state=session.authz_request["state"],
-            iss=issuer.sub if issuer else "",
-        )
 
 
 class ConsentPageView(OpBase, View):
@@ -312,28 +251,14 @@ class ConsentPageView(OpBase, View):
             is_active = True
         ).first()
 
-        # if this auth code has already been used ... forbidden
+        # if this auth code was already been used ... forbidden
         if IssuedToken.objects.filter(session=session):
             logger.warning(f"Auth code Replay {session}")
             return HttpResponseForbidden()
 
-        # get up fresh claims
-        user_claims = request.user.attributes
-        user_claims["email"] = user_claims.get("email", request.user.email)
-        user_claims["username"] = request.user.username
-
-        # filter on requested claims
-        filtered_user_claims = []
-        for target, claims in session.authz_request.get("claims", {}).items():
-            for claim in claims:
-                if claim in user_claims:
-                    filtered_user_claims.append(claim)
-
-        # mapping with human names
-        i18n_user_claims = [
-            OIDCFED_ATTRNAME_I18N.get(i, i)
-            for i in filtered_user_claims
-        ]
+        i18n_user_claims = self.attributes_names_to_release(
+            request, session
+        )['i18n_user_claims']
 
         context = {
             "form": self.get_consent_form()(),

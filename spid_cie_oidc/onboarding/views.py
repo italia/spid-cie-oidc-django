@@ -14,7 +14,9 @@ from spid_cie_oidc.entity.jwks import (
     private_pem_from_jwk,
     public_pem_from_jwk,
     new_rsa_key,
-    serialize_rsa_key
+    serialize_rsa_key,
+    private_jwk_from_pem,
+    public_jwk_from_pem
 )
 
 from spid_cie_oidc.entity.jwtse import unpad_jwt_head, unpad_jwt_payload, verify_jws
@@ -36,6 +38,7 @@ from spid_cie_oidc.onboarding.schemas.token_requests import TokenRefreshRequest
 from spid_cie_oidc.onboarding.schemas.token_response import TokenRefreshResponse
 
 from spid_cie_oidc.onboarding.schemas.jwt import JwtStructure
+from spid_cie_oidc.entity.policy import apply_policy
 
 
 def onboarding_landing(request):
@@ -74,8 +77,8 @@ def onboarding_create_jwk(request):
     private_jwk = serialize_rsa_key(_rsa_key.priv_key, 'private')
     public_jwk = serialize_rsa_key(_rsa_key.pub_key)
     context = {
-        "private_jwk": private_jwk,
-        "public_jwk": public_jwk
+        "private_jwk": json.dumps(private_jwk, indent=4),
+        "public_jwk": json.dumps(public_jwk, indent=4)
     }
     return render(request, 'onboarding_jwk.html', context)
 
@@ -108,6 +111,28 @@ def onboarding_convert_jwk(request):
             return render(request, 'onboarding_convert_jwk.html', context)
     return render(request, 'onboarding_convert_jwk.html', context)
 
+def onboarding_convert_pem(request):
+    pem_type = request.GET.get('type')
+    context = {
+        "pem_type": pem_type
+    }
+    if request.method == 'POST':
+        try:
+            pem = request.POST.get('pem')
+            if pem_type == 'private':
+                jwk = private_jwk_from_pem(pem)
+            if pem_type == 'public':
+                jwk = public_jwk_from_pem(pem)
+            context = {
+                "pem": pem,
+                "pem_type": pem_type,
+                "jwk": jwk
+            }
+        except Exception as e:
+            messages.error(request, _(f" {e} "))
+            return render(request, 'onboarding_convert_pem.html', context)
+    return render(request, 'onboarding_convert_pem.html', context)
+
 
 def onboarding_resolve_statement(request):
     if "sub" in request.GET :
@@ -123,7 +148,8 @@ def onboarding_resolve_statement(request):
         }
         try:
             res = resolve_entity_statement(request, format="json")
-            context["resolved_statement"] = res.content.decode()
+            resultJson = json.loads(res.content.decode())
+            context["resolved_statement"] = json.dumps(resultJson, indent=4)
         except Exception:
             messages.error(request, _('Failed to resolve entity statement, Please check your inserted data'))
             render(request, 'onboarding_resolve_statement.html', context)
@@ -162,8 +188,8 @@ def onboarding_decode_jwt(request):
         head = unpad_jwt_head(jwt)
         payload = unpad_jwt_payload(jwt)
         context["jwt"] = jwt
-        context["head"] = head
-        context["payload"] = payload
+        context["head"] = json.dumps(head, indent=4)
+        context["payload"] = json.dumps(payload, indent=4)
         if request.POST.get('jwk'):
             jwk_str = request.POST['jwk']
             context["jwk"] = jwk_str
@@ -178,28 +204,57 @@ def onboarding_decode_jwt(request):
     return render(request, 'onboarding_decode_jwt.html', context)
 
 
+def onboarding_apply_policy(request):
+    context = {
+        "md": "",
+        "policy": "",
+        "result": ""
+    }
+    if request.GET.get('md') and request.GET.get('policy'):
+        try:
+            md = json.loads(request.GET['md'])
+            policy = json.loads(request.GET['policy'])
+            context = {
+                "md": request.GET['md'],
+                "policy": request.GET['policy'],
+                "result": ""
+            }
+            reuslt = apply_policy(md, policy)
+            context["result"] = json.dumps(reuslt, indent=4)
+        except Exception as e:
+            messages.error(request, {e})
+            render(request, 'onboarding_apply_policy.html', context)
+    return render(request, 'onboarding_apply_policy.html', context)
+
+
 def onboarding_schemas_authorization(request):
     auth_request = AuthenticationRequestSpid.schema_json(indent=2)
     auth_res_succ = AuthenticationResponse.schema_json(indent=2)
     auth_res_err = AuthenticationErrorResponse.schema_json(indent=2)
-    content = dict(
-        auth_request = auth_request,
-        auth_res_succ = auth_res_succ,
-        auth_res_err = auth_res_err
-    )
-    return render(request, "onboarding_schemas_authorization.html", content)
+    content = {
+        "title": "Schemas authorization endpoint",
+        "schemas": {
+            "authorization request": auth_request,
+            "authorization successful response": auth_res_succ,
+            "authorization error response": auth_res_err,
+        }
+    }
+    return render(request, "onboarding_schemas.html", content)
 
 
 def onboarding_schemas_introspection(request):
     intro_request = IntrospectionRequest.schema_json(indent=2)
     intro_res_succ = IntrospectionResponse.schema_json(indent=2)
     intro_res_err = IntrospectionErrorResponseSpid.schema_json(indent=2)
-    content = dict(
-        intro_request = intro_request,
-        intro_res_succ = intro_res_succ,
-        intro_res_err = intro_res_err
-    )
-    return render(request, "onboarding_schemas_introspection.html", content)
+    content = {
+        "title": "Schemas introspection endpoint",
+        "schemas": {
+            "introspection request": intro_request,
+            "introspection successful response": intro_res_succ,
+            "introspection error response": intro_res_err,
+        }
+    }
+    return render(request, "onboarding_schemas.html", content)
 
 
 def onboarding_schemas_metadata(request):
@@ -207,21 +262,27 @@ def onboarding_schemas_metadata(request):
     op_meta_cie = OPMetadataCie.schema_json(indent=2)
     rp_meta_spid = RPMetadataSpid.schema_json(indent=2)
     rp_meta_cie = RPMetadataCie.schema_json(indent=2)
-    content = dict(
-        op_meta_spid = op_meta_spid,
-        op_meta_cie = op_meta_cie,
-        rp_meta_spid = rp_meta_spid,
-        rp_meta_cie = rp_meta_cie
-    )
-    return render(request, "onboarding_schemas_metadata.html", content)
+    content = {
+        "title": "Schemas metadata Spid/Cie",
+        "schemas": {
+            "metadata OP Spid": op_meta_spid,
+            "metadata OP Cie": op_meta_cie,
+            "metadata RP Spid": rp_meta_spid,
+            "metadata RP Cie": rp_meta_cie
+        }
+    }
+    return render(request, "onboarding_schemas.html", content)
 
 
 def onboarding_schemas_revocation(request):
     revoc_request = RevocationRequest.schema_json(indent=2)
-    content = dict(
-        revoc_request = revoc_request,
-    )
-    return render(request, "onboarding_schemas_revocation.html", content)
+    content = {
+        "title": "Schemas revocation endpoint",
+        "schemas": {
+            "revocation request": revoc_request
+        }
+    }
+    return render(request, "onboarding_schemas.html", content)
 
 
 def onboarding_schemas_token(request):
@@ -230,19 +291,25 @@ def onboarding_schemas_token(request):
     refr_req = TokenRefreshRequest.schema_json(indent=2)
     refr_res = TokenRefreshResponse.schema_json(indent=2)
     err_res = TokenErrorResponse.schema_json(indent=2)
-    content = dict(
-        auth_code_req = auth_code_req,
-        auth_code_res = auth_code_res,
-        refr_req = refr_req,
-        refr_res = refr_res,
-        err_res = err_res
-    )
-    return render(request, "onboarding_schemas_token.html", content)
+    content = {
+        "title": "Schemas token endpoint",
+        "schemas": {
+            "token authn code request": auth_code_req,
+            "token authn code response": auth_code_res,
+            "refresh token request": refr_req,
+            "refresh token response": refr_res,
+            "token error response": err_res
+        }
+    }
+    return render(request, "onboarding_schemas.html", content)
 
 
 def onboarding_schemas_jwt_client_assertion(request):
     jwt_client_asser = JwtStructure.schema_json(indent=2)
-    content = dict(
-        jwt_client_asser = jwt_client_asser,
-    )
-    return render(request, "onboarding_schemas_jwt_client_assertion.html", content)
+    content = {
+        "title": "Schemas jwt",
+        "schemas": {
+            "jwt client assertion": jwt_client_asser
+        }
+    }
+    return render(request, "onboarding_schemas.html", content)

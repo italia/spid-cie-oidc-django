@@ -114,7 +114,9 @@ INSTALLED_APPS = [
     'spid_cie_oidc.authority',
     'spid_cie_oidc.onboarding',
     'spid_cie_oidc.relying_party',
-    'spid_cie_oidc.provider'
+    'spid_cie_oidc.relying_party_test',
+    'spid_cie_oidc.provider',
+    
 ]
 
 DATABASES = {
