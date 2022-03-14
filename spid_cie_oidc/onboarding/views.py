@@ -14,7 +14,9 @@ from spid_cie_oidc.entity.jwks import (
     private_pem_from_jwk,
     public_pem_from_jwk,
     new_rsa_key,
-    serialize_rsa_key
+    serialize_rsa_key,
+    private_jwk_from_pem,
+    public_jwk_from_pem
 )
 
 from spid_cie_oidc.entity.jwtse import unpad_jwt_head, unpad_jwt_payload, verify_jws
@@ -109,6 +111,28 @@ def onboarding_convert_jwk(request):
             return render(request, 'onboarding_convert_jwk.html', context)
     return render(request, 'onboarding_convert_jwk.html', context)
 
+def onboarding_convert_pem(request):
+    pem_type = request.GET.get('type')
+    context = {
+        "pem_type": pem_type
+    }
+    if request.method == 'POST':
+        try:
+            pem = request.POST.get('pem')
+            if pem_type == 'private':
+                jwk = private_jwk_from_pem(pem)
+            if pem_type == 'public':
+                jwk = public_jwk_from_pem(pem)
+            context = {
+                "pem": pem,
+                "pem_type": pem_type,
+                "jwk": jwk
+            }
+        except Exception as e:
+            messages.error(request, _(f" {e} "))
+            return render(request, 'onboarding_convert_pem.html', context)
+    return render(request, 'onboarding_convert_pem.html', context)
+
 
 def onboarding_resolve_statement(request):
     if "sub" in request.GET :
@@ -179,6 +203,7 @@ def onboarding_decode_jwt(request):
                 render(request, 'onboarding_decode_jwt.html', context)
     return render(request, 'onboarding_decode_jwt.html', context)
 
+
 def onboarding_apply_policy(request):
     context = {
         "md": "",
@@ -190,9 +215,9 @@ def onboarding_apply_policy(request):
             md = json.loads(request.GET['md'])
             policy = json.loads(request.GET['policy'])
             context = {
-            "md": request.GET['md'],
-            "policy": request.GET['policy'],
-            "result": ""
+                "md": request.GET['md'],
+                "policy": request.GET['policy'],
+                "result": ""
             }
             reuslt = apply_policy(md, policy)
             context["result"] = json.dumps(reuslt, indent=4)
@@ -200,6 +225,7 @@ def onboarding_apply_policy(request):
             messages.error(request, {e})
             render(request, 'onboarding_apply_policy.html', context)
     return render(request, 'onboarding_apply_policy.html', context)
+
 
 def onboarding_schemas_authorization(request):
     auth_request = AuthenticationRequestSpid.schema_json(indent=2)

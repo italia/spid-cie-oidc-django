@@ -7,12 +7,22 @@ from spid_cie_oidc.entity.tests.settings import ta_conf_data
 from spid_cie_oidc.authority.models import (
     FederationEntityConfiguration,
     FederationEntityProfile,
-    FederationDescendant
+    FederationDescendant,
+    FederationEntityAssignedProfile
 )
 from spid_cie_oidc.authority.tests.settings import (
     rp_conf,
     RP_PROFILE,
     rp_onboarding_data
+)
+
+from spid_cie_oidc.entity.jwks import (
+    private_pem_from_jwk,
+    public_pem_from_jwk,
+    new_rsa_key,
+    serialize_rsa_key,
+    private_jwk_from_pem,
+    public_jwk_from_pem
 )
 
 from spid_cie_oidc.authority.tests.settings import RP_METADATA_JWK1, RP_METADATA_JWK1_pub
@@ -27,6 +37,11 @@ class ToolsTests(TestCase):
 
         self.rp_profile = FederationEntityProfile.objects.create(**RP_PROFILE)
         self.rp = FederationDescendant.objects.create(**rp_onboarding_data)
+
+        self.rp_assigned_profile = FederationEntityAssignedProfile.objects.create(
+            descendant=self.rp, profile=self.rp_profile, issuer=self.ta_conf
+        )
+
 
     def test_create_jwk(self):
         url = reverse("oidc_onboarding_create_jwk")
@@ -49,11 +64,31 @@ class ToolsTests(TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertIn("alert-error", res.content.decode())
         
-        #check with right jwk
+        #check with right jwk private
         res = self.client.post(url + '?type=private', {'jwk':json.dumps(RP_METADATA_JWK1)})
         self.assertEqual(res.status_code, 200)
         self.assertNotIn("alert-error", res.content.decode())
 
+        #check with right jwk public
+        res = self.client.post(url + '?type=public', {'jwk':json.dumps(RP_METADATA_JWK1_pub)})
+        self.assertEqual(res.status_code, 200)
+        self.assertNotIn("alert-error", res.content.decode())
+    
+    def test_convert_pem_to_jwk(self):
+        url = reverse("oidc_onboarding_convert_pem")
+        res = self.client.get(url)
+        self.assertEqual(res.status_code, 200)
+
+        pem_private = private_pem_from_jwk(RP_METADATA_JWK1)
+        res = self.client.post(url + '?type=private', {"pem": pem_private})
+        self.assertEqual(res.status_code, 200)
+        self.assertNotIn("alert-error", res.content.decode())
+
+        pem_public = public_pem_from_jwk(RP_METADATA_JWK1_pub)
+        res = self.client.post(url + '?type=public', {"pem": pem_public})
+        self.assertEqual(res.status_code, 200)
+        self.assertNotIn("alert-error", res.content.decode())
+        
     def test_decode_and_verify_jwt(self):
         url = reverse("oidc_onboarding_tools_decode_jwt")
         res = self.client.get(url)
@@ -114,15 +149,14 @@ class ToolsTests(TestCase):
             "sub": "http://rp-test.it/oidc/rp/",
         })
 
-        # TODO: Dezhi
-        # self.assertEqual(res.status_code, 200)
-        # self.assertIn("alert-success", res.content.decode())
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("alert-success", res.content.decode())
 
-        # trust_mark = self.rp_assigned_profile.trust_mark_as_jws
+        trust_mark = self.rp_assigned_profile.trust_mark_as_jws
         
-        # res = self.client.get(url, {
-        #     "trust_mark": trust_mark,
-        # })
-        # self.assertEqual(res.status_code, 200)
-        # self.assertIn("alert-success", res.content.decode())
+        res = self.client.get(url, {
+            "trust_mark": trust_mark,
+        })
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("alert-success", res.content.decode())
 

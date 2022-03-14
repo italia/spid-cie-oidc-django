@@ -89,6 +89,10 @@ https://www.spid.gov.it/
                             <span>{% trans "Convert a private JWK to PEM" %}</span></a></li>
                         <li><a class="list-item" href="{% url 'oidc_onboarding_convert_jwk'%}?type=public">
                             <span>{% trans "Convert a public JWK to PEM" %}</span></a></li>
+                        <li><a class="list-item" href="{% url 'oidc_onboarding_convert_pem'%}?type=private">
+                            <span>{% trans "Convert a private PEM to JWK" %}</span></a></li>
+                        <li><a class="list-item" href="{% url 'oidc_onboarding_convert_pem'%}?type=public">
+                            <span>{% trans "Convert a public PEM to JWK" %}</span></a></li>
                         <li><a class="list-item" href="{% url 'oidc_onboarding_tools_decode_jwt' %}">
                             <span>{% trans "JWT decode and verification" %}</span></a></li>
                     </ul>

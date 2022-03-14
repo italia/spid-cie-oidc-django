@@ -85,7 +85,7 @@ def entity_list(request):
 def advanced_entity_listing(request):
     desecendants = FederationDescendant.objects.filter(
         is_active = True,
-    ).order_by("modified")
+    ).order_by("-modified")
     entities_list = []
     for descendant in desecendants:
         entity = {
@@ -207,7 +207,6 @@ def resolve_entity_statement(request, format: str = "jose"):
 
 def trust_mark_status(request):
     failed_data = {"active": False}
-
     if request.GET.get("sub", "") and request.GET.get("id", ""):
         sub = request.GET["sub"]
         _id = request.GET["id"]
