@@ -1,5 +1,6 @@
 import logging
 import math
+from tkinter.tix import MAX
 import urllib.parse
 
 from django.conf import settings
@@ -84,7 +85,7 @@ def entity_list(request):
 def advanced_entity_listing(request):
     desecendants = FederationDescendant.objects.filter(
         is_active = True,
-    ).order_by("modified")
+    ).order_by("-modified")
     entities_list = []
     for descendant in desecendants:
         entity = {
@@ -94,7 +95,9 @@ def advanced_entity_listing(request):
         }
         entities_list.append(entity)
     total_entries = desecendants.count()
-    p = Paginator(entities_list, MAX_ENTRIES_PAGE)
+
+    _max_entries = getattr(settings, 'MAX_ENTRIES_PAGE', MAX_ENTRIES_PAGE)
+    p = Paginator(entities_list, _max_entries)
     page = request.GET.get("page", 1)
     entities = p.get_page(page)
     next_page_path = ""

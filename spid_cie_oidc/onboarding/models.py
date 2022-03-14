@@ -40,9 +40,9 @@ class OnBoardingRegistration(TimeStampedModel):
             ("onboarded", "onboarded"),
             ("failed", "failed"),
             ("processing", "processing"),
-            ("aquired", "aquired"),
+            ("acquired", "acquired"),
         ),
-        default="aquired",
+        default="acquired",
     )
 
     created_by = models.ForeignKey(
