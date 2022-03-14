@@ -113,7 +113,7 @@ def advanced_entity_listing(request):
             {
                 "error": "Missing trust anchor",
             },
-            status = 500
+            status = 404
         )
     res = {
             "iss" : iss,
