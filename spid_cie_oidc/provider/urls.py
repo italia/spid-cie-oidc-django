@@ -1,15 +1,15 @@
 from django.conf import settings
 from django.urls import path
 
-from .views.views import (
-    oidc_provider_not_consent,
-    AuthzRequestView,
+from .views.authz_request_view import AuthzRequestView
+from .views.userinfo_endpoint import UserInfoEndpoint
+from .views.consent_page_view import (
     ConsentPageView,
-    IntrospectionEndpoint,
-    RevocationEndpoint,
-    TokenEndpoint,
-    UserInfoEndpoint
+    oidc_provider_not_consent
 )
+from .views.token_endpoint import TokenEndpoint
+from .views.revocation_endpoint import RevocationEndpoint
+from .views.introspection_endpoint import IntrospectionEndpoint
 
 _PREF = getattr(settings, "OIDC_PREFIX", "oidc/op")
 

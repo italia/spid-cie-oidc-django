@@ -571,7 +571,7 @@ def oidc_rpinitiated_logout(request):
         auth_token.save()
 
         revocation_request = dict(
-            token = auth_token.id_token,
+            token = auth_token.access_token,
             client_id = authz.client_id,
             client_assertion = client_assertion,
             client_assertion_type = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"

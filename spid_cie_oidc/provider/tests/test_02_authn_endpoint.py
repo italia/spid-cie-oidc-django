@@ -253,6 +253,7 @@ class AuthnRequestTest(TestCase):
         res = client.get(url, {"request": jws})
         self.assertTrue(res.status_code == 302)
         self.assertIn("error=invalid_request", res.url)
+        self.assertIn("state", res.url)
 
     @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB)
     def test_auth_request_trust_chain_no_active(self):
@@ -264,6 +265,7 @@ class AuthnRequestTest(TestCase):
         res = client.get(url, {"request": jws})
         self.assertTrue(res.status_code == 302)
         self.assertIn("error=invalid_request", res.url)
+        self.assertIn("state", res.url)
 
     @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB)
     def test_auth_request_invalid_jwk(self):
@@ -277,6 +279,7 @@ class AuthnRequestTest(TestCase):
         res = client.get(url, {"request": jws})
         self.assertTrue(res.status_code == 302)
         self.assertIn("error=invalid_request", res.url)
+        self.assertIn("state", res.url)
         self.trust_chain.metadata["jwks"]["keys"][0][
             "kid"
         ] = RP_METADATA_JWK1['kid']
@@ -292,6 +295,7 @@ class AuthnRequestTest(TestCase):
         res = client.get(url, {"request": jws})
         self.assertTrue(res.status_code == 302)
         self.assertIn("error", res.url)
+        self.assertIn("state", res.url)
 
     @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB)
     def test_auth_request_invalid_session(self):

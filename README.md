@@ -1,6 +1,7 @@
 # SPID/CIE OIDC Federation SDK
 
 ![CI build](https://github.com/peppelinux/spid-cie-oidc-django/workflows/spid_cie_oidc/badge.svg)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/dd67eb5a241955b75585/test_coverage)](https://codeclimate.com/github/italia/spid-cie-oidc-django/test_coverage)
 ![Python version](https://img.shields.io/badge/license-Apache%202-blue.svg)
 ![py-versions](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9-blue.svg)
 [![GitHub issues](https://img.shields.io/github/issues/italia/spid-cie-oidc-django.svg)](https://github.com/italia/spid-cie-oidc-django/issues)

@@ -9,10 +9,8 @@ import string
 import urllib
 
 
-from cryptojwt.key_jar import KeyJar
 from django.utils.module_loading import import_string
 from django.utils.safestring import mark_safe
-from oidcmsg.message import Message
 
 
 logger = logging.getLogger(__name__)
@@ -27,11 +25,6 @@ def http_redirect_uri_to_dict(url):
 
 def http_dict_to_redirect_uri_path(data):
     return urllib.parse.urlencode(data)
-
-
-def decode_token(bearer_token, keyjar, verify_sign=True):
-    msg = Message().from_jwt(bearer_token, keyjar=keyjar, verify=verify_sign)
-    return msg.to_dict()
 
 
 def random_string(n=32):
@@ -55,22 +48,6 @@ def get_pkce(code_challenge_method: str = "S256", code_challenge_length: int = 6
         "code_challenge": code_challenge,
         "code_challenge_method": code_challenge_method,
     }
-
-
-def get_issuer_keyjar(jwks, issuer: str):
-    key_jar = KeyJar()
-    # "" means default, you can always point to a issuer identifier
-    key_jar.import_jwks(jwks, issuer_id=issuer)
-    return key_jar
-
-
-def validate_jwt(jwt: str, key_jar):
-    try:
-        recv = Message().from_jwt(jwt, keyjar=key_jar)
-        return recv.verify(), key_jar
-    except Exception as e:
-        logger.warning(f"{e}")
-        return False
 
 
 def html_json_preview(value):

@@ -20,7 +20,7 @@ from spid_cie_oidc.authority.tests.settings import (
 
 from spid_cie_oidc.entity.jwks import (
     private_pem_from_jwk,
-    public_pem_from_jwk,
+    public_pem_from_jwk
 )
 
 from spid_cie_oidc.entity.tests.op_metadata_settings import OP_METADATA_SPID
