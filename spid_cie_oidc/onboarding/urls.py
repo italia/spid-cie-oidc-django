@@ -125,7 +125,7 @@ urlpatterns = [
         onboarding_validate_md,
         name="oidc_onboarding_validate_md",
     ),
-     path(
+    path(
         f"{_PREF}onboarding/tools/validate-authn-request",
         onboarding_validate_authn_request,
         name="oidc_onboarding_validate_authn_request_jwt",

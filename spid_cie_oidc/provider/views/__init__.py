@@ -208,7 +208,7 @@ class OpBase:
     ) -> dict:
         _provider_profile = getattr(settings, 'OIDCFED_DEFAULT_PROVIDER_PROFILE', OIDCFED_DEFAULT_PROVIDER_PROFILE)
         claims = {}
-        allowed_id_token_claims = OIDCFED_PROVIDER_PROFILES[_provider_profile].get("id_token", [])
+        OIDCFED_PROVIDER_PROFILES[_provider_profile].get("id_token", [])
         for claim in (
                     authz.authz_request.get(
                         "claims", {}

@@ -1,10 +1,7 @@
 from copy import deepcopy
-from unittest.mock import patch
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
-from spid_cie_oidc.accounts.models import User
 from spid_cie_oidc.authority.tests.settings import RP_METADATA, rp_onboarding_data, RP_METADATA_JWK1
 from django.utils import timezone
 

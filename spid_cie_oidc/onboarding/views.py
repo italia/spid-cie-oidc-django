@@ -114,6 +114,7 @@ def onboarding_convert_jwk(request):
             return render(request, 'onboarding_convert_jwk.html', context)
     return render(request, 'onboarding_convert_jwk.html', context)
 
+
 def onboarding_convert_pem(request):
     pem_type = request.GET.get('type')
     context = {
@@ -219,6 +220,7 @@ def onboarding_validate_md(request):
         return render(request, 'onboarding_validate_md.html', context)
     return render(request, 'onboarding_validate_md.html', context)
 
+
 def onboarding_validate_authn_request(request):
     provider_profile = request.GET.get('provider_profile')
     title = f'Validate authn request {provider_profile}'
@@ -231,11 +233,11 @@ def onboarding_validate_authn_request(request):
     if request.POST.get('md'):
         jwt_str = request.POST['md']
         context = {
-        "provider_profile": provider_profile,
-        "title": title,
-        "description": description,
-        "md": jwt_str
-    }
+            "provider_profile": provider_profile,
+            "title": title,
+            "description": description,
+            "md": jwt_str
+        }
         payload = unpad_jwt_payload(jwt_str)
         schema = OIDCFED_PROVIDER_PROFILES[provider_profile]
         try:
