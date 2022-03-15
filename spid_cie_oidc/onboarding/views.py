@@ -40,6 +40,9 @@ from spid_cie_oidc.onboarding.schemas.token_response import TokenRefreshResponse
 from spid_cie_oidc.onboarding.schemas.jwt import JwtStructure
 from spid_cie_oidc.entity.policy import apply_policy
 
+from spid_cie_oidc.relying_party.settings import RP_PROVIDER_PROFILES
+from spid_cie_oidc.provider.settings import OIDCFED_PROVIDER_PROFILES
+
 
 def onboarding_landing(request):
     return render(request, "onboarding_landing.html")
@@ -175,6 +178,75 @@ def onboarding_validating_trustmark(request):
         else:
             messages.error(request, _('Validation Trust Mark Failed'))
     return render(request, 'onboarding_validating_tm.html', context)
+
+
+def onboarding_validate_md(request):
+    metadata_type = request.GET.get('metadata_type')
+    provider_profile = request.GET.get('provider_profile')
+    md_type = metadata_type.replace("_", " ")
+    title = f'Validate {md_type} {provider_profile}'
+    description = f'Enter a {md_type} of {provider_profile} to verify if it is compatible'
+    context = {
+        "metadata_type": metadata_type,
+        "provider_profile": provider_profile,
+        "title": title,
+        "description": description
+    }
+    if request.POST.get('md'):
+        md = request.POST['md']
+        context = {
+            "metadata_type": metadata_type,
+            "provider_profile": provider_profile,
+            "title": title,
+            "description":description,
+            "md": md
+        }
+        md_str_double_quote = md.replace("'", '"')
+        metadata = json.loads(md_str_double_quote)
+        if metadata_type == 'op_metadata':
+            schema = OIDCFED_PROVIDER_PROFILES[provider_profile]
+            try:
+                schema[metadata_type](**metadata)
+                messages.success(request, _('Validation Metadata Successfully'))
+            except Exception as e:
+                messages.error(request, f"Validation Failed: {e}")
+        if metadata_type == 'rp_metadata':
+            schema = RP_PROVIDER_PROFILES[provider_profile]
+            try:
+                schema[metadata_type](**metadata)
+                messages.success(request, _('Validation Metadata Successfully'))
+            except Exception as e:
+                messages.error(request, f"Validation Failed: {e}")
+        return render(request, 'onboarding_validate_md.html', context)
+    return render(request, 'onboarding_validate_md.html', context)
+
+
+def onboarding_validate_authn_request(request):
+    provider_profile = request.GET.get('provider_profile')
+    title = f'Validate authn request {provider_profile}'
+    description = f'Enter a jwt of authn request for {provider_profile} to verify if it is compatible'
+    context = {
+        "provider_profile": provider_profile,
+        "title": title,
+        "description": description
+    }
+    if request.POST.get('md'):
+        jwt_str = request.POST['md']
+        context = {
+            "provider_profile": provider_profile,
+            "title": title,
+            "description": description,
+            "md": jwt_str
+        }
+        payload = unpad_jwt_payload(jwt_str)
+        schema = OIDCFED_PROVIDER_PROFILES[provider_profile]
+        try:
+            schema["authorization_request"](**payload)
+            messages.success(request, _('Validation Authn Request Successfully'))
+        except Exception as e:
+            messages.error(request, f"Validation Failed: {e}")
+        return render(request, 'onboarding_validate_md.html', context)
+    return render(request, 'onboarding_validate_md.html', context)
 
 
 def onboarding_decode_jwt(request):
