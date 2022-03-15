@@ -3,13 +3,17 @@ from django.urls import path
 
 from .views.views import (
     oidc_provider_not_consent,
-    AuthzRequestView,
-    ConsentPageView,
     IntrospectionEndpoint,
     RevocationEndpoint,
-    TokenEndpoint,
     UserInfoEndpoint
 )
+
+from .views.authz_endpoint import (
+    AuthzRequestView,
+    ConsentPageView,
+)
+
+from .views.token_endpoint import TokenEndpoint
 
 _PREF = getattr(settings, "OIDC_PREFIX", "oidc/op")
 
