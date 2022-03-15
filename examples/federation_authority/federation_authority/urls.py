@@ -42,7 +42,7 @@ urlpatterns.extend(
         re_path('^static/(?P<path>.*)$',
             serve, {
                 'document_root': settings.STATIC_ROOT,
-                'show_indexes': True
+                # 'show_indexes': True
             }
         ),
     )
