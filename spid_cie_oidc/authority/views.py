@@ -1,6 +1,5 @@
 import logging
 import math
-from tkinter.tix import MAX
 import urllib.parse
 
 from django.conf import settings
@@ -112,7 +111,7 @@ def advanced_entity_listing(request):
         prev_page_path = f"{url}"
     try:
         iss = get_first_self_trust_anchor().sub
-    except Exception as e:
+    except Exception:
         return JsonResponse(
             {
                 "error": "Missing trust anchor",

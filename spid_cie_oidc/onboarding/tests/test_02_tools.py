@@ -1,6 +1,8 @@
+import json
 from django.test import TestCase, Client
 from django.urls import reverse
-import json
+from copy import deepcopy
+from spid_cie_oidc.entity.jwtse import create_jws
 
 from spid_cie_oidc.onboarding.tests.tools_settings import jwk_priv, jwt
 from spid_cie_oidc.entity.tests.settings import ta_conf_data
@@ -18,13 +20,12 @@ from spid_cie_oidc.authority.tests.settings import (
 
 from spid_cie_oidc.entity.jwks import (
     private_pem_from_jwk,
-    public_pem_from_jwk,
-    new_rsa_key,
-    serialize_rsa_key,
-    private_jwk_from_pem,
-    public_jwk_from_pem
+    public_pem_from_jwk
 )
 
+from spid_cie_oidc.entity.tests.op_metadata_settings import OP_METADATA_SPID
+from spid_cie_oidc.entity.tests.rp_metadata_settings import RP_METADATA_CIE
+from spid_cie_oidc.onboarding.tests.authn_request_settings import AUTHN_REQUEST_SPID
 from spid_cie_oidc.authority.tests.settings import RP_METADATA_JWK1, RP_METADATA_JWK1_pub
 
 class ToolsTests(TestCase):
@@ -133,7 +134,7 @@ class ToolsTests(TestCase):
         self.assertIsNotNone(res.context['resolved_statement'])
 
     def test_validating_trust_mark(self):
-        url = reverse("oidc_onboarding_tools_validating_trustmark")
+        url = reverse("oidc_onboarding_validating_trustmark")
         res = self.client.get(url)
         self.assertEqual(res.status_code, 200)
 
@@ -159,4 +160,77 @@ class ToolsTests(TestCase):
         })
         self.assertEqual(res.status_code, 200)
         self.assertIn("alert-success", res.content.decode())
+
+    def test_validate_metadata(self):
+        url = reverse("oidc_onboarding_validate_md")
+
+        OP_METADATA_SPID_WRONG = deepcopy(OP_METADATA_SPID)
+        OP_METADATA_SPID_WRONG["issuer"] = "htps://idserver.servizicie.interno.gov.it/op/"
+        res = self.client.post(url + '?metadata_type=op_metadata&provider_profile=spid', 
+            {'md': json.dumps(OP_METADATA_SPID_WRONG)})
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("alert-error", res.content.decode())
+
+        res = self.client.post(url + '?metadata_type=op_metadata&provider_profile=spid', 
+            {'md': json.dumps(OP_METADATA_SPID)})
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("alert-success", res.content.decode())
+
+        RP_METADATA_CIE_WRONG = deepcopy(RP_METADATA_CIE)
+        RP_METADATA_CIE_WRONG["jwks_uri"] = "htps://registry.cie.gov.it/keys.json"
+        res = self.client.post(url + '?metadata_type=rp_metadata&provider_profile=cie', 
+            {'md': json.dumps(RP_METADATA_CIE_WRONG)})
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("alert-error", res.content.decode())
+
+        res = self.client.post(url + '?metadata_type=rp_metadata&provider_profile=cie', 
+            {'md': json.dumps(RP_METADATA_CIE)})
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("alert-success", res.content.decode())
+    
+    def test_validating_trust_mark(self):
+        url = reverse("oidc_onboarding_validating_trustmark")
+        res = self.client.get(url)
+        self.assertEqual(res.status_code, 200)
+
+        res = self.client.get(url, {
+            "id": "https://www.ciao.gov.it/certification/rp",
+            "sub": "http://ciao.it/oidc/rp/",
+        })
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("alert-error", res.content.decode())
+
+        res = self.client.get(url, {
+            "id": "https://www.spid.gov.it/certification/rp",
+            "sub": "http://rp-test.it/oidc/rp/",
+        })
+
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("alert-success", res.content.decode())
+
+        trust_mark = self.rp_assigned_profile.trust_mark_as_jws
+        
+        res = self.client.get(url, {
+            "trust_mark": trust_mark,
+        })
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("alert-success", res.content.decode())
+
+    def test_validate_authn_request(self):
+        url = reverse("oidc_onboarding_validate_authn_request_jwt")
+        AUTHN_REQUEST_SPID_WRONG = deepcopy(AUTHN_REQUEST_SPID)
+        AUTHN_REQUEST_SPID_WRONG["client_id"] = "hps://rp.cie.it/callback1/"
+        jwt = create_jws(AUTHN_REQUEST_SPID_WRONG, RP_METADATA_JWK1)
+        res = self.client.post(url + '?provider_profile=spid',
+            {'md': jwt})
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("alert-error", res.content.decode())
+
+        jwt = create_jws(AUTHN_REQUEST_SPID, RP_METADATA_JWK1)
+        res = self.client.post(url + '?provider_profile=spid', 
+            {'md': jwt})
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("alert-success", res.content.decode())
+
+
 

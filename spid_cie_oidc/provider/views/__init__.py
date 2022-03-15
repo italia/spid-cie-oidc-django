@@ -212,6 +212,7 @@ class OpBase:
         allowed_id_token_claims = OIDCFED_PROVIDER_PROFILES_ID_TOKEN_CLAIMS[_provider_profile]
         if not allowed_id_token_claims:
             return claims
+
         for claim in (
                     authz.authz_request.get(
                         "claims", {}

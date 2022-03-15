@@ -27,7 +27,7 @@ class OidcAuthenticationTokenInline(admin.StackedInline):
 
 @admin.register(OidcAuthentication)
 class OidcAuthenticationAdmin(admin.ModelAdmin):
-    search_fields = ("endpoint", "state", "client_id")
+    search_fields = ("endpoint", "state", "client_id", )
     list_display = ("client_id", "state", "endpoint", "created", "modified")
     list_filter = ("created", "endpoint")
     inlines = (OidcAuthenticationTokenInline,)
