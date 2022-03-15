@@ -10,7 +10,6 @@ from django.http import (
     JsonResponse
 )
 from django.utils.decorators import method_decorator
-from django.utils.translation import gettext as _
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from spid_cie_oidc.entity.jwtse import unpad_jwt_payload
@@ -18,6 +17,7 @@ from spid_cie_oidc.provider.models import IssuedToken, OidcSession
 
 from . import OpBase
 logger = logging.getLogger(__name__)
+
 
 @method_decorator(csrf_exempt, name="dispatch")
 class TokenEndpoint(OpBase, View):

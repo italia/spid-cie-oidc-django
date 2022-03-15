@@ -214,7 +214,7 @@ class OpBase:
                         "claims", {}
                     ).get("id_token", {}).keys()
         ):
-            #TODO: check
+            # TODO: check
             # if claim in allowed_id_token_claims and authz.user.attributes.get(claim, None):
             if authz.user.attributes.get(claim, None):
                 claims[claim] = authz.user.attributes[claim]
