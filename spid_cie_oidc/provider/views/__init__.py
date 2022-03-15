@@ -210,9 +210,10 @@ class OpBase:
         claims = {}
         allowed_id_token_claims = OIDCFED_PROVIDER_PROFILES[_provider_profile].get("id_token_claims", [])
         claims_allowed = []
-        for k, v in allowed_id_token_claims.items():
-            claims_allowed.extend(list(v))
-            claims_allowed.append(k)
+        if allowed_id_token_claims:
+            for k, v in allowed_id_token_claims.items():
+                claims_allowed.extend(list(v))
+                claims_allowed.append(k)
         for claim in (
                     authz.authz_request.get(
                         "claims", {}
