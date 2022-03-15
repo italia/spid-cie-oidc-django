@@ -51,7 +51,7 @@ class RevocationEndpoint(OpBase,View):
             )
 
         token = IssuedToken.objects.filter(
-            access_token= access_token,
+            access_token = access_token,
             revoked = False
         ).first()
 

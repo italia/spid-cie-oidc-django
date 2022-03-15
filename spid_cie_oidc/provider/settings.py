@@ -1,5 +1,4 @@
 from copy import deepcopy
-from ssl import CertificateError
 from django.conf import settings
 from django.utils.translation import gettext as _
 from spid_cie_oidc.entity.schemas.op_metadata import (
@@ -8,8 +7,7 @@ from spid_cie_oidc.entity.schemas.op_metadata import (
 )
 from spid_cie_oidc.onboarding.schemas.authn_requests import (
     AuthenticationRequestCie,
-    AuthenticationRequestSpid,
-    IdToken
+    AuthenticationRequestSpid
 )
 from spid_cie_oidc.onboarding.schemas.introspection_request import IntrospectionRequest
 from spid_cie_oidc.onboarding.schemas.revocation_request import RevocationRequest
