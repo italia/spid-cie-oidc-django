@@ -34,7 +34,7 @@ class OidcSession(TimeStampedModel):
 
     def set_sid(self, request):
         try:
-            #Session.objects.get(session_key=request.session.session_key)
+            # Session.objects.get(session_key=request.session.session_key)
             self.sid = request.session.session_key
             self.save()
         except Exception:
