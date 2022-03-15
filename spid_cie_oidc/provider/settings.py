@@ -1,3 +1,5 @@
+from copy import deepcopy
+from ssl import CertificateError
 from django.conf import settings
 from django.utils.translation import gettext as _
 from spid_cie_oidc.entity.schemas.op_metadata import (
@@ -55,7 +57,7 @@ OIDCFED_PROVIDER_ATTRIBUTES_SPID_MAP = {
 }
 
 OIDCFED_PROVIDER_ATTRIBUTES_CIE_MAP = {
-     "given_name": ("name", "given_name"),
+    "given_name": ("name", "given_name"),
     "family_name": ("family_name", "surname"),
     "email": ("email",),
     "fiscal_number": ("fiscal_number", "tin"),
@@ -71,8 +73,12 @@ OIDCFED_PROVIDER_ATTRIBUTES_CIE_MAP = {
     "physical_phone_number": ("mobile_phone", "phone", "telephone"),
 }
 
-OIDCFED_PROVIDER_ATTRIBUTES_MAP = (
-    OIDCFED_PROVIDER_ATTRIBUTES_SPID_MAP.update(OIDCFED_PROVIDER_ATTRIBUTES_CIE_MAP)
+OIDCFED_PROVIDER_ATTRIBUTES_MAP = deepcopy(OIDCFED_PROVIDER_ATTRIBUTES_SPID_MAP)
+OIDCFED_PROVIDER_ATTRIBUTES_MAP.update(OIDCFED_PROVIDER_ATTRIBUTES_CIE_MAP)
+
+OIDCFED_PROVIDER_PROFILES_ID_TOKEN_CLAIMS = dict(
+    spid = dict(),
+    cie = OIDCFED_PROVIDER_ATTRIBUTES_CIE_MAP
 )
 
 OIDCFED_PROVIDER_PROFILES = getattr(
@@ -94,7 +100,6 @@ OIDCFED_PROVIDER_PROFILES = getattr(
             "refresh_token": TokenRefreshRequest,
             "revocation_request": RevocationRequest,
             "introspection_request" : IntrospectionRequest,
-            "id_token_claims": OIDCFED_PROVIDER_ATTRIBUTES_CIE_MAP
         },
     },
 )
