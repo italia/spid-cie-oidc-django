@@ -102,14 +102,25 @@ https://www.spid.gov.it/
                 <div class="link-list-wrapper">
                     <ul class="link-list">
                         <li>
-                            <h3 class="no_toc">Trust Chain / Trust mark</h3>
+                            <h3 class="no_toc">VALIDATORS</h3>
                         </li>        
-                        <li><a class="list-item" href="{% url 'oidc_onboarding_resolve_statement' %}"><span>{% trans "Resolve entity statement" %}</span></a></li>
-                        <li><a class="list-item" href="{% url 'oidc_onboarding_tools_validating_trustmark' %}"><span>{% trans "Trust mark validation" %}</span></a></li> 
+                        <li><a class="list-item" href="{% url 'oidc_onboarding_validate_md' %}?metadata_type=op_metadata&oidc_fed=spid">
+                            <span>{% trans "Validate OP metadata spid" %}</span></a></li>
+                        <li><a class="list-item" href="{% url 'oidc_onboarding_validate_md' %}?metadata_type=op_metadata&oidc_fed=cie">
+                            <span>{% trans "Validate OP metadata cie" %}</span></a></li>
+                        <li><a class="list-item" href="{% url 'oidc_onboarding_validate_md' %}?metadata_type=rp_metadata&oidc_fed=spid">
+                            <span>{% trans "Validate RP metadata spid" %}</span></a></li>
+                        <li><a class="list-item" href="{% url 'oidc_onboarding_validate_md' %}?metadata_type=rp_metadata&oidc_fed=cie">
+                            <span>{% trans "Validate RP metadata cie" %}</span></a></li>
+                        <li><a class="list-item" href="{% url 'oidc_onboarding_validating_trustmark' %}">
+                            <span>{% trans "Trust mark validation" %}</span></a></li> 
                         <li>
-                            <h3 class="no_toc">POLICY</h3>
+                            <h3 class="no_toc">Utils</h3>
                         </li>        
-                        <li><a class="list-item" href="{% url 'oidc_onboarding_tools_apply_policy' %}"><span>{% trans "Apply policy" %}</span></a></li>
+                        <li><a class="list-item" href="{% url 'oidc_onboarding_resolve_statement' %}">
+                            <span>{% trans "Resolve entity statement" %}</span></a></li>
+                        <li><a class="list-item" href="{% url 'oidc_onboarding_tools_apply_policy' %}">
+                            <span>{% trans "Apply policy" %}</span></a></li>
                     </ul>
                 </div>
             </div>

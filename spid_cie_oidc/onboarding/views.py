@@ -1,4 +1,5 @@
 import json
+from multiprocessing import context
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -39,6 +40,9 @@ from spid_cie_oidc.onboarding.schemas.token_response import TokenRefreshResponse
 
 from spid_cie_oidc.onboarding.schemas.jwt import JwtStructure
 from spid_cie_oidc.entity.policy import apply_policy
+
+from spid_cie_oidc.relying_party.settings import RP_PROVIDER_PROFILES
+from spid_cie_oidc.provider.settings import OIDCFED_PROVIDER_PROFILES
 
 
 def onboarding_landing(request):
@@ -175,6 +179,46 @@ def onboarding_validating_trustmark(request):
             messages.error(request, _('Validation Trust Mark Failed'))
     return render(request, 'onboarding_validating_tm.html', context)
 
+
+def onboarding_validate_md(request):
+    metadata_type = request.GET.get('metadata_type')
+    oidc_fed = request.GET.get('oidc_fed')
+    md_type = metadata_type.replace("_", " ")
+    title = f'Validate {md_type} {oidc_fed}'
+    description = f'Enter a {md_type} of {oidc_fed} to verify if it is compatible'
+    context = {
+        "metadata_type": metadata_type,
+        "oidc_fed": oidc_fed,
+        "title": title,
+        "description": description
+    }
+    if request.POST.get('md'):
+        md = request.POST['md']
+        context = {
+            "metadata_type": metadata_type,
+            "oidc_fed": oidc_fed,
+            "title": title,
+            "description":description,
+            "md": md
+        }
+        md_str_double_quote = md.replace("'", '"')
+        metadata = json.loads(md_str_double_quote)
+        if metadata_type == 'op_metadata':
+            schema = OIDCFED_PROVIDER_PROFILES[oidc_fed]
+            try:
+                schema[metadata_type](**metadata)
+                messages.success(request, _('Validation Metadata Successfully'))
+            except Exception as e:
+                messages.error(request, f"Validation Failed: {e}")
+        if metadata_type == 'rp_metadata':
+            schema = RP_PROVIDER_PROFILES[oidc_fed]
+            try:
+                schema[metadata_type](**metadata)
+                messages.success(request, _('Validation Metadata Successfully'))
+            except Exception as e:
+                messages.error(request, f"Validation Failed: {e}")
+        return render(request, 'onboarding_validate_md.html', context)
+    return render(request, 'onboarding_validate_md.html', context)
 
 def onboarding_decode_jwt(request):
     context = {
