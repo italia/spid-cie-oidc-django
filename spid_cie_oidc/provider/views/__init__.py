@@ -43,7 +43,7 @@ class OpBase:
             header = unpad_jwt_head(req)
         except Exception as e:
             # FIXME: if not payload it's no possible to do redirect
-            state = self.payload["state"]
+            state = self.payload.get("state", "")
             logger.error(
                 f"Error in Authz request object {dict(req.GET)}: {e}."
                 f" error=invalid_request"
@@ -58,7 +58,7 @@ class OpBase:
             trust_anchor__sub=settings.OIDCFED_DEFAULT_TRUST_ANCHOR
         ).first()
         if rp_trust_chain and not rp_trust_chain.is_active:
-            state = self.payload["state"]
+            state = self.payload.get("state", "")
             logger.warning(
                 f"Disabled client {rp_trust_chain.sub} requests an authorization. "
                 "error = access_denied, "
@@ -78,7 +78,7 @@ class OpBase:
             )
             if not rp_trust_chain.is_valid:
                 # FIXME: to do test
-                state = self.payload["iss"]
+                state = self.payload.get("state", "")
                 logger.warning(
                     f"Failed trust chain validation for {self.payload['iss']}. "
                     "error=unauthorized_client, "
@@ -89,7 +89,7 @@ class OpBase:
         jwks = rp_trust_chain.metadata["jwks"]["keys"]
         jwk = self.find_jwk(header, jwks)
         if not jwk:
-            state = self.payload["iss"]
+            state = self.payload.get("state", "")
             logger.error(
                 f"Invalid jwk for {self.payload['iss']}. "
                 f"{header['kid']} not found in {jwks}. "
@@ -102,7 +102,7 @@ class OpBase:
             verify_jws(req, jwk)
         except Exception as e:
             # FIXME: to do test
-            state = self.payload["iss"]
+            state = self.payload.get("state", "")
             logger.error(
                 "Authz request object signature validation failed "
                 f"for {self.payload['iss']}: {e}. "
@@ -214,7 +214,7 @@ class OpBase:
                         "claims", {}
                     ).get("id_token", {}).keys()
         ):
-            #TODO: check
+            # TODO: check
             # if claim in allowed_id_token_claims and authz.user.attributes.get(claim, None):
             if authz.user.attributes.get(claim, None):
                 claims[claim] = authz.user.attributes[claim]
