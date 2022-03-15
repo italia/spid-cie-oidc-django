@@ -47,24 +47,58 @@ As inherited from [__spid_cie_oidc.entity__](docs/tecnhical_specifications/ENTIT
 
 ### authorization
 
-WiP
+The webpath is customizable in the `urls.py` file and by default it's
+configured [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/provider/urls.py#L16) 
+and correspond to `spid_cie_oidc.provider.views.AuthzRequestView`.
+
+The Authorization Endpoint support the use of the HTTP GET and POST methods.
+
+An exemple of accepted rquest is [heare](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/onboarding/tests/authn_request_settings.py#L30)
+
+For Spid profile only 'userinfo' claims are accepted, for CIE profile both 'userinfo' and 'id_token'.
+
+In the case of successful user authentication, the response contains the following parameters:
+
+- __code__, REQUIRED. Authorization code.
+- __state__, REQUIRED. State value enclosed in the authentication requests.
+- __iss__, REQUIRED for CIE, OPTIONAL for Spid. Issuer identifier of the OP.
+- __scope__, REQUIRED if the scopes are different from those required by RP.
 
 ### token
 
-WiP
+The webpath is customizable in the `urls.py` file and by default it's
+configured [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/provider/urls.py#L27) 
+and correspond to `spid_cie_oidc.provider.views.TokenEndpoint`.
+
+Token endpoint support the use only of the HTTP POST method and accepts as grant_type both 'authorization_code' and 'refresh_token'.
 
 ### token introspection
 
-WiP
+The webpath is customizable in the `urls.py` file and by default it's
+configured [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/provider/urls.py#L42) 
+and correspond to `spid_cie_oidc.provider.views.IntrospectionEndpoint`.
+
+Introspection endpoint support the use only of the HTTP POST method, an example of acceptet request is [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/onboarding/tests/introspection_request_settings.py#L3)
+
+In the response the only REQUIRED attribute is __active__, boolean indicator of whether the presented token is currently active.
 
 ### token revocation
 
-WiP
+The webpath is customizable in the `urls.py` file and by default it's
+configured [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/provider/urls.py#L37) 
+and correspond to `spid_cie_oidc.provider.views.RevocationEndpoint`.
 
-### userinfo endpoint
+Revocation endpoint support the use only of the HTTP POST method.
 
-WiP
+In case of successful token invalidation, responds with an HTTP 200 code.
 
+### userinfo
+
+The webpath is customizable in the `urls.py` file and by default it's
+configured [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/provider/urls.py#L32) 
+and correspond to `spid_cie_oidc.provider.views.UserInfoEndpoint`.
+
+The UserInfo Endpoint returns an encrypthed jwt of the user claims.
 
 ## SPID/CIE QAD and compliances tests
 
