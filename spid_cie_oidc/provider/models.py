@@ -41,6 +41,9 @@ class OidcSession(TimeStampedModel):
             logger.warning(f"Error setting SID for OidcSession {self}")
 
     def revoke(self):
+        session = Session.objects.filter(session_key=self.sid)
+        if session:
+            session.delete()
         self.revoked = True
         iss_tokens = IssuedToken.objects.filter(session=self)
         iss_tokens.update(revoked=True)
