@@ -208,15 +208,16 @@ class OpBase:
     ) -> dict:
         _provider_profile = getattr(settings, 'OIDCFED_DEFAULT_PROVIDER_PROFILE', OIDCFED_DEFAULT_PROVIDER_PROFILE)
         claims = {}
-        allowed_id_token_claims = OIDCFED_PROVIDER_PROFILES[_provider_profile].get("id_token", [])
+        allowed_id_token_claims = OIDCFED_PROVIDER_PROFILES[_provider_profile].get("id_token_claims", [])
+        claims_allowed = []
+        for v in allowed_id_token_claims.values():
+            claims_allowed.extend(list(v))
         for claim in (
                     authz.authz_request.get(
                         "claims", {}
                     ).get("id_token", {}).keys()
         ):
-            # TODO: check
-            # if claim in allowed_id_token_claims and authz.user.attributes.get(claim, None):
-            if authz.user.attributes.get(claim, None):
+            if claim in claims_allowed and authz.user.attributes.get(claim, None):
                 claims[claim] = authz.user.attributes[claim]
         return claims
 
