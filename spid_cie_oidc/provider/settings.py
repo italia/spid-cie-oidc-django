@@ -1,3 +1,4 @@
+from copy import deepcopy
 from django.conf import settings
 from django.utils.translation import gettext as _
 from spid_cie_oidc.entity.schemas.op_metadata import (
@@ -6,8 +7,7 @@ from spid_cie_oidc.entity.schemas.op_metadata import (
 )
 from spid_cie_oidc.onboarding.schemas.authn_requests import (
     AuthenticationRequestCie,
-    AuthenticationRequestSpid,
-    IdToken
+    AuthenticationRequestSpid
 )
 from spid_cie_oidc.onboarding.schemas.introspection_request import IntrospectionRequest
 from spid_cie_oidc.onboarding.schemas.revocation_request import RevocationRequest
@@ -25,37 +25,7 @@ OIDCFED_PROVIDER_PROFILES_MEDIA = getattr(
         },
     },
 )
-
-OIDCFED_PROVIDER_PROFILES = getattr(
-    settings,
-    "OIDCFED_PROVIDER_PROFILES",
-    {
-        "spid": {
-            "authorization_request": AuthenticationRequestSpid,
-            "op_metadata": OPMetadataSpid,
-            "authorization_code": TokenAuthnCodeRequest,
-            "refresh_token": TokenRefreshRequest,
-            "revocation_request": RevocationRequest,
-            "introspection_request" : IntrospectionRequest,
-        },
-        "cie": {
-            "authorization_request": AuthenticationRequestCie,
-            "op_metadata": OPMetadataCie,
-            "authorization_code": TokenAuthnCodeRequest,
-            "refresh_token": TokenRefreshRequest,
-            "revocation_request": RevocationRequest,
-            "introspection_request" : IntrospectionRequest,
-            "id_token": IdToken
-        },
-    },
-)
-
-OIDCFED_PROVIDER_SALT = getattr(settings, "OIDCFED_PROVIDER_SALT", "CHANGEME")
-
-OIDCFED_DEFAULT_PROVIDER_PROFILE = getattr(settings, "OIDCFED_PROVIDER_PROFILE", "spid")
-
-OIDCFED_PROVIDER_ATTRIBUTES_MAP = {
-    # SPID
+OIDCFED_PROVIDER_ATTRIBUTES_SPID_MAP = {
     "https://attributes.spid.gov.it/spidCode": (
         {
             "func": "spid_cie_oidc.provider.processors.spidCode",
@@ -82,7 +52,9 @@ OIDCFED_PROVIDER_ATTRIBUTES_MAP = {
     "https://attributes.spid.gov.it/address": ("address",),
     "https://attributes.spid.gov.it/expirationDate": ("expiration_date",),
     "https://attributes.spid.gov.it/digitalAddress": ("digital_address",),
-    # CIE
+}
+
+OIDCFED_PROVIDER_ATTRIBUTES_CIE_MAP = {
     "given_name": ("name", "given_name"),
     "family_name": ("family_name", "surname"),
     "email": ("email",),
@@ -98,6 +70,41 @@ OIDCFED_PROVIDER_ATTRIBUTES_MAP = {
     # "e_delivery_service":  ,
     "physical_phone_number": ("mobile_phone", "phone", "telephone"),
 }
+
+OIDCFED_PROVIDER_ATTRIBUTES_MAP = deepcopy(OIDCFED_PROVIDER_ATTRIBUTES_SPID_MAP)
+OIDCFED_PROVIDER_ATTRIBUTES_MAP.update(OIDCFED_PROVIDER_ATTRIBUTES_CIE_MAP)
+
+OIDCFED_PROVIDER_PROFILES_ID_TOKEN_CLAIMS = dict(
+    spid = dict(),
+    cie = OIDCFED_PROVIDER_ATTRIBUTES_CIE_MAP
+)
+
+OIDCFED_PROVIDER_PROFILES = getattr(
+    settings,
+    "OIDCFED_PROVIDER_PROFILES",
+    {
+        "spid": {
+            "authorization_request": AuthenticationRequestSpid,
+            "op_metadata": OPMetadataSpid,
+            "authorization_code": TokenAuthnCodeRequest,
+            "refresh_token": TokenRefreshRequest,
+            "revocation_request": RevocationRequest,
+            "introspection_request" : IntrospectionRequest,
+        },
+        "cie": {
+            "authorization_request": AuthenticationRequestCie,
+            "op_metadata": OPMetadataCie,
+            "authorization_code": TokenAuthnCodeRequest,
+            "refresh_token": TokenRefreshRequest,
+            "revocation_request": RevocationRequest,
+            "introspection_request" : IntrospectionRequest,
+        },
+    },
+)
+
+OIDCFED_PROVIDER_SALT = getattr(settings, "OIDCFED_PROVIDER_SALT", "CHANGEME")
+
+OIDCFED_DEFAULT_PROVIDER_PROFILE = getattr(settings, "OIDCFED_PROVIDER_PROFILE", "spid")
 
 OIDCFED_PROVIDER_MAX_REFRESH = 1
 
