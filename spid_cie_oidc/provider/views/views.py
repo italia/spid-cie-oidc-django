@@ -101,8 +101,9 @@ class AuthzRequestView(OpBase, View):
             logger.error(f" {e}")
             return self.redirect_response_data(
                 self.payload["redirect_uri"],
-                error="invalid_request",
-                error_description=_("Failed to establish the Trust"),
+                error = "invalid_request",
+                error_description =_("Failed to establish the Trust"),
+                state = self.payload["state"]
             )
         except AuthzRequestReplay as e:
             logger.error(
@@ -111,11 +112,13 @@ class AuthzRequestView(OpBase, View):
             )
             return self.redirect_response_data(
                 self.payload["redirect_uri"],
-                error="invalid_request",
-                error_description=_(
+                error = "invalid_request",
+                error_description =_(
                     "An Unknown error raised during validation of "
                     f" authz request object: {e}"
                 ),
+                state = self.payload["state"]
+
             )
         except Exception as e:
             logger.error(
@@ -126,6 +129,8 @@ class AuthzRequestView(OpBase, View):
                 self.payload["redirect_uri"],
                 error="invalid_request",
                 error_description=_("Authorization request not valid"),
+                state = self.payload["state"]
+
             )
 
         try:
@@ -136,6 +141,8 @@ class AuthzRequestView(OpBase, View):
                 self.payload["redirect_uri"],
                 error="invalid_request",
                 error_description=_("Authorization request validation error"),
+                state = self.payload["state"]
+
             )
 
         # stores the authz request in a hidden field in the form
@@ -285,6 +292,7 @@ class ConsentPageView(OpBase, View):
                 # TODO: this is not normative -> check AgID/IPZS
                 error="rejected_by_user",
                 error_description=_("User rejected the release of attributes"),
+                state = self.payload["state"]
             )
         issuer = self.get_issuer()
 

@@ -43,7 +43,9 @@ class OpBase:
             header = unpad_jwt_head(req)
         except Exception as e:
             # FIXME: if not payload it's no possible to do redirect
-            state = self.payload["state"]
+            state = ""
+            if self.payload:
+                state = self.payload["state"]
             logger.error(
                 f"Error in Authz request object {dict(req.GET)}: {e}."
                 f" error=invalid_request"
