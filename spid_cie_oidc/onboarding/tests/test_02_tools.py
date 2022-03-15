@@ -20,10 +20,6 @@ from spid_cie_oidc.authority.tests.settings import (
 from spid_cie_oidc.entity.jwks import (
     private_pem_from_jwk,
     public_pem_from_jwk,
-    new_rsa_key,
-    serialize_rsa_key,
-    private_jwk_from_pem,
-    public_jwk_from_pem
 )
 
 from spid_cie_oidc.entity.tests.op_metadata_settings import OP_METADATA_SPID
