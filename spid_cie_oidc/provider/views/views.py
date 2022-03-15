@@ -103,7 +103,7 @@ class AuthzRequestView(OpBase, View):
                 self.payload["redirect_uri"],
                 error = "invalid_request",
                 error_description =_("Failed to establish the Trust"),
-                state = self.payload["state"]
+                state = self.payload.get("state", "")
             )
         except AuthzRequestReplay as e:
             logger.error(
@@ -117,7 +117,7 @@ class AuthzRequestView(OpBase, View):
                     "An Unknown error raised during validation of "
                     f" authz request object: {e}"
                 ),
-                state = self.payload["state"]
+                state = self.payload.get("state", "")
 
             )
         except Exception as e:
@@ -129,7 +129,7 @@ class AuthzRequestView(OpBase, View):
                 self.payload["redirect_uri"],
                 error="invalid_request",
                 error_description=_("Authorization request not valid"),
-                state = self.payload["state"]
+                state = self.payload.get("state", "")
 
             )
 
@@ -141,7 +141,7 @@ class AuthzRequestView(OpBase, View):
                 self.payload["redirect_uri"],
                 error="invalid_request",
                 error_description=_("Authorization request validation error"),
-                state = self.payload["state"]
+                state = self.payload.get("state", "")
 
             )
 
@@ -292,7 +292,7 @@ class ConsentPageView(OpBase, View):
                 # TODO: this is not normative -> check AgID/IPZS
                 error="rejected_by_user",
                 error_description=_("User rejected the release of attributes"),
-                state = self.payload["state"]
+                state = self.payload.get("state", "")
             )
         issuer = self.get_issuer()
 

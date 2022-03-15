@@ -43,9 +43,7 @@ class OpBase:
             header = unpad_jwt_head(req)
         except Exception as e:
             # FIXME: if not payload it's no possible to do redirect
-            state = ""
-            if self.payload:
-                state = self.payload["state"]
+            state = self.payload.get("state", "")
             logger.error(
                 f"Error in Authz request object {dict(req.GET)}: {e}."
                 f" error=invalid_request"
@@ -80,7 +78,7 @@ class OpBase:
             )
             if not rp_trust_chain.is_valid:
                 # FIXME: to do test
-                state = self.payload["iss"]
+                state = self.payload["state"]
                 logger.warning(
                     f"Failed trust chain validation for {self.payload['iss']}. "
                     "error=unauthorized_client, "
@@ -91,7 +89,7 @@ class OpBase:
         jwks = rp_trust_chain.metadata["jwks"]["keys"]
         jwk = self.find_jwk(header, jwks)
         if not jwk:
-            state = self.payload["iss"]
+            state = self.payload["state"]
             logger.error(
                 f"Invalid jwk for {self.payload['iss']}. "
                 f"{header['kid']} not found in {jwks}. "
@@ -104,7 +102,7 @@ class OpBase:
             verify_jws(req, jwk)
         except Exception as e:
             # FIXME: to do test
-            state = self.payload["iss"]
+            state = self.payload["state"]
             logger.error(
                 "Authz request object signature validation failed "
                 f"for {self.payload['iss']}: {e}. "
