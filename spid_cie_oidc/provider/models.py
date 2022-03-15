@@ -34,16 +34,13 @@ class OidcSession(TimeStampedModel):
 
     def set_sid(self, request):
         try:
-            Session.objects.get(session_key=request.session.session_key)
+            #Session.objects.get(session_key=request.session.session_key)
             self.sid = request.session.session_key
             self.save()
         except Exception:
             logger.warning(f"Error setting SID for OidcSession {self}")
 
     def revoke(self):
-        session = Session.objects.filter(session_key=self.sid)
-        if session:
-            session.delete()
         self.revoked = True
         iss_tokens = IssuedToken.objects.filter(session=self)
         iss_tokens.update(revoked=True)
