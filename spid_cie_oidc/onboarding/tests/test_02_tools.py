@@ -1,6 +1,7 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 import json
+from copy import deepcopy
 
 from spid_cie_oidc.onboarding.tests.tools_settings import jwk_priv, jwt
 from spid_cie_oidc.entity.tests.settings import ta_conf_data
@@ -25,6 +26,8 @@ from spid_cie_oidc.entity.jwks import (
     public_jwk_from_pem
 )
 
+from spid_cie_oidc.entity.tests.op_metadata_settings import OP_METADATA_SPID
+from spid_cie_oidc.entity.tests.rp_metadata_settings import RP_METADATA_CIE
 from spid_cie_oidc.authority.tests.settings import RP_METADATA_JWK1, RP_METADATA_JWK1_pub
 
 class ToolsTests(TestCase):
@@ -133,7 +136,7 @@ class ToolsTests(TestCase):
         self.assertIsNotNone(res.context['resolved_statement'])
 
     def test_validating_trust_mark(self):
-        url = reverse("oidc_onboarding_tools_validating_trustmark")
+        url = reverse("oidc_onboarding_validating_trustmark")
         res = self.client.get(url)
         self.assertEqual(res.status_code, 200)
 
@@ -159,4 +162,32 @@ class ToolsTests(TestCase):
         })
         self.assertEqual(res.status_code, 200)
         self.assertIn("alert-success", res.content.decode())
+
+    def test_validate_metadata(self):
+        url = reverse("oidc_onboarding_validate_md")
+
+        OP_METADATA_SPID_WRONG = deepcopy(OP_METADATA_SPID)
+        OP_METADATA_SPID_WRONG["issuer"] = "htps://idserver.servizicie.interno.gov.it/op/"
+        res = self.client.post(url + '?metadata_type=op_metadata&oidc_fed=spid', 
+            {'md': json.dumps(OP_METADATA_SPID_WRONG)})
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("alert-error", res.content.decode())
+
+        res = self.client.post(url + '?metadata_type=op_metadata&oidc_fed=spid', 
+            {'md': json.dumps(OP_METADATA_SPID)})
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("alert-success", res.content.decode())
+
+        RP_METADATA_CIE_WRONG = deepcopy(RP_METADATA_CIE)
+        RP_METADATA_CIE_WRONG["jwks_uri"] = "htps://registry.cie.gov.it/keys.json"
+        res = self.client.post(url + '?metadata_type=rp_metadata&oidc_fed=cie', 
+            {'md': json.dumps(RP_METADATA_CIE_WRONG)})
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("alert-error", res.content.decode())
+
+        res = self.client.post(url + '?metadata_type=rp_metadata&oidc_fed=cie', 
+            {'md': json.dumps(RP_METADATA_CIE)})
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("alert-success", res.content.decode())
+
 
