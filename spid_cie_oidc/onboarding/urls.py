@@ -35,6 +35,7 @@ from .views import (
     onboarding_schemas_token,
     onboarding_schemas_jwt_client_assertion,
     onboarding_validate_authn_request,
+    onboarding_validate_ec,
 )
 
 _PREF = getattr(settings, "OIDC_PREFIX", "")
@@ -129,5 +130,10 @@ urlpatterns = [
         f"{_PREF}onboarding/tools/validate-authn-request",
         onboarding_validate_authn_request,
         name="oidc_onboarding_validate_authn_request_jwt",
+    ),
+    path(
+        f"{_PREF}onboarding/tools/validate-ec",
+        onboarding_validate_ec,
+        name="oidc_onboarding_validate_ec",
     ),
 ]

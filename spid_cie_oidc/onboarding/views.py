@@ -21,6 +21,7 @@ from spid_cie_oidc.entity.jwks import (
 
 from spid_cie_oidc.entity.jwtse import unpad_jwt_head, unpad_jwt_payload, verify_jws
 from spid_cie_oidc.authority.views import trust_mark_status, resolve_entity_statement
+from spid_cie_oidc.authority.validators import validate_entity_configuration
 from spid_cie_oidc.onboarding.schemas.authn_requests import AuthenticationRequestSpid
 from spid_cie_oidc.onboarding.schemas.authn_response import AuthenticationResponse
 from spid_cie_oidc.onboarding.schemas.authn_response import AuthenticationErrorResponse
@@ -190,7 +191,8 @@ def onboarding_validate_md(request):
         "metadata_type": metadata_type,
         "provider_profile": provider_profile,
         "title": title,
-        "description": description
+        "description": description,
+        "field_name":"metadata"
     }
     if request.POST.get('md'):
         md = request.POST['md']
@@ -199,6 +201,7 @@ def onboarding_validate_md(request):
             "provider_profile": provider_profile,
             "title": title,
             "description":description,
+            "field_name":"metadata",
             "md": md
         }
         md_str_double_quote = md.replace("'", '"')
@@ -228,7 +231,8 @@ def onboarding_validate_authn_request(request):
     context = {
         "provider_profile": provider_profile,
         "title": title,
-        "description": description
+        "description": description,
+        "field_name":"jwt"
     }
     if request.POST.get('md'):
         jwt_str = request.POST['md']
@@ -236,6 +240,7 @@ def onboarding_validate_authn_request(request):
             "provider_profile": provider_profile,
             "title": title,
             "description": description,
+            "field_name":"jwt",
             "md": jwt_str
         }
         payload = unpad_jwt_payload(jwt_str)
@@ -247,6 +252,19 @@ def onboarding_validate_authn_request(request):
             messages.error(request, f"Validation Failed: {e}")
         return render(request, 'onboarding_validate_md.html', context)
     return render(request, 'onboarding_validate_md.html', context)
+
+def onboarding_validate_ec(request):
+    context={}
+    if request.POST:
+        url = request.POST.get("url")
+        context = {"url": url}
+        try:
+            validate_entity_configuration(url)
+            messages.success(request, _('Validation Entity Configuration Successfully'))
+        except Exception as e :
+            messages.error(request, f"Validation Failed: {e}")
+            return render(request, 'onboarding_validate_ec.html', context)
+    return render(request, 'onboarding_validate_ec.html', context)
 
 
 def onboarding_decode_jwt(request):
