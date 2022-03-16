@@ -27,12 +27,14 @@ from .views import (
     onboarding_validating_trustmark,
     onboarding_decode_jwt,
     onboarding_apply_policy,
+    onboarding_validate_md,
     onboarding_schemas_authorization,
     onboarding_schemas_introspection,
     onboarding_schemas_metadata,
     onboarding_schemas_revocation,
     onboarding_schemas_token,
     onboarding_schemas_jwt_client_assertion,
+    onboarding_validate_authn_request,
 )
 
 _PREF = getattr(settings, "OIDC_PREFIX", "")
@@ -76,7 +78,7 @@ urlpatterns = [
     path(
         f"{_PREF}onboarding/tools/validating-trustmark",
         onboarding_validating_trustmark,
-        name="oidc_onboarding_tools_validating_trustmark",
+        name="oidc_onboarding_validating_trustmark",
     ),
     path(
         f"{_PREF}onboarding/tools/decode-jwt",
@@ -117,5 +119,15 @@ urlpatterns = [
         f"{_PREF}onboarding/schemas/jwt/client/assertion",
         onboarding_schemas_jwt_client_assertion,
         name="oidc_onboarding_schemas_jwt_client_assertion",
+    ),
+    path(
+        f"{_PREF}onboarding/tools/validate-md",
+        onboarding_validate_md,
+        name="oidc_onboarding_validate_md",
+    ),
+    path(
+        f"{_PREF}onboarding/tools/validate-authn-request",
+        onboarding_validate_authn_request,
+        name="oidc_onboarding_validate_authn_request_jwt",
     ),
 ]
