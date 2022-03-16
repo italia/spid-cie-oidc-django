@@ -53,7 +53,7 @@ class FetchProviderTest(TestCase):
             **kwargs,
         )
 
-    @override_settings(OIDCFED_IDENTITY_PROVIDERS = {"http://127.0.0.1:8000/oidc/op/" :"http://testserver/"})
+    @override_settings(OIDCFED_IDENTITY_PROVIDERS = {"spid": {"http://127.0.0.1:8000/oidc/op/" :"http://testserver/"}, "cie":{}})
     def test_fetch_provider(self):
         self.patcher = patch(
             "spid_cie_oidc.entity.trust_chain_operations.get_or_create_trust_chain", 
