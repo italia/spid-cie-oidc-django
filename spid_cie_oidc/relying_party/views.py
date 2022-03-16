@@ -79,7 +79,6 @@ class SpidCieOidcRp:
             raise InvalidTrustchain(
                 "Missing provider url. Please try '?provider=https://provider-subject/'"
             )
-
         trust_anchor = request.GET.get(
             "trust_anchor",
             settings.OIDCFED_IDENTITY_PROVIDERS.get(
@@ -588,10 +587,17 @@ def oidc_rp_landing(request):
     trust_chains = TrustChain.objects.filter(
         type="openid_provider", is_active=True
     )
-    providers = []
+    spid_providers = []
+    cie_providers = []
     for tc in trust_chains:
-        if tc.is_valid:
-            providers.append(tc)
-    random.shuffle(providers)
-    content = {"providers": providers}
+        if tc.is_active:
+            if tc.sub in settings.OIDCFED_IDENTITY_PROVIDERS["spid"]:
+                spid_providers.append(tc)
+            elif tc.sub in settings.OIDCFED_IDENTITY_PROVIDERS["cie"]:
+                cie_providers.append(tc)
+    random.shuffle(spid_providers)
+    content = {
+        "spid_providers": spid_providers, 
+        "cie_providers" : cie_providers
+    }
     return render(request, "rp_landing.html", content)

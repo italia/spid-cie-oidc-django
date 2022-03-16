@@ -50,9 +50,9 @@
                     style="display: none; left: 56.5px; top: 46.05px;">
                     <ul id="spid-idp-list-medium-root-get" class="spid-idp-button-menu"
                         aria-labelledby="spid-idp">
-                        {% for provider in providers %}
+                        {% for provider in spid_providers %}
                             <li class="spid-idp-button-link">
-                                <a href="{% url 'spid_cie_rp_begin' %}?provider={{provider.sub}}">
+                                <a href="{% url 'spid_cie_rp_begin' %}?provider={{provider.sub}}?profile=spid">
                                     <span class="spid-sr-only">{{ provider.metadata.organization_name }}</span>
                                     {% if provider.metadata.logo_uri %}
                                     <img src="{{ provider.metadata.logo_uri }}" alt="{{ provider.metadata.organization_name }}">
@@ -67,14 +67,23 @@
 
             </span>
             <span
-                class="badge badge-grey-unical square-corners mb-3 mr-2 ml-0 pr-10 p-2 mw-100"
+                class="badge square-corners mb-3 mr-2 ml-0 pr-10 p-2 mw-100"
                 style="font-size: 100%">
-                <a href="#" class="italia-it-button italia-it-button-size-m button-cie">
-                    <span class="italia-it-button-icon"><img
-                            src="{% static 'svg/cie-ico-circle-bb.svg' %}"
-                            alt=""></span>
-                    <span class="italia-it-button-text">{% trans "Entra con CIE" %}</span>
-                </a>
+                <ul id="spid-idp-list-medium-root-get" class="spid-idp-button-menu"
+                aria-labelledby="spid-idp">
+                {% for provider in cie_providers %}
+                    <li class="spid-idp-button-link">
+                        <a href="{% url 'spid_cie_rp_begin' %}?provider={{provider.sub}}?profile=cie">
+                            <span class="spid-sr-only">{{ provider.metadata.organization_name }}</span>
+                            {% if provider.metadata.logo_uri %}
+                            <img src="{{ provider.metadata.logo_uri }}" alt="{{ provider.metadata.organization_name }}">
+                            {% else %}
+                            <img src="{% static 'svg/no_image_available.svg' %}" alt="{{ provider.metadata.organization_name }}">
+                            {% endif %}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
             </span>
         </div>
     </div>
