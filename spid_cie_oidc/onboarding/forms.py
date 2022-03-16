@@ -46,7 +46,7 @@ class OnboardingRegistrationForm(forms.Form):
     )
 
     public_jwks = forms.JSONField(
-        initial=dict,
+        initial=list,
         label=_("public jwks of the entities"),
         error_messages={"required": _("Enter the public jwks of the entities")},
         validators=[validate_public_jwks],
