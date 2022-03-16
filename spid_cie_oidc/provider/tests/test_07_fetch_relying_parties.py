@@ -66,7 +66,7 @@ class FetchRPTest(TestCase):
             **kwargs,
         )
     
-    @override_settings(OIDCFED_IDENTITY_PROVIDERS = {"http://127.0.0.1:8000/oidc/op/" :"http://testserver/"})
+    @override_settings(OIDCFED_IDENTITY_PROVIDERS = {"spid":{"http://127.0.0.1:8000/oidc/op/" :"http://testserver/"}, "cie":{}})
     @override_settings(OIDCFED_TRUST_ANCHOR = [])
     def test_fetch_rp(self):
         self.patcher = patch(
