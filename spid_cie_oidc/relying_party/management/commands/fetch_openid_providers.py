@@ -41,26 +41,27 @@ class Command(BaseCommand):
             return
 
         res = []
-        for op_sub, ta in settings.OIDCFED_IDENTITY_PROVIDERS.items():
-            logger.info(f"Fetching Entity Configuration for {op_sub}")
-            try:
-                tc = get_or_create_trust_chain(
-                    subject=op_sub,
-                    trust_anchor=ta,
-                    metadata_type="openid_provider",
-                    httpc_params=HTTPC_PARAMS,
-                    required_trust_marks=getattr(
-                        settings, "OIDCFED_REQUIRED_TRUST_MARKS", []
-                    ),
-                    force=options["force"],
-                )
-                if tc.is_valid:
-                    res.append(tc)
+        for op_profile in settings.OIDCFED_IDENTITY_PROVIDERS.keys():
+            for op_sub, ta in settings.OIDCFED_IDENTITY_PROVIDERS[op_profile].items():
+                logger.info(f"Fetching Entity Configuration for {op_sub}")
+                try:
+                    tc = get_or_create_trust_chain(
+                        subject=op_sub,
+                        trust_anchor=ta,
+                        metadata_type="openid_provider",
+                        httpc_params=HTTPC_PARAMS,
+                        required_trust_marks=getattr(
+                            settings, "OIDCFED_REQUIRED_TRUST_MARKS", []
+                        ),
+                        force=options["force"],
+                    )
+                    if tc.is_valid:
+                        res.append(tc)
 
-                logger.info(f"Final Metadata for {tc.sub}:\n\n{tc.metadata}")
+                    logger.info(f"Final Metadata for {tc.sub}:\n\n{tc.metadata}")
 
-            except Exception as e:
-                logger.error(f"Failed to download {op_sub} due to: {e}")
-                continue
+                except Exception as e:
+                    logger.error(f"Failed to download {op_sub} due to: {e}")
+                    continue
 
         logger.info(f"Found {res}")

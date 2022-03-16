@@ -290,3 +290,124 @@ svg {
     clip: rect(0, 0, 0, 0);
     border: 0
 }
+
+.cie-idp-button {
+    position: absolute;
+    z-index: 1039;
+    display: none
+}
+
+.cie-idp-button .cie-idp-button-menu,
+.cie-idp-button .cie-idp-button-panel {
+    list-style: none;
+    background: white;
+    border: solid 1px #ddd;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    overflow: visible;
+    padding: 0;
+    margin: 0
+}
+
+#cie-idp-button-small-get,
+#cie-idp-button-medium-get,
+#cie-idp-button-small-post,
+#cie-idp-button-medium-post {
+    width: 230px
+}
+
+#cie-idp-button-large-get,
+#cie-idp-button-large-post {
+    width: 270px
+}
+
+#cie-idp-button-xlarge-get,
+#cie-idp-button-xlarge-post {
+    width: 330px
+}
+
+.cie-idp-button .cie-idp-button-panel {
+    padding: 10px
+}
+
+.cie-idp-button.cie-idp-button-tip {
+    margin-top: 8px
+}
+
+.cie-idp-button.cie-idp-button-tip:before {
+    position: absolute;
+    top: -6px;
+    left: 9px;
+    content: "";
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 7px solid #ddd;
+    display: inline-block
+}
+
+.cie-idp-button.cie-idp-button-tip:after {
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    content: "";
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 6px solid white;
+    display: inline-block
+}
+
+.cie-idp-button.cie-idp-button-tip.cie-idp-button-anchor-right:before {
+    left: auto;
+    right: 9px
+}
+
+.cie-idp-button.cie-idp-button-tip.cie-idp-button-anchor-right:after {
+    left: auto;
+    right: 10px
+}
+
+.cie-idp-button.cie-idp-button-scroll .cie-idp-button-menu,
+.cie-idp-button.cie-idp-button-scroll .cie-idp-button-panel {
+    max-height: 180px;
+    overflow: auto
+}
+
+.cie-idp-button .cie-idp-button-menu li {
+    list-style: none;
+    padding: 0 0;
+    margin: 0;
+    line-height: 18px
+}
+
+.cie-idp-button .cie-idp-button-menu li > a,
+.cie-idp-button .cie-idp-button-menu label {
+    display: block;
+    font-family: "Titillium Web", HelveticaNeue, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
+    font-weight: 600;
+    font-size: .9em;
+    color: #3b61b6; 
+    text-decoration: underline;
+    line-height: 18px;
+    padding-top: 5px;
+    white-space: nowrap;
+    border-bottom: 1px solid #ddd;
+}
+
+.cie-idp-button .cie-idp-button-menu li > a:hover,
+.cie-idp-button .cie-idp-button-menu label:hover {
+    color: #036;
+    cursor: pointer;
+    background-color: #F0F0F0
+}
+
+.cie-idp-button .cie-idp-button-menu li > a img {
+    height: 35px;
+    padding-bottom: 5px;
+    border: 0;
+    width: 100%;
+}
+
+
+
+
+
+
