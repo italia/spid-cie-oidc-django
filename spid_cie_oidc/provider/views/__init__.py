@@ -238,7 +238,7 @@ class OpBase:
             "c_hash": left_hash(authz.auth_code, "HS256"),
             "aud": [authz.client_id],
             "iss": iss_sub,
-            "acr": authz.authz_request["acr_values"]
+            "acr": authz.acr
         }
         claims = self.get_id_token_claims(authz)
         if claims:
