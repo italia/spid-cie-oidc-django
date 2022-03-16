@@ -21,6 +21,7 @@ from spid_cie_oidc.provider.forms import AuthLoginForm, AuthzHiddenForm
 from spid_cie_oidc.provider.models import OidcSession
 
 from spid_cie_oidc.provider.exceptions import AuthzRequestReplay
+from spid_cie_oidc.provider.settings import OIDCFED_DEFAULT_PROVIDER_PROFILE, OIDCFED_PROVIDER_PROFILES_DEFAULT_ACR
 
 from . import OpBase
 logger = logging.getLogger(__name__)
@@ -199,6 +200,12 @@ class AuthzRequestView(OpBase, View):
         request.session["oidc"] = {"auth_code": auth_code}
 
         # store the User session
+        _provider_profile = getattr(
+            settings, 
+            'OIDCFED_DEFAULT_PROVIDER_PROFILE', 
+            OIDCFED_DEFAULT_PROVIDER_PROFILE
+        )
+        default_acr = OIDCFED_PROVIDER_PROFILES_DEFAULT_ACR[_provider_profile]
         session = OidcSession.objects.create(
             user=user,
             user_uid=user.username,
@@ -206,6 +213,11 @@ class AuthzRequestView(OpBase, View):
             authz_request=self.payload,
             client_id=self.payload["client_id"],
             auth_code=auth_code,
+            acr=(
+                self.payload["acr_values"][-1] 
+                if len(self.payload.get("acr_values",[])) > 0 
+                else default_acr
+            )
         )
         session.set_sid(request)
         url = reverse("oidc_provider_consent")

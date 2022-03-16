@@ -31,6 +31,7 @@ class OidcSession(TimeStampedModel):
 
     revoked = models.BooleanField(default=False)
     auth_code = models.CharField(max_length=2048, blank=False, null=False)
+    acr = models.CharField(max_length=1024, blank=False, null=False)
 
     def set_sid(self, request):
         try:
