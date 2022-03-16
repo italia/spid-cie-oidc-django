@@ -36,6 +36,7 @@ Setup the example projects
 ````
 git clone https://github.com/peppelinux/spid-cie-oidc-django
 cd spid-cie-oidc
+pip install --upgrade pip
 pip install -e .
 ````
 # Install Django Bootstrap italia template

@@ -32,6 +32,7 @@ Lists all the descendant entities.
  - `http://127.0.0.1:8000/list/`
  - `http://127.0.0.1:8000/list/?is_leaf=false`
  - `http://127.0.0.1:8000/list/?is_leaf=true`
+ - `http://127.0.0.1:8000/list/?type=openid_provider`
 
 #### Resolve entity statement
 
