@@ -191,7 +191,8 @@ def onboarding_validate_md(request):
         "metadata_type": metadata_type,
         "provider_profile": provider_profile,
         "title": title,
-        "description": description
+        "description": description,
+        "field_name":"metadata"
     }
     if request.POST.get('md'):
         md = request.POST['md']
@@ -200,6 +201,7 @@ def onboarding_validate_md(request):
             "provider_profile": provider_profile,
             "title": title,
             "description":description,
+            "field_name":"metadata",
             "md": md
         }
         md_str_double_quote = md.replace("'", '"')
@@ -229,7 +231,8 @@ def onboarding_validate_authn_request(request):
     context = {
         "provider_profile": provider_profile,
         "title": title,
-        "description": description
+        "description": description,
+        "field_name":"jwt"
     }
     if request.POST.get('md'):
         jwt_str = request.POST['md']
@@ -237,6 +240,7 @@ def onboarding_validate_authn_request(request):
             "provider_profile": provider_profile,
             "title": title,
             "description": description,
+            "field_name":"jwt",
             "md": jwt_str
         }
         payload = unpad_jwt_payload(jwt_str)
