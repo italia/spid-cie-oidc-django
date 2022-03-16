@@ -230,7 +230,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             redirect_uri = client_conf["redirect_uris"][0]
 
         authz_data = dict(
-            scope=" ".join([i for i in request.GET.get("scope", ["openid"])]),
+            scope= request.GET.get("scope", None) or "openid",
             redirect_uri=redirect_uri,
             response_type=client_conf["response_types"][0],
             nonce=random_string(32),

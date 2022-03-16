@@ -40,7 +40,10 @@ class AuthzRequestView(OpBase, View):
         must_list = ("scope", "acr_values")
         for i in must_list:
             if isinstance(payload.get(i, None), str):
-                payload[i] = [payload[i]]
+                if ' ' in payload[i]:
+                    payload[i] = payload[i].split(' ')
+                else:
+                    payload[i] = [payload[i]]
 
         redirect_uri = payload.get("redirect_uri", "")
         p = urllib.parse.urlparse(redirect_uri)
