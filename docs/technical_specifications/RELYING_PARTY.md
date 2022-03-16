@@ -72,27 +72,68 @@ RP_PROVIDER_PROFILES = getattr(
         "spid": {
             "authorization_request": {"acr_values": AcrValuesSpid.l2.value},
             "rp_metadata": RPMetadataSpid,
-            "authn_response": AuthenticationResponse
+            "authn_response": AuthenticationResponse,
+            "token_response": TokenResponse
         },
         "cie": {
             "authorization_request": {"acr_values": AcrValuesCie.l2.value},
             "rp_metadata": RPMetadataCie,
-            "authn_response": AuthenticationResponseCie
+            "authn_response": AuthenticationResponseCie,
+            "token_response": TokenResponse
         },
     },
 )
 ````
 - `RP_USER_LOOKUP_FIELD`, which user attribute will be used to link to a preexisting account, example: `RP_USER_LOOKUP_FIELD = "fiscal_number"`.
 - `RP_USER_CREATE`, if a newly logged user can be created, example: `RP_USER_CREATE = True`
+- `RP_REQUEST_CLAIM_BY_PROFILE`
 
+Example
+````
+RP_REQUEST_CLAIM_BY_PROFILE = {
+    "spid": SPID_REQUESTED_CLAIMS,
+    "cie": CIE_REQUESTED_CLAIMS,
+}
+
+SPID_REQUESTED_CLAIMS = getattr(
+    settings,
+    "RP_REQUIRED_CLAIMS",
+    {
+        "id_token": {
+            "https://attributes.spid.gov.it/familyName": {"essential": True},
+            "https://attributes.spid.gov.it/email": {"essential": True},
+        },
+        "userinfo": {
+            "https://attributes.spid.gov.it/name": None,
+            "https://attributes.spid.gov.it/familyName": None,
+            "https://attributes.spid.gov.it/email": None,
+            "https://attributes.spid.gov.it/fiscalNumber": None,
+        },
+    },
+)
+
+CIE_REQUESTED_CLAIMS = getattr(
+    settings,
+    "RP_REQUIRED_CLAIMS",
+    {
+        "id_token": {"family_name": {"essential": True}, "email": {"essential": True}},
+        "userinfo": {
+            "given_name": None,
+            "family_name": None,
+            "email": None,
+        },
+    },
+)
+````
 
 ## OIDC Federation CLI
 
-`fetch_openid_providers` build the Trust Chains for each `OIDCFED_IDENTITY_PROVIDERS`. 
+`fetch_openid_providers` build the Trust Chains for each `OIDCFED_IDENTITY_PROVIDERS`. Flag '-f' force trust chian renew even if is still valid.
 ````
 examples/federation_authority/manage.py fetch_openid_providers --start -f
 
 ````
+Flag '-f' force trust chian renew.
 
 ## Usage
 
