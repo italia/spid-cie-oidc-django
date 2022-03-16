@@ -27,10 +27,10 @@ from spid_cie_oidc.entity.models import (FederationEntityConfiguration,
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.statements import get_http_url
 from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
-from spid_cie_oidc.onboarding.schemas.authn_requests import AcrValuesSpid
 from spid_cie_oidc.relying_party.settings import (
     RP_DEFAULT_PROVIDER_PROFILES,
-    RP_PROVIDER_PROFILES
+    RP_PROVIDER_PROFILES,
+    OIDCFED_ACR_PROFILES
 )
 
 from .models import OidcAuthentication, OidcAuthenticationToken
@@ -228,7 +228,8 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
                 f"Reverted to default {client_conf['redirect_uris'][0]}."
             )
             redirect_uri = client_conf["redirect_uris"][0]
-
+        _profile = request.GET.get("profile", "spid")
+        _acr = OIDCFED_ACR_PROFILES[_profile]
         authz_data = dict(
             scope= request.GET.get("scope", None) or "openid",
             redirect_uri=redirect_uri,
@@ -237,10 +238,10 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             state=random_string(32),
             client_id=client_conf["client_id"],
             endpoint=authz_endpoint,
-            acr_values=request.GET.get("acr_values", AcrValuesSpid.l2.value),
+            acr_values= _acr,
             iat=int(timezone.localtime().timestamp()),
             aud=[tc.sub, authz_endpoint],
-            claims=RP_REQUEST_CLAIM_BY_PROFILE[request.GET.get("profile", "spid")],
+            claims=RP_REQUEST_CLAIM_BY_PROFILE[_profile],
         )
 
         _prompt = request.GET.get("prompt", "consent login")

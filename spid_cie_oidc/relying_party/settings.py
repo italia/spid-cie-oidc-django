@@ -14,9 +14,14 @@ RP_PREFS = {
     "token_endpoint_auth_method": ["private_key_jwt"],
 }
 
-OIDCFED_PROVIDER_PROFILES_DEFAULT_ACR = dict(
-    spid = AcrValuesSpid.l2.value,
-    cie = AcrValuesCie.l2.value
+
+OIDCFED_ACR_PROFILES = getattr(
+    settings, 
+    "OIDCFED_ACR_PROFILES",
+     dict(
+        spid = AcrValuesSpid.l2.value,
+        cie = AcrValuesCie.l2.value
+     )
 )
 
 RP_PROVIDER_PROFILES = getattr(
