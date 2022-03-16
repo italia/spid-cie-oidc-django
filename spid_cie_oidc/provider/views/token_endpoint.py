@@ -62,7 +62,12 @@ class TokenEndpoint(OpBase, View):
         issuedToken = IssuedToken.objects.filter(
             session = session
         )
-        return (issuedToken.count() - 1) < getattr(settings, "OIDCFED_PROVIDER_MAX_REFRESH", 1)
+        # TODO: check also ACR
+        return (
+            (issuedToken.count() - 1) < getattr(
+                settings, "OIDCFED_PROVIDER_MAX_REFRESH", 1
+            )
+        )
 
     def grant_refresh_token(self, request, *args, **kwargs):
         """
