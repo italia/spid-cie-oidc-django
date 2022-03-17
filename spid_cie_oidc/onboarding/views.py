@@ -5,6 +5,8 @@ from django.contrib import messages
 from django.utils.translation import gettext as _
 
 from spid_cie_oidc.entity.models import FederationEntityConfiguration
+from spid_cie_oidc.entity.settings import HTTPC_PARAMS
+from spid_cie_oidc.entity.statements import EntityConfiguration, get_entity_configurations
 
 from .forms import (
     OnboardingRegistrationForm,
@@ -262,9 +264,9 @@ def onboarding_validate_ec(request):
         context = {"url": url}
         try:
             validate_entity_configuration(url)
-            entity_confs = FederationEntityConfiguration.objects.filter(sub=url)
-            ec_as_dict = entity_confs[0].entity_configuration_as_dict
-            context["ec"] = json.dumps(ec_as_dict, indent=4)
+            jwt = get_entity_configurations(url)[0]
+            ec = EntityConfiguration(jwt, httpc_params=HTTPC_PARAMS)
+            context["ec"] = json.dumps(ec.payload, indent=4)
             messages.success(request, _('Validation Entity Configuration Successfully'))
         except Exception as e :
             messages.error(request, f"Validation Failed: {e}")
