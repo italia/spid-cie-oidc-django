@@ -17,6 +17,15 @@ $(document).ready(function(){
     rootList.append(lnkList);
 });
 $(document).ready(function(){
+    var rootList = $("#cie-idp-list-medium-root-get");
+    var idpList = rootList.children(".cie-idp-button-link");
+    var lnkList = rootList.children(".cie-idp-support-link");
+    while (idpList.length) {
+        rootList.append(idpList.splice(Math.floor(Math.random() * idpList.length), 1)[0]);
+    }
+    rootList.append(lnkList);
+});
+$(document).ready(function(){
     var rootList = $("#spid-idp-list-large-root-get");
     var idpList = rootList.children(".spid-idp-button-link");
     var lnkList = rootList.children(".spid-idp-support-link");

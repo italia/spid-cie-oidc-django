@@ -69,7 +69,7 @@ class RefreshTokenTest(TestCase):
             user=User.objects.create(username = "username"),
             user_uid="",
             nonce="",
-            authz_request={"scope": "openid", "nonce": "123"},
+            authz_request={"scope": "openid", "nonce": "123", "acr_values":["https://www.spid.gov.it/SpidL2"]},
             client_id="",
             auth_code="code",
         )
