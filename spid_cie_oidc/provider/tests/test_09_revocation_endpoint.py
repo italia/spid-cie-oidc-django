@@ -1,26 +1,23 @@
 
 from copy import deepcopy
+
 from django.test import Client, TestCase
 from django.urls import reverse
 from spid_cie_oidc.accounts.models import User
-
 from spid_cie_oidc.authority.tests.settings import (
-    RP_CONF_AS_JSON,
-    RP_METADATA,
+    RP_CONF_AS_JSON,                          
     RP_METADATA_JWK1,
     rp_conf
 )
-
-from spid_cie_oidc.entity.jwtse import create_jws, verify_jws
+from spid_cie_oidc.entity.jwtse import create_jws
 from spid_cie_oidc.entity.models import FetchedEntityStatement, TrustChain
 from spid_cie_oidc.entity.tests.settings import TA_SUB
 from spid_cie_oidc.entity.utils import (
-    datetime_from_timestamp,
+    datetime_from_timestamp, 
     exp_from_now,
     iat_now
 )
 from spid_cie_oidc.provider.models import IssuedToken, OidcSession
-
 from spid_cie_oidc.provider.tests.settings import op_conf, op_conf_priv_jwk
 
 RP_SUB = rp_conf["sub"]
