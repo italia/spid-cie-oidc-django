@@ -142,7 +142,6 @@ class TokenEndpoint(OpBase, View):
                 },
                 status = 400
             )
-            
 
         self.commons = self.get_jwt_common_data()
         self.issuer = self.get_issuer()

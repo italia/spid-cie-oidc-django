@@ -15,7 +15,6 @@ from django.utils.module_loading import import_string
 from django.utils.translation import gettext as _
 from django.views import View
 from pydantic import ValidationError
-from spid_cie_oidc.authority.models import FederationDescendant
 from spid_cie_oidc.entity.exceptions import InvalidTrustchain
 from spid_cie_oidc.entity.jwtse import (
     create_jws,
@@ -28,6 +27,7 @@ from spid_cie_oidc.entity.models import (FederationEntityConfiguration,
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.statements import get_http_url
 from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
+from spid_cie_oidc.relying_party.exceptions import ValidationException
 from spid_cie_oidc.relying_party.settings import (
     RP_DEFAULT_PROVIDER_PROFILES,
     RP_PROVIDER_PROFILES,
@@ -131,13 +131,7 @@ class SpidCieOidcRp:
                 f"{error_description} "
                 f"for {request.get('client_id', None)}: {e} "
             )
-            return JsonResponse(
-                {
-                    "error": "invalid_request",
-                    "error_description": f"{error_description} ",
-                },
-                status = 400
-            )
+            raise ValidationException()
 
 
 class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
@@ -297,6 +291,7 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
     """
 
     error_template = "rp_error.html"
+
     def user_reunification(self, user_attrs: dict):
         user_model = get_user_model()
         lookup = {
@@ -345,13 +340,20 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
         authz = OidcAuthentication.objects.filter(
             state=request_args.get("state"),
         )
-        result = self.validate_json_schema(
-            request.GET.dict(),
-            "authn_response",
-            "Authn response object validation failed"
-        )
-        if result:
-            return result
+        try:
+            self.validate_json_schema(
+                request.GET.dict(),
+                "authn_response",
+                "Authn response object validation failed"
+            )
+        except ValidationException as e:
+            return JsonResponse(
+                {
+                    "error": "invalid_request",
+                    "error_description": "Authn response object validation failed",
+                },
+                status = 400
+            )
 
         if not authz:
             # TODO: verify error message and status
@@ -406,13 +408,20 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
             return render(request, self.error_template, context, status=400)
 
         else:
-            result = self.validate_json_schema(
-                token_response,
-                "token_response",
-                "Token response object validation failed"
-            )
-            if result:
-                return result
+            try:
+                self.validate_json_schema(
+                    token_response,
+                    "token_response",
+                    "Token response object validation failed"
+                )
+            except ValidationException as e:
+                return JsonResponse(
+                    {
+                        "error": "invalid_request",
+                        "error_description": "Token response object validation failed",
+                    },
+                    status = 400
+                )
         jwks = authz.provider_configuration["jwks"]["keys"]
         access_token = token_response["access_token"]
         id_token = token_response["id_token"]
