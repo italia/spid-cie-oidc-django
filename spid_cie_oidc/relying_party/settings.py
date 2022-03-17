@@ -97,6 +97,7 @@ CIE_REQUESTED_CLAIMS = getattr(
             "given_name": None,
             "family_name": None,
             "email": None,
+            "fiscal_number": None
         },
     },
 )

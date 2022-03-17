@@ -15,6 +15,7 @@ from django.utils.module_loading import import_string
 from django.utils.translation import gettext as _
 from django.views import View
 from pydantic import ValidationError
+from spid_cie_oidc.authority.models import FederationDescendant
 from spid_cie_oidc.entity.exceptions import InvalidTrustchain
 from spid_cie_oidc.entity.jwtse import (
     create_jws,
@@ -296,7 +297,6 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
     """
 
     error_template = "rp_error.html"
-
     def user_reunification(self, user_attrs: dict):
         user_model = get_user_model()
         lookup = {
@@ -413,13 +413,7 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
             )
             if result:
                 return result
-
-        entity_conf = FederationEntityConfiguration.objects.filter(
-            entity_type="openid_provider",
-        ).first()
-
-        op_conf = entity_conf.metadata["openid_provider"]
-        jwks = op_conf["jwks"]["keys"]
+        jwks = authz.provider_configuration["jwks"]["keys"]
         access_token = token_response["access_token"]
         id_token = token_response["id_token"]
         op_ac_jwk = self.get_jwk_from_jwt(access_token, jwks)
@@ -465,7 +459,6 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
         authz_token.token_type = token_response["token_type"]
         authz_token.expires_in = token_response["expires_in"]
         authz_token.save()
-
         userinfo = self.get_userinfo(
             authz.state,
             authz_token.access_token,
