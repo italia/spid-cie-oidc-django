@@ -1511,7 +1511,7 @@
             "contacts": [
               "ops@localhost"
             ],
-            "federation_api_endpoint": "http://127.0.0.1:8000/fetch",
+            "federation_fetch_endpoint": "http://127.0.0.1:8000/fetch",
             "homepage_uri": "http://127.0.0.1:8000",
             "name": "example TA",
             "federation_list_endpoint": "http://127.0.0.1:8000/list/"
