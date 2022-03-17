@@ -33,8 +33,14 @@ def validate_entity_configuration(value):
         )
     if not jwt:
         raise ValidationError("Entity Configuration is Null")
-    ec = EntityConfiguration(jwt, httpc_params=HTTPC_PARAMS)
-    ec.validate_by_itself()
+
+    try:
+        ec = EntityConfiguration(jwt, httpc_params=HTTPC_PARAMS)
+        ec.validate_by_itself()
+    except Exception as e:
+        raise ValidationError(
+            f"Failed to fetch Entity Configuration for {value}: {e}"
+        )
 
     authority_hints = ec.payload.get("authority_hints", [])
     if not authority_hints:

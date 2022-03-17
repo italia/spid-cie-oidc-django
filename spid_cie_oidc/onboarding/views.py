@@ -4,6 +4,10 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.utils.translation import gettext as _
 
+from spid_cie_oidc.entity.models import FederationEntityConfiguration
+from spid_cie_oidc.entity.settings import HTTPC_PARAMS
+from spid_cie_oidc.entity.statements import EntityConfiguration, get_entity_configurations
+
 from .forms import (
     OnboardingRegistrationForm,
     OnboardingCreateTrustChain,
@@ -261,6 +265,9 @@ def onboarding_validate_ec(request):
         context = {"url": url}
         try:
             validate_entity_configuration(url)
+            jwt = get_entity_configurations(url)[0]
+            ec = EntityConfiguration(jwt, httpc_params=HTTPC_PARAMS)
+            context["ec"] = json.dumps(ec.payload, indent=4)
             messages.success(request, _('Validation Entity Configuration Successfully'))
         except Exception as e :
             messages.error(request, f"Validation Failed: {e}")

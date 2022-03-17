@@ -41,9 +41,9 @@ class OidcSession(TimeStampedModel):
         except Exception:
             logger.warning(f"Error setting SID for OidcSession {self}")
 
-    def revoke(self):
+    def revoke(self, destroy_session=True):
         session = Session.objects.filter(session_key=self.sid)
-        if session:
+        if session and destroy_session:
             session.delete()
         self.revoked = True
         iss_tokens = IssuedToken.objects.filter(session=self)
@@ -67,6 +67,7 @@ class OidcSession(TimeStampedModel):
         verbose_name = "User Session"
         verbose_name_plural = "User Sessions"
         unique_together = ("client_id", "nonce")
+        ordering = ["-created"]
 
 
 class IssuedToken(TimeStampedModel):
