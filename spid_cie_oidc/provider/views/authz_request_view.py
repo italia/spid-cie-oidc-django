@@ -19,7 +19,7 @@ from spid_cie_oidc.entity.exceptions import InvalidEntityConfiguration
 from spid_cie_oidc.provider.forms import AuthLoginForm, AuthzHiddenForm
 from spid_cie_oidc.provider.models import OidcSession
 
-from spid_cie_oidc.provider.exceptions import AuthzRequestReplay
+from spid_cie_oidc.provider.exceptions import AuthzRequestReplay, ValidationException
 from spid_cie_oidc.provider.settings import OIDCFED_DEFAULT_PROVIDER_PROFILE, OIDCFED_PROVIDER_PROFILES_DEFAULT_ACR
 
 from . import OpBase
@@ -50,7 +50,7 @@ class AuthzRequestView(OpBase, View):
         if payload.get("client_id", None) in scheme_fqdn:
             raise ValidationError("client_id not in redirect_uri")
 
-        return self.validate_json_schema(
+        self.validate_json_schema(
             payload,
             "authorization_request",
             "Authen request object validation failed "
@@ -118,9 +118,9 @@ class AuthzRequestView(OpBase, View):
                 state = self.payload.get("state", "")
 
             )
-
-        result = self.validate_authz(self.payload)
-        if result:
+        try:
+            self.validate_authz(self.payload)
+        except ValidationException as e:
             return self.redirect_response_data(
                 self.payload["redirect_uri"],
                 error="invalid_request",

@@ -8,3 +8,7 @@ class InvalidSession(Exception):
 
 class RevokedSession(Exception):
     pass
+
+
+class ValidationException(Exception):
+    pass

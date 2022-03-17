@@ -11,7 +11,7 @@ from spid_cie_oidc.entity.models import FederationEntityConfiguration, TrustChai
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
 from spid_cie_oidc.entity.utils import datetime_from_timestamp, exp_from_now, iat_now
-from spid_cie_oidc.provider.exceptions import AuthzRequestReplay, InvalidSession, RevokedSession
+from spid_cie_oidc.provider.exceptions import AuthzRequestReplay, InvalidSession, RevokedSession, ValidationException
 from spid_cie_oidc.provider.models import OidcSession
 
 from spid_cie_oidc.provider.settings import (
@@ -176,13 +176,7 @@ class OpBase:
                 f"{error_description} "
                 f"for {payload.get('client_id', None)}: {e}"
             )
-            return JsonResponse(
-                {
-                    "error": "invalid_request",
-                    "error_description": f"{error_description} ",
-                },
-                status = 400
-            )
+            raise ValidationException()
 
     def get_jwt_common_data(self):
         return {
