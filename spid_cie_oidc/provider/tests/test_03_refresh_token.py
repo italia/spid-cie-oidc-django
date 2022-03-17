@@ -9,7 +9,7 @@ from spid_cie_oidc.authority.tests.settings import (
     RP_METADATA_JWK1,
     rp_conf
 )
-from spid_cie_oidc.entity.jwtse import create_jws
+from spid_cie_oidc.entity.jwtse import create_jws, verify_jws
 from spid_cie_oidc.entity.models import (
     FederationEntityConfiguration,
     FetchedEntityStatement, 
@@ -58,13 +58,14 @@ class RefreshTokenTest(TestCase):
             "jti": "jti",
         }
         self.ca_jws = create_jws(CLIENT_ASSERTION, RP_METADATA_JWK1)
-        self.refresh_token = {
+        refresh_token = {
             "iss": self.op_local_conf["sub"],
             "sub": RP_SUB,
             "aud": [RP_CLIENT_ID],
             "client_id": RP_CLIENT_ID,
             "scope": "openid",
         }
+        self.rt_jws = create_jws(refresh_token, op_conf_priv_jwk)
         session = OidcSession.objects.create(
             user=User.objects.create(username = "username"),
             user_uid="",
@@ -74,7 +75,7 @@ class RefreshTokenTest(TestCase):
             auth_code="code",
         )
         IssuedToken.objects.create(
-            refresh_token = self.refresh_token,
+            refresh_token = self.rt_jws,
             session = session,
             expires = timezone.localtime()
         )
@@ -86,13 +87,15 @@ class RefreshTokenTest(TestCase):
             client_id = RP_CLIENT_ID,
             client_assertion = self.ca_jws,
             client_assertion_type = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-            refresh_token = str(self.refresh_token),
+            refresh_token = self.rt_jws,
             grant_type="refresh_token",
             code = "code",
             code_verifier = "code_verifier"
         )
         res = client.post(url, request)
         self.assertTrue(res.status_code == 200)
+        refresh_token = verify_jws(res.json().get("refresh_token"), op_conf_priv_jwk)
+        self.assertEqual(refresh_token["sub"], RP_SUB)
 
     @override_settings(OIDCFED_PROVIDER_MAX_REFRESH = 1)
     def test_grant_refresh_token_two_times(self):
@@ -102,7 +105,7 @@ class RefreshTokenTest(TestCase):
             client_id = RP_CLIENT_ID,
             client_assertion = self.ca_jws,
             client_assertion_type = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-            refresh_token = str(self.refresh_token),
+            refresh_token = self.rt_jws,
             grant_type="refresh_token",
             code = "code",
             code_verifier = "code_verifier"

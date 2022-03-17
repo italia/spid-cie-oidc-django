@@ -134,7 +134,8 @@ class SpidCieOidcRp:
                 {
                     "error": "invalid_request",
                     "error_description": f"{error_description} ",
-                }
+                },
+                status = 400
             )
 
 

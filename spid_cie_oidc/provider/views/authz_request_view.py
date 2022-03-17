@@ -35,7 +35,7 @@ class AuthzRequestView(OpBase, View):
 
     template = "op_user_login.html"
 
-    def validate_authz(self, payload: dict) -> None:
+    def validate_authz(self, payload: dict):
 
         must_list = ("scope", "acr_values")
         for i in must_list:
@@ -51,7 +51,7 @@ class AuthzRequestView(OpBase, View):
         if payload.get("client_id", None) in scheme_fqdn:
             raise ValidationError("client_id not in redirect_uri")
 
-        self.validate_json_schema(
+        return self.validate_json_schema(
             payload,
             "authorization_request",
             "Authen request object validation failed "
@@ -120,16 +120,13 @@ class AuthzRequestView(OpBase, View):
 
             )
 
-        try:
-            self.validate_authz(self.payload)
-        except (Exception, pydantic_ValidationError) as e:
-            logger.warning(f"Authz request failed: {e}")
+        result = self.validate_authz(self.payload)
+        if result:
             return self.redirect_response_data(
                 self.payload["redirect_uri"],
                 error="invalid_request",
                 error_description=_("Authorization request validation error"),
                 state = self.payload.get("state", "")
-
             )
 
         # stores the authz request in a hidden field in the form

@@ -53,11 +53,7 @@
                         aria-labelledby="spid-idp">
                         {% for provider in spid_providers %}
                             <li>
-<<<<<<< HEAD
-                                <a href="{% url 'spid_cie_rp_begin' %}?provider={{provider.sub}}?profile=spid">
-=======
                                 <a href="{% url 'spid_cie_rp_begin' %}?provider={{provider.sub}}&profile=spid">
->>>>>>> 4ff56c69d71d81bdb3a3b96879a8e09f3788ba75
                                     <span class="spid-sr-only">{{ provider.metadata.organization_name }}</span>
                                     {% if provider.metadata.logo_uri %}
                                     <img src="{{ provider.metadata.logo_uri }}" alt="{{ provider.metadata.organization_name }}">

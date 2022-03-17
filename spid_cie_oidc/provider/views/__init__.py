@@ -3,7 +3,7 @@ import uuid
 from cryptojwt.jws.utils import left_hash
 from django.conf import settings
 from pydantic import ValidationError
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.utils import timezone
 import urllib
 from spid_cie_oidc.entity.jwtse import create_jws, unpad_jwt_head, unpad_jwt_payload, verify_jws
@@ -176,9 +176,12 @@ class OpBase:
                 f"{error_description} "
                 f"for {payload.get('client_id', None)}: {e}"
             )
-            raise Exception(
-                f"Validation error on {schema_type} "
-                f"for {payload}"
+            return JsonResponse(
+                {
+                    "error": "invalid_request",
+                    "error_description": f"{error_description} ",
+                },
+                status = 400
             )
 
     def get_jwt_common_data(self):
@@ -290,8 +293,8 @@ class OpBase:
 
         _refresh_token = self.get_refresh_token(iss_sub, _sub, session, jwt_at, commons)
         if _refresh_token:
-            iss_token_data["refresh_token"] = _refresh_token
-
+            jwt_rt = create_jws(_refresh_token, jwk)
+            iss_token_data["refresh_token"] = jwt_rt
         return iss_token_data
 
     def get_expires_in(self, iat: int, exp: int):
