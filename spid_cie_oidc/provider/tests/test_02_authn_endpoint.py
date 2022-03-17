@@ -2,10 +2,10 @@ from copy import deepcopy
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
-from spid_cie_oidc.authority.tests.settings import RP_METADATA, rp_onboarding_data, RP_METADATA_JWK1
+from spid_cie_oidc.authority.tests.settings import RP_METADATA, rp_onboarding_data, RP_METADATA_JWK1, RP_METADATA_JWK1_pub
 from django.utils import timezone
 
-from spid_cie_oidc.entity.jwtse import create_jws, unpad_jwt_payload
+from spid_cie_oidc.entity.jwtse import create_jws, unpad_jwt_payload, verify_jws
 from spid_cie_oidc.entity.models import (
     FederationEntityConfiguration,
     FetchedEntityStatement,
@@ -14,7 +14,7 @@ from spid_cie_oidc.entity.models import (
 from spid_cie_oidc.entity.tests.settings import TA_SUB
 from spid_cie_oidc.entity.utils import datetime_from_timestamp, exp_from_now, iat_now
 from spid_cie_oidc.provider.models import IssuedToken, OidcSession
-from spid_cie_oidc.provider.tests.settings import op_conf
+from spid_cie_oidc.provider.tests.settings import op_conf, op_conf_priv_jwk
 from spid_cie_oidc.relying_party.utils import random_string
 
 RP_SUB = rp_onboarding_data["sub"]
@@ -108,6 +108,7 @@ class AuthnRequestTest(TestCase):
         self.assertFalse("error" in res.content.decode())
         res = client.post(consent_page_url, {"agree": True})
         issued_token = IssuedToken.objects.all().first()
+        verify_jws(issued_token.id_token, op_conf_priv_jwk)
         id_token = unpad_jwt_payload(issued_token.id_token)
         self.assertEqual(id_token.get("family_name"), "rossi")
         self.assertEqual(id_token.get("email"), "test@test.it")

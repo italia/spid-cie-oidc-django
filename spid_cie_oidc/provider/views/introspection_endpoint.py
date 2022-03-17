@@ -6,6 +6,7 @@ from django.http import (
     JsonResponse
 )
 from django.views import View
+from spid_cie_oidc.provider.exceptions import ValidationException
 from spid_cie_oidc.provider.models import IssuedToken
 
 from . import OpBase
@@ -17,18 +18,24 @@ class IntrospectionEndpoint(OpBase, View):
         return HttpResponseBadRequest()
 
     def post(self, request, *args, **kwargs):
-        result = self.validate_json_schema(
-            request.POST.dict(),
-            "introspection_request",
-            "Introspection request object validation failed"
-        )
-        if result:
-            return result
-        client_id = request.POST['client_id']
         try:
+            self.validate_json_schema(
+                request.POST.dict(),
+                "introspection_request",
+                "Introspection request object validation failed"
+            )
+            client_id = request.POST['client_id']
             self.check_client_assertion(
                 client_id,
                 request.POST['client_assertion']
+            )
+        except ValidationException as e:
+            return JsonResponse(
+                {
+                    "error": "invalid_request",
+                    "error_description": "Introspection request object validation failed",
+                },
+                status = 400
             )
         except Exception:
             return HttpResponseForbidden()

@@ -1,5 +1,3 @@
-
-
 from django.test import Client, TestCase
 from django.urls import reverse
 from spid_cie_oidc.entity.models import FetchedEntityStatement, TrustChain

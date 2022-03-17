@@ -27,6 +27,7 @@ from spid_cie_oidc.entity.models import (FederationEntityConfiguration,
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.statements import get_http_url
 from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
+from spid_cie_oidc.relying_party.exceptions import ValidationException
 from spid_cie_oidc.relying_party.settings import (
     RP_DEFAULT_PROVIDER_PROFILES,
     RP_PROVIDER_PROFILES,
@@ -130,12 +131,7 @@ class SpidCieOidcRp:
                 f"{error_description} "
                 f"for {request.get('client_id', None)}: {e} "
             )
-            return JsonResponse(
-                {
-                    "error": "invalid_request",
-                    "error_description": f"{error_description} ",
-                }
-            )
+            raise ValidationException()
 
 
 class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
@@ -344,13 +340,20 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
         authz = OidcAuthentication.objects.filter(
             state=request_args.get("state"),
         )
-        result = self.validate_json_schema(
-            request.GET.dict(),
-            "authn_response",
-            "Authn response object validation failed"
-        )
-        if result:
-            return result
+        try:
+            self.validate_json_schema(
+                request.GET.dict(),
+                "authn_response",
+                "Authn response object validation failed"
+            )
+        except ValidationException as e:
+            return JsonResponse(
+                {
+                    "error": "invalid_request",
+                    "error_description": "Authn response object validation failed",
+                },
+                status = 400
+            )
 
         if not authz:
             # TODO: verify error message and status
@@ -405,20 +408,21 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
             return render(request, self.error_template, context, status=400)
 
         else:
-            result = self.validate_json_schema(
-                token_response,
-                "token_response",
-                "Token response object validation failed"
-            )
-            if result:
-                return result
-
-        entity_conf = FederationEntityConfiguration.objects.filter(
-            entity_type="openid_provider",
-        ).first()
-
-        op_conf = entity_conf.metadata["openid_provider"]
-        jwks = op_conf["jwks"]["keys"]
+            try:
+                self.validate_json_schema(
+                    token_response,
+                    "token_response",
+                    "Token response object validation failed"
+                )
+            except ValidationException as e:
+                return JsonResponse(
+                    {
+                        "error": "invalid_request",
+                        "error_description": "Token response object validation failed",
+                    },
+                    status = 400
+                )
+        jwks = authz.provider_configuration["jwks"]["keys"]
         access_token = token_response["access_token"]
         id_token = token_response["id_token"]
         op_ac_jwk = self.get_jwk_from_jwt(access_token, jwks)
@@ -464,7 +468,6 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
         authz_token.token_type = token_response["token_type"]
         authz_token.expires_in = token_response["expires_in"]
         authz_token.save()
-
         userinfo = self.get_userinfo(
             authz.state,
             authz_token.access_token,
@@ -598,7 +601,7 @@ def oidc_rp_landing(request):
                 cie_providers.append(tc)
     random.shuffle(spid_providers)
     content = {
-        "spid_providers": spid_providers, 
+        "spid_providers": spid_providers,
         "cie_providers" : cie_providers
     }
     return render(request, "rp_landing.html", content)

@@ -23,7 +23,7 @@ OIDCFED_PROVIDER_PROFILES_MEDIA = getattr(
             "logo": "svg/spid-logo-c-lb.svg"
         },
         "cie": {
-            "logo": "images/logo-cie-png"
+            "logo": "images/logo-cie.png"
         },
     },
 )

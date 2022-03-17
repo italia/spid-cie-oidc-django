@@ -107,7 +107,7 @@ Please consider the following branches:
 Backup and share your demo data
 ````
 # backup your data (upgrade example data), -e excludes.
-./manage.py dumpdata -e admin -e spid_cie_oidc_relying_party spid_cie_oidc_provider -e spid_cie_oidc_relying_party_test -e auth -e contenttypes -e sessions > dumps/example.json
+./manage.py dumpdata -e admin -e spid_cie_oidc_relying_party -e spid_cie_oidc_provider -e spid_cie_oidc_relying_party_test -e auth -e contenttypes -e sessions > dumps/example.json
 ````
 
 In this project we adopt [Semver](https://semver.org/lang/it/) and

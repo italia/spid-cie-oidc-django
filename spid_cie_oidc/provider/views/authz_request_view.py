@@ -15,12 +15,11 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views import View
-from pydantic import ValidationError as pydantic_ValidationError
 from spid_cie_oidc.entity.exceptions import InvalidEntityConfiguration
 from spid_cie_oidc.provider.forms import AuthLoginForm, AuthzHiddenForm
 from spid_cie_oidc.provider.models import OidcSession
 
-from spid_cie_oidc.provider.exceptions import AuthzRequestReplay
+from spid_cie_oidc.provider.exceptions import AuthzRequestReplay, ValidationException
 from spid_cie_oidc.provider.settings import OIDCFED_DEFAULT_PROVIDER_PROFILE, OIDCFED_PROVIDER_PROFILES_DEFAULT_ACR
 
 from . import OpBase
@@ -35,7 +34,7 @@ class AuthzRequestView(OpBase, View):
 
     template = "op_user_login.html"
 
-    def validate_authz(self, payload: dict) -> None:
+    def validate_authz(self, payload: dict):
 
         must_list = ("scope", "acr_values")
         for i in must_list:
@@ -119,17 +118,14 @@ class AuthzRequestView(OpBase, View):
                 state = self.payload.get("state", "")
 
             )
-
         try:
             self.validate_authz(self.payload)
-        except (Exception, pydantic_ValidationError) as e:
-            logger.warning(f"Authz request failed: {e}")
+        except ValidationException as e:
             return self.redirect_response_data(
                 self.payload["redirect_uri"],
                 error="invalid_request",
                 error_description=_("Authorization request validation error"),
                 state = self.payload.get("state", "")
-
             )
 
         # stores the authz request in a hidden field in the form
@@ -204,8 +200,8 @@ class AuthzRequestView(OpBase, View):
 
         # store the User session
         _provider_profile = getattr(
-            settings, 
-            'OIDCFED_DEFAULT_PROVIDER_PROFILE', 
+            settings,
+            'OIDCFED_DEFAULT_PROVIDER_PROFILE',
             OIDCFED_DEFAULT_PROVIDER_PROFILE
         )
         default_acr = OIDCFED_PROVIDER_PROFILES_DEFAULT_ACR[_provider_profile]
@@ -217,8 +213,8 @@ class AuthzRequestView(OpBase, View):
             client_id=self.payload["client_id"],
             auth_code=auth_code,
             acr=(
-                self.payload["acr_values"][-1] 
-                if len(self.payload.get("acr_values",[])) > 0 
+                self.payload["acr_values"][-1]
+                if len(self.payload.get("acr_values",[])) > 0
                 else default_acr
             )
         )

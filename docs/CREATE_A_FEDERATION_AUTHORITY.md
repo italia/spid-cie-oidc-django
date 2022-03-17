@@ -80,3 +80,40 @@ authority_hints = ["http://testserver/"]
 ### Create a Federation Descendant via API
 
 see [unit tests](https://github.com/peppelinux/spid-cie-oidc-django/blob/main/spid_cie_oidc/authority/tests/test_02_trust_anchor_intermediary.py#L32).
+
+
+### Create a CIE provider in a Federation Authority
+
+Delete provider database:
+````
+cd examples/provider
+rm db.sqlite3
+````
+do migrations ````./manage.py migrate````
+
+in provider settingslocal.py configure cie profile:  ````OIDCFED_PROVIDER_PROFILE = "cie"````
+
+In exemples/provider configure a federation entity configuration as OP:
+
+````
+./manage.py runserver 0.0.0.0:8002
+````
+In provider admin console:
+
+![OP federation entity](images/op_federation_entity.png)
+
+In examples/federation_authority configure OP cie as descendant:
+
+````
+./manage.py runserver
+````
+
+In federation admin console:
+
+![OP as descendant](images/op_descendant.png)
+
+In federation service build trust chain for OP:
+
+````
+examples/federation_authority/manage.py fetch_openid_providers --start -f
+````
