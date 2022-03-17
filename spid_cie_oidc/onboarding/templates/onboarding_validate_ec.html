@@ -8,7 +8,7 @@
         {% trans "Validate entity configuration" %}
     </h4>
 
-    <p class="pt-4 mb-0">
+    <p class="pt-4 mb-4">
         {% trans "enter a url of entity to check if it is compatible" %}
     </p>
 
@@ -18,7 +18,7 @@
             <div class="col-12 form-group my-3">
             <label for="id_url">
                 <span class="form-label-content">
-                    url of the entity
+                    {% trans "url of the entity" %}
                 </span>
             </label>
             
@@ -27,6 +27,18 @@
             </div>
             <span for="id_url" class="text-danger"></span>
         </div>
+        {% if ec %}
+        <div class="form-row mt-3">
+            <div class="col-12 form-group my-3">
+                <label for="id_ec">
+                    <span class="form-label-content">
+                        {% trans "Here the json of entity configuration." %}
+                    </span>
+                </label>
+                <textarea id="id_ec" rows="14" disabled>{{ ec }}</textarea>
+            </div>
+        </div>
+        {% endif %}
         <input type="submit" name="confirm" class="btn btn-lg btn-primary btn-block" value="{% trans 'validate' %}" />
     </form>
 </div>

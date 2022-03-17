@@ -16,9 +16,9 @@ RP_PREFS = {
 
 
 OIDCFED_ACR_PROFILES = getattr(
-    settings, 
+    settings,
     "OIDCFED_ACR_PROFILES",
-     dict(
+    dict(
         spid = AcrValuesSpid.l2.value,
         cie = AcrValuesCie.l2.value
      )
@@ -97,6 +97,7 @@ CIE_REQUESTED_CLAIMS = getattr(
             "given_name": None,
             "family_name": None,
             "email": None,
+            "fiscal_number": None
         },
     },
 )
