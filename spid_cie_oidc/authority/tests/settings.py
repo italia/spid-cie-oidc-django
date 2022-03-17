@@ -52,7 +52,7 @@ intermediary_conf = {
     "metadata": {
         "federation_entity": {
             "contacts": ["ops@localhost"],
-            "federation_api_endpoint": "http://intermediary-test/fetch",
+            "federation_fetch_endpoint": "http://intermediary-test/fetch",
             "homepage_uri": "http://intermediary-test",
             "name": "example Intermediate",
         }
