@@ -253,8 +253,9 @@ def onboarding_validate_authn_request(request):
         return render(request, 'onboarding_validate_md.html', context)
     return render(request, 'onboarding_validate_md.html', context)
 
+
 def onboarding_validate_ec(request):
-    context={}
+    context = {}
     if request.POST:
         url = request.POST.get("url")
         context = {"url": url}

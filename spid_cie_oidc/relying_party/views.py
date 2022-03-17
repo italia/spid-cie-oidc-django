@@ -599,7 +599,7 @@ def oidc_rp_landing(request):
                 cie_providers.append(tc)
     random.shuffle(spid_providers)
     content = {
-        "spid_providers": spid_providers, 
+        "spid_providers": spid_providers,
         "cie_providers" : cie_providers
     }
     return render(request, "rp_landing.html", content)

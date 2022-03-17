@@ -16,9 +16,9 @@ RP_PREFS = {
 
 
 OIDCFED_ACR_PROFILES = getattr(
-    settings, 
+    settings,
     "OIDCFED_ACR_PROFILES",
-     dict(
+    dict(
         spid = AcrValuesSpid.l2.value,
         cie = AcrValuesCie.l2.value
      )
