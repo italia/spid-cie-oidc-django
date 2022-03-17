@@ -592,9 +592,9 @@ def oidc_rp_landing(request):
     cie_providers = []
     for tc in trust_chains:
         if tc.is_active:
-            if tc.sub in settings.OIDCFED_IDENTITY_PROVIDERS["spid"]:
+            if tc.sub in settings.OIDCFED_IDENTITY_PROVIDERS.get("spid", []):
                 spid_providers.append(tc)
-            elif tc.sub in settings.OIDCFED_IDENTITY_PROVIDERS["cie"]:
+            elif tc.sub in settings.OIDCFED_IDENTITY_PROVIDERS.get("cie", []):
                 cie_providers.append(tc)
     random.shuffle(spid_providers)
     content = {
