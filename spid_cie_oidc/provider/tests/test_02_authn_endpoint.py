@@ -2,7 +2,7 @@ from copy import deepcopy
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
-from spid_cie_oidc.authority.tests.settings import RP_METADATA, rp_onboarding_data, RP_METADATA_JWK1, RP_METADATA_JWK1_pub
+from spid_cie_oidc.authority.tests.settings import RP_METADATA, RP_METADATA_JWK1, rp_onboarding_data
 from django.utils import timezone
 
 from spid_cie_oidc.entity.jwtse import create_jws, unpad_jwt_payload, verify_jws

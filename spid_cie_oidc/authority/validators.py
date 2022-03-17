@@ -58,3 +58,4 @@ def validate_entity_configuration(value):
             f"{', '.join(OIDCFED_TRUST_ANCHORS) or []} in "
             f"its authority_hints claim. It has: {authority_hints}"
         )
+    return ec

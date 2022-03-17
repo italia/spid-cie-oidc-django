@@ -120,7 +120,7 @@ class AuthzRequestView(OpBase, View):
             )
         try:
             self.validate_authz(self.payload)
-        except ValidationException as e:
+        except ValidationException:
             return self.redirect_response_data(
                 self.payload["redirect_uri"],
                 error="invalid_request",

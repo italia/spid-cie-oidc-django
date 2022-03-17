@@ -16,6 +16,7 @@ from spid_cie_oidc.entity.models import (
 )
 from spid_cie_oidc.provider.forms import ConsentPageForm
 from spid_cie_oidc.provider.models import IssuedToken, OidcSession
+from spid_cie_oidc.provider.settings import OIDCFED_PROVIDER_HISTORY_PER_PAGE
 
 from . import OpBase
 
@@ -113,15 +114,18 @@ class UserAccessHistoryView(OpBase, View):
             logger.warning("Invalid session on Access History page")
             return HttpResponseForbidden()
 
-        user_access_history= OidcSession.objects.filter(
+        user_access_history = OidcSession.objects.filter(
             user_uid=session.user_uid,
         ).exclude(auth_code=session.auth_code)
-        paginator = Paginator(user_access_history, 10)
-        page = request.GET.get("page")
+        paginator = Paginator(
+            user_access_history,
+            OIDCFED_PROVIDER_HISTORY_PER_PAGE
+        )
+        page = request.GET.get("page", 1)
         history = paginator.get_page(page)
         context = {
             "history": history,
-            "user": session.user
+            "user": request.user
         }
         return render(request, "op_user_history.html", context)
 
@@ -130,14 +134,17 @@ class RevokeSessionView(OpBase, View):
 
     def get(self, request, *args, **kwargs):
         try:
-            session = self.check_session(request)
+            self.check_session(request)
         except Exception:
             logger.warning("Invalid session on revoke page")
             return HttpResponseForbidden()
 
         if request.GET.get("auth_code"):
             auth_code = request.GET["auth_code"]
-            session_to_revoke = OidcSession.objects.filter(auth_code=auth_code).first()
+            session_to_revoke = OidcSession.objects.filter(
+                auth_code=auth_code,
+                user=request.user
+            ).first()
             session_to_revoke.revoke(destroy_session=False)
-        
+
         return redirect("oidc_provider_access_history")
