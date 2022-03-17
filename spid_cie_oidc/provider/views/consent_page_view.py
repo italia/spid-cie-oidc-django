@@ -1,4 +1,5 @@
 import logging
+from django.core.paginator import Paginator
 import urllib.parse
 
 from django.contrib.auth import logout
@@ -6,7 +7,7 @@ from django.http import (
     HttpResponseForbidden,
     HttpResponseRedirect,
 )
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views import View
@@ -14,7 +15,7 @@ from spid_cie_oidc.entity.models import (
     TrustChain
 )
 from spid_cie_oidc.provider.forms import ConsentPageForm
-from spid_cie_oidc.provider.models import IssuedToken
+from spid_cie_oidc.provider.models import IssuedToken, OidcSession
 
 from . import OpBase
 
@@ -101,3 +102,42 @@ def oidc_provider_not_consent(request):
     )
     url = f'{urlrp}?{urllib.parse.urlencode(kwargs)}'
     return HttpResponseRedirect(url)
+
+
+class UserAccessHistoryView(OpBase, View):
+
+    def get(self, request, *args, **kwargs):
+        try:
+            session = self.check_session(request)
+        except Exception:
+            logger.warning("Invalid session on Access History page")
+            return HttpResponseForbidden()
+
+        user_access_history= OidcSession.objects.filter(
+            user_uid=session.user_uid,
+        ).exclude(auth_code=session.auth_code)
+        paginator = Paginator(user_access_history, 10)
+        page = request.GET.get("page")
+        history = paginator.get_page(page)
+        context = {
+            "history": history,
+            "user": session.user
+        }
+        return render(request, "op_user_history.html", context)
+
+
+class RevokeSessionView(OpBase, View):
+
+    def get(self, request, *args, **kwargs):
+        try:
+            session = self.check_session(request)
+        except Exception:
+            logger.warning("Invalid session on revoke page")
+            return HttpResponseForbidden()
+
+        if request.GET.get("auth_code"):
+            auth_code = request.GET["auth_code"]
+            session_to_revoke = OidcSession.objects.filter(auth_code=auth_code).first()
+            session_to_revoke.revoke(destroy_session=False)
+        
+        return redirect("oidc_provider_access_history")
