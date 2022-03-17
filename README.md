@@ -39,7 +39,7 @@ each of these can be installed separately within a django project. These are the
 ------------------------------------------------
 
 ![RP Auth demo](docs/images/rp_auth_demo_3.gif)
-An onboarded Relying Party with a succesful authentication.
+_An onboarded Relying Party with a succesful authentication._
 
 ## Setup
 
@@ -85,7 +85,7 @@ Examples Users and Passwords:
 ### Tools
 
 ![OIDC Tools](docs/images/onboard_tools_jwt_debug.png)
-OIDC tools facilitates the lives of developers and service operators, here a simple interface to decode and verify a JWT.
+_OIDC tools facilitates the lives of developers and service operators, here a simple interface to decode and verify a JWT._
 
 ## Contribute
 
