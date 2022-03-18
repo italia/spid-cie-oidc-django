@@ -278,8 +278,8 @@ def onboarding_decode_jwt(request):
             jwk_str = request.POST['jwk']
             context["jwk"] = jwk_str
             jwk_str_double_quote = jwk_str.replace("'", '"')
-            jwk = json.loads(jwk_str_double_quote)
             try:
+                jwk = json.loads(jwk_str_double_quote)
                 verify_jws(jwt, jwk)
                 messages.success(request, _('Your jws is verified'))
             except Exception:
