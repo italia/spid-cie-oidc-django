@@ -3,7 +3,7 @@ import uuid
 from cryptojwt.jws.utils import left_hash
 from django.conf import settings
 from pydantic import ValidationError
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect
 from django.utils import timezone
 import urllib
 from spid_cie_oidc.entity.jwtse import create_jws, unpad_jwt_head, unpad_jwt_payload, verify_jws

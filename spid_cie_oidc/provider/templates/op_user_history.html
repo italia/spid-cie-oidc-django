@@ -1,0 +1,132 @@
+{% extends 'op_base.html' %}
+{% load i18n %}
+{% load static %}
+{% load spid_cie_op %}
+
+{% block menu_links %}
+
+<li class="nav-item ">
+    <a class="nav-link {% if request.resolver_match.view_name == 'oidc_provider_consent' %}active{% endif %}" 
+    href="{% url 'oidc_provider_consent' %}">
+        <span>{% trans 'Home' %}</span>
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.view_name == 'oidc_provider_access_history' %}active{% endif %}" 
+    href="{% url 'oidc_provider_access_history' %}">
+        <span>{% trans 'Access History' %}</span>
+    </a>
+</li>
+
+{% endblock menu_links %}
+
+{% block centered_container %}
+
+<div class="col-12">
+
+    <div class="row row-header border-bottom no-border-bottom-xs">
+        <div class="wrap-container">
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                <h1>
+                    <a href="/" title="torna alla home">
+                        <img src="{% oidc_provider_logo %}" alt="SPID" class="w-100 p-3">
+                    </a>
+                </h1>
+            </div>
+            <div class="clear"></div>
+        </div>
+    </div>
+
+    <div class="row mt-4 ml-1">
+        <h4 class="text-left">
+            {% blocktrans %}
+                Access history of {{user}}
+            {% endblocktrans%}
+        </h4>
+    </div>
+
+    <div class="row mt-2 ml-1">
+        <div>
+            <p class="">
+                {% blocktrans%}
+                    Accesses logs and status are listed below, 
+                    you can revoke an access to a Relying Party by clicking on "revoke" button
+                {% endblocktrans %}
+            </p>
+        </div>
+    </div>
+
+        {% csrf_token %}
+       
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">{% trans "Relying party" %}</th>
+                    <th scope="col">{% trans "Sid" %}</th>
+                    <th scope="col">{% trans "Created" %}</th>
+                    <th scope="col">{% trans "Revoked" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for session in history %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ session.client_id }}</td>
+                    <td>{{ session.sid}}</td>
+                    <td>{{ session.created | date:'Y-m-d H:i'}}</td>
+                    {% if session.revoked %}
+                        <td class="text-success">
+                            {{ session.revoked }}
+                        </td>
+                    {% else %}
+                        <td>
+                            <a href="{% url 'oidc_provider_revoke_session' %}?auth_code={{session.auth_code}}" 
+                                class="btn btn-secondary" role="button">{% trans "Revoke" %}</a>
+                        </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    
+        <nav class="pagination-wrapper justify-content-center">
+            <ul class="pagination">
+                {% if history.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{history.previous_page_number}}" tabindex="-1" aria-hidden="true">
+                        <svg class="icon icon-primary">
+                            <use href="{% static 'svg/sprite.svg' %}#it-chevron-left"></use>
+                        </svg>
+                        <span class="sr-only">{% trans "previous page" %}</span>
+                    </a>
+                </li>
+                {% endif %}
+                {% for i in history.paginator.page_range%}
+                {% if i == history.number %}
+                <li class="page-item active">
+                    <a class="page-link" href="?page={{ i }}" aria-current="page">
+                        <span class="d-inline-block d-sm-none">{% trans "page" %}</span>{{ i }}
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                {% endif %}
+                {% endfor %}
+    
+                {% if history.has_next%}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{history.next_page_number}}">
+                        <span class="sr-only">{% trans "next page" %}</span>
+                        <svg class="icon icon-primary">
+                            <use href="{% static 'svg/sprite.svg' %}#it-chevron-right"></use>
+                        </svg>
+                    </a>
+                </li>
+                {% endif %}
+    
+            </ul>
+        </nav>
+</div>
+
+{% endblock %}

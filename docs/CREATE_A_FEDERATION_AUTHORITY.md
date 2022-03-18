@@ -41,7 +41,7 @@ TA_SUB = "http://testserver/"
 FA_METADATA = {
     "federation_entity": {
         "contacts": ["ops@localhost"],
-        "federation_api_endpoint": f"{TA_SUB}/fetch",
+        "federation_fetch_endpoint": f"{TA_SUB}/fetch",
         "homepage_uri": f"{TA_SUB}",
         "name": "example TA",
     }

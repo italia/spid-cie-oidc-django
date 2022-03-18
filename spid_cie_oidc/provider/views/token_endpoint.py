@@ -134,7 +134,7 @@ class TokenEndpoint(OpBase, View):
                 request.POST["grant_type"],
                 "Token request object validation failed "
             )
-        except ValidationException as e:
+        except ValidationException:
             return JsonResponse(
                 {
                     "error": "invalid_request",

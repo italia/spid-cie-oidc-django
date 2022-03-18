@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.utils.translation import gettext as _
 
+
 from .forms import (
     OnboardingRegistrationForm,
     OnboardingCreateTrustChain,
@@ -260,7 +261,9 @@ def onboarding_validate_ec(request):
         url = request.POST.get("url")
         context = {"url": url}
         try:
-            validate_entity_configuration(url)
+            # TODO: here we have 2 http requests ...
+            ec = validate_entity_configuration(url)
+            context["ec"] = json.dumps(ec.payload, indent=4)
             messages.success(request, _('Validation Entity Configuration Successfully'))
         except Exception as e :
             messages.error(request, f"Validation Failed: {e}")

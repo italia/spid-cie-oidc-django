@@ -129,7 +129,7 @@ class SpidCieOidcRp:
         except ValidationError as e:
             logger.error(
                 f"{error_description} "
-                f"for {request.get('client_id', None)}: {e} "
+                f"for {request.get('client_id', None)}: {e}"
             )
             raise ValidationException()
 
@@ -346,7 +346,7 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
                 "authn_response",
                 "Authn response object validation failed"
             )
-        except ValidationException as e:
+        except ValidationException:
             return JsonResponse(
                 {
                     "error": "invalid_request",
@@ -414,7 +414,7 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
                     "token_response",
                     "Token response object validation failed"
                 )
-            except ValidationException as e:
+            except ValidationException:
                 return JsonResponse(
                     {
                         "error": "invalid_request",

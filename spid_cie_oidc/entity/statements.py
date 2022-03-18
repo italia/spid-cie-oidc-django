@@ -428,11 +428,11 @@ class EntityConfiguration:
             try:
                 # get superior fetch url
                 fetch_api_url = ec.payload["metadata"]["federation_entity"][
-                    "federation_api_endpoint"
+                    "federation_fetch_endpoint"
                 ]
             except KeyError:
                 logger.warning(
-                    "Missing federation_api_endpoint in  "
+                    "Missing federation_fetch_endpoint in  "
                     f"federation_entity metadata for {self.sub} by {ec.sub}."
                 )
                 self.invalid_superiors[ec.sub] = None
