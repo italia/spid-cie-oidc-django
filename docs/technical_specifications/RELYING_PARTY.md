@@ -30,6 +30,8 @@ Regarding django user management
 
 ## General Settings Paramenters
 
+Please see `example/relying_party/settingslocal.py` as example.
+
 - `OIDCFED_DEFAULT_TRUST_ANCHOR` defines the default Trust Anchor.
 - `OIDCFED_TRUST_ANCHORS` defines the allowed Trust Anchors. 
 - `OIDCFED_IDENTITY_PROVIDERS` defines the list of OPs to enable in Trust Chain operations.
@@ -46,10 +48,9 @@ OIDCFED_IDENTITY_PROVIDERS = {
 }
 ````
 
-Please see `example/relying_party/settingslocal.py` as example.
-
 - `RP_PREFS`: General informations, default parameters during authentication requests, like the `scope` attribute
 - `RP_ATTR_MAP`: defines how oidc claims should be mapped to User model. You can even use a function to do rewrite or create new attributes (feel free to contribute with new processors in `processors.py`)
+Example
     ````
     (
      {
@@ -63,7 +64,7 @@ Please see `example/relying_party/settingslocal.py` as example.
 - `RP_PKCE_CONF`: function and general paramenters for PKCE creation
 
 - `RP_PROVIDER_PROFILES`
-
+Example
 ````
 RP_PROVIDER_PROFILES = getattr(
     settings,
@@ -124,6 +125,12 @@ CIE_REQUESTED_CLAIMS = getattr(
         },
     },
 )
+````
+
+- `LOGIN_REDIRECT_URL` url to which you are redirected after getting the user attributes  
+Example
+````
+LOGIN_REDIRECT_URL = "/oidc/rp/echo_attributes"
 ````
 
 ## OIDC Federation CLI
