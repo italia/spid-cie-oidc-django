@@ -63,10 +63,14 @@ OIDCFED_DEFAULT_PROVIDER_PROFILE = getattr(
 ````
 
 - `OIDCFED_PROVIDER_MAX_REFRESH` How many times a token can be refreshed.
+Example
+````
+OIDCFED_PROVIDER_MAX_REFRESH = 1
+````
 
-- `OIDCFED_PROVIDER_ATTRIBUTES_SPID_MAP` map of attributes for a spid provider
-- `OIDCFED_PROVIDER_ATTRIBUTES_CIE_MAP` map of attributes for a cie provider
-- `OIDCFED_PROVIDER_ATTRIBUTES_MAP` map of all provider attributes
+- `OIDCFED_PROVIDER_ATTRIBUTES_SPID_MAP` map of attributes for a spid provider, an example [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/provider/settings.py#L31)
+- `OIDCFED_PROVIDER_ATTRIBUTES_CIE_MAP` map of attributes for a cie provider, an example [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/provider/settings.py#L60)
+- `OIDCFED_PROVIDER_ATTRIBUTES_MAP` map of all provider attributes, an example [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/provider/settings.py#L77)
 
 - `OIDCFED_PROVIDER_PROFILES_ID_TOKEN_CLAIMS` claims that can be requested to token endpoint
 Example
@@ -77,13 +81,13 @@ OIDCFED_PROVIDER_PROFILES_ID_TOKEN_CLAIMS = dict(
 )
 ````
 
--`OIDCFED_PROVIDER_SALT`
+-`OIDCFED_PROVIDER_SALT`, need for subject identifier's hash function 
 Example
 ````
 OIDCFED_PROVIDER_SALT = getattr(settings, "OIDCFED_PROVIDER_SALT", "CHANGEME")
 ````
 
-- `OIDCFED_PROVIDER_HISTORY_PER_PAGE`
+- `OIDCFED_PROVIDER_HISTORY_PER_PAGE`, identify number of access to RP to show in the page of access history
 Example
 ````
 OIDCFED_PROVIDER_HISTORY_PER_PAGE = getattr(settings, "OIDCFED_PROVIDER_HISTORY_PER_PAGE", 50)
@@ -108,7 +112,7 @@ OIDCFED_PROVIDER_PROFILES_DEFAULT_ACR = dict(
 )
 ````
 
-- `OIDCFED_ATTRNAME_I18N`
+- `OIDCFED_ATTRNAME_I18N`, attributes internationalization, an example [here](, an example [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/provider/settings.py#L125))
 
 ## Endpoints
 

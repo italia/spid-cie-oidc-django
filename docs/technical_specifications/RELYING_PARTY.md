@@ -133,6 +133,17 @@ Example
 LOGIN_REDIRECT_URL = "/oidc/rp/echo_attributes"
 ````
 
+`OIDCFED_ACR_PROFILES`, acr value required to OP Authentication Endpoint
+Example
+````
+    dict(
+        spid = AcrValuesSpid.l2.value,
+        cie = AcrValuesCie.l2.value
+     )
+````
+
+`RP_DEFAULT_PROVIDER_PROFILES`, default profile for OP
+
 ## OIDC Federation CLI
 
 `fetch_openid_providers` build the Trust Chains for each `OIDCFED_IDENTITY_PROVIDERS`. Flag '-f' force trust chian renew even if is still valid.
