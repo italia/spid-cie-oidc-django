@@ -14,18 +14,27 @@ can be inherited in the general settings file of your project.
 ````
 OIDCFED_PROVIDER_PROFILES = getattr(
     settings,
-    'OIDCFED_PROVIDER_PROFILES',
+    "OIDCFED_PROVIDER_PROFILES",
     {
         "spid": {
-            "authentication_request": AuthenticationRequestSpid,
+            "authorization_request": AuthenticationRequestSpid,
+            "op_metadata": OPMetadataSpid,
+            "authorization_code": TokenAuthnCodeRequest,
+            "refresh_token": TokenRefreshRequest,
+            "revocation_request": RevocationRequest,
+            "introspection_request" : IntrospectionRequest,
         },
         "cie": {
-            "authentication_request": AuthenticationRequestCie,
-        }
-    }
+            "authorization_request": AuthenticationRequestCie,
+            "op_metadata": OPMetadataCie,
+            "authorization_code": TokenAuthnCodeRequest,
+            "refresh_token": TokenRefreshRequest,
+            "revocation_request": RevocationRequest,
+            "introspection_request" : IntrospectionRequest,
+        },
+    },
 )
 ````
-
 ````
 OIDCFED_DEFAULT_PROVIDER_PROFILE = getattr(
     settings,
@@ -34,7 +43,7 @@ OIDCFED_DEFAULT_PROVIDER_PROFILE = getattr(
 )
 ````
 
-`OIDCFED_PROVIDER_MAX_REFRESH = 1` How many times a token can be refreshed.
+`OIDCFED_PROVIDER_MAX_REFRESH` How many times a token can be refreshed.
 
 
 ## Endpoints

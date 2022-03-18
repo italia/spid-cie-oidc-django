@@ -41,7 +41,7 @@ TA_SUB = "http://testserver/"
 FA_METADATA = {
     "federation_entity": {
         "contacts": ["ops@localhost"],
-        "federation_fetch_endpoint": f"{TA_SUB}/fetch",
+        "federation_api_endpoint": f"{TA_SUB}/fetch",
         "homepage_uri": f"{TA_SUB}",
         "name": "example TA",
     }
@@ -84,14 +84,14 @@ see [unit tests](https://github.com/peppelinux/spid-cie-oidc-django/blob/main/sp
 
 ### Create a CIE provider in a Federation Authority
 
-Delete provider database:
-````
-cd examples/provider
-rm db.sqlite3
-````
-do migrations ````./manage.py migrate````
 
-in provider settingslocal.py configure cie profile:  ````OIDCFED_PROVIDER_PROFILE = "cie"````
+Do migrations:
+
+ ````examples/federation_authority/manage.py migrate````
+
+In provider settingslocal.py configure cie profile:  ````OIDCFED_PROVIDER_PROFILE = "cie"````
+
+For all provider configuration parameters see [here](https://github.com/francescatronconi/spid-cie-oidc-django/blob/newbranch/docs/technical_specifications/PROVIDER.md) 
 
 In exemples/provider configure a federation entity configuration as OP:
 
@@ -102,7 +102,7 @@ In provider admin console:
 
 ![OP federation entity](images/op_federation_entity.png)
 
-In examples/federation_authority configure OP cie as descendant:
+In examples/federation_authority configure OP cie as descendant and assign it a profile::
 
 ````
 ./manage.py runserver
@@ -112,8 +112,47 @@ In federation admin console:
 
 ![OP as descendant](images/op_descendant.png)
 
+![OP assigned profile](images/op_assigned_profile.png)
+
 In federation service build trust chain for OP:
 
 ````
 examples/federation_authority/manage.py fetch_openid_providers --start -f
 ````
+
+### Create a Relying Party in a Federation Authority
+
+Do migrations:
+
+ ````examples/federation_authority/manage.py migrate````
+
+In relying party configure settingslocal.py, for all configuration parameters see [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/docs/technical_specifications/RELYING_PARTY.md) 
+
+In exemples/relying_party configure a federation entity configuration as RP:
+
+````
+./manage.py runserver 0.0.0.0:8001
+````
+In relying_party admin console:
+
+![RP federation entity](images/rp_federation_entity.png)
+
+In relying_party service build trust chain for OP:
+
+````
+examples/relaying_party/manage.py fetch_openid_providers --start -f
+````
+
+In examples/federation_authority configure RP as descendant and assign it a profile:
+
+````
+./manage.py runserver
+````
+
+In federation admin console:
+
+![RP as descendant](images/rp_descendant.png)
+
+![RP assigned profile](images/rp_assigned_profile.png)
+
+
