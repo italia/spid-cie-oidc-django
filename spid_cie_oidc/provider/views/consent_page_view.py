@@ -58,7 +58,8 @@ class ConsentPageView(OpBase, View):
             "client_organization_name": tc.metadata.get(
                 "client_name", session.client_id
             ),
-            "user_claims": sorted(set(i18n_user_claims),)
+            "user_claims": sorted(set(i18n_user_claims),),
+            "redirect_uri": session.authz_request["redirect_uri"]
         }
         return render(request, self.template, context)
 
@@ -93,15 +94,15 @@ class ConsentPageView(OpBase, View):
 
 
 def oidc_provider_not_consent(request):
+    redirect_uri = request.GET.get("redirect_uri")
     logout(request)
-    urlrp = reverse("spid_cie_rp_callback")
     kwargs = dict(
         error = "invalid_request",
         error_description = _(
             "Authentication request rejected by user"
         )
     )
-    url = f'{urlrp}?{urllib.parse.urlencode(kwargs)}'
+    url = f'{redirect_uri}?{urllib.parse.urlencode(kwargs)}'
     return HttpResponseRedirect(url)
 
 
