@@ -76,6 +76,7 @@ class Migration(migrations.Migration):
                 ),
             ],
             options={
+                'ordering': ['-created'],
                 "verbose_name": "Issued Token",
                 "verbose_name_plural": "Issued Tokens",
             },
