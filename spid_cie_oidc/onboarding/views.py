@@ -199,18 +199,12 @@ def onboarding_validate_md(request):
             metadata = json.loads(md_str_double_quote)
             if metadata_type == 'op_metadata':
                 schema = OIDCFED_PROVIDER_PROFILES[provider_profile]
-                try:
-                    schema[metadata_type](**metadata)
-                    messages.success(request, _('Validation Metadata Successfully'))
-                except Exception as e:
-                    messages.error(request, f"Validation Failed: {e}")
+                schema[metadata_type](**metadata)
+                messages.success(request, _('Validation Metadata Successfully'))
             if metadata_type == 'rp_metadata':
                 schema = RP_PROVIDER_PROFILES[provider_profile]
-                try:
-                    schema[metadata_type](**metadata)
-                    messages.success(request, _('Validation Metadata Successfully'))
-                except Exception as e:
-                    messages.error(request, f"Validation Failed: {e}")
+                schema[metadata_type](**metadata)
+                messages.success(request, _('Validation Metadata Successfully'))
         except Exception as e:
             messages.error(request, f"Validation Failed: {e}")
     return render(request, 'onboarding_validate_md.html', context)
