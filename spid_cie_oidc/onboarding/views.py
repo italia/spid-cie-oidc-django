@@ -295,14 +295,14 @@ def onboarding_apply_policy(request):
         "result": ""
     }
     if request.GET.get('md') and request.GET.get('policy'):
-        try:
-            md = json.loads(request.GET['md'])
-            policy = json.loads(request.GET['policy'])
-            context = {
+        context = {
                 "md": request.GET['md'],
                 "policy": request.GET['policy'],
                 "result": ""
             }
+        try:
+            md = json.loads(request.GET['md'])
+            policy = json.loads(request.GET['policy'])
             reuslt = apply_policy(md, policy)
             context["result"] = json.dumps(reuslt, indent=4)
         except Exception as e:
