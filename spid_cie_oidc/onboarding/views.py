@@ -255,16 +255,17 @@ def onboarding_validate_authn_request(request):
         return render(request, 'onboarding_validate_md.html', context)
     return render(request, 'onboarding_validate_md.html', context)
 
+
 def onboarding_validate_ec(request):
-    context={}
+    context = {}
     if request.POST:
         url = request.POST.get("url")
         context = {"url": url}
         try:
             validate_entity_configuration(url)
-            entity_confs = FederationEntityConfiguration.objects.filter(sub=url)
-            ec_as_dict = entity_confs[0].entity_configuration_as_dict
-            context["ec"] = json.dumps(ec_as_dict, indent=4)
+            # TODO: here we have 2 http requests ...
+            ec = validate_entity_configuration(url)
+            context["ec"] = json.dumps(ec.payload, indent=4)
             messages.success(request, _('Validation Entity Configuration Successfully'))
         except Exception as e :
             messages.error(request, f"Validation Failed: {e}")

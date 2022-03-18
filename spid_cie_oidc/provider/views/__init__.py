@@ -11,7 +11,7 @@ from spid_cie_oidc.entity.models import FederationEntityConfiguration, TrustChai
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
 from spid_cie_oidc.entity.utils import datetime_from_timestamp, exp_from_now, iat_now
-from spid_cie_oidc.provider.exceptions import AuthzRequestReplay, InvalidSession, RevokedSession
+from spid_cie_oidc.provider.exceptions import AuthzRequestReplay, InvalidSession, RevokedSession, ValidationException
 from spid_cie_oidc.provider.models import OidcSession
 
 from spid_cie_oidc.provider.settings import (
@@ -176,10 +176,7 @@ class OpBase:
                 f"{error_description} "
                 f"for {payload.get('client_id', None)}: {e}"
             )
-            raise Exception(
-                f"Validation error on {schema_type} "
-                f"for {payload}"
-            )
+            raise ValidationException()
 
     def get_jwt_common_data(self):
         return {
@@ -290,8 +287,8 @@ class OpBase:
 
         _refresh_token = self.get_refresh_token(iss_sub, _sub, session, jwt_at, commons)
         if _refresh_token:
-            iss_token_data["refresh_token"] = _refresh_token
-
+            jwt_rt = create_jws(_refresh_token, jwk)
+            iss_token_data["refresh_token"] = jwt_rt
         return iss_token_data
 
     def get_expires_in(self, iat: int, exp: int):

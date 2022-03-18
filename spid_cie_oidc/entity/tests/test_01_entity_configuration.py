@@ -45,7 +45,7 @@ class EntityConfigurationTest(TestCase):
             self.assertTrue(attr)
 
         md = self.ta_conf.entity_configuration_as_dict["metadata"]["federation_entity"]
-        for i in ("federation_api_endpoint",):
+        for i in ("federation_fetch_endpoint",):
             self.assertTrue(md.get(i))
 
         # dulcis in fundo -> test the .well-knwon/openid-federation

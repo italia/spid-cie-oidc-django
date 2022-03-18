@@ -43,8 +43,8 @@ class Jwk(BaseModel):
 
 class JwkCie(Jwk):
     x: Optional[str]  # Base64url-encoded
-    y:  Optional[str]  # Base64url-encoded
-    crv:  Optional[Literal["P-256", "P-384", "P-521"]]
+    y: Optional[str]  # Base64url-encoded
+    crv: Optional[Literal["P-256", "P-384", "P-521"]]
 
     @validator("x")
     def validate_x(cls, x_value, values):

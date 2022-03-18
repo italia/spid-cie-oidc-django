@@ -13,6 +13,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from spid_cie_oidc.entity.jwtse import unpad_jwt_payload
+from spid_cie_oidc.provider.exceptions import ValidationException
 from spid_cie_oidc.provider.models import IssuedToken, OidcSession
 
 from . import OpBase
@@ -127,14 +128,20 @@ class TokenEndpoint(OpBase, View):
 
     def post(self, request, *args, **kwargs):
         logger.debug(f"{request.headers}: {request.POST}")
-
-        result = self.validate_json_schema(
-            request.POST.dict(),
-            request.POST["grant_type"],
-            "Token request object validation failed "
-        )
-        if result:
-            return result
+        try:
+            self.validate_json_schema(
+                request.POST.dict(),
+                request.POST["grant_type"],
+                "Token request object validation failed "
+            )
+        except ValidationException:
+            return JsonResponse(
+                {
+                    "error": "invalid_request",
+                    "error_description": "Token request object validation failed",
+                },
+                status = 400
+            )
 
         self.commons = self.get_jwt_common_data()
         self.issuer = self.get_issuer()

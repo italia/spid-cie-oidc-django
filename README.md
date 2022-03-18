@@ -39,7 +39,7 @@ each of these can be installed separately within a django project. These are the
 ------------------------------------------------
 
 ![RP Auth demo](docs/images/rp_auth_demo_3.gif)
-An onboarded Relying Party with a succesful authentication.
+_An onboarded Relying Party with a succesful authentication._
 
 ## Setup
 
@@ -85,7 +85,7 @@ Examples Users and Passwords:
 ### Tools
 
 ![OIDC Tools](docs/images/onboard_tools_jwt_debug.png)
-OIDC tools facilitates the lives of developers and service operators, here a simple interface to decode and verify a JWT.
+_OIDC tools facilitates the lives of developers and service operators, here a simple interface to decode and verify a JWT._
 
 ## Contribute
 
@@ -107,7 +107,7 @@ Please consider the following branches:
 Backup and share your demo data
 ````
 # backup your data (upgrade example data), -e excludes.
-./manage.py dumpdata -e admin -e spid_cie_oidc_relying_party spid_cie_oidc_provider -e spid_cie_oidc_relying_party_test -e auth -e contenttypes -e sessions > dumps/example.json
+./manage.py dumpdata -e admin -e spid_cie_oidc_relying_party -e spid_cie_oidc_provider -e spid_cie_oidc_relying_party_test -e auth -e contenttypes -e sessions --indent 2 > dumps/example.json
 ````
 
 In this project we adopt [Semver](https://semver.org/lang/it/) and
