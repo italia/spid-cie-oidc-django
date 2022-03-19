@@ -68,6 +68,8 @@ Read the [setup documentation](docs/SETUP.md) to get started.
 
 ## Docker compose
 
+> TODO: Not available until v0.6.0 release
+
 ````
 apt install jq
 pip install docker-compose
@@ -103,11 +105,26 @@ cp -R examples/provider/* `docker volume inspect provider_project | jq .[0].Moun
 cp -R examples/relying_party/* `docker volume inspect relying_party_project | jq .[0].Mountpoint | sed 's/"//g'`
 ````
 
+Change hostnames from 127.0.0.1 to which one configuerdi n the compose file
+
+````
+export TFILE=$(docker volume inspect trust_anchor_project | jq .[0].Mountpoint | sed 's/"//g')dumps/example.json
+sed 's\http://127.0.0.1:8000/\http://trust-anchor:8000/\g' $TFILE > $TFILE.2
+cp $TFILE.2 $TFILE
+
+export TFILE=$(docker volume inspect relying_party_project | jq .[0].Mountpoint | sed 's/"//g')/dumps/example.json
+sed 's\http://127.0.0.1:8001/\http://relying-party:8001/\g' $TFILE > $TFILE.2
+cp $TFILE.2 $TFILE
+
+export TFILE=$(docker volume inspect provider_project | jq .[0].Mountpoint | sed 's/"//g')/dumps/example.json
+sed 's\http://127.0.0.1:8002/\http://provider:8002/\g' $TFILE > $TFILE.2
+cp $TFILE.2 $TFILE
+````
+
 Check if everything is ok, for example
 ````
 ls `docker volume inspect trust_anchor_project | jq .[0].Mountpoint | sed 's/"//g'`
 ````
-
 
 Run the stack
 ````
