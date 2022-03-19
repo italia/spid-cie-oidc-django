@@ -190,7 +190,7 @@ The UserInfo Endpoint returns an encrypthed jwt of the user claims.
 
 ### Login history page
 
-![OIDC Provider login history](docs/images/provider_login_history.png)
+![OIDC Provider login history](../images/provider_login_history.png)
 _The user can consult the history of his accesses and also can revoke the access tokens for selected RPs._
 
 ## SPID/CIE QAD and compliances tests
