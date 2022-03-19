@@ -3,9 +3,11 @@
 Thins kind of Entity represents a trusted third party 
 and below it must have other entities for which it provides an onboarding mechanism.
 
+
 ### Endpoints
 
 All the endpoints are configured in the `urls.py` file of the project folder.
+
 
 #### Fetch
 
@@ -21,6 +23,7 @@ Example of FETCH request
 - `http://127.0.0.1:8000/fetch/?sub=http://127.0.0.1:8000/oidc/rp/`
 - `http://127.0.0.1:8000/fetch/?sub=http://127.0.0.1:8001/&format=json`
 
+
 #### Listing
 
 As described in the official specification
@@ -34,12 +37,14 @@ Lists all the descendant entities.
  - `http://127.0.0.1:8000/list/?is_leaf=true`
  - `http://127.0.0.1:8000/list/?type=openid_provider`
 
+
 #### Resolve entity statement
 
 An entity MAY use the resolve endpoint to fetch resolved metadata and trust marks for an entity as seen/trusted by the resolver. 
 
 - `http://127.0.0.1:8000/resolve/?sub=http://127.0.0.1:8000/oidc/op/&anchor=http://127.0.0.1:8000/&format=json`
 - `http://127.0.0.1:8000/resolve/?sub=http://127.0.0.1:8000/oidc/op/&anchor=http://127.0.0.1:8000/`
+
 
 #### trust mark status
 
