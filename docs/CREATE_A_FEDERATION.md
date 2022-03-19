@@ -3,7 +3,7 @@
 In this tutorial we show how to setup a Federation with a Trust Anchor, a Provider and a Relying Party.
 We can achieve this though the Admin backend or via internal API.
 
-If you're using the Docker-compose demo, you can skip the 
+If you're using the Docker-compose demo, you can skip the creation of a Federation Authority.
 
 ### Create a Federation Authority via web
 
