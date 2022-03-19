@@ -57,11 +57,12 @@ In this repository we have three example projects:
  - relying_party
  - provider
 
-> Federation Authority loads all the applications for development needs, acting as both authority, RP and OP.
+Federation Authority loads all the applications for development needs, acting as both authority, SPID RP and SPID OP.
 This allows us to make a demo by starting a single service. See admin page `http://127.0.0.1:8000/admin/` and user login page `http://127.0.0.1:8000/oidc/rp/landing/`.
 
-relying party and provider are examples that only integrate
-__spid_cie_oidc.entity__ and __spid_cie_oidc.provider__ or __.relying_party__.
+Then we have also another Relying Party, as indipendent project, and another Provider configured with the CIE profile.
+Relying party and Provider are examples that only integrate
+__spid_cie_oidc.entity__ and __spid_cie_oidc.provider__ or __.relying_party__ as applications.
 
 Read the [setup documentation](docs/SETUP.md) to get started.
 
