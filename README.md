@@ -68,7 +68,52 @@ Read the [setup documentation](docs/SETUP.md) to get started.
 
 ## Docker compose
 
-> TODO: Not available until v0.6.0 release
+````
+apt install jq
+pip install docker-compose
+````
+
+Create your project folder, starting from our example project
+````
+cp -R examples docker-compose-projects
+````
+Then do your customizations in each settingslocal.py files and/or in the example dumps json file.
+
+Create volumes
+````
+docker volume create --name=trust_anchor_project
+docker volume create --name=provider_project
+docker volume create --name=relying_party_project
+````
+
+Where the data are
+`docker volume ls`
+
+Customize example data and settings, configure your projects
+````
+cp examples/federation_authority/federation_authority/settingslocal.py.example examples/federation_authority/federation_authority/settingslocal.py
+cp examples/provider/provider/settingslocal.py.example examples/provider/provider/settingslocal.py
+cp examples/relying_party/relying_party/settingslocal.py.example examples/relying_party/relying_party/settingslocal.py
+````
+
+Copy files in destination volumes
+````
+cp -R examples/federation_authority/* `docker volume inspect trust_anchor_project | jq .[0].Mountpoint | sed 's/"//g'`
+cp -R examples/provider/* `docker volume inspect provider_project | jq .[0].Mountpoint | sed 's/"//g'`
+cp -R examples/relying_party/* `docker volume inspect relying_party_project | jq .[0].Mountpoint | sed 's/"//g'`
+````
+
+Check if everything is ok, for example
+````
+ls `docker volume inspect trust_anchor_project | jq .[0].Mountpoint | sed 's/"//g'`
+````
+
+
+Run the stack
+````
+docker-compose up
+````
+
 
 ## Usage
 

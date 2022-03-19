@@ -1,0 +1,69 @@
+version: "3"
+
+services:
+  trust-anchor:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - trust_anchor_project:/django-project
+    networks:
+      - oidcfed
+    command: |
+        bash -c "cd /django-project/ &&
+        python3 manage.py migrate &&
+        python3 manage.py loaddata dumps/example.json &&
+        python3 manage.py runserver 0.0.0.0:8000"
+
+  relying-party:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    expose:
+      - 8001
+    ports:
+      - "8001:8000"
+    volumes:
+      - relying_party_project:/django-project
+    networks:
+      - oidcfed
+    depends_on:
+      - trust-anchor
+    command: |
+        bash -c "cd /django-project/ &&
+        python3 manage.py migrate &&
+        python3 manage.py loaddata dumps/example.json &&
+        python3 manage.py runserver 0.0.0.0:8000"
+
+  provider:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    expose:
+      - 8002
+    ports:
+      - "8002:8000"
+    volumes:
+      - provider_project:/django-project
+    networks:
+      - oidcfed
+    depends_on:
+      - trust-anchor
+    command: |
+        bash -c "cd /django-project/ &&
+        python3 manage.py migrate &&
+        python3 manage.py loaddata dumps/example.json &&
+        python3 manage.py runserver 0.0.0.0:8000"
+
+volumes:
+  trust_anchor_project:
+    external: true
+  provider_project:
+    external: true
+  relying_party_project:
+    external: true
+
+networks:
+  oidcfed:
