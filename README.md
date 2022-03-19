@@ -167,16 +167,10 @@ with a full support of explicit client registration, please look at idpy's
   - Entity statement resolve endpoint
   - Fetch statement endpoing
   - List entities endpoint
+  - Advanced List endpoint
   - Federation CLI
     - RP: build trust chains for all the available OPs
     - OP: build trust chains for all the available RPs
-- OIDC Federation web tools:
-  - Create a JWK
-  - Convert a private jwk to PEM certificate/key
-  - Convert a public jwk to PEM certificate/key
-  - Decode a jwt and verify the signature
-  - Resolve entity statement web UI
-  - Validating a trust mark web UI
 - Multitenancy, a single service can configure many entities like RPs, OP, Trust Anchors and intermediaries
 - gettext compliant (i18n)
 - Bootstrap Italia Design templates
