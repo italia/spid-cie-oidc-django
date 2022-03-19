@@ -1,6 +1,7 @@
-## Tutorial
+## Create a OpenID Connect Federation
 
-We can create an OIDC Federation though the Admin backend or via internal API.
+I nthis tutorial we show how to setup a Federation with a Trust Anchor, a Provider and a Relying Party.
+We can achieve this though the Admin backend or via internal API.
 
 ### Create a Federation Authority via web
 
