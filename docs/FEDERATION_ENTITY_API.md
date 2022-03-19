@@ -66,4 +66,4 @@ FederationDescendant.objects.filter(
 
 ### Resolve entity statements
 
-See [Authority specs](tecnhical_specifications/AUTHORITY.md).
+See [Authority specs](technical_specifications/AUTHORITY.md).

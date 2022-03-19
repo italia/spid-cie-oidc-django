@@ -187,6 +187,11 @@ class ToolsTests(TestCase):
             {'md': json.dumps(RP_METADATA_CIE)})
         self.assertEqual(res.status_code, 200)
         self.assertIn("alert-success", res.content.decode())
+
+        res = self.client.post(url + '?metadata_type=rp_metadata&provider_profile=cie', 
+            {'md': "hello world"})
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("alert-error", res.content.decode())
     
     def test_validating_trust_mark(self):
         url = reverse("oidc_onboarding_validating_trustmark")

@@ -135,7 +135,8 @@ class AuthzRequestView(OpBase, View):
                 "client_name", self.payload["client_id"]
             ),
             "hidden_form": AuthzHiddenForm(dict(authz_request_object=req)),
-            "form": form
+            "form": form,
+            "redirect_uri": self.payload["redirect_uri"]
         }
         return render(request, self.template, context)
 

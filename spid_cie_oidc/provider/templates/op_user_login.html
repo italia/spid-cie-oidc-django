@@ -65,7 +65,7 @@
                                     {% endfor %}
 
                                     <div class="col-sm-12 mt-2">
-                                        <a href="{% url 'oidc_provider_not_consent' %}"
+                                        <a href="{% url 'oidc_provider_not_consent' %}?redirect_uri={{ redirect_uri }}"
                                             class="italia-it-button italia-it-button-cancel-s button-cancel mb-4 mr-4">
                                             <span class="italia-it-buttons-text">{% trans "Cancel" %}</span>
                                         </a>
