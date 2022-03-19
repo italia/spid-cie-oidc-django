@@ -4,7 +4,7 @@
   "pk": 1,
   "fields": {
     "password": "pbkdf2_sha256$320000$FIyN55FCASEozeA1pWYRm1$8QzndgdnJkC7OPhEGPVHrrAxsa5KDoydMkl4zgrn0fs=",
-    "last_login": "2022-03-17T22:23:33.419Z",
+    "last_login": "2022-03-19T22:44:31.621Z",
     "is_superuser": true,
     "username": "admin",
     "is_staff": true,
@@ -66,7 +66,7 @@
   "pk": 1,
   "fields": {
     "created": "2022-03-16T09:48:07.724Z",
-    "modified": "2022-03-18T08:01:20.014Z",
+    "modified": "2022-03-19T22:46:17.178Z",
     "uuid": "dca85f48-0dbe-4b35-b74d-9ed42f9d00a7",
     "sub": "http://127.0.0.1:8002/oidc/op/",
     "default_exp": 2880,
@@ -144,7 +144,7 @@
           "RS256",
           "ES256"
         ],
-        "issuer": "http://127.0.0.1:8000/oidc/op/",
+        "issuer": "http://127.0.0.1:8002/oidc/op/",
         "authority_hints": [
           "http://127.0.0.1:8000/"
         ],
@@ -163,9 +163,9 @@
           "openid",
           "offline_access"
         ],
-        "logo_uri": "http://127.0.0.1:8000/static/svg/spid-logo-c-lb.svg",
+        "logo_uri": "http://127.0.0.1:8002/static/image/logo-cie-png",
         "organization_name": "SPID OIDC identity provider",
-        "op_policy_uri": "http://127.0.0.1:8000/oidc/op/en/website/legal-information/",
+        "op_policy_uri": "http://127.0.0.1:8002/oidc/op/en/website/legal-information/",
         "request_parameter_supported": true,
         "request_uri_parameter_supported": true,
         "require_request_uri_registration": true,

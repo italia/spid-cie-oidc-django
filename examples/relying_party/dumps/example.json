@@ -1,10 +1,30 @@
 [
 {
   "model": "spid_cie_oidc_accounts.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$320000$DMnJbK8U6nud1dLxbP181B$7L+UE2YgT5b1VwortW19WB1NY9gmlW0hwXhzzgo63eY=",
+    "last_login": "2022-02-26T23:22:07.240Z",
+    "is_superuser": true,
+    "username": "wert",
+    "is_staff": true,
+    "date_joined": "2022-02-13T09:08:44.265Z",
+    "first_name": null,
+    "last_name": null,
+    "is_active": true,
+    "email": "",
+    "origin": null,
+    "attributes": {},
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "spid_cie_oidc_accounts.user",
   "pk": 2,
   "fields": {
     "password": "pbkdf2_sha256$320000$CmkauYnR0tV0uXPlxcDXKr$OmpasMWm+T4oUHAklupXMTiLGWyUEfbF5WPInKCBf0Q=",
-    "last_login": "2022-03-19T17:17:38.217Z",
+    "last_login": "2022-03-19T22:49:19.309Z",
     "is_superuser": true,
     "username": "admin",
     "is_staff": true,
@@ -24,7 +44,7 @@
   "pk": 1,
   "fields": {
     "created": "2022-02-06T17:25:43.158Z",
-    "modified": "2022-02-26T23:40:15.682Z",
+    "modified": "2022-03-19T22:51:59.159Z",
     "uuid": "10b07ffc-5d22-4625-b5b9-d710d0b9a1de",
     "sub": "http://127.0.0.1:8001/",
     "default_exp": 33,
@@ -52,7 +72,7 @@
         "client_registration_types": [
           "automatic"
         ],
-        "client_name": "Name of this service called https://rp.example.it/spid",
+        "client_name": "an example Relying Party",
         "client_id": "http://127.0.0.1:8001/",
         "contacts": [
           "ops@rp.example.it"
@@ -62,13 +82,18 @@
           "authorization_code"
         ],
         "jwks": {
-          "kty": "RSA",
-          "n": "1cE1PyQiBkmwO4TT30HGUwegdPZ9iKvuwQezUYOe8LqGol_6sUgxAf67_KbAeP1PMrmGH6d-AgNIT2Taa0OAtqyRUTLhG8rl7gT3_Jzwt2mOJu2JI4MfWcQxa-ZtzM8PPr7JUzWUzhHO7Nb1MfBm_fqB20cRcHOS_fvu3PqY-C-t33z3JYeDD_PsvSs2-WLlUiMDf9ILp0rVatF4GTPwvEp7VLCqCf1lLSLIxuuTVI0sc1j3xPbyv4MO_33fTmoAOVDmkUnhi2igLgw_tjc2-iu_4-r2qsKbotGiTu6y1RQrHc8xcrQmfqJ8FUwqAcpgQnlsekEHc6lWx9262Anobw",
-          "e": "AQAB",
-          "kid": "2C3zbeQjgx3jk-CHSqK3pLhdPeV9Fn5eSBPMNUp7vQk"
+          "keys": [
+            {
+              "use": "sig",
+              "kty": "RSA",
+              "n": "1cE1PyQiBkmwO4TT30HGUwegdPZ9iKvuwQezUYOe8LqGol_6sUgxAf67_KbAeP1PMrmGH6d-AgNIT2Taa0OAtqyRUTLhG8rl7gT3_Jzwt2mOJu2JI4MfWcQxa-ZtzM8PPr7JUzWUzhHO7Nb1MfBm_fqB20cRcHOS_fvu3PqY-C-t33z3JYeDD_PsvSs2-WLlUiMDf9ILp0rVatF4GTPwvEp7VLCqCf1lLSLIxuuTVI0sc1j3xPbyv4MO_33fTmoAOVDmkUnhi2igLgw_tjc2-iu_4-r2qsKbotGiTu6y1RQrHc8xcrQmfqJ8FUwqAcpgQnlsekEHc6lWx9262Anobw",
+              "e": "AQAB",
+              "kid": "2C3zbeQjgx3jk-CHSqK3pLhdPeV9Fn5eSBPMNUp7vQk"
+            }
+          ]
         },
         "redirect_uris": [
-          "https://rp.example.it/spid/callback"
+          "http://127.0.0.1:8001/oidc/rp/callback"
         ],
         "response_types": [
           "code"
@@ -211,7 +236,7 @@
             "RS256",
             "ES256"
           ],
-          "issuer": "https://idp.it",
+          "issuer": "http://127.0.0.1:8002/oidc/op/",
           "jwks": {
             "keys": [
               {
@@ -226,7 +251,7 @@
             "openid",
             "offline_access"
           ],
-          "logo_uri": "http://127.0.0.1:8002/oidc/op/statics/images/logo-cie.png",
+          "logo_uri": "http://127.0.0.1:8000/statics/svg/spid-logo-c-lb.svg",
           "organization_name": "SPID OIDC identity provider",
           "op_policy_uri": "https://idp.it/en/website/legal-information/",
           "request_parameter_supported": true,
@@ -458,10 +483,10 @@
         },
         "metadata": {
           "openid_provider": {
-            "authorization_endpoint": "https://idp.it/openid/authorization",
-            "token_endpoint": "https://idp.it/openid/token",
-            "userinfo_endpoint": "https://idp.it/openid/userinfo",
-            "introspection_endpoint": "https://idp.it/openid/introspection",
+            "authorization_endpoint": "http://127.0.0.1:8000/oidc/op/authorization",
+            "token_endpoint": "http://127.0.0.1:8000/oidc/op/token",
+            "userinfo_endpoint": "http://127.0.0.1:8000/oidc/op/userinfo",
+            "introspection_endpoint": "http://127.0.0.1:8000/oidc/op/introspection",
             "claims_parameter_supported": true,
             "contacts": [
               "ops@https://idp.it"
@@ -506,7 +531,7 @@
               "RS256",
               "ES256"
             ],
-            "issuer": "https://idp.it",
+            "issuer": "http://127.0.0.1:8002/oidc/op/",
             "jwks": {
               "keys": [
                 {
@@ -521,7 +546,7 @@
               "openid",
               "offline_access"
             ],
-            "logo_uri": "https://idp.it/statics/logo.svg",
+            "logo_uri": "http://127.0.0.1:8000/oidc/op/statics/svg/logo.svg",
             "organization_name": "SPID OIDC identity provider",
             "op_policy_uri": "https://idp.it/en/website/legal-information/",
             "request_parameter_supported": true,
@@ -645,7 +670,7 @@
           "exp": 1646095909,
           "iat": 1645923109,
           "iss": "http://127.0.0.1:8000/",
-          "sub": "http://127.0.0.1:8000/oidc/op/",
+          "sub": "http://127.0.0.1:8002/oidc/op/",
           "jwks": {
             "keys": [
               {
@@ -755,10 +780,10 @@
       ]
     ],
     "metadata": {
-      "authorization_endpoint": "https://idp.it/openid/authorization",
-      "token_endpoint": "https://idp.it/openid/token",
-      "userinfo_endpoint": "https://idp.it/openid/userinfo",
-      "introspection_endpoint": "https://idp.it/openid/introspection",
+      "authorization_endpoint": "http://127.0.0.1:8002/oidc/op/authorization",
+      "token_endpoint": "http://127.0.0.1:8002/oidc/op/token",
+      "userinfo_endpoint": "http://127.0.0.1:8002/oidc/op/userinfo",
+      "introspection_endpoint": "http://127.0.0.1:8002/oidc/op/introspection",
       "claims_parameter_supported": true,
       "contacts": [
         "ops@https://idp.it"
@@ -803,7 +828,7 @@
         "RS256",
         "ES256"
       ],
-      "issuer": "https://idp.it",
+      "issuer": "http://127.0.0.1:8002/oidc/op/",
       "jwks": {
         "keys": [
           {
@@ -818,7 +843,7 @@
         "openid",
         "offline_access"
       ],
-      "logo_uri": "https://idp.it/statics/logo.svg",
+      "logo_uri": "http://127.0.0.1:8002/statics/images/logo-cie.png",
       "organization_name": "SPID OIDC identity provider",
       "op_policy_uri": "https://idp.it/en/website/legal-information/",
       "request_parameter_supported": true,

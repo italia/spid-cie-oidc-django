@@ -3,6 +3,7 @@ import logging
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from spid_cie_oidc.entity.statements import (
+    OIDCFED_FEDERATION_WELLKNOWN_URL,
     get_entity_configurations,
     EntityConfiguration,
 )
@@ -32,7 +33,10 @@ def validate_entity_configuration(value):
             f"Failed to fetch Entity Configuration for {value}: {e}"
         )
     if not jwt:
-        raise ValidationError("Entity Configuration is Null")
+        raise ValidationError(
+            "failed to get a valid Entity Configuration from "
+            f"{value}{OIDCFED_FEDERATION_WELLKNOWN_URL}"
+        )
 
     try:
         ec = EntityConfiguration(jwt, httpc_params=HTTPC_PARAMS)
