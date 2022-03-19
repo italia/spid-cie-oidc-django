@@ -9,7 +9,22 @@ All the Provider settings paramenter are available at
 [spid_cie_oidc.provider.settings](spie_cie_oidc/provider/settings.py) and
 can be inherited in the general settings file of your project.
 
-- `OIDCFED_PROVIDER_PROFILES_MEDIA` 
+These are the following:
+
+
+- `OIDCFED_DEFAULT_PROVIDER_PROFILE`, default profile of the service, if the OP is Spid or CIE.
+
+Example
+````
+OIDCFED_DEFAULT_PROVIDER_PROFILE = getattr(
+    settings,
+    "OIDCFED_PROVIDER_PROFILE",
+    "Spid"
+)
+````
+
+- `OIDCFED_PROVIDER_PROFILES_MEDIA`, Logo of the service, for each profile.
+
 Example
 ````
 OIDCFED_PROVIDER_PROFILES_MEDIA = getattr(
@@ -26,7 +41,8 @@ OIDCFED_PROVIDER_PROFILES_MEDIA = getattr(
 )
 ````
 
-- `OIDCFED_PROVIDER_PROFILES` supported profiles.
+- `OIDCFED_PROVIDER_PROFILES`, json validation schemas for each profile.
+
 Example
 ````
 OIDCFED_PROVIDER_PROFILES = getattr(
@@ -52,17 +68,9 @@ OIDCFED_PROVIDER_PROFILES = getattr(
     },
 )
 ````
-- `OIDCFED_DEFAULT_PROVIDER_PROFILE`
-Example
-````
-OIDCFED_DEFAULT_PROVIDER_PROFILE = getattr(
-    settings,
-    "OIDCFED_PROVIDER_PROFILE",
-    "Spid"
-)
-````
 
 - `OIDCFED_PROVIDER_MAX_REFRESH` How many times a token can be refreshed.
+
 Example
 ````
 OIDCFED_PROVIDER_MAX_REFRESH = 1
@@ -72,7 +80,8 @@ OIDCFED_PROVIDER_MAX_REFRESH = 1
 - `OIDCFED_PROVIDER_ATTRIBUTES_CIE_MAP` map of attributes for a cie provider, an example [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/provider/settings.py#L60)
 - `OIDCFED_PROVIDER_ATTRIBUTES_MAP` map of all provider attributes, an example [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/provider/settings.py#L77)
 
-- `OIDCFED_PROVIDER_PROFILES_ID_TOKEN_CLAIMS` claims that can be requested to token endpoint
+- `OIDCFED_PROVIDER_PROFILES_ID_TOKEN_CLAIMS` claims that can be requested to token endpoint.
+
 Example
 ````
 OIDCFED_PROVIDER_PROFILES_ID_TOKEN_CLAIMS = dict(
@@ -81,19 +90,22 @@ OIDCFED_PROVIDER_PROFILES_ID_TOKEN_CLAIMS = dict(
 )
 ````
 
--`OIDCFED_PROVIDER_SALT`, need for subject identifier's hash function 
+-`OIDCFED_PROVIDER_SALT`, salt used in the subject identifier hash function.
+ 
 Example
 ````
 OIDCFED_PROVIDER_SALT = getattr(settings, "OIDCFED_PROVIDER_SALT", "CHANGEME")
 ````
 
-- `OIDCFED_PROVIDER_HISTORY_PER_PAGE`, identify number of access to RP to show in the page of access history
+- `OIDCFED_PROVIDER_HISTORY_PER_PAGE`, max entries per page to show in the page of access history.
+
 Example
 ````
 OIDCFED_PROVIDER_HISTORY_PER_PAGE = getattr(settings, "OIDCFED_PROVIDER_HISTORY_PER_PAGE", 50)
 ````
 
-- `OIDCFED_PROVIDER_AUTH_CODE_MAX_AGE` lifetime of validity of an auth code
+- `OIDCFED_PROVIDER_AUTH_CODE_MAX_AGE` lifetime of validity of an auth code.
+
 Example
 ````
 OIDCFED_PROVIDER_AUTH_CODE_MAX_AGE = getattr(
@@ -103,7 +115,8 @@ OIDCFED_PROVIDER_AUTH_CODE_MAX_AGE = getattr(
 )
 ````
 
-- `OIDCFED_PROVIDER_PROFILES_DEFAULT_ACR` default acr value that is satisfied by the OP in the Authentication Request
+- `OIDCFED_PROVIDER_PROFILES_DEFAULT_ACR` default acr value in the Authentication Request if not sumbmitted by RP.
+
 Example
 ````
 OIDCFED_PROVIDER_PROFILES_DEFAULT_ACR = dict(
@@ -130,9 +143,7 @@ and correspond to `spid_cie_oidc.provider.views.AuthzRequestView`.
 
 The Authorization Endpoint support the use of the HTTP GET and POST methods.
 
-An exemple of accepted rquest is [heare](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/onboarding/tests/authn_request_settings.py#L30)
-
-For Spid profile only 'userinfo' claims are accepted, for CIE profile both 'userinfo' and 'id_token'.
+An exemple of accepted request is [heare](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/onboarding/tests/authn_request_settings.py#L30)
 
 In the case of successful user authentication, the response contains the following parameters:
 

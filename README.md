@@ -18,11 +18,11 @@ each of these can be installed separately within a django project. These are the
 | Application | Description |
 | :--- | --- |
 | __spid_cie_oidc.accounts__ | Customizable application that extends the django User model. |
-| __spid_cie_oidc.entity__ | Openid Connect Federation django app that implements OIDC Federation 1.0 Entity Statements, metadata discovery, Trust Chain, Trust Marks and Metadata policy. Technical specifications: [__OIDC Federation Entity__](docs/technical_specifications/ENTITY.md) |
-| __spid_cie_oidc.authority__ | Openid Connect Federation API and models for __OIDC Federation Authority/Intermediary__, [Technical specifications](docs/technical_specifications/AUTHORITY.md) and [tutorial](docs/CREATE_A_FEDERATION_AUTHORITY.md). 
-| __spid_cie_oidc.onboarding__ | [__Openid Connect Federation onboarding demo service__](docs/technical_specifications/ONBOARDING.md) and tools|
-| __spid_cie_oidc.relying_party__ | [__Openid Connect Relying Party__](docs/technical_specifications/RELYING_PARTY.md) and test suite for OIDC Providers |
-| __spid_cie_oidc.provider__ | [__Openid Connect Provider__](docs/technical_specifications/PROVIDER.md) and test suite for OIDC Relying Parties |
+| __spid_cie_oidc.entity__ | OpenID Connect Federation django app that implements OIDC Federation 1.0 Entity Statements, metadata discovery, Trust Chain, Trust Marks and Metadata policy. Technical specifications: [__OIDC Federation Entity__](docs/technical_specifications/ENTITY.md) |
+| __spid_cie_oidc.authority__ | OpenID Connect Federation API and models for __OIDC Federation Authority/Intermediary__, [Technical specifications](docs/technical_specifications/AUTHORITY.md) and [tutorial](docs/CREATE_A_FEDERATION_AUTHORITY.md). 
+| __spid_cie_oidc.onboarding__ | [__OpenID Connect Federation onboarding demo service__](docs/technical_specifications/ONBOARDING.md) and tools|
+| __spid_cie_oidc.relying_party__ | [__OpenID Connect Relying Party__](docs/technical_specifications/RELYING_PARTY.md) and test suite for OIDC Providers |
+| __spid_cie_oidc.provider__ | [__OpenID Connect Provider__](docs/technical_specifications/PROVIDER.md) and test suite for OIDC Relying Parties |
 
 ## Summary
 
@@ -83,6 +83,35 @@ Examples Users and Passwords:
  - __user__ __oidcuser__
 
 ### Tools
+
+The OnBoarding app comes with the following collection of tools:
+
+- JWK
+    - Create a jwk
+    - Convert a private JWK to PEM
+    - Convert a public JWK to PEM
+    - Convert a private PEM to JWK
+    - Convert a public PEM to JWK
+    - JWT decode and verification
+- Federation
+    - Resolve entity statement
+    - Apply policy
+- Validators
+    - Validate OP metadata spid
+    - Validate OP metadata cie
+    - Validate RP metadata spid
+    - Validate RP metadata cie
+    - Validate Authn Request spid
+    - Validate Authn Request cie
+    - Validate Entity Configuration
+    - Trust mark validation
+- Schemas
+    - Authorization Endpoint
+    - Introspection Endpoint
+    - Metadata
+    - Token Endpoint
+    - Revocation Endpoint
+    - Jwt client Assertion
 
 ![OIDC Tools](docs/images/onboard_tools_jwt_debug.png)
 _OIDC tools facilitates the lives of developers and service operators, here a simple interface to decode and verify a JWT._
