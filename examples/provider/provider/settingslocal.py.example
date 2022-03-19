@@ -126,7 +126,7 @@ LOGGING = {
           "class": "logging.handlers.TimedRotatingFileHandler",
           "level": "INFO",
           "formatter": "default",
-          "filename": f"{BASE_DIR}/logs/trust_anchor.log",
+          "filename": f"{BASE_DIR}/logs/provider.log",
           "when": "midnight",
           "backupCount": 96
         }

@@ -9,8 +9,6 @@
 [![Join the #spid openid](https://img.shields.io/badge/Slack%20channel-%23spid%20openid-blue.svg)](https://developersitalia.slack.com/archives/C7E85ED1N/)
 
 
-> ⚠️ __This project is a WiP, the first stable release for production use will be the v0.6.0.__
-
 SPID/CIE OIDC Federation is a suite of Django applications designed to
 make it easy to build an [Openid Connect Federation](https://openid.net/specs/openid-connect-federation-1_0.html), 
 each of these can be installed separately within a django project. These are the following:
@@ -68,15 +66,67 @@ Read the [setup documentation](docs/SETUP.md) to get started.
 
 ## Docker compose
 
-> TODO: Not available until v0.6.0 release
+````
+apt install jq
+pip install docker-compose
+````
+
+Please do your customizations in each _settingslocal.py_ files and/or in the example dumps json file.
+
+Create volumes
+````
+docker volume create --name=trust_anchor_project
+````
+
+Where the data are
+`docker volume ls`
+
+
+Copy files in destination volumes
+````
+cp -R examples/federation_authority/* `docker volume inspect trust_anchor_project | jq .[0].Mountpoint | sed 's/"//g'`
+````
+
+Change hostnames from 127.0.0.1 to which one configured in the compose file, in the settingslocal.py files and in the dumps/example.json files.
+In our example we rename:
+
+- http://127.0.0.1:8000 to http://trust-anchor.org:8000/
+
+````
+export SUB_AT='s\http://127.0.0.1:8000/\http://trust-anchor.org:8000/\g'
+export TARGET_PATH=$(docker volume inspect trust_anchor_project | jq .[0].Mountpoint | sed 's/"//g')
+sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/federation_authority/dumps/example.json > $TARGET_PATH/dumps/example.json
+sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/federation_authority/federation_authority/settingslocal.py.example > $TARGET_PATH/federation_authority/settingslocal.py
+````
+
+Feel free to customize the example data and settings. then check if everything is ok, for example:
+````
+ls `docker volume inspect trust_anchor_project | jq .[0].Mountpoint | sed 's/"//g'`
+````
+
+Run the stack
+````
+docker-compose up
+````
+
+Configure a proper DNS resolution for trust-anchor.org. In GNU/Linux we can configure it in `/etc/hosts`:
+
+````
+127.0.0.1   localhost  trust-anchor.org
+````
+
+Point your web browser to `http://trust-anchor.org/oidc/rp/landing` and do your first oidc authentication.
+
 
 ## Usage
 
 The demo propose a small federation composed by the following entities:
 
- - Federation Authority, acts as trust anchor and onboarding system. It's available at `http://127.0.0.1:8000/`
+ - Federation Authority, acts as trust anchor and onboarding system. It's available at `http://127.0.0.1:8000/`. It has also an embedded Spid provider and a embedded Relying Party available at `/oidc/rp/landing`.
  - OpenID Relying Party, available at `http://127.0.0.1:8001/`
  - OpenID Provider, available at `http://127.0.0.1:8002/`
+
+In the docker example we have only the Federation Authority.
 
 Examples Users and Passwords:
 
