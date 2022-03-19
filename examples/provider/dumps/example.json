@@ -3,16 +3,16 @@
   "model": "spid_cie_oidc_accounts.user",
   "pk": 1,
   "fields": {
-    "password": "pbkdf2_sha256$320000$wMtUP3kWkHwOQ4VoeLiaK9$wqcd4OO+/1yvFrOqH4ZZIlfX2AJyKeB5IFBf/WQHYiU=",
-    "last_login": "2022-03-18T08:00:24.267Z",
+    "password": "pbkdf2_sha256$320000$FIyN55FCASEozeA1pWYRm1$8QzndgdnJkC7OPhEGPVHrrAxsa5KDoydMkl4zgrn0fs=",
+    "last_login": "2022-03-17T22:23:33.419Z",
     "is_superuser": true,
-    "username": "francesca",
+    "username": "admin",
     "is_staff": true,
-    "date_joined": "2022-03-16T09:46:26.105Z",
+    "date_joined": "2022-03-02T22:51:34.537Z",
     "first_name": null,
     "last_name": null,
     "is_active": true,
-    "email": "francesca@elabor.biz",
+    "email": "",
     "origin": null,
     "attributes": {
       "https://attributes.spid.gov.it/name": "peppe",
@@ -23,10 +23,39 @@
       "family_name": "maradona",
       "email": "that@ema.il",
       "fiscal_number": "8sada89s7da89sd7a98sd78",
-      "sub": "484d7a9bb9c99e17ab06eb897b13072aca276c7d8a1b6db8fb281430613da67a",
-      "username": "http://127.0.0.1:8000/oidc/op/__484d7a9bb9c99e17ab06eb897b13072aca276c7d8a1b6db8fb281430613da67a",
+      "sub": "5f32567af7e0e77ea09de8521ae5f6a0fd6984176e99a6bc694a8a0198231dc3",
+      "username": "http://127.0.0.1:8000/oidc/op/__5f32567af7e0e77ea09de8521ae5f6a0fd6984176e99a6bc694a8a0198231dc3",
       "first_name": "peppe",
       "last_name": "maradona"
+    },
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "spid_cie_oidc_accounts.user",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$320000$AhIzWIg12g3HskebsrXn98$vnuNV6C91Bnc1JobVWj392ekqHkKiI12bhgd0q6ApZk=",
+    "last_login": "2022-03-17T22:09:49.750Z",
+    "is_superuser": false,
+    "username": "user",
+    "is_staff": false,
+    "date_joined": "2022-03-11T22:09:22.789Z",
+    "first_name": null,
+    "last_name": null,
+    "is_active": true,
+    "email": "",
+    "origin": null,
+    "attributes": {
+      "https://attributes.spid.gov.it/name": "antonio",
+      "https://attributes.spid.gov.it/familyName": "rossi",
+      "https://attributes.spid.gov.it/email": "antonio@email.it",
+      "https://attributes.spid.gov.it/fiscalNumber": "AATTTJDFKSKDF89",
+      "given_name": "antonio",
+      "family_name": "rossi",
+      "email": "that@ema.il",
+      "fiscal_number": "8sada89s7da89sd7a98sd78"
     },
     "groups": [],
     "user_permissions": []

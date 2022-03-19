@@ -1,26 +1,6 @@
 [
 {
   "model": "spid_cie_oidc_accounts.user",
-  "pk": 1,
-  "fields": {
-    "password": "pbkdf2_sha256$320000$DMnJbK8U6nud1dLxbP181B$7L+UE2YgT5b1VwortW19WB1NY9gmlW0hwXhzzgo63eY=",
-    "last_login": "2022-02-26T23:22:07.240Z",
-    "is_superuser": true,
-    "username": "wert",
-    "is_staff": true,
-    "date_joined": "2022-02-13T09:08:44.265Z",
-    "first_name": null,
-    "last_name": null,
-    "is_active": true,
-    "email": "",
-    "origin": null,
-    "attributes": {},
-    "groups": [],
-    "user_permissions": []
-  }
-},
-{
-  "model": "spid_cie_oidc_accounts.user",
   "pk": 2,
   "fields": {
     "password": "pbkdf2_sha256$320000$CmkauYnR0tV0uXPlxcDXKr$OmpasMWm+T4oUHAklupXMTiLGWyUEfbF5WPInKCBf0Q=",
@@ -130,7 +110,7 @@
           "contacts": [
             "ops@localhost"
           ],
-          "federation_api_endpoint": "http://127.0.0.1:8000/fetch",
+          "federation_api_endpoint": "http://127.0.0.1:8000/fetch/",
           "homepage_uri": "http://127.0.0.1:8000",
           "name": "example TA",
           "federation_list_endpoint": "http://127.0.0.1:8000/list/"
@@ -183,10 +163,10 @@
       },
       "metadata": {
         "openid_provider": {
-          "authorization_endpoint": "https://idp.it/openid/authorization",
-          "token_endpoint": "https://idp.it/openid/token",
-          "userinfo_endpoint": "https://idp.it/openid/userinfo",
-          "introspection_endpoint": "https://idp.it/openid/introspection",
+          "authorization_endpoint": "http://127.0.0.1:8002/oidc/op/authorization/",
+          "token_endpoint": "http://127.0.0.1:8002/oidc/op/token",
+          "userinfo_endpoint": "http://127.0.0.1:8002/oidc/op/userinfo",
+          "introspection_endpoint": "http://127.0.0.1:8002/oidc/op/introspection",
           "claims_parameter_supported": true,
           "contacts": [
             "ops@https://idp.it"
@@ -246,7 +226,7 @@
             "openid",
             "offline_access"
           ],
-          "logo_uri": "https://idp.it/statics/logo.svg",
+          "logo_uri": "http://127.0.0.1:8002/oidc/op/statics/images/logo-cie.png",
           "organization_name": "SPID OIDC identity provider",
           "op_policy_uri": "https://idp.it/en/website/legal-information/",
           "request_parameter_supported": true,
