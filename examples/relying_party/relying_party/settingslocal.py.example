@@ -23,8 +23,12 @@ OIDCFED_REQUIRED_TRUST_MARKS = []
 
 # for RP only
 OIDCFED_IDENTITY_PROVIDERS = {
+  "spid": {
     "http://127.0.0.1:8000/oidc/op/" : OIDCFED_DEFAULT_TRUST_ANCHOR,
-    "http://127.0.0.1:8002/" : OIDCFED_DEFAULT_TRUST_ANCHOR
+  },
+  "cie": {
+    "http://127.0.0.1:8002/oidc/op/" : OIDCFED_DEFAULT_TRUST_ANCHOR,
+  }
 }
 
 HTTPC_PARAMS = {
@@ -32,7 +36,7 @@ HTTPC_PARAMS = {
     "session": {"timeout": aiohttp.ClientTimeout(total=4)},
 }
 
-LOGIN_REDIRECT_URL = "/oidc/rp/landing"
+LOGIN_REDIRECT_URL = "/oidc/rp/echo_attributes"
 LOGOUT_REDIRECT_URL = "/oidc/rp/landing"
 LOGIN_URL = "/oidc/rp/landing"
 

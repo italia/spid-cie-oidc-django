@@ -82,38 +82,103 @@ authority_hints = ["http://testserver/"]
 see [unit tests](https://github.com/peppelinux/spid-cie-oidc-django/blob/main/spid_cie_oidc/authority/tests/test_02_trust_anchor_intermediary.py#L32).
 
 
-### Create a CIE provider in a Federation Authority
+### Create a provider in a Federation Authority
 
-Delete provider database:
-````
-cd examples/provider
-rm db.sqlite3
-````
-do migrations ````./manage.py migrate````
+In provider configure settingslocal.py, for all provider configuration parameters see [here](https://github.com/francescatronconi/spid-cie-oidc-django/blob/newbranch/docs/technical_specifications/PROVIDER.md) 
 
-in provider settingslocal.py configure cie profile:  ````OIDCFED_PROVIDER_PROFILE = "cie"````
+
+To create a CIE or Spid provider configure `OIDCFED_PROVIDER_PROFILE` parameter in settingslocal.py as "cie" or "spid"
 
 In exemples/provider configure a federation entity configuration as OP:
 
 ````
 ./manage.py runserver 0.0.0.0:8002
 ````
-In provider admin console:
+In provider admin console (http://127.0.0.1:8002/admin) the following data are required:
+
+- sub (eg. 'http://127.0.0.1:8002/oidc/op/')
+- authority hints, list of trust anchor(eg. ["http://127.0.0.1:8000/"])
+- Jwks, private jwks, an example [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/provider/tests/settings.py#L1)
+- metadata, url paths in metadata need to be mapped in examples/relying_party/urls.py, [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/examples/provider/provider/urls.py#L48).
+An example of metadata[here]https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/provider/tests/settings.py#L20)
 
 ![OP federation entity](images/op_federation_entity.png)
 
-In examples/federation_authority configure OP cie as descendant:
+In examples/federation_authority configure OP cie as descendant and assign it a profile::
 
 ````
 ./manage.py runserver
 ````
 
-In federation admin console:
+In federation admin console (http://127.0.0.1:8000/admin) the following data are required:
+
+- OP name
+- sub (eg. 'http://127.0.0.1:80012/oidc/rp/')
+- Jwks, public jwks, an example [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/provider/tests/settings.py#L58)
 
 ![OP as descendant](images/op_descendant.png)
+
+Then assign a profile:
+
+as profile select 'Identity Provider'
+
+![OP assigned profile](images/op_assigned_profile.png)
 
 In federation service build trust chain for OP:
 
 ````
 examples/federation_authority/manage.py fetch_openid_providers --start -f
 ````
+
+### Create a Relying Party in a Federation Authority
+
+Do migrate:
+ ````examples/relying_party/manage.py migrate````
+
+In relying_party configure settingslocal.py, for more information on configuration parameters see [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/docs/technical_specifications/RELYING_PARTY.md) 
+
+In examples/relying_party configure a federation entity configuration as RP:
+
+````
+./manage.py runserver 0.0.0.0:8001
+````
+In relying_party admin console (http://127.0.0.1:8001/admin) the following data are required:
+
+- sub (eg. 'http://127.0.0.1:8001/oidc/rp/')
+- authority hints, list of trust anchor(eg. ["http://127.0.0.1:8000/"])
+- Jwks, private jwks, an example [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/authority/tests/settings.py#L7)
+- metadata, url paths in metadata need to be mapped in examples/relying_party/urls.py, [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/examples/relying_party/relying_party/urls.py#L42).
+An example of metadata[here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/authority/tests/settings.py#L91)
+
+![RP federation entity](images/rp_federation_entity.png)
+
+
+In examples/federation_authority configure RP as descendant and assign it a profile:
+
+````
+./manage.py runserver
+````
+
+In federation admin console (http://127.0.0.1:8000/admin) the following data are required:
+
+- RP name
+- sub (eg. 'http://127.0.0.1:8001/oidc/rp/')
+- Jwks, public jwks, an example [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/authority/tests/settings.py#L8)
+
+![RP as descendant](images/rp_descendant.png)
+
+Then assign a profile:
+
+as profile select 'SPID Private SP'
+
+![RP assigned profile](images/rp_assigned_profile.png)
+
+
+In relying_party service build trust chain for OP:
+
+by parameter `OIDCFED_IDENTITY_PROVIDERS` in settingslocal.py define the list of OPs to enable in Trust Chain operations
+````
+examples/relaying_party/manage.py fetch_openid_providers --start -f
+````
+
+Connect to the login page specified in settingslocal.py by 'LOGIN_URL' parameter (eg. 'http://127.0.0.1:8000/oidc/rp/landing' where 'LOGIN_URL=/oidc/rp/landing') and start authentication.

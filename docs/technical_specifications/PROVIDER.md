@@ -9,23 +9,51 @@ All the Provider settings paramenter are available at
 [spid_cie_oidc.provider.settings](spie_cie_oidc/provider/settings.py) and
 can be inherited in the general settings file of your project.
 
-
-`OIDCFED_PROVIDER_PROFILES` supported profiles.
+- `OIDCFED_PROVIDER_PROFILES_MEDIA` 
+Example
 ````
-OIDCFED_PROVIDER_PROFILES = getattr(
+OIDCFED_PROVIDER_PROFILES_MEDIA = getattr(
     settings,
-    'OIDCFED_PROVIDER_PROFILES',
+    "OIDCFED_PROVIDER_PROFILES_MEDIA",
     {
         "spid": {
-            "authentication_request": AuthenticationRequestSpid,
+            "logo": "svg/spid-logo-c-lb.svg"
         },
         "cie": {
-            "authentication_request": AuthenticationRequestCie,
-        }
-    }
+            "logo": "images/logo-cie.png"
+        },
+    },
 )
 ````
 
+- `OIDCFED_PROVIDER_PROFILES` supported profiles.
+Example
+````
+OIDCFED_PROVIDER_PROFILES = getattr(
+    settings,
+    "OIDCFED_PROVIDER_PROFILES",
+    {
+        "spid": {
+            "authorization_request": AuthenticationRequestSpid,
+            "op_metadata": OPMetadataSpid,
+            "authorization_code": TokenAuthnCodeRequest,
+            "refresh_token": TokenRefreshRequest,
+            "revocation_request": RevocationRequest,
+            "introspection_request" : IntrospectionRequest,
+        },
+        "cie": {
+            "authorization_request": AuthenticationRequestCie,
+            "op_metadata": OPMetadataCie,
+            "authorization_code": TokenAuthnCodeRequest,
+            "refresh_token": TokenRefreshRequest,
+            "revocation_request": RevocationRequest,
+            "introspection_request" : IntrospectionRequest,
+        },
+    },
+)
+````
+- `OIDCFED_DEFAULT_PROVIDER_PROFILE`
+Example
 ````
 OIDCFED_DEFAULT_PROVIDER_PROFILE = getattr(
     settings,
@@ -34,8 +62,57 @@ OIDCFED_DEFAULT_PROVIDER_PROFILE = getattr(
 )
 ````
 
-`OIDCFED_PROVIDER_MAX_REFRESH = 1` How many times a token can be refreshed.
+- `OIDCFED_PROVIDER_MAX_REFRESH` How many times a token can be refreshed.
+Example
+````
+OIDCFED_PROVIDER_MAX_REFRESH = 1
+````
 
+- `OIDCFED_PROVIDER_ATTRIBUTES_SPID_MAP` map of attributes for a spid provider, an example [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/provider/settings.py#L31)
+- `OIDCFED_PROVIDER_ATTRIBUTES_CIE_MAP` map of attributes for a cie provider, an example [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/provider/settings.py#L60)
+- `OIDCFED_PROVIDER_ATTRIBUTES_MAP` map of all provider attributes, an example [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/provider/settings.py#L77)
+
+- `OIDCFED_PROVIDER_PROFILES_ID_TOKEN_CLAIMS` claims that can be requested to token endpoint
+Example
+````
+OIDCFED_PROVIDER_PROFILES_ID_TOKEN_CLAIMS = dict(
+    spid = dict(),
+    cie = OIDCFED_PROVIDER_ATTRIBUTES_CIE_MAP
+)
+````
+
+-`OIDCFED_PROVIDER_SALT`, need for subject identifier's hash function 
+Example
+````
+OIDCFED_PROVIDER_SALT = getattr(settings, "OIDCFED_PROVIDER_SALT", "CHANGEME")
+````
+
+- `OIDCFED_PROVIDER_HISTORY_PER_PAGE`, identify number of access to RP to show in the page of access history
+Example
+````
+OIDCFED_PROVIDER_HISTORY_PER_PAGE = getattr(settings, "OIDCFED_PROVIDER_HISTORY_PER_PAGE", 50)
+````
+
+- `OIDCFED_PROVIDER_AUTH_CODE_MAX_AGE` lifetime of validity of an auth code
+Example
+````
+OIDCFED_PROVIDER_AUTH_CODE_MAX_AGE = getattr(
+    settings,
+    "OIDCFED_PROVIDER_AUTH_CODE_MAX_AGE",
+    10
+)
+````
+
+- `OIDCFED_PROVIDER_PROFILES_DEFAULT_ACR` default acr value that is satisfied by the OP in the Authentication Request
+Example
+````
+OIDCFED_PROVIDER_PROFILES_DEFAULT_ACR = dict(
+    spid = AcrValuesSpid.l2.value,
+    cie = AcrValuesCie.l2.value
+)
+````
+
+- `OIDCFED_ATTRNAME_I18N`, attributes internationalization, an example [here](, an example [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/provider/settings.py#L125))
 
 ## Endpoints
 
