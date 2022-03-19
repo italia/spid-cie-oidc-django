@@ -43,6 +43,12 @@ class OnboardingRegistrationForm(forms.Form):
                 "Enter the url of the page where the SPID/CIE button is available"
             )
         },
+    ),
+
+    type = forms.ChoiceField(
+        choices=[(i, i) for i in ENTITY_TYPES],
+        label="",
+        error_messages={"required": _("Select a entity type")},
     )
 
     public_jwks = forms.JSONField(

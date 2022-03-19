@@ -28,6 +28,7 @@ class OnboardingTest(TestCase):
             "organization_name": "",
             "url_entity": "",
             "authn_buttons_page_url": "",
+            "type":"",
             "public_jwks": "",
         }
 
@@ -44,17 +45,12 @@ class OnboardingTest(TestCase):
         )
         self.assertFormError(res, "form", "url_entity", "Enter your url of the entity")
         self.assertFormError(
-            res,
-            "form",
-            "authn_buttons_page_url",
-            "Enter the url of the page where the SPID/CIE button is available",
-        )
-        self.assertFormError(
             res, "form", "public_jwks", "Enter the public jwks of the entities"
         )
         self.assertEqual(res.status_code, 200)
         self.data["organization_name"] = "test name"
         self.data["url_entity"] = "http://rp-test/oidc/rp"
+        self.data["type"] = "openid_relying_party"
         self.data["authn_buttons_page_url"] = "https://authnurl.com"
         self.data["public_jwks"] = {"key": "ciao"}
         res = client.post(url, self.data)

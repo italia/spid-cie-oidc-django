@@ -29,12 +29,22 @@
                   {{ form_field.label }}
                </span>
             </label>
-            {% if form_field.field.widget.input_type%}
+            {% if form_field.field.widget.input_type == 'select'%}
+               <div class="bootstrap-select-wrapper mb-4">
+                  <select name="{{ form_field.name }}" id="id_{{ form_field.html_name }}">
+                     {% for value, label in form_field.field.choices %}
+                     <option value="{{ value }}" {% if form_field.value == value %} selected {% endif %}>
+                        {{ label }}
+                     </option>
+                     {% endfor %}
+                  </select>
+               </div>
+            {% elif form_field.name == 'public_jwks' %}
+               <textarea id="id_{{ form_field.html_name }}" rows="5"
+                  name="{{ form_field.name }}">{{ form.public_jwks.value}}</textarea>
+            {% else %}
             <input type="{{ form_field.field.widget.input_type }}" class="form-control"
                id="id_{{ form_field.html_name }}" name="{{ form_field.name }}" value="{{form_field.value}}">
-            {% else%}
-            <textarea id="id_{{ form_field.html_name }}"
-               name="{{ form_field.name }}">{{ form.public_jwks.value}}</textarea>
             {% endif %}
          </div>
          <span for="id_{{ form_field.html_name }}" class="text-danger">{{ form_field.errors }}</span>

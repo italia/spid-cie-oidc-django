@@ -113,7 +113,6 @@ def onboarding_convert_jwk(request):
             }
         except Exception as e:
             messages.error(request, _(f" {e} "))
-            return render(request, 'onboarding_convert_jwk.html', context)
     return render(request, 'onboarding_convert_jwk.html', context)
 
 
@@ -136,7 +135,6 @@ def onboarding_convert_pem(request):
             }
         except Exception as e:
             messages.error(request, _(f" {e} "))
-            return render(request, 'onboarding_convert_pem.html', context)
     return render(request, 'onboarding_convert_pem.html', context)
 
 
@@ -158,8 +156,6 @@ def onboarding_resolve_statement(request):
             context["resolved_statement"] = json.dumps(resultJson, indent=4)
         except Exception:
             messages.error(request, _('Failed to resolve entity statement, Please check your inserted data'))
-            render(request, 'onboarding_resolve_statement.html', context)
-
     return render(request, 'onboarding_resolve_statement.html', context)
 
 
@@ -197,31 +193,20 @@ def onboarding_validate_md(request):
     }
     if request.POST.get('md'):
         md = request.POST['md']
-        context = {
-            "metadata_type": metadata_type,
-            "provider_profile": provider_profile,
-            "title": title,
-            "description":description,
-            "field_name":"metadata",
-            "md": md
-        }
-        md_str_double_quote = md.replace("'", '"')
-        metadata = json.loads(md_str_double_quote)
-        if metadata_type == 'op_metadata':
-            schema = OIDCFED_PROVIDER_PROFILES[provider_profile]
-            try:
+        context["md"] = md
+        try:
+            md_str_double_quote = md.replace("'", '"')
+            metadata = json.loads(md_str_double_quote)
+            if metadata_type == 'op_metadata':
+                schema = OIDCFED_PROVIDER_PROFILES[provider_profile]
                 schema[metadata_type](**metadata)
                 messages.success(request, _('Validation Metadata Successfully'))
-            except Exception as e:
-                messages.error(request, f"Validation Failed: {e}")
-        if metadata_type == 'rp_metadata':
-            schema = RP_PROVIDER_PROFILES[provider_profile]
-            try:
+            if metadata_type == 'rp_metadata':
+                schema = RP_PROVIDER_PROFILES[provider_profile]
                 schema[metadata_type](**metadata)
                 messages.success(request, _('Validation Metadata Successfully'))
-            except Exception as e:
-                messages.error(request, f"Validation Failed: {e}")
-        return render(request, 'onboarding_validate_md.html', context)
+        except Exception as e:
+            messages.error(request, f"Validation Failed: {e}")
     return render(request, 'onboarding_validate_md.html', context)
 
 
@@ -251,7 +236,6 @@ def onboarding_validate_authn_request(request):
             messages.success(request, _('Validation Authn Request Successfully'))
         except Exception as e:
             messages.error(request, f"Validation Failed: {e}")
-        return render(request, 'onboarding_validate_md.html', context)
     return render(request, 'onboarding_validate_md.html', context)
 
 
@@ -261,7 +245,6 @@ def onboarding_validate_ec(request):
         url = request.POST.get("url")
         context = {"url": url}
         try:
-            # TODO: here we have 2 http requests ...
             ec = validate_entity_configuration(url)
             context["ec"] = json.dumps(ec.payload, indent=4)
             messages.success(request, _('Validation Entity Configuration Successfully'))
@@ -289,8 +272,8 @@ def onboarding_decode_jwt(request):
             jwk_str = request.POST['jwk']
             context["jwk"] = jwk_str
             jwk_str_double_quote = jwk_str.replace("'", '"')
-            jwk = json.loads(jwk_str_double_quote)
             try:
+                jwk = json.loads(jwk_str_double_quote)
                 verify_jws(jwt, jwk)
                 messages.success(request, _('Your jws is verified'))
             except Exception:
@@ -306,19 +289,18 @@ def onboarding_apply_policy(request):
         "result": ""
     }
     if request.GET.get('md') and request.GET.get('policy'):
-        try:
-            md = json.loads(request.GET['md'])
-            policy = json.loads(request.GET['policy'])
-            context = {
+        context = {
                 "md": request.GET['md'],
                 "policy": request.GET['policy'],
                 "result": ""
             }
+        try:
+            md = json.loads(request.GET['md'])
+            policy = json.loads(request.GET['policy'])
             reuslt = apply_policy(md, policy)
             context["result"] = json.dumps(reuslt, indent=4)
         except Exception as e:
             messages.error(request, {e})
-            render(request, 'onboarding_apply_policy.html', context)
     return render(request, 'onboarding_apply_policy.html', context)
 
 
