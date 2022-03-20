@@ -28,12 +28,4 @@ Examples of requests to this endpoint are:
 
 ### API
 
-WiP
-
-#### Entity Statements and Configuration
-
-WiP
-
-#### TrustChain
-
-WiP
+See [The Entity API documentation](../docs/FEDERATION_ENTITY_API.md).
