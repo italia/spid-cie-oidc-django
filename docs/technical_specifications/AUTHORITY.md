@@ -42,8 +42,8 @@ Lists all the descendant entities.
 
 An entity MAY use the resolve endpoint to fetch resolved metadata and trust marks for an entity as seen/trusted by the resolver. 
 
-- `http://127.0.0.1:8000/resolve/?sub=http://127.0.0.1:8000/oidc/op/&anchor=http://127.0.0.1:8000/&format=json`
-- `http://127.0.0.1:8000/resolve/?sub=http://127.0.0.1:8000/oidc/op/&anchor=http://127.0.0.1:8000/`
+- `http://127.0.0.1:8000/resolve/?sub=http://127.0.0.1:8000/oidc/rp/&anchor=http://127.0.0.1:8000/&type=openid_relying_party&format=json`
+- `http://127.0.0.1:8000/resolve/?sub=http://127.0.0.1:8000/oidc/op/&anchor=http://127.0.0.1:8000/&type=openid_provider`
 
 
 #### trust mark status

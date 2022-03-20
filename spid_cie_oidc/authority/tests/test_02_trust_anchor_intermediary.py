@@ -253,7 +253,12 @@ class TrustChainTest(TestCase):
         url = reverse("oidcfed_resolve")
 
         c = Client()
-        res = c.get(url, data={"sub": self.rp.sub, "anchor": self.ta_conf.sub})
+        res = c.get(url, data={
+                "sub": self.rp.sub, 
+                "anchor": self.ta_conf.sub,
+                "type": "openid_relying_party"
+            }
+        )
         self.assertTrue(res.status_code == 200)
         verify_jws(res.content.decode(), self.ta_conf.jwks[0])
 
