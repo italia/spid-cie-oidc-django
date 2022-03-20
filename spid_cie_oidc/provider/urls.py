@@ -5,7 +5,9 @@ from .views.authz_request_view import AuthzRequestView
 from .views.userinfo_endpoint import UserInfoEndpoint
 from .views.consent_page_view import (
     ConsentPageView,
-    oidc_provider_not_consent
+    oidc_provider_not_consent,
+    UserAccessHistoryView,
+    RevokeSessionView,
 )
 from .views.token_endpoint import TokenEndpoint
 from .views.revocation_endpoint import RevocationEndpoint
@@ -48,5 +50,15 @@ urlpatterns = [
         f"{_PREF}/notconsent/",
         oidc_provider_not_consent,
         name="oidc_provider_not_consent",
+    ),
+    path(
+        f"{_PREF}/history/",
+        UserAccessHistoryView.as_view(),
+        name="oidc_provider_access_history",
+    ),
+    path(
+        f"{_PREF}/revoke/",
+        RevokeSessionView.as_view(),
+        name="oidc_provider_revoke_session",
     ),
 ]

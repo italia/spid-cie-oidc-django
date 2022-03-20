@@ -18,7 +18,8 @@ ADMIN_PATH = 'admin/'
 # required for onboarding checks and also for all the leafs
 OIDCFED_DEFAULT_TRUST_ANCHOR = "http://127.0.0.1:8000/"
 OIDCFED_TRUST_ANCHORS = [OIDCFED_DEFAULT_TRUST_ANCHOR]
-
+OIDCFED_PROVIDER_PROFILE = "cie"
+ 
 OIDCFED_REQUIRED_TRUST_MARKS = []
 
 #OIDCFED_FEDERATION_TRUST_MARKS_PROFILES = {
@@ -125,7 +126,7 @@ LOGGING = {
           "class": "logging.handlers.TimedRotatingFileHandler",
           "level": "INFO",
           "formatter": "default",
-          "filename": f"{BASE_DIR}/logs/trust_anchor.log",
+          "filename": f"{BASE_DIR}/logs/provider.log",
           "when": "midnight",
           "backupCount": 96
         }

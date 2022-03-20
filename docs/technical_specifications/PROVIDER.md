@@ -1,4 +1,4 @@
-# __Openid Connect Provider__ Identity Provider with additional test suite.
+# __Openid Connect Provider__ Identity Provider.
 
 A SPID/CIE implementation of a OpenID Connect Provider fully compliant to
 AgID SPID guidelines and CIE id guidelines.
@@ -9,23 +9,12 @@ All the Provider settings paramenter are available at
 [spid_cie_oidc.provider.settings](spie_cie_oidc/provider/settings.py) and
 can be inherited in the general settings file of your project.
 
+These are the following:
 
-`OIDCFED_PROVIDER_PROFILES` supported profiles.
-````
-OIDCFED_PROVIDER_PROFILES = getattr(
-    settings,
-    'OIDCFED_PROVIDER_PROFILES',
-    {
-        "spid": {
-            "authentication_request": AuthenticationRequestSpid,
-        },
-        "cie": {
-            "authentication_request": AuthenticationRequestCie,
-        }
-    }
-)
-````
 
+- `OIDCFED_DEFAULT_PROVIDER_PROFILE`, default profile of the service, if the OP is Spid or CIE.
+
+Example
 ````
 OIDCFED_DEFAULT_PROVIDER_PROFILE = getattr(
     settings,
@@ -34,8 +23,109 @@ OIDCFED_DEFAULT_PROVIDER_PROFILE = getattr(
 )
 ````
 
-`OIDCFED_PROVIDER_MAX_REFRESH = 1` How many times a token can be refreshed.
+- `OIDCFED_PROVIDER_PROFILES_MEDIA`, Logo of the service, for each profile.
 
+Example
+````
+OIDCFED_PROVIDER_PROFILES_MEDIA = getattr(
+    settings,
+    "OIDCFED_PROVIDER_PROFILES_MEDIA",
+    {
+        "spid": {
+            "logo": "svg/spid-logo-c-lb.svg"
+        },
+        "cie": {
+            "logo": "images/logo-cie.png"
+        },
+    },
+)
+````
+
+- `OIDCFED_PROVIDER_PROFILES`, json validation schemas for each profile.
+
+Example
+````
+OIDCFED_PROVIDER_PROFILES = getattr(
+    settings,
+    "OIDCFED_PROVIDER_PROFILES",
+    {
+        "spid": {
+            "authorization_request": AuthenticationRequestSpid,
+            "op_metadata": OPMetadataSpid,
+            "authorization_code": TokenAuthnCodeRequest,
+            "refresh_token": TokenRefreshRequest,
+            "revocation_request": RevocationRequest,
+            "introspection_request" : IntrospectionRequest,
+        },
+        "cie": {
+            "authorization_request": AuthenticationRequestCie,
+            "op_metadata": OPMetadataCie,
+            "authorization_code": TokenAuthnCodeRequest,
+            "refresh_token": TokenRefreshRequest,
+            "revocation_request": RevocationRequest,
+            "introspection_request" : IntrospectionRequest,
+        },
+    },
+)
+````
+
+- `OIDCFED_PROVIDER_MAX_REFRESH` How many times a token can be refreshed.
+
+Example
+````
+OIDCFED_PROVIDER_MAX_REFRESH = 1
+````
+
+- `OIDCFED_PROVIDER_ATTRIBUTES_SPID_MAP` map of attributes for a spid provider, an example [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/provider/settings.py#L31)
+- `OIDCFED_PROVIDER_ATTRIBUTES_CIE_MAP` map of attributes for a cie provider, an example [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/provider/settings.py#L60)
+- `OIDCFED_PROVIDER_ATTRIBUTES_MAP` map of all provider attributes, an example [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/provider/settings.py#L77)
+
+- `OIDCFED_PROVIDER_PROFILES_ID_TOKEN_CLAIMS` claims that can be requested to token endpoint.
+
+Example
+````
+OIDCFED_PROVIDER_PROFILES_ID_TOKEN_CLAIMS = dict(
+    spid = dict(), # means that SPID doesn't support user claims in the id_token
+    cie = OIDCFED_PROVIDER_ATTRIBUTES_CIE_MAP
+)
+````
+
+-`OIDCFED_PROVIDER_SALT`, salt used in the hash function used to create the subject identifier of the resource owner (the user).
+ 
+Example
+````
+OIDCFED_PROVIDER_SALT = getattr(settings, "OIDCFED_PROVIDER_SALT", "CHANGEME")
+````
+
+- `OIDCFED_PROVIDER_HISTORY_PER_PAGE`, max entries per page to show in the page of access history.
+
+Example
+````
+OIDCFED_PROVIDER_HISTORY_PER_PAGE = getattr(settings, "OIDCFED_PROVIDER_HISTORY_PER_PAGE", 50)
+````
+
+- `OIDCFED_PROVIDER_AUTH_CODE_MAX_AGE` lifetime of validity of an auth code.
+
+Example
+````
+OIDCFED_PROVIDER_AUTH_CODE_MAX_AGE = getattr(
+    settings,
+    "OIDCFED_PROVIDER_AUTH_CODE_MAX_AGE",
+    10
+)
+````
+
+- `OIDCFED_PROVIDER_PROFILES_DEFAULT_ACR` default acr value in the Authentication Request if not sumbmitted by RP.
+
+Example
+````
+OIDCFED_PROVIDER_PROFILES_DEFAULT_ACR = dict(
+    spid = AcrValuesSpid.l2.value,
+    cie = AcrValuesCie.l2.value
+)
+````
+
+- `OIDCFED_ATTRNAME_I18N`, attributes internationalization, an example [here](, an example [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/provider/settings.py#L125))
 
 ## Endpoints
 
@@ -53,9 +143,7 @@ and correspond to `spid_cie_oidc.provider.views.AuthzRequestView`.
 
 The Authorization Endpoint support the use of the HTTP GET and POST methods.
 
-An exemple of accepted rquest is [heare](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/onboarding/tests/authn_request_settings.py#L30)
-
-For Spid profile only 'userinfo' claims are accepted, for CIE profile both 'userinfo' and 'id_token'.
+An exemple of accepted request is [heare](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/onboarding/tests/authn_request_settings.py#L30)
 
 In the case of successful user authentication, the response contains the following parameters:
 
@@ -99,6 +187,11 @@ configured [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_c
 and correspond to `spid_cie_oidc.provider.views.UserInfoEndpoint`.
 
 The UserInfo Endpoint returns an encrypthed jwt of the user claims.
+
+### Login history page
+
+![OIDC Provider login history](../images/provider_login_history.png)
+_The user can consult the history of his accesses and also can revoke the access tokens for selected RPs._
 
 ## SPID/CIE QAD and compliances tests
 

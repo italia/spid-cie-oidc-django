@@ -17,23 +17,16 @@ def trust_chain_builder(
     subject: str,
     trust_anchor: EntityConfiguration,
     httpc_params: dict = HTTPC_PARAMS,
-    required_trust_marks: list = [],
-    metadata_type: str = "openid_provider",
+    required_trust_marks: list = []
 ) -> Union[TrustChainBuilder, bool]:
     """
-    Minimal Provider Discovery endpoint request processing
-
-    metadata_type MUST be one of
-        openid_provider
-        openid_relying_party
-        oauth_resource
+        Trust Chain builder
     """
     tc = TrustChainBuilder(
         subject,
         trust_anchor=trust_anchor,
         required_trust_marks=required_trust_marks,
-        httpc_params=httpc_params,
-        metadata_type=metadata_type,
+        httpc_params=httpc_params
     )
     tc.start()
 
@@ -105,7 +98,6 @@ def get_or_create_trust_chain(
     trust_anchor: str,
     httpc_params: dict = HTTPC_PARAMS,
     required_trust_marks: list = [],
-    metadata_type: str = "openid_provider",
     force: bool = False,
 ) -> Union[TrustChain, None]:
     """
@@ -161,8 +153,7 @@ def get_or_create_trust_chain(
         trust_chain = trust_chain_builder(
             subject=subject,
             trust_anchor=ta_conf,
-            required_trust_marks=required_trust_marks,
-            metadata_type=metadata_type
+            required_trust_marks=required_trust_marks
         )
         if not trust_chain or not trust_chain.is_valid:
             raise InvalidTrustchain(
@@ -172,13 +163,12 @@ def get_or_create_trust_chain(
         elif not trust_chain.final_metadata:
             raise TrustchainMissingMetadata(
                 f"Trust chain for subject {subject} and "
-                f"trust_anchor {trust_anchor} doesn't have any "
-                f"metadata of type '{metadata_type}'"
+                f"trust_anchor {trust_anchor} doesn't have any metadata"
             )
         dumps_statements_from_trust_chain_to_db(trust_chain)
 
         tc = TrustChain.objects.filter(
-            sub=subject, type=metadata_type, trust_anchor__sub=trust_anchor
+            sub=subject, trust_anchor__sub=trust_anchor
         )
 
         data = dict(
@@ -201,7 +191,6 @@ def get_or_create_trust_chain(
         else:
             tc = TrustChain.objects.create(
                 sub=subject,
-                type=metadata_type,
                 trust_anchor=fetched_trust_anchor,
                 **data,
             )

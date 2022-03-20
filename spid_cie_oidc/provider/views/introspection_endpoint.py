@@ -29,7 +29,7 @@ class IntrospectionEndpoint(OpBase, View):
                 client_id,
                 request.POST['client_assertion']
             )
-        except ValidationException as e:
+        except ValidationException:
             return JsonResponse(
                 {
                     "error": "invalid_request",

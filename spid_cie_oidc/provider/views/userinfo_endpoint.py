@@ -40,7 +40,7 @@ class UserInfoEndpoint(OpBase, View):
 
         rp_tc = TrustChain.objects.filter(
             sub=token.session.client_id,
-            type="openid_relying_party",
+            metadata__openid_relying_party__isnull=False,
             is_active=True
         ).first()
         if not rp_tc:
@@ -63,5 +63,5 @@ class UserInfoEndpoint(OpBase, View):
         jws = create_jws(jwt, issuer.jwks[0])
 
         # encrypt the data
-        jwe = encrypt_dict(jws, rp_tc.metadata["jwks"]["keys"][0])
+        jwe = encrypt_dict(jws, rp_tc.metadata['openid_relying_party']["jwks"]["keys"][0])
         return HttpResponse(jwe, content_type="application/jose")

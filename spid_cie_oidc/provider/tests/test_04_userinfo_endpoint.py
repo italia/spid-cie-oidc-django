@@ -92,9 +92,8 @@ class UserInfoEndpointTest(TestCase):
         headers = self.define_db()
         self.trust_chain = TrustChain.objects.create(
             sub=self.RP_SUB,
-            type="openid_relying_party",
             exp=datetime_from_timestamp(exp_from_now(33)),
-            metadata=RP_METADATA["openid_relying_party"],
+            metadata=RP_METADATA,
             status="valid",
             trust_anchor=self.ta_fes,
             is_active=True,

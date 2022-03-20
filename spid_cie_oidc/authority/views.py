@@ -14,6 +14,7 @@ from django.urls import reverse
 from spid_cie_oidc.authority.models import (
     FederationDescendant,
     FederationEntityAssignedProfile,
+    StaffToken,
     get_first_self_trust_anchor
 )
 from spid_cie_oidc.authority.settings import MAX_ENTRIES_PAGE
@@ -139,6 +140,7 @@ def resolve_entity_statement(request, format: str = "jose"):
     Metadata if it's valid
     we avoid any possibility to trigger a new Metadata discovery if
     """
+
     if not all((request.GET.get("sub", None), request.GET.get("anchor", None))):
         raise Http404("sub and anchor parameters are REQUIRED.")
 
@@ -152,23 +154,13 @@ def resolve_entity_statement(request, format: str = "jose"):
         trust_anchor__sub=request.GET["anchor"],
         is_active=True
     )
-    entity = TrustChain.objects.filter(**_q)
 
-    if not entity:
-        raise Http404("entity not found.")
-    elif entity and request.GET.get("type", None):
-        _q["type"] = request.GET["type"]
-        typed_entity = entity.filter(type=request.GET["type"]).first()
-        if not typed_entity:
-            logger.warning(
-                f'Resolve statement endpoint not found for {request.GET["sub"]} '
-                f'with metadata_type {request.GET["type"]}.'
-            )
-            raise Http404("entity metadata type not found.")
-        else:
-            entity = typed_entity
+    # gets the cached one
+    entity = TrustChain.objects.filter(**_q).first()
 
-    try:
+    # only with privileged actors with staff token can triggers a new trust chain
+    staff_token_head = request.headers.get("Authorization", None)
+    if staff_token_head:
         tc_data = dict(
             httpc_params=HTTPC_PARAMS,
             # TODO
@@ -176,13 +168,19 @@ def resolve_entity_statement(request, format: str = "jose"):
             subject=_q["sub"],
             trust_anchor=_q["trust_anchor__sub"]
         )
-        if _q.get('type', None):
-            tc_data["metadata_type"] = _q['type']
-        entity = get_or_create_trust_chain(**tc_data)
-    except Exception as e:
-        logger.error(
-            f"Failed Trust Chain on resolve statement endpoint: {e}"
-        )
+
+        staff_token = StaffToken.objects.filter(
+            token = staff_token_head
+        ).first()
+        if staff_token.is_valid:
+            try:
+                entity = get_or_create_trust_chain(**tc_data)
+            except Exception as e:
+                logger.error(
+                    f"Failed Trust Chain creation with {tc_data}: {e}"
+                )
+
+    if not entity:
         raise Http404("entity not found.")
 
     res = {

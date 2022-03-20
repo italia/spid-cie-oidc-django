@@ -4,6 +4,7 @@ from django.utils.translation import gettext as _
 
 from spid_cie_oidc.entity.abstract_models import TimeStampedModel
 from spid_cie_oidc.entity.validators import validate_public_jwks
+from spid_cie_oidc.entity.models import ENTITY_TYPES
 
 
 class OnBoardingRegistration(TimeStampedModel):
@@ -32,6 +33,14 @@ class OnBoardingRegistration(TimeStampedModel):
         help_text=_("Public jwks of the Entities"),
         default=list,
         validators=[validate_public_jwks],
+    )
+
+    type = models.CharField(
+        max_length=33,
+        blank=True,
+        default="openid_relying_party",
+        choices=[(i, i) for i in ENTITY_TYPES],
+        help_text=_("OpenID Connect Federation entity type"),
     )
 
     status = models.CharField(

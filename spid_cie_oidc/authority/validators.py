@@ -3,6 +3,7 @@ import logging
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from spid_cie_oidc.entity.statements import (
+    OIDCFED_FEDERATION_WELLKNOWN_URL,
     get_entity_configurations,
     EntityConfiguration,
 )
@@ -32,9 +33,18 @@ def validate_entity_configuration(value):
             f"Failed to fetch Entity Configuration for {value}: {e}"
         )
     if not jwt:
-        raise ValidationError("Entity Configuration is Null")
-    ec = EntityConfiguration(jwt, httpc_params=HTTPC_PARAMS)
-    ec.validate_by_itself()
+        raise ValidationError(
+            "failed to get a valid Entity Configuration from "
+            f"{value}{OIDCFED_FEDERATION_WELLKNOWN_URL}"
+        )
+
+    try:
+        ec = EntityConfiguration(jwt, httpc_params=HTTPC_PARAMS)
+        ec.validate_by_itself()
+    except Exception as e:
+        raise ValidationError(
+            f"Failed to fetch Entity Configuration for {value}: {e}"
+        )
 
     authority_hints = ec.payload.get("authority_hints", [])
     if not authority_hints:
@@ -52,3 +62,4 @@ def validate_entity_configuration(value):
             f"{', '.join(OIDCFED_TRUST_ANCHORS) or []} in "
             f"its authority_hints claim. It has: {authority_hints}"
         )
+    return ec

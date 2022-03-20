@@ -89,8 +89,8 @@ class Command(BaseCommand):
             try:
                 tc = get_or_create_trust_chain(
                     subject=rp_sub,
-                    trust_anchor=settings.OIDCFED_TRUST_ANCHOR,
-                    metadata_type="openid_relying_party",
+                    trust_anchor=settings.OIDCFED_DEFAULT_TRUST_ANCHOR,
+                    metadata__relying_party__is_null=False,
                     httpc_params=settings.HTTPC_PARAMS,
                     required_trust_marks=getattr(
                         settings, "OIDCFED_REQUIRED_TRUST_MARKS", []

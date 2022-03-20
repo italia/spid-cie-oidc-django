@@ -44,11 +44,6 @@ pip install -e .
 pip install design-django-theme
 ````
 
-# Install pydantic email validator
-````
- pip install pydantic[email]
-````
-
 In `examples/` folder you have three demostrations projects:
 
  - federation_authority
@@ -62,7 +57,6 @@ cd examples/$project_name
 cp $project_name/settingslocal.py.example $project_name/settingslocal.py
 
 # then customize (optional) $project_name/settingslocal.py
-# add OIDCFED_DEFAULT_TRUST_ANCHOR = "http://127.0.0.1:8000"
 
 ./manage.py migrate
 
@@ -73,6 +67,6 @@ cp $project_name/settingslocal.py.example $project_name/settingslocal.py
 ./manage.py createsuperuser
 
 # run the web server
-./manage.py runserver
+./manage.py runserver 0.0.0.0:8000
 ````
 Point your web browser to `http://127.0.0.1:8000/admin` to enter in the management interface.

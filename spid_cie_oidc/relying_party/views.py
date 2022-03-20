@@ -117,7 +117,6 @@ class SpidCieOidcRp:
                 trust_anchor=trust_anchor,
                 # TODO - not sure that it's required for a RP that fetches OP directly from TA
                 # required_trust_marks = [],
-                metadata_type="openid_provider",
                 force=True,
             )
         return tc
@@ -129,7 +128,7 @@ class SpidCieOidcRp:
         except ValidationError as e:
             logger.error(
                 f"{error_description} "
-                f"for {request.get('client_id', None)}: {e} "
+                f"for {request.get('client_id', None)}: {e}"
             )
             raise ValidationException()
 
@@ -161,7 +160,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
                 "error": "request rejected",
                 "error_description": str(exc.args),
             }
-            return render(request, self.error_template, context)
+            return render(request, self.error_template, context, status=404)
 
         except Exception as exc:
             context = {
@@ -170,13 +169,13 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             }
             return render(request, self.error_template, context)
 
-        provider_metadata = tc.metadata
+        provider_metadata = tc.metadata.get('openid_provider', None)
         if not provider_metadata:
             context = {
                 "error": "request rejected",
                 "error_description": _("provider metadata not found"),
             }
-            return render(request, self.error_template, context)
+            return render(request, self.error_template, context, status=404)
 
         entity_conf = FederationEntityConfiguration.objects.filter(
             entity_type="openid_relying_party",
@@ -189,18 +188,21 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
                 "error": "request rejected",
                 "error_description": _("Missing configuration."),
             }
-            return render(request, self.error_template, context)
+            return render(request, self.error_template, context, status=404)
 
         client_conf = entity_conf.metadata["openid_relying_party"]
+
         if not (
-            provider_metadata.get("jwks_uri", None)
-            or provider_metadata.get("jwks", None)
+            # TODO
+            # provider_metadata.get("jwks_uri", None)
+            # or
+            provider_metadata.get("jwks", None)
         ):
             context = {
                 "error": "request rejected",
                 "error_description": _("Invalid provider Metadata."),
             }
-            return render(request, self.error_template, context)
+            return render(request, self.error_template, context, status=404)
 
         if provider_metadata.get("jwks", None):
             jwks_dict = provider_metadata["jwks"]
@@ -346,7 +348,7 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
                 "authn_response",
                 "Authn response object validation failed"
             )
-        except ValidationException as e:
+        except ValidationException:
             return JsonResponse(
                 {
                     "error": "invalid_request",
@@ -414,7 +416,7 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
                     "token_response",
                     "Token response object validation failed"
                 )
-            except ValidationException as e:
+            except ValidationException:
                 return JsonResponse(
                     {
                         "error": "invalid_request",
@@ -589,7 +591,8 @@ def oidc_rpinitiated_logout(request):
 
 def oidc_rp_landing(request):
     trust_chains = TrustChain.objects.filter(
-        type="openid_provider", is_active=True
+        metadata__openid_provider__isnull=False,
+        is_active=True
     )
     spid_providers = []
     cie_providers = []

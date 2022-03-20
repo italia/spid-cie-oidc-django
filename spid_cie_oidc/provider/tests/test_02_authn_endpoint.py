@@ -2,7 +2,7 @@ from copy import deepcopy
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
-from spid_cie_oidc.authority.tests.settings import RP_METADATA, rp_onboarding_data, RP_METADATA_JWK1, RP_METADATA_JWK1_pub
+from spid_cie_oidc.authority.tests.settings import RP_METADATA, RP_METADATA_JWK1, rp_onboarding_data
 from django.utils import timezone
 
 from spid_cie_oidc.entity.jwtse import create_jws, unpad_jwt_payload, verify_jws
@@ -69,9 +69,8 @@ class AuthnRequestTest(TestCase):
         )
         self.trust_chain = TrustChain.objects.create(
             sub=RP_SUB,
-            type="openid_relying_party",
             exp=datetime_from_timestamp(exp_from_now(33)),
-            metadata=RP_METADATA["openid_relying_party"],
+            metadata=RP_METADATA,
             status="valid",
             trust_anchor=self.ta_fes,
             is_active=True,
@@ -271,7 +270,7 @@ class AuthnRequestTest(TestCase):
     @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB)
     def test_auth_request_invalid_jwk(self):
         jws = create_jws(self.REQUEST_OBJECT_PAYLOAD, RP_METADATA_JWK1)
-        self.trust_chain.metadata["jwks"]["keys"][0][
+        self.trust_chain.metadata['openid_relying_party']["jwks"]["keys"][0][
             "kid"
         ] = "31ALfVXx9dcAMMHCVvh42qLTlanBL_r6BTnD5uMDzFT"
         self.trust_chain.save()
@@ -281,7 +280,7 @@ class AuthnRequestTest(TestCase):
         self.assertTrue(res.status_code == 302)
         self.assertIn("error=invalid_request", res.url)
         self.assertIn("state", res.url)
-        self.trust_chain.metadata["jwks"]["keys"][0][
+        self.trust_chain.metadata['openid_relying_party']["jwks"]["keys"][0][
             "kid"
         ] = RP_METADATA_JWK1['kid']
         self.trust_chain.save()

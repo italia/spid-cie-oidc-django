@@ -132,6 +132,7 @@ dmypy.json
 */logs/*
 examples/federation_authority/logs/
 examples/provider/logs/
+examples/relying_party/logs/
 
 examples/federation_authority/federation_authority/settingslocal.py
 examples/relying_party/relying_party/settingslocal.py

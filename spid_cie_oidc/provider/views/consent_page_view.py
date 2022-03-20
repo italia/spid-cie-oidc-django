@@ -1,4 +1,5 @@
 import logging
+from django.core.paginator import Paginator
 import urllib.parse
 
 from django.contrib.auth import logout
@@ -6,15 +7,15 @@ from django.http import (
     HttpResponseForbidden,
     HttpResponseRedirect,
 )
-from django.shortcuts import render
-from django.urls import reverse
+from django.shortcuts import redirect, render
 from django.utils.translation import gettext as _
 from django.views import View
 from spid_cie_oidc.entity.models import (
     TrustChain
 )
 from spid_cie_oidc.provider.forms import ConsentPageForm
-from spid_cie_oidc.provider.models import IssuedToken
+from spid_cie_oidc.provider.models import IssuedToken, OidcSession
+from spid_cie_oidc.provider.settings import OIDCFED_PROVIDER_HISTORY_PER_PAGE
 
 from . import OpBase
 
@@ -37,7 +38,7 @@ class ConsentPageView(OpBase, View):
 
         tc = TrustChain.objects.filter(
             sub=session.client_id,
-            type="openid_relying_party",
+            metadata__openid_relying_party__isnull=False,
             is_active = True
         ).first()
 
@@ -56,7 +57,8 @@ class ConsentPageView(OpBase, View):
             "client_organization_name": tc.metadata.get(
                 "client_name", session.client_id
             ),
-            "user_claims": sorted(set(i18n_user_claims),)
+            "user_claims": sorted(set(i18n_user_claims),),
+            "redirect_uri": session.authz_request["redirect_uri"]
         }
         return render(request, self.template, context)
 
@@ -91,13 +93,56 @@ class ConsentPageView(OpBase, View):
 
 
 def oidc_provider_not_consent(request):
+    redirect_uri = request.GET.get("redirect_uri")
     logout(request)
-    urlrp = reverse("spid_cie_rp_callback")
     kwargs = dict(
         error = "invalid_request",
         error_description = _(
             "Authentication request rejected by user"
         )
     )
-    url = f'{urlrp}?{urllib.parse.urlencode(kwargs)}'
+    url = f'{redirect_uri}?{urllib.parse.urlencode(kwargs)}'
     return HttpResponseRedirect(url)
+
+
+class UserAccessHistoryView(OpBase, View):
+
+    def get(self, request, *args, **kwargs):
+        try:
+            session = self.check_session(request)
+        except Exception:
+            logger.warning("Invalid session on Access History page")
+            return HttpResponseForbidden()
+        user_access_history = OidcSession.objects.filter(
+            user_uid=session.user_uid,
+        ).exclude(auth_code=session.auth_code)
+        paginator = Paginator(
+            user_access_history,
+            OIDCFED_PROVIDER_HISTORY_PER_PAGE
+        )
+        page = request.GET.get("page", 1)
+        history = paginator.get_page(page)
+        context = {
+            "history": history,
+            "user": request.user
+        }
+        return render(request, "op_user_history.html", context)
+
+
+class RevokeSessionView(OpBase, View):
+
+    def get(self, request, *args, **kwargs):
+        try:
+            self.check_session(request)
+        except Exception:
+            logger.warning("Invalid session on revoke page")
+            return HttpResponseForbidden()
+
+        if request.GET.get("auth_code"):
+            auth_code = request.GET["auth_code"]
+            session_to_revoke = OidcSession.objects.filter(
+                auth_code=auth_code,
+                user=request.user
+            ).first()
+            session_to_revoke.revoke(destroy_session=False)
+        return redirect("oidc_provider_access_history")

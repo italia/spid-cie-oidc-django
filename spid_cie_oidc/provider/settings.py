@@ -15,6 +15,7 @@ from spid_cie_oidc.onboarding.schemas.introspection_request import Introspection
 from spid_cie_oidc.onboarding.schemas.revocation_request import RevocationRequest
 from spid_cie_oidc.onboarding.schemas.token_requests import TokenAuthnCodeRequest, TokenRefreshRequest
 
+
 OIDCFED_PROVIDER_PROFILES_MEDIA = getattr(
     settings,
     "OIDCFED_PROVIDER_PROFILES_MEDIA",
@@ -107,7 +108,8 @@ OIDCFED_PROVIDER_PROFILES = getattr(
 OIDCFED_PROVIDER_SALT = getattr(settings, "OIDCFED_PROVIDER_SALT", "CHANGEME")
 OIDCFED_DEFAULT_PROVIDER_PROFILE = getattr(settings, "OIDCFED_PROVIDER_PROFILE", "spid")
 
-OIDCFED_PROVIDER_MAX_REFRESH = 1
+OIDCFED_PROVIDER_MAX_REFRESH = getattr(settings, "OIDCFED_PROVIDER_MAX_REFRESH", 1)
+OIDCFED_PROVIDER_HISTORY_PER_PAGE = getattr(settings, "OIDCFED_PROVIDER_HISTORY_PER_PAGE", 50)
 
 # lifetime of validity of an auth code
 OIDCFED_PROVIDER_AUTH_CODE_MAX_AGE = getattr(

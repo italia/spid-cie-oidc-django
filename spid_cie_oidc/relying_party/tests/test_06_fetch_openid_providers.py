@@ -26,9 +26,8 @@ def create_tc():
     )
     return TrustChain.objects.create(
         sub=op_conf["sub"],
-        type="openid_provider",
         exp=EXP,
-        metadata=op_conf["metadata"]["openid_provider"],
+        metadata=op_conf["metadata"],
         status="valid",
         trust_anchor=ta_fes,
         is_active=True,
