@@ -141,8 +141,6 @@ def resolve_entity_statement(request, format: str = "jose"):
     Metadata if it's valid
     we avoid any possibility to trigger a new Metadata discovery if
     """
-    if not request.GET.get("type", None):
-        return HttpResponseBadRequest("type must be specified")
 
     if not all((request.GET.get("sub", None), request.GET.get("anchor", None))):
         raise Http404("sub and anchor parameters are REQUIRED.")
@@ -155,8 +153,7 @@ def resolve_entity_statement(request, format: str = "jose"):
     _q = dict(
         sub=request.GET["sub"],
         trust_anchor__sub=request.GET["anchor"],
-        is_active=True,
-        type = request.GET["type"]
+        is_active=True
     )
 
     # gets the cached one
@@ -170,8 +167,7 @@ def resolve_entity_statement(request, format: str = "jose"):
             # TODO
             # required_trust_marks = [],
             subject=_q["sub"],
-            trust_anchor=_q["trust_anchor__sub"],
-            metadata_type = _q['type']
+            trust_anchor=_q["trust_anchor__sub"]
         )
 
         staff_token = StaffToken.objects.filter(

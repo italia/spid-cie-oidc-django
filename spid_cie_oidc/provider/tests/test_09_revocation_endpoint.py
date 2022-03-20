@@ -75,9 +75,8 @@ class RevocationEndponitTest(TestCase):
 
         TrustChain.objects.create(
             sub=RP_CONF_AS_JSON["sub"],
-            type="openid_relying_party",
             exp=datetime_from_timestamp(exp_from_now(33)),
-            metadata=RP_CONF_AS_JSON["metadata"]["openid_relying_party"],
+            metadata=RP_CONF_AS_JSON["metadata"],
             status="valid",
             trust_anchor=ta_fes,
             is_active=True,

@@ -55,8 +55,8 @@ class FederationEntityConfigurationAdmin(admin.ModelAdmin):
 
 @admin.register(TrustChain)
 class TrustChainAdmin(admin.ModelAdmin):
-    list_display = ("sub", "type", "exp", "modified", "is_valid")
-    list_filter = ("exp", "modified", "is_active", "type")
+    list_display = ("sub", "exp", "modified", "is_valid")
+    list_filter = ("exp", "modified", "is_active")
     search_fields = ("sub",)
     readonly_fields = (
         "created",

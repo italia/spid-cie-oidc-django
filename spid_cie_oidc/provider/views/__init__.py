@@ -54,7 +54,7 @@ class OpBase:
 
         self.is_a_replay_authz()
         rp_trust_chain = TrustChain.objects.filter(
-            type="openid_relying_party",
+            metadata__openid_relying_party__isnull=False,
             sub=self.payload["iss"],
             trust_anchor__sub=settings.OIDCFED_DEFAULT_TRUST_ANCHOR
         ).first()
@@ -71,7 +71,6 @@ class OpBase:
             rp_trust_chain = get_or_create_trust_chain(
                 subject=self.payload["iss"],
                 trust_anchor=settings.OIDCFED_DEFAULT_TRUST_ANCHOR,
-                metadata_type="openid_relying_party",
                 httpc_params=HTTPC_PARAMS,
                 required_trust_marks=getattr(
                     settings, "OIDCFED_REQUIRED_TRUST_MARKS", []
@@ -87,7 +86,7 @@ class OpBase:
                 )
                 raise Exception()
 
-        jwks = rp_trust_chain.metadata["jwks"]["keys"]
+        jwks = rp_trust_chain.metadata['openid_relying_party']["jwks"]["keys"]
         jwk = self.find_jwk(header, jwks)
         if not jwk:
             state = self.payload.get("state", "")
@@ -162,7 +161,7 @@ class OpBase:
             raise Exception()
 
         tc = TrustChain.objects.get(sub=client_id, is_active=True)
-        jwk = self.find_jwk(head, tc.metadata['jwks']['keys'])
+        jwk = self.find_jwk(head, tc.metadata['openid_relying_party']['jwks']['keys'])
         verify_jws(client_assertion, jwk)
 
         return True

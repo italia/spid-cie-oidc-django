@@ -39,7 +39,7 @@ class ConsentPageView(OpBase, View):
 
         tc = TrustChain.objects.filter(
             sub=session.client_id,
-            type="openid_relying_party",
+            metadata__openid_relying_party__isnull=False,
             is_active = True
         ).first()
 

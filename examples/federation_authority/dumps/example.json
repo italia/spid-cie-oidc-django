@@ -928,7 +928,6 @@
     "modified": "2022-03-01T17:49:22.983Z",
     "sub": "http://127.0.0.1:8000/oidc/op/",
     "trust_anchor": 107,
-    "type": "openid_provider",
     "exp": "2022-03-18T17:05:57Z",
     "iat": "2022-02-25T20:24:45.840Z",
     "chain": [
@@ -1261,6 +1260,8 @@
       ]
     ],
     "metadata": {
+        "openid_provider":
+    {
       "authorization_endpoint": "http://127.0.0.1:8000/oidc/op/authorization",
       "revocation_endpoint": "http://127.0.0.1:8000/oidc/op/revocation/",
       "id_token_encryption_alg_values_supported": [
@@ -1409,7 +1410,7 @@
         "ES384",
         "ES512"
       ]
-    },
+    }},
     "trust_marks": [],
     "parties_involved": [
       "http://127.0.0.1:8000/oidc/op/",
@@ -1429,7 +1430,6 @@
     "modified": "2022-02-26T19:53:36.683Z",
     "sub": "http://127.0.0.1:8000/oidc/rp/",
     "trust_anchor": 107,
-    "type": "openid_relying_party",
     "exp": "2022-03-18T17:05:57Z",
     "iat": "2022-02-26T19:53:36.683Z",
     "chain": [
@@ -1586,6 +1586,7 @@
       ]
     ],
     "metadata": {
+        "openid_relying_party": {
       "application_type": "web",
       "client_id": "http://127.0.0.1:8000/oidc/rp/",
       "client_registration_types": [
@@ -1617,7 +1618,7 @@
         "code"
       ],
       "subject_type": "pairwise"
-    },
+    }},
     "trust_marks": [],
     "parties_involved": [
       "http://127.0.0.1:8000/oidc/rp/",
