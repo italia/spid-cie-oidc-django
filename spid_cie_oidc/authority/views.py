@@ -7,7 +7,6 @@ from django.core.paginator import Paginator
 from django.http import (
     Http404,
     HttpResponse,
-    HttpResponseBadRequest,
     JsonResponse
 )
 from django.urls import reverse
@@ -180,7 +179,7 @@ def resolve_entity_statement(request, format: str = "jose"):
                 logger.error(
                     f"Failed Trust Chain creation with {tc_data}: {e}"
                 )
-                
+
     if not entity:
         raise Http404("entity not found.")
 

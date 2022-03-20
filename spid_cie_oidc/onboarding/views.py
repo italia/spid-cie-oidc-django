@@ -293,7 +293,7 @@ def onboarding_apply_policy(request):
                 "md": request.GET['md'],
                 "policy": request.GET['policy'],
                 "result": ""
-            }
+        }
         try:
             md = json.loads(request.GET['md'])
             policy = json.loads(request.GET['policy'])

@@ -195,7 +195,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
         if not (
             # TODO
             # provider_metadata.get("jwks_uri", None)
-            # or 
+            # or
             provider_metadata.get("jwks", None)
         ):
             context = {
@@ -591,7 +591,7 @@ def oidc_rpinitiated_logout(request):
 
 def oidc_rp_landing(request):
     trust_chains = TrustChain.objects.filter(
-        metadata__openid_provider__isnull=False, 
+        metadata__openid_provider__isnull=False,
         is_active=True
     )
     spid_providers = []
