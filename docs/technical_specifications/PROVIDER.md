@@ -1,4 +1,4 @@
-# __Openid Connect Provider__ Identity Provider with additional test suite.
+# __Openid Connect Provider__ Identity Provider.
 
 A SPID/CIE implementation of a OpenID Connect Provider fully compliant to
 AgID SPID guidelines and CIE id guidelines.
@@ -85,12 +85,12 @@ OIDCFED_PROVIDER_MAX_REFRESH = 1
 Example
 ````
 OIDCFED_PROVIDER_PROFILES_ID_TOKEN_CLAIMS = dict(
-    spid = dict(),
+    spid = dict(), # means that SPID doesn't support user claims in the id_token
     cie = OIDCFED_PROVIDER_ATTRIBUTES_CIE_MAP
 )
 ````
 
--`OIDCFED_PROVIDER_SALT`, salt used in the subject identifier hash function.
+-`OIDCFED_PROVIDER_SALT`, salt used in the hash function used to create the subject identifier of the resource owner (the user).
  
 Example
 ````

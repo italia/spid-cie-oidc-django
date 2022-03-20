@@ -66,6 +66,7 @@ Read the [setup documentation](docs/SETUP.md) to get started.
 
 ## Docker compose
 
+Install Docker using the packages distributed from the official website and the following tools.
 ````
 apt install jq
 pip install docker-compose
@@ -115,18 +116,18 @@ Configure a proper DNS resolution for trust-anchor.org. In GNU/Linux we can conf
 127.0.0.1   localhost  trust-anchor.org
 ````
 
-Point your web browser to `http://trust-anchor.org/oidc/rp/landing` and do your first oidc authentication.
+Point your web browser to `http://trust-anchor.org:8000/oidc/rp/landing` and do your first oidc authentication.
 
 
 ## Usage
 
-The demo propose a small federation composed by the following entities:
+The demo proposes a small federation composed by the following entities:
 
  - Federation Authority, acts as trust anchor and onboarding system. It's available at `http://127.0.0.1:8000/`. It has also an embedded Spid provider and a embedded Relying Party available at `/oidc/rp/landing`.
  - OpenID Relying Party, available at `http://127.0.0.1:8001/`
- - OpenID Provider, available at `http://127.0.0.1:8002/`
+ - CIE OpenID Provider, available at `http://127.0.0.1:8002/`
 
-In the docker example we have only the Federation Authority.
+In the docker example we have only the Federation Authority with an embedded SPID OP and a RP.
 
 Examples Users and Passwords:
 
