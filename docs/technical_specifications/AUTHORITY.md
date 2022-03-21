@@ -38,6 +38,50 @@ Lists all the descendant entities.
  - `http://127.0.0.1:8000/list/?type=openid_provider`
 
 
+
+#### Advanced entity listing endpoint
+
+The advanced entity listing endpoint extends Listings endpoint.
+
+The request MUST be an HTTP request using the GET method, an entity needs to know only the endpoint url.
+
+Example of Advanced listing request: `http://127.0.0.1:8000/advanced_entity_listing/`
+
+
+The response is a json object (content type: "application/json") in which for each entity the only REQUIRED claim is iat.
+The entity's result set must have a descendant ordering with higher iat on top.
+
+A response example: 
+````
+{
+    "iss": "https://registry.spid.gov.it/",
+    "iat": 1620050972,
+    "entities": [
+        {
+            "https://rp.example.it/spid/": {
+            "iat": 1588455866,
+            },
+            {
+            "https://rp.another.it/spid/": {
+            "iat": 1588455856,
+            },
+            {
+            "https://rp.it/spid/": {
+            "iat": 1588355866,
+            },
+        ... # many other entries
+    ],
+    "page": 1,
+    "total_pages": 2,
+    "total_entries": 189,
+    "next_page_path": "/federation_adv_list/?page=2",
+    "prev_page_path": ""
+}
+```` 
+
+
+
+
 #### Resolve entity statement
 
 An entity MAY use the resolve endpoint to fetch resolved metadata and trust marks for an entity as seen/trusted by the resolver. 
