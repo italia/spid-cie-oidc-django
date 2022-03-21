@@ -48,7 +48,7 @@ The request MUST be an HTTP request using the GET method, an entity needs to kno
 Example of Advanced listing request: `http://127.0.0.1:8000/advanced_entity_listing/`
 
 
-The response is a json object in which for each entity the only REQUIRED claim is iat.
+The response is a json object (content type: "application/json") in which for each entity the only REQUIRED claim is iat.
 The entity's result set must have a descendant ordering with higher iat on top.
 
 A response example: 
