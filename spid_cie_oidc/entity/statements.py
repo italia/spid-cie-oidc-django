@@ -327,9 +327,7 @@ class EntityConfiguration:
             try:
                 ec = self.__class__(jwt, httpc_params=self.httpc_params)
             except Exception as e:
-                logger.warning(
-                    f"Get Entity Configuration Failed for {jwt}: {e}"
-                )
+                logger.warning(f"Get Entity Configuration for {jwt}: {e}")
                 continue
 
             if ec.validate_by_itself():
@@ -338,6 +336,13 @@ class EntityConfiguration:
                 target = self.failed_superiors
 
             target[ec.payload["sub"]] = ec
+
+        for ahints in authority_hints:
+            if not self.verified_superiors.get(ahints, None):
+                logger.warning(
+                    f"{ahints} is not available, missing or not valid authority hint"
+                )
+                continue
 
         return self.verified_superiors
 
