@@ -4,7 +4,7 @@
   "pk": 1,
   "fields": {
     "password": "pbkdf2_sha256$320000$FIyN55FCASEozeA1pWYRm1$8QzndgdnJkC7OPhEGPVHrrAxsa5KDoydMkl4zgrn0fs=",
-    "last_login": "2022-03-19T22:44:31.621Z",
+    "last_login": "2022-03-21T09:35:18.724Z",
     "is_superuser": true,
     "username": "admin",
     "is_staff": true,
@@ -66,7 +66,7 @@
   "pk": 1,
   "fields": {
     "created": "2022-03-16T09:48:07.724Z",
-    "modified": "2022-03-19T22:46:17.178Z",
+    "modified": "2022-03-21T09:30:20.578Z",
     "uuid": "dca85f48-0dbe-4b35-b74d-9ed42f9d00a7",
     "sub": "http://127.0.0.1:8002/oidc/op/",
     "default_exp": 2880,
@@ -163,7 +163,7 @@
           "openid",
           "offline_access"
         ],
-        "logo_uri": "http://127.0.0.1:8002/static/image/logo-cie-png",
+        "logo_uri": "http://127.0.0.1:8002/static/images/logo-cie.png",
         "organization_name": "SPID OIDC identity provider",
         "op_policy_uri": "http://127.0.0.1:8002/oidc/op/en/website/legal-information/",
         "request_parameter_supported": true,
@@ -242,6 +242,403 @@
       }
     },
     "constraints": {},
+    "is_active": true
+  }
+},
+{
+  "model": "spid_cie_oidc_entity.fetchedentitystatement",
+  "pk": 1,
+  "fields": {
+    "created": "2022-03-21T09:35:07.608Z",
+    "modified": "2022-03-21T09:35:07.608Z",
+    "iss": "http://127.0.0.1:8000/",
+    "sub": "http://127.0.0.1:8000/",
+    "exp": "2022-03-21T10:08:07Z",
+    "iat": "2022-03-21T09:35:07Z",
+    "statement": {
+      "exp": 1647857287,
+      "iat": 1647855307,
+      "iss": "http://127.0.0.1:8000/",
+      "sub": "http://127.0.0.1:8000/",
+      "jwks": {
+        "keys": [
+          {
+            "kty": "RSA",
+            "e": "AQAB",
+            "n": "3i5vV-_4nF_ES1BU86Zf2Bj6SiyGdGM3Izc2GrvtknQQCzpT3QlGv2d_wMrzVTS7PmZlvjyi2Qceq8EmEwbsIa5R8G57fxSpE0HL33giJfhpe8ublY4hGb6tEqSbHiFcgiF4T-Ft_98pz4nZtKTcesMZ8CcDUd9ibaLXGM4vaiUhSt76X1qOzqJHqAKMG-9VGm5DD2GSe7cu1yvaMCMPU6DGOqHYoBSkSbsnLelsRg6sINh6mZfb39odTJlOMFGhlg665702kc_iqqxd8jpyOh94vBagmJB4EQqI1qEte8sTMeBkVRpSLDoV5uNTlp2ZdINu1SakmaHB3WeStwC1lw",
+            "kid": "FifYx03bnosD8m6gYQIfNHNP9cM_Sam9Tc5nLloIIrc"
+          }
+        ]
+      },
+      "metadata": {
+        "federation_entity": {
+          "contacts": [
+            "ops@localhost"
+          ],
+          "federation_fetch_endpoint": "http://127.0.0.1:8000/fetch/",
+          "federation_resolve_endpoint": "http://127.0.0.1:8000/resolve/",
+          "federation_status_endpoint": "http://127.0.0.1:8000/trust_mark_status/",
+          "homepage_uri": "http://127.0.0.1:8000",
+          "name": "example TA",
+          "federation_list_endpoint": "http://127.0.0.1:8000/list/"
+        }
+      },
+      "trust_marks_issuers": {
+        "https://www.spid.gov.it/certification/rp/public": [
+          "https://registry.spid.agid.gov.it",
+          "https://public.intermediary.spid.it"
+        ],
+        "https://www.spid.gov.it/certification/rp/private": [
+          "https://registry.spid.agid.gov.it",
+          "https://private.other.intermediary.it"
+        ],
+        "https://sgd.aa.it/onboarding": [
+          "https://sgd.aa.it"
+        ]
+      },
+      "constraints": {
+        "max_path_length": 1
+      }
+    },
+    "jwt": "eyJhbGciOiJSUzI1NiIsImtpZCI6IkZpZll4MDNibm9zRDhtNmdZUUlmTkhOUDljTV9TYW05VGM1bkxsb0lJcmMiLCJ0eXAiOiJlbnRpdHktc3RhdGVtZW50K2p3dCJ9.eyJleHAiOjE2NDc4NTcyODcsImlhdCI6MTY0Nzg1NTMwNywiaXNzIjoiaHR0cDovLzEyNy4wLjAuMTo4MDAwLyIsInN1YiI6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC8iLCJqd2tzIjp7ImtleXMiOlt7Imt0eSI6IlJTQSIsImUiOiJBUUFCIiwibiI6IjNpNXZWLV80bkZfRVMxQlU4NlpmMkJqNlNpeUdkR00zSXpjMkdydnRrblFRQ3pwVDNRbEd2MmRfd01yelZUUzdQbVpsdmp5aTJRY2VxOEVtRXdic0lhNVI4RzU3ZnhTcEUwSEwzM2dpSmZocGU4dWJsWTRoR2I2dEVxU2JIaUZjZ2lGNFQtRnRfOThwejRuWnRLVGNlc01aOENjRFVkOWliYUxYR000dmFpVWhTdDc2WDFxT3pxSkhxQUtNRy05VkdtNUREMkdTZTdjdTF5dmFNQ01QVTZER09xSFlvQlNrU2JzbkxlbHNSZzZzSU5oNm1aZmIzOW9kVEpsT01GR2hsZzY2NTcwMmtjX2lxcXhkOGpweU9oOTR2QmFnbUpCNEVRcUkxcUV0ZThzVE1lQmtWUnBTTERvVjV1TlRscDJaZElOdTFTYWttYUhCM1dlU3R3QzFsdyIsImtpZCI6IkZpZll4MDNibm9zRDhtNmdZUUlmTkhOUDljTV9TYW05VGM1bkxsb0lJcmMifV19LCJtZXRhZGF0YSI6eyJmZWRlcmF0aW9uX2VudGl0eSI6eyJjb250YWN0cyI6WyJvcHNAbG9jYWxob3N0Il0sImZlZGVyYXRpb25fZmV0Y2hfZW5kcG9pbnQiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvZmV0Y2gvIiwiZmVkZXJhdGlvbl9yZXNvbHZlX2VuZHBvaW50IjoiaHR0cDovLzEyNy4wLjAuMTo4MDAwL3Jlc29sdmUvIiwiZmVkZXJhdGlvbl9zdGF0dXNfZW5kcG9pbnQiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvdHJ1c3RfbWFya19zdGF0dXMvIiwiaG9tZXBhZ2VfdXJpIjoiaHR0cDovLzEyNy4wLjAuMTo4MDAwIiwibmFtZSI6ImV4YW1wbGUgVEEiLCJmZWRlcmF0aW9uX2xpc3RfZW5kcG9pbnQiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvbGlzdC8ifX0sInRydXN0X21hcmtzX2lzc3VlcnMiOnsiaHR0cHM6Ly93d3cuc3BpZC5nb3YuaXQvY2VydGlmaWNhdGlvbi9ycC9wdWJsaWMiOlsiaHR0cHM6Ly9yZWdpc3RyeS5zcGlkLmFnaWQuZ292Lml0IiwiaHR0cHM6Ly9wdWJsaWMuaW50ZXJtZWRpYXJ5LnNwaWQuaXQiXSwiaHR0cHM6Ly93d3cuc3BpZC5nb3YuaXQvY2VydGlmaWNhdGlvbi9ycC9wcml2YXRlIjpbImh0dHBzOi8vcmVnaXN0cnkuc3BpZC5hZ2lkLmdvdi5pdCIsImh0dHBzOi8vcHJpdmF0ZS5vdGhlci5pbnRlcm1lZGlhcnkuaXQiXSwiaHR0cHM6Ly9zZ2QuYWEuaXQvb25ib2FyZGluZyI6WyJodHRwczovL3NnZC5hYS5pdCJdfSwiY29uc3RyYWludHMiOnsibWF4X3BhdGhfbGVuZ3RoIjoxfX0.NGO_V0CE39gpxE_imaG2XsMLU-JPQLT9SQUNNzCfBmbLBJ2bynzSZ01_YIB30j4Wa8APshliCc99N0ZxkaeunwAGIQ58z0ESk6cpVx5FFQUJukTAyLsR-je3usx44Gr5AOAojBGMGtprbux3mA0HQlRnjJ_FG0nJDNymqwF60M9hwSfMw9yyUhi9v0DNwG-9w8N6lnTfsBpXDid4v0WyLFwH8ZQLAqB01tsd4hVpOk8G0idI6SbGILwdcBz9SkAB22FAjjvIU-CorXzwBFCCZK6OPKvYeK1OvxzZYzb1LHGZVYQgxgcZly3EuSZ3JphbSLf7iOQNpHQ9b9ZX2ZJXew"
+  }
+},
+{
+  "model": "spid_cie_oidc_entity.fetchedentitystatement",
+  "pk": 2,
+  "fields": {
+    "created": "2022-03-21T09:35:07.683Z",
+    "modified": "2022-03-21T09:35:07.683Z",
+    "iss": "http://127.0.0.1:8000/oidc/rp/",
+    "sub": "http://127.0.0.1:8000/oidc/rp/",
+    "exp": "2022-03-23T09:35:07Z",
+    "iat": "2022-03-21T09:35:07Z",
+    "statement": {
+      "exp": 1648028107,
+      "iat": 1647855307,
+      "iss": "http://127.0.0.1:8000/oidc/rp/",
+      "sub": "http://127.0.0.1:8000/oidc/rp/",
+      "jwks": {
+        "keys": [
+          {
+            "kty": "RSA",
+            "e": "AQAB",
+            "n": "5s4qi1Ta-sEuKb5rJ8TzHmyGKaSu89pIXIi6w4Ekx6GL56mJDNE_MWJHsFjWXajfMdMQmZrSXAvLtXxmbhUui9Mq_IormhmEyyEJS0SyE9UKTxWzi0yd_n_C7OjFBhM-0ZyUlgl81E_sr-35P1A6b5WSYwMvRSR-P9yx_NI-XBQ48G_zdmk3CbuuzZsXZqqgj5U7OGWH-4Huosn9nH3FVkwX0OlWkgWM-J9DEWzGBjl9hfbbrMtM_obljHL2NfT6RJYER2IpdI8RCyQS3sMPt6ZHDskmuNlyMDNATCChXQJLnltwEjxcgvzjw_G9J25DwfdfVEhDF_0kCp44UMmS3Q",
+            "kid": "2HnoFS3YnC9tjiCaivhWLVUJ3AxwGGz_98uRFaqMEEs"
+          }
+        ]
+      },
+      "metadata": {
+        "openid_relying_party": {
+          "application_type": "web",
+          "client_id": "http://127.0.0.1:8000/oidc/rp/",
+          "client_registration_types": [
+            "automatic"
+          ],
+          "jwks": {
+            "keys": [
+              {
+                "kty": "RSA",
+                "use": "sig",
+                "n": "5s4qi1Ta-sEuKb5rJ8TzHmyGKaSu89pIXIi6w4Ekx6GL56mJDNE_MWJHsFjWXajfMdMQmZrSXAvLtXxmbhUui9Mq_IormhmEyyEJS0SyE9UKTxWzi0yd_n_C7OjFBhM-0ZyUlgl81E_sr-35P1A6b5WSYwMvRSR-P9yx_NI-XBQ48G_zdmk3CbuuzZsXZqqgj5U7OGWH-4Huosn9nH3FVkwX0OlWkgWM-J9DEWzGBjl9hfbbrMtM_obljHL2NfT6RJYER2IpdI8RCyQS3sMPt6ZHDskmuNlyMDNATCChXQJLnltwEjxcgvzjw_G9J25DwfdfVEhDF_0kCp44UMmS3Q",
+                "e": "AQAB",
+                "kid": "2HnoFS3YnC9tjiCaivhWLVUJ3AxwGGz_98uRFaqMEEs"
+              }
+            ]
+          },
+          "client_name": "Name of an example organization",
+          "contacts": [
+            "ops@rp.example.it"
+          ],
+          "grant_types": [
+            "refresh_token",
+            "authorization_code"
+          ],
+          "redirect_uris": [
+            "http://127.0.0.1:8000/oidc/rp/callback"
+          ],
+          "response_types": [
+            "code"
+          ],
+          "subject_type": "pairwise"
+        }
+      },
+      "trust_marks": [
+        {
+          "id": "https://www.spid.gov.it/openid-federation/agreement/sp-public/",
+          "trust_mark": "eyJhbGciOiJSUzI1NiIsImtpZCI6IkZpZll4MDNibm9zRDhtNmdZUUlmTkhOUDljTV9TYW05VGM1bkxsb0lJcmMifQ.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvIiwic3ViIjoiaHR0cDovLzEyNy4wLjAuMTo4MDAwL29pZGMvcnAvIiwiaWF0IjoxNjQ1NjEyNDAxLCJpZCI6Imh0dHBzOi8vd3d3LnNwaWQuZ292Lml0L2NlcnRpZmljYXRpb24vcnAiLCJtYXJrIjoiaHR0cHM6Ly93d3cuYWdpZC5nb3YuaXQvdGhlbWVzL2N1c3RvbS9hZ2lkL2xvZ28uc3ZnIiwicmVmIjoiaHR0cHM6Ly9kb2NzLml0YWxpYS5pdC9pdGFsaWEvc3BpZC9zcGlkLXJlZ29sZS10ZWNuaWNoZS1vaWRjL2l0L3N0YWJpbGUvaW5kZXguaHRtbCJ9.mSPNR0AOPBn3UNJAIbrWUMQ8vGTetQajpa3i59JDKDXYWqo2TUGh4AQBghCiG3qqV9cl-hleLtuwoeZ1InKHeslTLftVdcR3meeMLs3mLobHYr26Mi7pC7-jx1ZFVyk4GXl7mn9WVSQGEUOiuhL01tdlUfxf0TJSFSOMEZGpCA3hXroLOnEl3FjkAw7sPvjfImsbadbHVusb72HTTs1n5Xo7z3As3fDWHcxD-fvvq0beu9cx-L2sT4YaNC-ELd1M3m5r0NIjjEUAt4Gnot-l5Z3-C_bA41uvh2hX34U_fGZ6jpmuluJo1Lqi26N8LTB-Rbu0UMaZnkRg9E72_YRZig"
+        }
+      ],
+      "authority_hints": []
+    },
+    "jwt": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjJIbm9GUzNZbkM5dGppQ2FpdmhXTFZVSjNBeHdHR3pfOTh1UkZhcU1FRXMiLCJ0eXAiOiJlbnRpdHktc3RhdGVtZW50K2p3dCJ9.eyJleHAiOjE2NDgwMjgxMDcsImlhdCI6MTY0Nzg1NTMwNywiaXNzIjoiaHR0cDovLzEyNy4wLjAuMTo4MDAwL29pZGMvcnAvIiwic3ViIjoiaHR0cDovLzEyNy4wLjAuMTo4MDAwL29pZGMvcnAvIiwiandrcyI6eyJrZXlzIjpbeyJrdHkiOiJSU0EiLCJlIjoiQVFBQiIsIm4iOiI1czRxaTFUYS1zRXVLYjVySjhUekhteUdLYVN1ODlwSVhJaTZ3NEVreDZHTDU2bUpETkVfTVdKSHNGaldYYWpmTWRNUW1aclNYQXZMdFh4bWJoVXVpOU1xX0lvcm1obUV5eUVKUzBTeUU5VUtUeFd6aTB5ZF9uX0M3T2pGQmhNLTBaeVVsZ2w4MUVfc3ItMzVQMUE2YjVXU1l3TXZSU1ItUDl5eF9OSS1YQlE0OEdfemRtazNDYnV1elpzWFpxcWdqNVU3T0dXSC00SHVvc245bkgzRlZrd1gwT2xXa2dXTS1KOURFV3pHQmpsOWhmYmJyTXRNX29ibGpITDJOZlQ2UkpZRVIySXBkSThSQ3lRUzNzTVB0NlpIRHNrbXVObHlNRE5BVENDaFhRSkxubHR3RWp4Y2d2emp3X0c5SjI1RHdmZGZWRWhERl8wa0NwNDRVTW1TM1EiLCJraWQiOiIySG5vRlMzWW5DOXRqaUNhaXZoV0xWVUozQXh3R0d6Xzk4dVJGYXFNRUVzIn1dfSwibWV0YWRhdGEiOnsib3BlbmlkX3JlbHlpbmdfcGFydHkiOnsiYXBwbGljYXRpb25fdHlwZSI6IndlYiIsImNsaWVudF9pZCI6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vaWRjL3JwLyIsImNsaWVudF9yZWdpc3RyYXRpb25fdHlwZXMiOlsiYXV0b21hdGljIl0sImp3a3MiOnsia2V5cyI6W3sia3R5IjoiUlNBIiwidXNlIjoic2lnIiwibiI6IjVzNHFpMVRhLXNFdUtiNXJKOFR6SG15R0thU3U4OXBJWElpNnc0RWt4NkdMNTZtSkRORV9NV0pIc0ZqV1hhamZNZE1RbVpyU1hBdkx0WHhtYmhVdWk5TXFfSW9ybWhtRXl5RUpTMFN5RTlVS1R4V3ppMHlkX25fQzdPakZCaE0tMFp5VWxnbDgxRV9zci0zNVAxQTZiNVdTWXdNdlJTUi1QOXl4X05JLVhCUTQ4R196ZG1rM0NidXV6WnNYWnFxZ2o1VTdPR1dILTRIdW9zbjluSDNGVmt3WDBPbFdrZ1dNLUo5REVXekdCamw5aGZiYnJNdE1fb2JsakhMMk5mVDZSSllFUjJJcGRJOFJDeVFTM3NNUHQ2WkhEc2ttdU5seU1ETkFUQ0NoWFFKTG5sdHdFanhjZ3Z6andfRzlKMjVEd2ZkZlZFaERGXzBrQ3A0NFVNbVMzUSIsImUiOiJBUUFCIiwia2lkIjoiMkhub0ZTM1luQzl0amlDYWl2aFdMVlVKM0F4d0dHel85OHVSRmFxTUVFcyJ9XX0sImNsaWVudF9uYW1lIjoiTmFtZSBvZiBhbiBleGFtcGxlIG9yZ2FuaXphdGlvbiIsImNvbnRhY3RzIjpbIm9wc0BycC5leGFtcGxlLml0Il0sImdyYW50X3R5cGVzIjpbInJlZnJlc2hfdG9rZW4iLCJhdXRob3JpemF0aW9uX2NvZGUiXSwicmVkaXJlY3RfdXJpcyI6WyJodHRwOi8vMTI3LjAuMC4xOjgwMDAvb2lkYy9ycC9jYWxsYmFjayJdLCJyZXNwb25zZV90eXBlcyI6WyJjb2RlIl0sInN1YmplY3RfdHlwZSI6InBhaXJ3aXNlIn19LCJ0cnVzdF9tYXJrcyI6W3siaWQiOiJodHRwczovL3d3dy5zcGlkLmdvdi5pdC9vcGVuaWQtZmVkZXJhdGlvbi9hZ3JlZW1lbnQvc3AtcHVibGljLyIsInRydXN0X21hcmsiOiJleUpoYkdjaU9pSlNVekkxTmlJc0ltdHBaQ0k2SWtacFpsbDRNRE5pYm05elJEaHRObWRaVVVsbVRraE9VRGxqVFY5VFlXMDVWR00xYmt4c2IwbEpjbU1pZlEuZXlKcGMzTWlPaUpvZEhSd09pOHZNVEkzTGpBdU1DNHhPamd3TURBdklpd2ljM1ZpSWpvaWFIUjBjRG92THpFeU55NHdMakF1TVRvNE1EQXdMMjlwWkdNdmNuQXZJaXdpYVdGMElqb3hOalExTmpFeU5EQXhMQ0pwWkNJNkltaDBkSEJ6T2k4dmQzZDNMbk53YVdRdVoyOTJMbWwwTDJObGNuUnBabWxqWVhScGIyNHZjbkFpTENKdFlYSnJJam9pYUhSMGNITTZMeTkzZDNjdVlXZHBaQzVuYjNZdWFYUXZkR2hsYldWekwyTjFjM1J2YlM5aFoybGtMMnh2WjI4dWMzWm5JaXdpY21WbUlqb2lhSFIwY0hNNkx5OWtiMk56TG1sMFlXeHBZUzVwZEM5cGRHRnNhV0V2YzNCcFpDOXpjR2xrTFhKbFoyOXNaUzEwWldOdWFXTm9aUzF2YVdSakwybDBMM04wWVdKcGJHVXZhVzVrWlhndWFIUnRiQ0o5Lm1TUE5SMEFPUEJuM1VOSkFJYnJXVU1ROHZHVGV0UWFqcGEzaTU5SkRLRFhZV3FvMlRVR2g0QVFCZ2hDaUczcXFWOWNsLWhsZUx0dXdvZVoxSW5LSGVzbFRMZnRWZGNSM21lZU1MczNtTG9iSFlyMjZNaTdwQzctangxWkZWeWs0R1hsN21uOVdWU1FHRVVPaXVoTDAxdGRsVWZ4ZjBUSlNGU09NRVpHcENBM2hYcm9MT25FbDNGamtBdzdzUHZqZkltc2JhZGJIVnVzYjcySFRUczFuNVhvN3ozQXMzZkRXSGN4RC1mdnZxMGJldTljeC1MMnNUNFlhTkMtRUxkMU0zbTVyME5JampFVUF0NEdub3QtbDVaMy1DX2JBNDF1dmgyaFgzNFVfZkdaNmpwbXVsdUpvMUxxaTI2TjhMVEItUmJ1MFVNYVpua1JnOUU3Ml9ZUlppZyJ9XSwiYXV0aG9yaXR5X2hpbnRzIjpbImh0dHA6Ly8xMjcuMC4wLjE6ODAwMC8iXX0.SGCw08DbgaNwB_4A2VFFlX3Ro85dok_t7neNA1ix_dSko6pNT_zUu1OqQTTIEOC1_ywYkqGh1mz_mkZoaInDOvITrktizGRbziZ9a-OI0PdorTXn783nlUuVN7DyNLj-WetTBFqY87lW_Q_meqh3bkeAFiu7cQQqngtxppgHJ9bFHBWeoRSZ2EO5xU_1s3JSFPObsfrxk7yRXCWhbyvn4OVXwWACYzI5xXr5b1LuWn-xghfQ0uQieYAxz2PnBjMXtIuwyoVjgBTevyuleH6uC-Xkm859Gx2LLgsmwvpNM-yRGaqjk1qzedSBsgme6DPQ25yeAB5lrLIG9dSWZgZ4uw"
+  }
+},
+{
+  "model": "spid_cie_oidc_entity.fetchedentitystatement",
+  "pk": 3,
+  "fields": {
+    "created": "2022-03-21T09:35:07.687Z",
+    "modified": "2022-03-21T09:35:07.687Z",
+    "iss": "http://127.0.0.1:8000/",
+    "sub": "http://127.0.0.1:8000/oidc/rp/",
+    "exp": "2022-03-23T09:35:07Z",
+    "iat": "2022-03-21T09:35:07Z",
+    "statement": {
+      "exp": 1648028107,
+      "iat": 1647855307,
+      "iss": "http://127.0.0.1:8000/",
+      "sub": "http://127.0.0.1:8000/oidc/rp/",
+      "jwks": {
+        "keys": [
+          {
+            "kty": "RSA",
+            "n": "5s4qi1Ta-sEuKb5rJ8TzHmyGKaSu89pIXIi6w4Ekx6GL56mJDNE_MWJHsFjWXajfMdMQmZrSXAvLtXxmbhUui9Mq_IormhmEyyEJS0SyE9UKTxWzi0yd_n_C7OjFBhM-0ZyUlgl81E_sr-35P1A6b5WSYwMvRSR-P9yx_NI-XBQ48G_zdmk3CbuuzZsXZqqgj5U7OGWH-4Huosn9nH3FVkwX0OlWkgWM-J9DEWzGBjl9hfbbrMtM_obljHL2NfT6RJYER2IpdI8RCyQS3sMPt6ZHDskmuNlyMDNATCChXQJLnltwEjxcgvzjw_G9J25DwfdfVEhDF_0kCp44UMmS3Q",
+            "e": "AQAB",
+            "kid": "2HnoFS3YnC9tjiCaivhWLVUJ3AxwGGz_98uRFaqMEEs"
+          }
+        ]
+      },
+      "metadata_policy": {
+        "openid_relying_party": {
+          "scopes": {
+            "superset_of": [
+              "openid"
+            ],
+            "subset_of": [
+              "openid",
+              "offline_access",
+              "profile",
+              "email"
+            ]
+          },
+          "contacts": {
+            "add": [
+              "ciao@email.it"
+            ]
+          }
+        }
+      },
+      "trust_marks": [
+        {
+          "id": "https://www.spid.gov.it/openid-federation/agreement/sp-public/",
+          "trust_mark": "eyJhbGciOiJSUzI1NiIsImtpZCI6IkZpZll4MDNibm9zRDhtNmdZUUlmTkhOUDljTV9TYW05VGM1bkxsb0lJcmMiLCJ0eXAiOiJ0cnVzdC1tYXJrK2p3dCJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvIiwic3ViIjoiaHR0cDovLzEyNy4wLjAuMTo4MDAwL29pZGMvcnAvIiwiaWF0IjoxNjQ3ODU1MzA3LCJpZCI6Imh0dHBzOi8vd3d3LnNwaWQuZ292Lml0L2NlcnRpZmljYXRpb24vcnAiLCJtYXJrIjoiaHR0cHM6Ly93d3cuYWdpZC5nb3YuaXQvdGhlbWVzL2N1c3RvbS9hZ2lkL2xvZ28uc3ZnIiwicmVmIjoiaHR0cHM6Ly9kb2NzLml0YWxpYS5pdC9pdGFsaWEvc3BpZC9zcGlkLXJlZ29sZS10ZWNuaWNoZS1vaWRjL2l0L3N0YWJpbGUvaW5kZXguaHRtbCJ9.cQ2w0Vs1Tdqlq6klA_4DC5SvkA6XEeE0g5G-R9Ejvqc0BXYgMsPYNjDpR_dcrWKxprbWyfekgOjzvBzygZwF3gBy3FylQxaKk0UYOCBfzju7ZZHcDkNNr3b3vGBSgFtxgkVkHCTgz0nELFBpplmedjj3VdbN4GLT1jH3RJddj9QwnB50TORnleqFJwIPGHaQWeyo2o8WzX0NGODaF-qw2O7WDUgEEdu0O728SEmqYtWbvRIlgJVrupQbe-vlFGqoykdLAltRByQ7TjscTXTI0umWv6gft3CnTaA6DWF51SgpndHptIzQcNDsBrpJJqUBhjR6lAk0CdabKr5pN_W7_A"
+        },
+        {
+          "id": "https://www.spid.gov.it/openid-federation/agreement/sp-private",
+          "trust_mark": "eyJhbGciOiJSUzI1NiIsImtpZCI6IkZpZll4MDNibm9zRDhtNmdZUUlmTkhOUDljTV9TYW05VGM1bkxsb0lJcmMiLCJ0eXAiOiJ0cnVzdC1tYXJrK2p3dCJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvIiwic3ViIjoiaHR0cDovLzEyNy4wLjAuMTo4MDAwL29pZGMvcnAvIiwiaWF0IjoxNjQ3ODU1MzA3LCJpZCI6Imh0dHBzOi8vd3d3LnNwaWQuZ292Lml0L2NlcnRpZmljYXRpb24vcnAvcHJpdmF0ZSIsImxvZ29fdXJpIjoiaHR0cHM6Ly93d3cuYWdpZC5nb3YuaXQvdGhlbWVzL2N1c3RvbS9hZ2lkL2xvZ28uc3ZnIiwicmVmIjoiaHR0cHM6Ly9kb2NzLml0YWxpYS5pdC9pdGFsaWEvc3BpZC9zcGlkLXJlZ29sZS10ZWNuaWNoZS1vaWRjL2l0L3N0YWJpbGUvaW5kZXguaHRtbCJ9.smmYm_hjryrMCpjXqymNd90kA0t9z9S4Sp8Z_oWPdQP_xIaL5-at8JMFTzr5t5LQKylGNpEltE6dhyGJwLs2g0XAh9UWT6FyYLRFpjATlsGSIeA1W7a79FXVhG0l9JyFrLjSq1fpGXZsF5pqWQD2-LiXf-YqMGh_sm9nt3ONJZCFDuhbCPF1ntpYB-ZOMb1NHJvhvDkXex_wXcPJJlh4sdY2Ima7j8kWYm2FYl7JgsSkIlZaEYc6vG9_pfiA-3Z0KmmjfR8yxEM3drYFddf2qPLMeM2UNqqsRqK0uG9IeOXYlb8RO_ymNu0jRmjIsrNLaqYeUJ0pVFvPk5sVEIZT_w"
+        }
+      ]
+    },
+    "jwt": "eyJhbGciOiJSUzI1NiIsImtpZCI6IkZpZll4MDNibm9zRDhtNmdZUUlmTkhOUDljTV9TYW05VGM1bkxsb0lJcmMiLCJ0eXAiOiJlbnRpdHktc3RhdGVtZW50K2p3dCJ9.eyJleHAiOjE2NDgwMjgxMDcsImlhdCI6MTY0Nzg1NTMwNywiaXNzIjoiaHR0cDovLzEyNy4wLjAuMTo4MDAwLyIsInN1YiI6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vaWRjL3JwLyIsImp3a3MiOnsia2V5cyI6W3sia3R5IjoiUlNBIiwibiI6IjVzNHFpMVRhLXNFdUtiNXJKOFR6SG15R0thU3U4OXBJWElpNnc0RWt4NkdMNTZtSkRORV9NV0pIc0ZqV1hhamZNZE1RbVpyU1hBdkx0WHhtYmhVdWk5TXFfSW9ybWhtRXl5RUpTMFN5RTlVS1R4V3ppMHlkX25fQzdPakZCaE0tMFp5VWxnbDgxRV9zci0zNVAxQTZiNVdTWXdNdlJTUi1QOXl4X05JLVhCUTQ4R196ZG1rM0NidXV6WnNYWnFxZ2o1VTdPR1dILTRIdW9zbjluSDNGVmt3WDBPbFdrZ1dNLUo5REVXekdCamw5aGZiYnJNdE1fb2JsakhMMk5mVDZSSllFUjJJcGRJOFJDeVFTM3NNUHQ2WkhEc2ttdU5seU1ETkFUQ0NoWFFKTG5sdHdFanhjZ3Z6andfRzlKMjVEd2ZkZlZFaERGXzBrQ3A0NFVNbVMzUSIsImUiOiJBUUFCIiwia2lkIjoiMkhub0ZTM1luQzl0amlDYWl2aFdMVlVKM0F4d0dHel85OHVSRmFxTUVFcyJ9XX0sIm1ldGFkYXRhX3BvbGljeSI6eyJvcGVuaWRfcmVseWluZ19wYXJ0eSI6eyJzY29wZXMiOnsic3VwZXJzZXRfb2YiOlsib3BlbmlkIl0sInN1YnNldF9vZiI6WyJvcGVuaWQiLCJvZmZsaW5lX2FjY2VzcyIsInByb2ZpbGUiLCJlbWFpbCJdfSwiY29udGFjdHMiOnsiYWRkIjpbImNpYW9AZW1haWwuaXQiXX19fSwidHJ1c3RfbWFya3MiOlt7ImlkIjoiaHR0cHM6Ly93d3cuc3BpZC5nb3YuaXQvb3BlbmlkLWZlZGVyYXRpb24vYWdyZWVtZW50L3NwLXB1YmxpYy8iLCJ0cnVzdF9tYXJrIjoiZXlKaGJHY2lPaUpTVXpJMU5pSXNJbXRwWkNJNklrWnBabGw0TUROaWJtOXpSRGh0Tm1kWlVVbG1Ua2hPVURsalRWOVRZVzA1VkdNMWJreHNiMGxKY21NaUxDSjBlWEFpT2lKMGNuVnpkQzF0WVhKcksycDNkQ0o5LmV5SnBjM01pT2lKb2RIUndPaTh2TVRJM0xqQXVNQzR4T2pnd01EQXZJaXdpYzNWaUlqb2lhSFIwY0Rvdkx6RXlOeTR3TGpBdU1UbzRNREF3TDI5cFpHTXZjbkF2SWl3aWFXRjBJam94TmpRM09EVTFNekEzTENKcFpDSTZJbWgwZEhCek9pOHZkM2QzTG5Od2FXUXVaMjkyTG1sMEwyTmxjblJwWm1sallYUnBiMjR2Y25BaUxDSnRZWEpySWpvaWFIUjBjSE02THk5M2QzY3VZV2RwWkM1bmIzWXVhWFF2ZEdobGJXVnpMMk4xYzNSdmJTOWhaMmxrTDJ4dloyOHVjM1puSWl3aWNtVm1Jam9pYUhSMGNITTZMeTlrYjJOekxtbDBZV3hwWVM1cGRDOXBkR0ZzYVdFdmMzQnBaQzl6Y0dsa0xYSmxaMjlzWlMxMFpXTnVhV05vWlMxdmFXUmpMMmwwTDNOMFlXSnBiR1V2YVc1a1pYZ3VhSFJ0YkNKOS5jUTJ3MFZzMVRkcWxxNmtsQV80REM1U3ZrQTZYRWVFMGc1Ry1SOUVqdnFjMEJYWWdNc1BZTmpEcFJfZGNyV0t4cHJiV3lmZWtnT2p6dkJ6eWdad0YzZ0J5M0Z5bFF4YUtrMFVZT0NCZnpqdTdaWkhjRGtOTnIzYjN2R0JTZ0Z0eGdrVmtIQ1RnejBuRUxGQnBwbG1lZGpqM1ZkYk40R0xUMWpIM1JKZGRqOVF3bkI1MFRPUm5sZXFGSndJUEdIYVFXZXlvMm84V3pYME5HT0RhRi1xdzJPN1dEVWdFRWR1ME83MjhTRW1xWXRXYnZSSWxnSlZydXBRYmUtdmxGR3FveWtkTEFsdFJCeVE3VGpzY1RYVEkwdW1XdjZnZnQzQ25UYUE2RFdGNTFTZ3BuZEhwdEl6UWNORHNCcnBKSnFVQmhqUjZsQWswQ2RhYktyNXBOX1c3X0EifSx7ImlkIjoiaHR0cHM6Ly93d3cuc3BpZC5nb3YuaXQvb3BlbmlkLWZlZGVyYXRpb24vYWdyZWVtZW50L3NwLXByaXZhdGUiLCJ0cnVzdF9tYXJrIjoiZXlKaGJHY2lPaUpTVXpJMU5pSXNJbXRwWkNJNklrWnBabGw0TUROaWJtOXpSRGh0Tm1kWlVVbG1Ua2hPVURsalRWOVRZVzA1VkdNMWJreHNiMGxKY21NaUxDSjBlWEFpT2lKMGNuVnpkQzF0WVhKcksycDNkQ0o5LmV5SnBjM01pT2lKb2RIUndPaTh2TVRJM0xqQXVNQzR4T2pnd01EQXZJaXdpYzNWaUlqb2lhSFIwY0Rvdkx6RXlOeTR3TGpBdU1UbzRNREF3TDI5cFpHTXZjbkF2SWl3aWFXRjBJam94TmpRM09EVTFNekEzTENKcFpDSTZJbWgwZEhCek9pOHZkM2QzTG5Od2FXUXVaMjkyTG1sMEwyTmxjblJwWm1sallYUnBiMjR2Y25BdmNISnBkbUYwWlNJc0lteHZaMjlmZFhKcElqb2lhSFIwY0hNNkx5OTNkM2N1WVdkcFpDNW5iM1l1YVhRdmRHaGxiV1Z6TDJOMWMzUnZiUzloWjJsa0wyeHZaMjh1YzNabklpd2ljbVZtSWpvaWFIUjBjSE02THk5a2IyTnpMbWwwWVd4cFlTNXBkQzlwZEdGc2FXRXZjM0JwWkM5emNHbGtMWEpsWjI5c1pTMTBaV051YVdOb1pTMXZhV1JqTDJsMEwzTjBZV0pwYkdVdmFXNWtaWGd1YUhSdGJDSjkuc21tWW1faGpyeXJNQ3BqWHF5bU5kOTBrQTB0OXo5UzRTcDhaX29XUGRRUF94SWFMNS1hdDhKTUZUenI1dDVMUUt5bEdOcEVsdEU2ZGh5R0p3THMyZzBYQWg5VVdUNkZ5WUxSRnBqQVRsc0dTSWVBMVc3YTc5RlhWaEcwbDlKeUZyTGpTcTFmcEdYWnNGNXBxV1FEMi1MaVhmLVlxTUdoX3NtOW50M09OSlpDRkR1aGJDUEYxbnRwWUItWk9NYjFOSEp2aHZEa1hleF93WGNQSkpsaDRzZFkySW1hN2o4a1dZbTJGWWw3SmdzU2tJbFphRVljNnZHOV9wZmlBLTNaMEttbWpmUjh5eEVNM2RyWUZkZGYycVBMTWVNMlVOcXFzUnFLMHVHOUllT1hZbGI4Uk9feW1OdTBqUm1qSXNyTkxhcVllVUowcFZGdlBrNXNWRUlaVF93In1dfQ.UOW5vTSj-IAIohSDAMkjyD8dm_OFsbEDhvIAcCUvPuvZMaApF-HEytJ1Dq1ci9Z18mQvNGSn6W2uWEEg8CcRy7tUxTr3PR6M4LZtXL4UgUKysAQBOf3nSIewiwu3QkbyZj1jhD2HiOPEmOKjOMsl-hfpK8jRxXnDk4ERifjo35y0g_e-ym0v76tlzr_h-Wxr1H0bcJML4pnL-N6ATuwyPhR6IOD4VyQ7vVTp7cnwe6weROS1bub_I-ssDXR-SCzU6X_JcPl83NH-o4Seid0m5vJFLlTTdLoy8O_rGg1foxx_6FKdOV81faoMNYLm6mSS4jh-fkwxbfKhDBEY0nwxiw"
+  }
+},
+{
+  "model": "spid_cie_oidc_entity.trustchain",
+  "pk": 1,
+  "fields": {
+    "created": "2022-03-21T09:35:07.691Z",
+    "modified": "2022-03-21T09:35:07.691Z",
+    "sub": "http://127.0.0.1:8000/oidc/rp/",
+    "trust_anchor": 1,
+    "exp": "2022-03-21T10:08:07Z",
+    "iat": "2022-03-21T09:35:07.691Z",
+    "chain": [
+      {
+        "exp": 1648028107,
+        "iat": 1647855307,
+        "iss": "http://127.0.0.1:8000/oidc/rp/",
+        "sub": "http://127.0.0.1:8000/oidc/rp/",
+        "jwks": {
+          "keys": [
+            {
+              "kty": "RSA",
+              "e": "AQAB",
+              "n": "5s4qi1Ta-sEuKb5rJ8TzHmyGKaSu89pIXIi6w4Ekx6GL56mJDNE_MWJHsFjWXajfMdMQmZrSXAvLtXxmbhUui9Mq_IormhmEyyEJS0SyE9UKTxWzi0yd_n_C7OjFBhM-0ZyUlgl81E_sr-35P1A6b5WSYwMvRSR-P9yx_NI-XBQ48G_zdmk3CbuuzZsXZqqgj5U7OGWH-4Huosn9nH3FVkwX0OlWkgWM-J9DEWzGBjl9hfbbrMtM_obljHL2NfT6RJYER2IpdI8RCyQS3sMPt6ZHDskmuNlyMDNATCChXQJLnltwEjxcgvzjw_G9J25DwfdfVEhDF_0kCp44UMmS3Q",
+              "kid": "2HnoFS3YnC9tjiCaivhWLVUJ3AxwGGz_98uRFaqMEEs"
+            }
+          ]
+        },
+        "metadata": {
+          "openid_relying_party": {
+            "application_type": "web",
+            "client_id": "http://127.0.0.1:8000/oidc/rp/",
+            "client_registration_types": [
+              "automatic"
+            ],
+            "jwks": {
+              "keys": [
+                {
+                  "kty": "RSA",
+                  "use": "sig",
+                  "n": "5s4qi1Ta-sEuKb5rJ8TzHmyGKaSu89pIXIi6w4Ekx6GL56mJDNE_MWJHsFjWXajfMdMQmZrSXAvLtXxmbhUui9Mq_IormhmEyyEJS0SyE9UKTxWzi0yd_n_C7OjFBhM-0ZyUlgl81E_sr-35P1A6b5WSYwMvRSR-P9yx_NI-XBQ48G_zdmk3CbuuzZsXZqqgj5U7OGWH-4Huosn9nH3FVkwX0OlWkgWM-J9DEWzGBjl9hfbbrMtM_obljHL2NfT6RJYER2IpdI8RCyQS3sMPt6ZHDskmuNlyMDNATCChXQJLnltwEjxcgvzjw_G9J25DwfdfVEhDF_0kCp44UMmS3Q",
+                  "e": "AQAB",
+                  "kid": "2HnoFS3YnC9tjiCaivhWLVUJ3AxwGGz_98uRFaqMEEs"
+                }
+              ]
+            },
+            "client_name": "Name of an example organization",
+            "contacts": [
+              "ops@rp.example.it"
+            ],
+            "grant_types": [
+              "refresh_token",
+              "authorization_code"
+            ],
+            "redirect_uris": [
+              "http://127.0.0.1:8000/oidc/rp/callback"
+            ],
+            "response_types": [
+              "code"
+            ],
+            "subject_type": "pairwise"
+          }
+        },
+        "trust_marks": [
+          {
+            "id": "https://www.spid.gov.it/openid-federation/agreement/sp-public/",
+            "trust_mark": "eyJhbGciOiJSUzI1NiIsImtpZCI6IkZpZll4MDNibm9zRDhtNmdZUUlmTkhOUDljTV9TYW05VGM1bkxsb0lJcmMifQ.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvIiwic3ViIjoiaHR0cDovLzEyNy4wLjAuMTo4MDAwL29pZGMvcnAvIiwiaWF0IjoxNjQ1NjEyNDAxLCJpZCI6Imh0dHBzOi8vd3d3LnNwaWQuZ292Lml0L2NlcnRpZmljYXRpb24vcnAiLCJtYXJrIjoiaHR0cHM6Ly93d3cuYWdpZC5nb3YuaXQvdGhlbWVzL2N1c3RvbS9hZ2lkL2xvZ28uc3ZnIiwicmVmIjoiaHR0cHM6Ly9kb2NzLml0YWxpYS5pdC9pdGFsaWEvc3BpZC9zcGlkLXJlZ29sZS10ZWNuaWNoZS1vaWRjL2l0L3N0YWJpbGUvaW5kZXguaHRtbCJ9.mSPNR0AOPBn3UNJAIbrWUMQ8vGTetQajpa3i59JDKDXYWqo2TUGh4AQBghCiG3qqV9cl-hleLtuwoeZ1InKHeslTLftVdcR3meeMLs3mLobHYr26Mi7pC7-jx1ZFVyk4GXl7mn9WVSQGEUOiuhL01tdlUfxf0TJSFSOMEZGpCA3hXroLOnEl3FjkAw7sPvjfImsbadbHVusb72HTTs1n5Xo7z3As3fDWHcxD-fvvq0beu9cx-L2sT4YaNC-ELd1M3m5r0NIjjEUAt4Gnot-l5Z3-C_bA41uvh2hX34U_fGZ6jpmuluJo1Lqi26N8LTB-Rbu0UMaZnkRg9E72_YRZig"
+          }
+        ],
+        "authority_hints": []
+      },
+      {
+        "exp": 1647857287,
+        "iat": 1647855307,
+        "iss": "http://127.0.0.1:8000/",
+        "sub": "http://127.0.0.1:8000/",
+        "jwks": {
+          "keys": [
+            {
+              "kty": "RSA",
+              "e": "AQAB",
+              "n": "3i5vV-_4nF_ES1BU86Zf2Bj6SiyGdGM3Izc2GrvtknQQCzpT3QlGv2d_wMrzVTS7PmZlvjyi2Qceq8EmEwbsIa5R8G57fxSpE0HL33giJfhpe8ublY4hGb6tEqSbHiFcgiF4T-Ft_98pz4nZtKTcesMZ8CcDUd9ibaLXGM4vaiUhSt76X1qOzqJHqAKMG-9VGm5DD2GSe7cu1yvaMCMPU6DGOqHYoBSkSbsnLelsRg6sINh6mZfb39odTJlOMFGhlg665702kc_iqqxd8jpyOh94vBagmJB4EQqI1qEte8sTMeBkVRpSLDoV5uNTlp2ZdINu1SakmaHB3WeStwC1lw",
+              "kid": "FifYx03bnosD8m6gYQIfNHNP9cM_Sam9Tc5nLloIIrc"
+            }
+          ]
+        },
+        "metadata": {
+          "federation_entity": {
+            "contacts": [
+              "ops@localhost"
+            ],
+            "federation_fetch_endpoint": "http://127.0.0.1:8000/fetch/",
+            "federation_resolve_endpoint": "http://127.0.0.1:8000/resolve/",
+            "federation_status_endpoint": "http://127.0.0.1:8000/trust_mark_status/",
+            "homepage_uri": "http://127.0.0.1:8000",
+            "name": "example TA",
+            "federation_list_endpoint": "http://127.0.0.1:8000/list/"
+          }
+        },
+        "trust_marks_issuers": {
+          "https://www.spid.gov.it/certification/rp/public": [
+            "https://registry.spid.agid.gov.it",
+            "https://public.intermediary.spid.it"
+          ],
+          "https://www.spid.gov.it/certification/rp/private": [
+            "https://registry.spid.agid.gov.it",
+            "https://private.other.intermediary.it"
+          ],
+          "https://sgd.aa.it/onboarding": [
+            "https://sgd.aa.it"
+          ]
+        },
+        "constraints": {
+          "max_path_length": 1
+        }
+      },
+      [
+        {
+          "exp": 1648028107,
+          "iat": 1647855307,
+          "iss": "http://127.0.0.1:8000/",
+          "sub": "http://127.0.0.1:8000/oidc/rp/",
+          "jwks": {
+            "keys": [
+              {
+                "kty": "RSA",
+                "n": "5s4qi1Ta-sEuKb5rJ8TzHmyGKaSu89pIXIi6w4Ekx6GL56mJDNE_MWJHsFjWXajfMdMQmZrSXAvLtXxmbhUui9Mq_IormhmEyyEJS0SyE9UKTxWzi0yd_n_C7OjFBhM-0ZyUlgl81E_sr-35P1A6b5WSYwMvRSR-P9yx_NI-XBQ48G_zdmk3CbuuzZsXZqqgj5U7OGWH-4Huosn9nH3FVkwX0OlWkgWM-J9DEWzGBjl9hfbbrMtM_obljHL2NfT6RJYER2IpdI8RCyQS3sMPt6ZHDskmuNlyMDNATCChXQJLnltwEjxcgvzjw_G9J25DwfdfVEhDF_0kCp44UMmS3Q",
+                "e": "AQAB",
+                "kid": "2HnoFS3YnC9tjiCaivhWLVUJ3AxwGGz_98uRFaqMEEs"
+              }
+            ]
+          },
+          "metadata_policy": {
+            "openid_relying_party": {
+              "scopes": {
+                "superset_of": [
+                  "openid"
+                ],
+                "subset_of": [
+                  "openid",
+                  "offline_access",
+                  "profile",
+                  "email"
+                ]
+              },
+              "contacts": {
+                "add": [
+                  "ciao@email.it"
+                ]
+              }
+            }
+          },
+          "trust_marks": [
+            {
+              "id": "https://www.spid.gov.it/openid-federation/agreement/sp-public/",
+              "trust_mark": "eyJhbGciOiJSUzI1NiIsImtpZCI6IkZpZll4MDNibm9zRDhtNmdZUUlmTkhOUDljTV9TYW05VGM1bkxsb0lJcmMiLCJ0eXAiOiJ0cnVzdC1tYXJrK2p3dCJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvIiwic3ViIjoiaHR0cDovLzEyNy4wLjAuMTo4MDAwL29pZGMvcnAvIiwiaWF0IjoxNjQ3ODU1MzA3LCJpZCI6Imh0dHBzOi8vd3d3LnNwaWQuZ292Lml0L2NlcnRpZmljYXRpb24vcnAiLCJtYXJrIjoiaHR0cHM6Ly93d3cuYWdpZC5nb3YuaXQvdGhlbWVzL2N1c3RvbS9hZ2lkL2xvZ28uc3ZnIiwicmVmIjoiaHR0cHM6Ly9kb2NzLml0YWxpYS5pdC9pdGFsaWEvc3BpZC9zcGlkLXJlZ29sZS10ZWNuaWNoZS1vaWRjL2l0L3N0YWJpbGUvaW5kZXguaHRtbCJ9.cQ2w0Vs1Tdqlq6klA_4DC5SvkA6XEeE0g5G-R9Ejvqc0BXYgMsPYNjDpR_dcrWKxprbWyfekgOjzvBzygZwF3gBy3FylQxaKk0UYOCBfzju7ZZHcDkNNr3b3vGBSgFtxgkVkHCTgz0nELFBpplmedjj3VdbN4GLT1jH3RJddj9QwnB50TORnleqFJwIPGHaQWeyo2o8WzX0NGODaF-qw2O7WDUgEEdu0O728SEmqYtWbvRIlgJVrupQbe-vlFGqoykdLAltRByQ7TjscTXTI0umWv6gft3CnTaA6DWF51SgpndHptIzQcNDsBrpJJqUBhjR6lAk0CdabKr5pN_W7_A"
+            },
+            {
+              "id": "https://www.spid.gov.it/openid-federation/agreement/sp-private",
+              "trust_mark": "eyJhbGciOiJSUzI1NiIsImtpZCI6IkZpZll4MDNibm9zRDhtNmdZUUlmTkhOUDljTV9TYW05VGM1bkxsb0lJcmMiLCJ0eXAiOiJ0cnVzdC1tYXJrK2p3dCJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvIiwic3ViIjoiaHR0cDovLzEyNy4wLjAuMTo4MDAwL29pZGMvcnAvIiwiaWF0IjoxNjQ3ODU1MzA3LCJpZCI6Imh0dHBzOi8vd3d3LnNwaWQuZ292Lml0L2NlcnRpZmljYXRpb24vcnAvcHJpdmF0ZSIsImxvZ29fdXJpIjoiaHR0cHM6Ly93d3cuYWdpZC5nb3YuaXQvdGhlbWVzL2N1c3RvbS9hZ2lkL2xvZ28uc3ZnIiwicmVmIjoiaHR0cHM6Ly9kb2NzLml0YWxpYS5pdC9pdGFsaWEvc3BpZC9zcGlkLXJlZ29sZS10ZWNuaWNoZS1vaWRjL2l0L3N0YWJpbGUvaW5kZXguaHRtbCJ9.smmYm_hjryrMCpjXqymNd90kA0t9z9S4Sp8Z_oWPdQP_xIaL5-at8JMFTzr5t5LQKylGNpEltE6dhyGJwLs2g0XAh9UWT6FyYLRFpjATlsGSIeA1W7a79FXVhG0l9JyFrLjSq1fpGXZsF5pqWQD2-LiXf-YqMGh_sm9nt3ONJZCFDuhbCPF1ntpYB-ZOMb1NHJvhvDkXex_wXcPJJlh4sdY2Ima7j8kWYm2FYl7JgsSkIlZaEYc6vG9_pfiA-3Z0KmmjfR8yxEM3drYFddf2qPLMeM2UNqqsRqK0uG9IeOXYlb8RO_ymNu0jRmjIsrNLaqYeUJ0pVFvPk5sVEIZT_w"
+            }
+          ]
+        }
+      ]
+    ],
+    "metadata": {
+      "openid_relying_party": {
+        "application_type": "web",
+        "client_id": "http://127.0.0.1:8000/oidc/rp/",
+        "client_registration_types": [
+          "automatic"
+        ],
+        "jwks": {
+          "keys": [
+            {
+              "kty": "RSA",
+              "use": "sig",
+              "n": "5s4qi1Ta-sEuKb5rJ8TzHmyGKaSu89pIXIi6w4Ekx6GL56mJDNE_MWJHsFjWXajfMdMQmZrSXAvLtXxmbhUui9Mq_IormhmEyyEJS0SyE9UKTxWzi0yd_n_C7OjFBhM-0ZyUlgl81E_sr-35P1A6b5WSYwMvRSR-P9yx_NI-XBQ48G_zdmk3CbuuzZsXZqqgj5U7OGWH-4Huosn9nH3FVkwX0OlWkgWM-J9DEWzGBjl9hfbbrMtM_obljHL2NfT6RJYER2IpdI8RCyQS3sMPt6ZHDskmuNlyMDNATCChXQJLnltwEjxcgvzjw_G9J25DwfdfVEhDF_0kCp44UMmS3Q",
+              "e": "AQAB",
+              "kid": "2HnoFS3YnC9tjiCaivhWLVUJ3AxwGGz_98uRFaqMEEs"
+            }
+          ]
+        },
+        "client_name": "Name of an example organization",
+        "contacts": [
+          "ops@rp.example.it"
+        ],
+        "grant_types": [
+          "refresh_token",
+          "authorization_code"
+        ],
+        "redirect_uris": [
+          "http://127.0.0.1:8000/oidc/rp/callback"
+        ],
+        "response_types": [
+          "code"
+        ],
+        "subject_type": "pairwise"
+      }
+    },
+    "trust_marks": [],
+    "parties_involved": [
+      "http://127.0.0.1:8000/oidc/rp/",
+      "http://127.0.0.1:8000/"
+    ],
+    "status": "valid",
+    "log": "",
+    "processing_start": "2022-03-21T09:35:07.690Z",
     "is_active": true
   }
 }
