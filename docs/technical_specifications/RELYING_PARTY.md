@@ -201,7 +201,7 @@ This endpoint accepts a request with this parameters:
 - __state__, REQUIRED. State value enclosed in the authentication request
 - __iss__, REQUIRED only for cie. Issuer identifier of the OP
 
-This endpoint first call OP's token endpoint and after getting the access token it calls the OP's userinfo endpont.
+This endpoint first call OP's token endpoint and, after getting the access token, it calls the OP's userinfo endpont.
 
 The request to token endpoint is of type POST and supports the following parameters:
 
