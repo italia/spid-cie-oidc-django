@@ -44,7 +44,7 @@ class RPBeginTest(TestCase):
         self.assertTrue(res.status_code == 302)
 
     @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB, OIDCFED_TRUST_ANCHORS=[TA_SUB])
-    @patch("spid_cie_oidc.relying_party.views.SpidCieOidcRpBeginView.get_oidc_op", return_value=None)
+    @patch("spid_cie_oidc.relying_party.views.rp_begin.SpidCieOidcRpBeginView.get_oidc_op", return_value=None)
     def test_rp_begin_no_tc(self, mocked):
         client = Client()
         url = reverse("spid_cie_rp_begin")
