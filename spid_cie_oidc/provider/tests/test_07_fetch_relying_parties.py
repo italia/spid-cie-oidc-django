@@ -41,9 +41,8 @@ def create_tc():
     )
     return TrustChain.objects.create(
         sub=RP_CONF_AS_JSON["sub"],
-        type="openid_relying_party",
         exp=EXP,
-        metadata=RP_CONF_AS_JSON["metadata"]["openid_relying_party"],
+        metadata=RP_CONF_AS_JSON["metadata"],
         status="valid",
         trust_anchor=ta_fes,
         is_active=True,

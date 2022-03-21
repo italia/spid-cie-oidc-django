@@ -26,7 +26,7 @@ class OnBoardingRegistrationAdmin(admin.ModelAdmin):
                 is_active = True,
             )
         except IntegrityError:
-            messages.error(request, f"Already exists a descendant with subject: {sub}" )
+            messages.error(request, f"Already exists a descendant with subject: {sub}")
 
     list_display = (
         "organization_name",

@@ -462,7 +462,6 @@
     "modified": "2022-02-27T00:50:28.438Z",
     "sub": "http://127.0.0.1:8000/oidc/op/",
     "trust_anchor": 1,
-    "type": "openid_provider",
     "exp": "2022-02-27T01:24:49Z",
     "iat": "2022-02-27T00:50:28.438Z",
     "chain": [
@@ -780,6 +779,7 @@
       ]
     ],
     "metadata": {
+          "openid_provider":{
       "authorization_endpoint": "http://127.0.0.1:8002/oidc/op/authorization",
       "token_endpoint": "http://127.0.0.1:8002/oidc/op/token",
       "userinfo_endpoint": "http://127.0.0.1:8002/oidc/op/userinfo",
@@ -915,7 +915,7 @@
         "ES384",
         "ES512"
       ]
-    },
+    }},
     "trust_marks": [],
     "parties_involved": [
       "http://127.0.0.1:8000/oidc/op/",

@@ -39,7 +39,6 @@ To evaluate a TrustChain we need at least of three things:
 - __subject identifier__ of the entity to which we want to establish the trust, the leaf.
 - __trust_anchor__, subject identifier of the Federation authority that represent the Federation,
 the root of the trust and the point of arrival, the final destination, of the path of trust.
-- __metadata_type__, which kind of metadata we want to export from the trust chain, if openid provider or relying party.
 The final metadata will be combined with the metadata policy of the superiors statements.
 - __required_trust_marks__, which trust marks are required to start a metadata discovery on the subject of the trust chain.
 At least one MUST be present as valid in the entity configuration of the subject. The validation of the trust mark JWS must be done

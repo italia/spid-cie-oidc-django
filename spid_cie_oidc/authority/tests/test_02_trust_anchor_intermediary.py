@@ -73,8 +73,7 @@ class TrustChainTest(TestCase):
 
         trust_chain = trust_chain_builder(
             subject=rp_onboarding_data["sub"],
-            trust_anchor=trust_anchor_ec,
-            metadata_type="openid_relying_party",
+            trust_anchor=trust_anchor_ec
         )
         self.assertTrue(trust_chain)
         self.assertTrue(trust_chain.final_metadata)
@@ -119,8 +118,7 @@ class TrustChainTest(TestCase):
 
         trust_chain = trust_chain_builder(
             subject=self.rp.sub,
-            trust_anchor=trust_anchor_ec,
-            metadata_type="openid_relying_party",
+            trust_anchor=trust_anchor_ec
         )
 
         self.assertTrue(trust_chain)
@@ -144,7 +142,6 @@ class TrustChainTest(TestCase):
 
         stored_trust_chain = TrustChain.objects.create(
             sub=trust_chain.subject,
-            type=trust_chain.metadata_type,
             exp=trust_chain.exp_datetime,
             chain=trust_chain.serialize(),
             metadata=trust_chain.final_metadata,
@@ -170,8 +167,7 @@ class TrustChainTest(TestCase):
 
         trust_chain = trust_chain_builder(
             subject=self.rp.sub,
-            trust_anchor=trust_anchor_ec,
-            metadata_type="openid_relying_party",
+            trust_anchor=trust_anchor_ec
         )
 
         for ec in trust_chain.trust_path:
@@ -197,7 +193,6 @@ class TrustChainTest(TestCase):
         trust_chain = trust_chain_builder(
             subject=self.rp.sub,
             trust_anchor=trust_anchor_ec,
-            metadata_type="openid_relying_party",
             required_trust_marks=["https://www.spid.gov.it/certification/rp"],
         )
 
@@ -220,7 +215,6 @@ class TrustChainTest(TestCase):
             trust_chain = trust_chain_builder(
                 subject=self.rp.sub,
                 trust_anchor=trust_anchor_ec,
-                metadata_type="openid_relying_party",
                 required_trust_marks=["https://www.spid.gov.it/certification/rp"],
             )
 
@@ -232,8 +226,7 @@ class TrustChainTest(TestCase):
             subject=rp_conf["sub"],
             trust_anchor=self.ta_conf.sub,
             # TODO
-            # required_trust_marks: list = [],
-            metadata_type="openid_relying_party",
+            # required_trust_marks: list = []
         )
 
         self.assertFalse(gctc.is_expired)
@@ -246,14 +239,17 @@ class TrustChainTest(TestCase):
             subject=rp_conf["sub"],
             trust_anchor=self.ta_conf.sub,
             # TODO
-            # required_trust_marks: list = [],
-            metadata_type="openid_relying_party",
+            # required_trust_marks: list = []
         )
 
         url = reverse("oidcfed_resolve")
 
         c = Client()
-        res = c.get(url, data={"sub": self.rp.sub, "anchor": self.ta_conf.sub})
+        res = c.get(url, data={
+                "sub": self.rp.sub, 
+                "anchor": self.ta_conf.sub
+            }
+        )
         self.assertTrue(res.status_code == 200)
         verify_jws(res.content.decode(), self.ta_conf.jwks[0])
 
