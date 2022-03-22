@@ -24,6 +24,7 @@ class OnBoardingRegistrationAdmin(admin.ModelAdmin):
                 type = _type,
                 jwks = jwks,
                 is_active = True,
+                status = "valid"
             )
         except IntegrityError:
             messages.error(request, f"Already exists a descendant with subject: {sub}")
