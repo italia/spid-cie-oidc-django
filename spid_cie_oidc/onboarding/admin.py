@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.db import IntegrityError
 
 from .models import OnBoardingRegistration
-from spid_cie_oidc.authority.models import FederationDescendant
+from spid_cie_oidc.authority.models import FederationDescendant, FederationDescendantContact
 
 
 @admin.register(OnBoardingRegistration)
@@ -16,9 +16,10 @@ class OnBoardingRegistrationAdmin(admin.ModelAdmin):
         sub = entity_onboarded.url_entity
         jwks = entity_onboarded.public_jwks
         _type = entity_onboarded.type
+        contact = entity_onboarded.contact
 
         try:
-            FederationDescendant.objects.create(
+            entity = FederationDescendant.objects.create(
                 name = name,
                 sub = sub,
                 type = _type,
@@ -26,8 +27,14 @@ class OnBoardingRegistrationAdmin(admin.ModelAdmin):
                 is_active = True,
                 status = "valid"
             )
+            FederationDescendantContact.objects.create(
+                entity = entity,
+                contact = contact,
+                type = "email"
+            )
         except IntegrityError:
             messages.error(request, f"Already exists a descendant with subject: {sub}")
+    
 
     list_display = (
         "organization_name",

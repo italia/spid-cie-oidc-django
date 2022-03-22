@@ -43,6 +43,13 @@ class OnBoardingRegistration(TimeStampedModel):
         help_text=_("OpenID Connect Federation entity type"),
     )
 
+    contact = models.CharField(
+        max_length=255,
+        blank=False,
+        null=False,
+        help_text=_("any kind of contact type, usually an email."),
+    )
+
     status = models.CharField(
         max_length=33,
         choices=(
