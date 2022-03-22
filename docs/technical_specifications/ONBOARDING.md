@@ -17,6 +17,8 @@ The actions to accredit an entity within the demo federation are described below
 2. becomes recognizable as an org affiliate and is given privileges to operate on
 behalf of that org for the registration of an entity, if not already present within the federation.
 
+To accredit a new entity, click to ` Register your entity `
+![Onboarding landing](../images/onboarding_landing.png)
 
 3. The user accesses the submission form of a federation entity, fill in the following REQUIRED fields:
     1. Organization Name (String)
@@ -38,15 +40,45 @@ behalf of that org for the registration of an entity, if not already present wit
     5. at least one administrative email contact (String)
         1. validators:
             - Email Field
-    6. at least one administrative email contact (String)
-        1. validators:
-            - Email Field
-    7. URL where the RP page shows the SPID and CIE authentication button
+    6. URL where the RP page shows the SPID and CIE authentication button
         1. validators:
             - Null, just for demo purpose
-    8. SPID/CIE authentication request trigger url at the onboarding system testing OP
+    7. SPID/CIE authentication request trigger url at the onboarding system testing OP
         1. validators:
             - Null, just for demo purpose
+
+![Registration entity](../images/fillregistration.png)
+
+After successful submission it is redirected to the list of registered entities
+
+![entity list](../images/listentity.png)
+
+### Entity OnBoarding
+
+- all the required information are moved (copied) from the OnBoardin registration storage to the FederationDescendant storage
+- trust marks is automatically generated for the available profile, public or private
+- the onboarding staff in any time can add more profiles and trust marks  through the FederationDescendant back office panel
+- an entity configuration with trust marks and metadata policy applied, signed by the Trust Anchor of the onboarding system, is automatically created and published to its __Resolve Entity Statement__ endpoint.
+- an email is sent to the user to inform on the succesfull state of the onboarding and the final entity configuration
+
+### Enable entity as descendat
+
+To enable the onboarded entity, go to admin panel:
+
+- Click OnBoarding Registrations
+- Select the entity you want to enable 
+- Select action "enable descendant"
+- submit
+
+![admin enable descendat](../images/enable_descendant.png)
+
+### next steps ( See the example in the documentation [CREATE_A_FEDERATION.md](../CREATE_A_FEDERATION.md) )
+
+- assign profile to descendant
+- configure a federation entity configuration
+
+
+
 
 ### SPID/CIE QaD tests
 
@@ -63,14 +95,6 @@ Automatic checks on the latter new registered entity. These check covers
 
 The tests produces a json report.
 this report would be also available in HTML format.
-
-### Entity OnBoarding
-
-- all the required information are moved (copied) from the OnBoardin registration storage to the FederationDescendant storage
-- trust marks is automatically generated for the available profile, public or private
-- the onboarding staff in any time can add more profiles and trust marks  through the FederationDescendant back office panel
-- an entity configuration with trust marks and metadata policy applied, signed by the Trust Anchor of the onboarding system, is automatically created and published to its __Resolve Entity Statement__ endpoint.
-- an email is sent to the user to inform on the succesfull state of the onboarding and the final entity configuration
 
 
 ### Considerations
