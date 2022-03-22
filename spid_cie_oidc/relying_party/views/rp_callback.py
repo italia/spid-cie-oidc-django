@@ -128,17 +128,9 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
         authz_token = OidcAuthenticationToken.objects.create(
             authz_request=authz, code=code
         )
-        try:
-            self.rp_conf = FederationEntityConfiguration.objects.get(
-                sub=authz_token.authz_request.client_id
-            )
-        except Exception as e:
-            # TODO: verify error message and status
-            context = {
-                "error": "invalid request",
-                "error_description": _("Relay party not found"),
-            }
-            return render(request, self.error_template, context, status=400)
+        self.rp_conf = FederationEntityConfiguration.objects.filter(
+            sub=authz_token.authz_request.client_id
+        ).first()
         if not self.rp_conf:
             # TODO: verify error message and status
             context = {
