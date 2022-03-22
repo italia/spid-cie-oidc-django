@@ -35,7 +35,7 @@ source env/bin/activate
 Setup the example projects
 ````
 git clone https://github.com/peppelinux/spid-cie-oidc-django
-cd spid-cie-oidc
+cd spid-cie-oidc-django
 pip install --upgrade pip
 pip install -e .
 ````
