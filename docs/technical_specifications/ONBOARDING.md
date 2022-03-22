@@ -2,7 +2,6 @@
 
 > ⚠️ This application is only intended for demostration purpose and not for production use.
 
-
 ## General OnBoarding registration flow
 
 The actions to accredit an entity within the demo federation are described below.
@@ -17,7 +16,7 @@ The actions to accredit an entity within the demo federation are described below
 2. becomes recognizable as an org affiliate and is given privileges to operate on
 behalf of that org for the registration of an entity, if not already present within the federation.
 
-To accredit a new entity, click to ` Register your entity `
+To accredit a new entity, click to `Register your entity`
 ![Onboarding landing](../images/onboarding_landing.png)
 
 3. The user accesses the submission form of a federation entity, fill in the following REQUIRED fields:
@@ -55,7 +54,8 @@ After successful submission it is redirected to the list of registered entities
 
 ### Entity OnBoarding
 
-- all the required information are moved (copied) from the OnBoardin registration storage to the FederationDescendant storage
+- all the required information are moved (copied) from the OnBoarding registration 
+- from the admin panel a staff user can enable it as a FederationDescendant
 - trust marks is automatically generated for the available profile, public or private
 - the onboarding staff in any time can add more profiles and trust marks  through the FederationDescendant back office panel
 - an entity configuration with trust marks and metadata policy applied, signed by the Trust Anchor of the onboarding system, is automatically created and published to its __Resolve Entity Statement__ endpoint.
@@ -77,9 +77,7 @@ To enable the onboarded entity, go to admin panel:
 - assign profile to descendant
 - configure a federation entity configuration
 
-
-
-
+TODO:
 ### SPID/CIE QaD tests
 
 Once the submission passes the initial checks the request is saved and a batch will start the
@@ -95,7 +93,6 @@ Automatic checks on the latter new registered entity. These check covers
 
 The tests produces a json report.
 this report would be also available in HTML format.
-
 
 ### Considerations
 
