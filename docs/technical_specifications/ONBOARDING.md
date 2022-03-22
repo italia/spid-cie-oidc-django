@@ -28,7 +28,7 @@ To accredit a new entity, click to ` Register your entity `
             - JWS signature validation
             - structure analysis of the JSON (json-schema)
             - presence and validation of the claim  __authority_hints__ that MUST matches to the onboarding system entity (trust anchor)
-    3. IPA code or VAT number, that determines whether the participant is public or private (String)
+    3. TODO: IPA code or VAT number, that determines whether the participant is public or private (String)
         1. validators:
             - TODO: fetch and verify the IPA code from the national registry of public services
     4. public jwks (List[JSON])
@@ -37,13 +37,13 @@ To accredit a new entity, click to ` Register your entity `
             - check of the presence of kid claim
             - check that the certificate is not expired
             - check that the kid is unique and of the lenght of a minimum JWK thumbprint length
-    5. at least one administrative email contact (String)
+    5. TODO: at least one administrative email contact (String)
         1. validators:
             - Email Field
     6. URL where the RP page shows the SPID and CIE authentication button
         1. validators:
             - Null, just for demo purpose
-    7. SPID/CIE authentication request trigger url at the onboarding system testing OP
+    7. TODO: SPID/CIE authentication request trigger url at the onboarding system testing OP
         1. validators:
             - Null, just for demo purpose
 
@@ -59,7 +59,7 @@ After successful submission it is redirected to the list of registered entities
 - trust marks is automatically generated for the available profile, public or private
 - the onboarding staff in any time can add more profiles and trust marks  through the FederationDescendant back office panel
 - an entity configuration with trust marks and metadata policy applied, signed by the Trust Anchor of the onboarding system, is automatically created and published to its __Resolve Entity Statement__ endpoint.
-- an email is sent to the user to inform on the succesfull state of the onboarding and the final entity configuration
+- TODO: an email is sent to the user to inform on the succesfull state of the onboarding and the final entity configuration
 
 ### Enable entity as descendat
 
