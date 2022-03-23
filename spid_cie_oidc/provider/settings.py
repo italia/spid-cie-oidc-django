@@ -6,8 +6,7 @@ from spid_cie_oidc.entity.schemas.op_metadata import (
     OPMetadataSpid
 )
 from spid_cie_oidc.onboarding.schemas.authn_requests import (
-    AcrValuesCie,
-    AcrValuesSpid,
+    AcrValues,
     AuthenticationRequestCie,
     AuthenticationRequestSpid
 )
@@ -117,9 +116,12 @@ OIDCFED_PROVIDER_AUTH_CODE_MAX_AGE = getattr(
     "OIDCFED_PROVIDER_AUTH_CODE_MAX_AGE",
     10
 )
-OIDCFED_PROVIDER_PROFILES_DEFAULT_ACR = dict(
-    spid = AcrValuesSpid.l2.value,
-    cie = AcrValuesCie.l2.value
+
+
+DEFAULT_ACR = getattr(
+    settings,
+    "DEFAULT_ACR",
+    AcrValues.l2.value
 )
 
 OIDCFED_ATTRNAME_I18N = {

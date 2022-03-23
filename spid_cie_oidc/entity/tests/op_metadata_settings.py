@@ -39,7 +39,6 @@ OP_METADATA_CIE["scopes_supported"] = ["openid", "offline_access", "email"]
 OP_METADATA_CIE["response_types_supported"] = ["code"]
 OP_METADATA_CIE["response_modes_supported"] = ["query", "form_post"]
 OP_METADATA_CIE["grant_types_supported"] = ["authorization_code", "refresh_token"]
-OP_METADATA_CIE["acr_values_supported"] = ["CIE_L1", "CIE_L3"]
 OP_METADATA_CIE["claims_supported"] = [
     "given_name",
     "family_name",

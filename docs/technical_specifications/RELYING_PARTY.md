@@ -71,13 +71,13 @@ RP_PROVIDER_PROFILES = getattr(
     "RP_PROVIDER_PROFILES",
     {
         "spid": {
-            "authorization_request": {"acr_values": AcrValuesSpid.l2.value},
+            "authorization_request": {"acr_values": AcrValues.l2.value},
             "rp_metadata": RPMetadataSpid,
             "authn_response": AuthenticationResponse,
             "token_response": TokenResponse
         },
         "cie": {
-            "authorization_request": {"acr_values": AcrValuesCie.l2.value},
+            "authorization_request": {"acr_values": AcrValues.l2.value},
             "rp_metadata": RPMetadataCie,
             "authn_response": AuthenticationResponseCie,
             "token_response": TokenResponse
@@ -136,10 +136,7 @@ LOGIN_REDIRECT_URL = "/oidc/rp/echo_attributes"
 `OIDCFED_ACR_PROFILES`, acr value required to OP Authentication Endpoint
 Example
 ````
-    dict(
-        spid = AcrValuesSpid.l2.value,
-        cie = AcrValuesCie.l2.value
-     )
+`OIDCFED_ACR_PROFILES` = AcrValues.l2.value
 ````
 
 `RP_DEFAULT_PROVIDER_PROFILES`, default profile for OP

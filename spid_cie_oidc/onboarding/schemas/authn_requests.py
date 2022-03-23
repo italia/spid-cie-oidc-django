@@ -6,17 +6,10 @@ from pydantic import BaseModel, Field, HttpUrl, conlist, constr, validator
 # TODO: Schema of claims is not genrated
 
 
-class AcrValuesSpid(str, Enum):
+class AcrValues(str, Enum):
     l1 = "https://www.spid.gov.it/SpidL1"
     l2 = "https://www.spid.gov.it/SpidL2"
     l3 = "https://www.spid.gov.it/SpidL3"
-
-
-class AcrValuesCie(str, Enum):
-    l1 = "CIE_L1"
-    l2 = "CIE_L2"
-    l3 = "CIE_L3"
-
 
 class ScopeSpid(str, Enum):
     openid = "openid"
@@ -152,6 +145,7 @@ class AuthenticationRequest(BaseModel):
     exp: Optional[int]
     jti: Optional[str]
     aud: List[HttpUrl]
+    acr_values: List[AcrValues]
 
     @validator("claims")
     def validate_claims(cls, claims):
@@ -176,7 +170,6 @@ class AuthenticationRequest(BaseModel):
 class AuthenticationRequestSpid(AuthenticationRequest):
     scope: List[ScopeSpid]
     prompt: Literal["consent", "consent login", "verify"]
-    acr_values: List[AcrValuesSpid]
 
     def get_claims() -> dict:
         return CLAIMS_SPID
@@ -185,7 +178,6 @@ class AuthenticationRequestSpid(AuthenticationRequest):
 class AuthenticationRequestCie(AuthenticationRequest):
     scope: List[ScopeCie]
     prompt: Literal["consent", "consent login"]
-    acr_values: List[AcrValuesCie]
 
     def get_claims() -> dict:
         return CLAIMS_CIE

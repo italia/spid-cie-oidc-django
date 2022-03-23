@@ -1,5 +1,5 @@
 from django.conf import settings
-from spid_cie_oidc.onboarding.schemas.authn_requests import AcrValuesCie, AcrValuesSpid, AuthenticationRequestCie, AuthenticationRequestSpid
+from spid_cie_oidc.onboarding.schemas.authn_requests import AcrValues, AuthenticationRequestCie, AuthenticationRequestSpid
 from spid_cie_oidc.entity.schemas.rp_metadata import RPMetadataSpid, RPMetadataCie
 from spid_cie_oidc.onboarding.schemas.authn_response import AuthenticationResponse, AuthenticationResponseCie
 from spid_cie_oidc.onboarding.schemas.token_response import TokenResponse
@@ -18,10 +18,7 @@ RP_PREFS = {
 OIDCFED_ACR_PROFILES = getattr(
     settings,
     "OIDCFED_ACR_PROFILES",
-    dict(
-        spid = AcrValuesSpid.l2.value,
-        cie = AcrValuesCie.l2.value
-     )
+    AcrValues.l2.value
 )
 
 RP_PROVIDER_PROFILES = getattr(
