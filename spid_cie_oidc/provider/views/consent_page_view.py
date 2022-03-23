@@ -65,8 +65,8 @@ class ConsentPageView(OpBase, View):
     def post(self, request, *args, **kwargs):
         try:
             session = self.check_session(request)
-        except Exception:
-            logger.warning("Invalid session")
+        except Exception as e:
+            logger.warning(f"Invalid session: {e}")
             return HttpResponseForbidden()
 
         self.payload = session.authz_request

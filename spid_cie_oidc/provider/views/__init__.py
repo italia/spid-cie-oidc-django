@@ -11,7 +11,7 @@ from spid_cie_oidc.entity.models import FederationEntityConfiguration, TrustChai
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
 from spid_cie_oidc.entity.utils import datetime_from_timestamp, exp_from_now, iat_now
-from spid_cie_oidc.provider.exceptions import AuthzRequestReplay, InvalidSession, RevokedSession, ValidationException
+from spid_cie_oidc.provider.exceptions import AuthzRequestReplay, ExpiredAuthCode, InvalidSession, RevokedSession, ValidationException
 from spid_cie_oidc.provider.models import OidcSession
 
 from spid_cie_oidc.provider.settings import (
@@ -19,6 +19,8 @@ from spid_cie_oidc.provider.settings import (
     OIDCFED_DEFAULT_PROVIDER_PROFILE,
     OIDCFED_PROVIDER_AUTH_CODE_MAX_AGE,
     OIDCFED_PROVIDER_PROFILES,
+    OIDCFED_PROVIDER_PROFILES_ACR_4_REFRESH,
+    OIDCFED_PROVIDER_PROFILES_DEFAULT_ACR,
     OIDCFED_PROVIDER_PROFILES_ID_TOKEN_CLAIMS
 )
 logger = logging.getLogger(__name__)
@@ -133,19 +135,30 @@ class OpBase:
             raise InvalidSession()
 
         session = OidcSession.objects.filter(
-            auth_code=request.session["oidc"]["auth_code"],
-            user=request.user,
-            created__lte = timezone.localtime() + timezone.timedelta(
-                minutes = OIDCFED_PROVIDER_AUTH_CODE_MAX_AGE
-            )
+            auth_code=request.session["oidc"]["auth_code"]
         ).first()
 
         if not session:
-            raise InvalidSession()
-
+            raise InvalidSession("Unknown Session")
+        
+        if session.user != request.user:
+            raise InvalidSession(
+                f"Different user, session is of {session.user} "
+                f"but request user is {request.user}"
+            )
+        
         if session.revoked:
-            raise RevokedSession()
-
+            raise RevokedSession(
+                "Session was revoked"
+            )
+        
+        session_not_after = session.created + timezone.timedelta(
+            minutes = OIDCFED_PROVIDER_AUTH_CODE_MAX_AGE
+        )
+        if session_not_after < timezone.localtime():
+            raise ExpiredAuthCode(
+                f"The Session is expired at {session_not_after}"
+            )
         return session
 
     def get_issuer(self):
@@ -255,9 +268,12 @@ class OpBase:
             commons:dict
     ) -> dict:
         # refresh token is scope offline_access and prompt == consent
+        refresh_acrs = OIDCFED_PROVIDER_PROFILES_ACR_4_REFRESH[OIDCFED_DEFAULT_PROVIDER_PROFILE]
+        acrs = authz.authz_request.get('acr_values', "").split(' ')
         if (
             "offline_access" in authz.authz_request['scope'] and
-            'consent' in authz.authz_request['prompt']
+            'consent' in authz.authz_request['prompt'] and 
+            set(refresh_acrs).intersection(set(acrs))
         ):
             refresh_token = {
                 "sub": sub,

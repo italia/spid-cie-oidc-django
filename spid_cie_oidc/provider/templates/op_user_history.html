@@ -73,7 +73,7 @@
                 <tr>
                     <th scope="row">{{ forloop.counter }}</th>
                     <td>{{ session.client_id }}</td>
-                    <td>{{ session.sid}}</td>
+                    <td>{{ session.sid|truncatechars:33 }}</td>
                     <td>{{ session.created | date:'Y-m-d H:i'}}</td>
                     {% if session.revoked %}
                         <td class="text-success">

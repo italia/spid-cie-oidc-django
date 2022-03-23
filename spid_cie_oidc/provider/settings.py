@@ -127,6 +127,16 @@ OIDCFED_PROVIDER_PROFILES_DEFAULT_ACR = getattr(
     )
 )
 
+OIDCFED_PROVIDER_PROFILES_ACR_4_REFRESH = getattr(
+    settings,
+    "OIDCFED_PROVIDER_PROFILES_ACR_4_REFRESH",
+    dict(
+        spid = [AcrValues.l1.value],
+        cie = [AcrValues.l1.value]
+    )
+)
+
+
 OIDCFED_ATTRNAME_I18N = {
     # SPID
     "https://attributes.spid.gov.it/name": _("Name"),
