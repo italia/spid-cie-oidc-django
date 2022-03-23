@@ -17,26 +17,34 @@
         {% csrf_token %}
         <div class="row">
             <div class="col-12 col-lg-7">
+                {% csrf_token %}
+                {% for form_field in form %}
                 <div class="form-row">
+                    {% if form_field.name == 'jwt' %}
                     <div class="col-12 form-group my-3">
-                        <label for="id_jwt">
+                        <label for="id_{{ form_field.html_name }}">
                             <span class="form-label-content">
-                                Jwt
+                            {{ form_field.label }}
                             </span>
                         </label>
-                        <textarea id="id_jwt" rows="14" name="jwt">{{ jwt }}</textarea>
+                        <textarea id="id_{{ form_field.html_name }}" rows="14" 
+                        name="{{ form_field.name }}">{{ form.jwt.value}}</textarea>
                     </div>
-                </div>
-                <div class="form-row">
+                    {% else %}
                     <div class="col-12 form-group my-3">
-                        <label for="id_jwk">
-                            <span class="form-label-content">
-                                Jwk
+                        <label for="id_{{ form_field.html_name }}">
+                            <span class="form-label-content mt-4">
+                            {{ form_field.label }}
                             </span>
                         </label>
-                        <textarea id="id_jwk" rows="6" name="jwk">{{ jwk }}</textarea>
+                        <textarea id="id_{{ form_field.html_name }}" rows="6" 
+                        name="{{ form_field.name }}">{{ form.jwk.value }}</textarea>
                     </div>
+                    
+                    {% endif %}
+                    <span for="id_{{ form_field.html_name }}" class="text-danger">{{ form_field.errors }}</span>
                 </div>
+                {% endfor %}
             </div>
             <div class="col-12 col-lg-5">
                 <div class="form-row">

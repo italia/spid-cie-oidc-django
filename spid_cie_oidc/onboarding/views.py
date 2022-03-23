@@ -8,7 +8,8 @@ from django.utils.translation import gettext as _
 from .forms import (
     OnboardingRegistrationForm,
     OnboardingCreateTrustChain,
-    OnboardingValidatingTrustMarkForm
+    OnboardingValidatingTrustMarkForm,
+    OnboardingDecodeForm
 )
 from .models import OnBoardingRegistration
 from spid_cie_oidc.entity.jwks import (
@@ -255,31 +256,28 @@ def onboarding_validate_ec(request):
 
 
 def onboarding_decode_jwt(request):
-    context = {
-            "jwt": "",
-            "jwk": "",
-            "head": "",
-            "payload": ""
-    }
-    if request.POST.get('jwt'):
-        jwt = request.POST['jwt']
-        head = unpad_jwt_head(jwt)
-        payload = unpad_jwt_payload(jwt)
-        context["jwt"] = jwt
-        context["head"] = json.dumps(head, indent=4)
-        context["payload"] = json.dumps(payload, indent=4)
-        if request.POST.get('jwk'):
-            jwk_str = request.POST['jwk']
-            context["jwk"] = jwk_str
-            jwk_str_double_quote = jwk_str.replace("'", '"')
-            try:
-                jwk = json.loads(jwk_str_double_quote)
+    if request.method == "GET":
+        form = OnboardingDecodeForm()
+    else:
+        form = OnboardingDecodeForm(request.POST)
+
+    context = {'form': form}
+
+    if form.is_valid():
+        form_dict = {**form.cleaned_data}
+        jwt = form_dict['jwt']
+        try:
+            head = unpad_jwt_head(jwt)
+            payload = unpad_jwt_payload(jwt)
+            context["head"] = json.dumps(head, indent=4)
+            context["payload"] = json.dumps(payload, indent=4)
+            jwk = form_dict["jwk"]
+            if jwk:
                 verify_jws(jwt, jwk)
                 messages.success(request, _('Your jws is verified'))
-            except Exception:
-                messages.error(request, _("Jws verification failed"))
-                render(request, 'onboarding_decode_jwt.html', context)
-    return render(request, 'onboarding_decode_jwt.html', context)
+        except Exception as e:
+            messages.error(request, f"Jws verification failed: {e}")
+    return render(request, "onboarding_decode_jwt.html", context)
 
 
 def onboarding_apply_policy(request):
