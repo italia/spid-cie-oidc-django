@@ -253,30 +253,30 @@ def onboarding_validate_ec(request):
             messages.error(request, f"Validation Failed: {e}")
             return render(request, 'onboarding_validate_ec.html', context)
     return render(request, 'onboarding_validate_ec.html', context)
-    
+
 
 def onboarding_decode_jwt(request):
-    form = OnboardingDecodeForm()
-    context = {"form": form}
-    if request.method == "POST":
+    if request.method == "GET":
+        form = OnboardingDecodeForm()
+    else:
         form = OnboardingDecodeForm(request.POST)
-        if not form.is_valid():
-            context = {"form": form}
-        else:
-            context = {"form": form}
-            form_dict = {**form.cleaned_data}
-            jwt = form_dict['jwt']
-            try:
-                head = unpad_jwt_head(jwt)
-                payload = unpad_jwt_payload(jwt)
-                context["head"] = json.dumps(head, indent=4)
-                context["payload"] = json.dumps(payload, indent=4)
-                jwk = form_dict["jwk"]
-                if jwk:
-                    verify_jws(jwt, jwk)
-                    messages.success(request, _('Your jws is verified'))
-            except Exception as e:
-                messages.error(request, f"Jws verification failed: {e}")
+
+    context = {'form': form}
+    
+    if form.is_valid():
+        form_dict = {**form.cleaned_data}
+        jwt = form_dict['jwt']
+        try:
+            head = unpad_jwt_head(jwt)
+            payload = unpad_jwt_payload(jwt)
+            context["head"] = json.dumps(head, indent=4)
+            context["payload"] = json.dumps(payload, indent=4)
+            jwk = form_dict["jwk"]
+            if jwk:
+                verify_jws(jwt, jwk)
+                messages.success(request, _('Your jws is verified'))
+        except Exception as e:
+            messages.error(request, f"Jws verification failed: {e}")
     return render(request, "onboarding_decode_jwt.html", context)
 
 def onboarding_apply_policy(request):

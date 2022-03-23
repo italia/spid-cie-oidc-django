@@ -116,7 +116,6 @@ class OnboardingDecodeForm(forms.Form):
     )
 
     jwk = forms.JSONField(
-        initial=None,
         label=_("jwk"),
         required=False,
         error_messages={"required": _("Enter a jwk to decode your jwt")}
