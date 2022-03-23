@@ -1,14 +1,17 @@
+from types import new_class
 from django.contrib import admin
 from django.utils.safestring import mark_safe
+from django.contrib import messages
 
 # from prettyjson import PrettyJSONWidget
 
-
+from django.conf import settings
 from .models import (
     FederationEntityConfiguration,
     FetchedEntityStatement,
     TrustChain
 )
+from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
 
 
 @admin.register(FederationEntityConfiguration)
@@ -55,6 +58,28 @@ class FederationEntityConfigurationAdmin(admin.ModelAdmin):
 
 @admin.register(TrustChain)
 class TrustChainAdmin(admin.ModelAdmin):
+
+    @admin.action(description='reload trust chain')
+    def update_trust_chain(modeladmin, request, queryset):
+        for tc in queryset:
+            sub = tc.sub
+            ta = tc.trust_anchor.sub
+            try :
+                n_tc = get_or_create_trust_chain(
+                        subject=sub,
+                        trust_anchor=ta,
+                        httpc_params=settings.HTTPC_PARAMS,
+                        required_trust_marks=getattr(
+                            settings, "OIDCFED_REQUIRED_TRUST_MARKS", []
+                        ),
+                    )
+                n_tc.is_valid
+                messages.success(request, f"reload trust chain successfully")
+            except Exception as e:
+                messages.error(request, f"Failed to update {sub} due to: {e}")
+                continue
+
+
     list_display = ("sub", "exp", "modified", "is_valid")
     list_filter = ("exp", "modified", "is_active")
     search_fields = ("sub",)
@@ -68,6 +93,8 @@ class TrustChainAdmin(admin.ModelAdmin):
         "chain",
         "iat",
     )
+
+    actions = [update_trust_chain]
 
 
 @admin.register(FetchedEntityStatement)
