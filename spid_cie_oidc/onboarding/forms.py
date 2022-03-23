@@ -105,3 +105,19 @@ class OnboardingValidatingTrustMarkForm(forms.Form):
         label=_("Enter trust mark"),
         required=False
     )
+
+
+class OnboardingDecodeForm(forms.Form):
+
+    jwt = forms.CharField(
+        initial="",
+        label=_("jwt"),
+        error_messages={"required": _("Enter a jwt")},
+    )
+
+    jwk = forms.JSONField(
+        initial=None,
+        label=_("jwk"),
+        required=False,
+        error_messages={"required": _("Enter a jwk to decode your jwt")}
+    )
