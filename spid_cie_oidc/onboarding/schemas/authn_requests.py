@@ -11,6 +11,7 @@ class AcrValues(str, Enum):
     l2 = "https://www.spid.gov.it/SpidL2"
     l3 = "https://www.spid.gov.it/SpidL3"
 
+
 class ScopeSpid(str, Enum):
     openid = "openid"
     offline_access = "offline_access"
