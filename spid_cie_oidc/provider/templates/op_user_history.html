@@ -6,10 +6,17 @@
 {% block menu_links %}
 
 <li class="nav-item ">
-    <a class="nav-link {% if request.resolver_match.view_name == 'oidc_provider_consent' %}active{% endif %}" 
-    href="{% url 'oidc_provider_consent' %}">
-        <span>{% trans 'Home' %}</span>
-    </a>
+    {% if user.is_staff %}
+        <a class="nav-link {% if request.resolver_match.view_name == 'oidc_provider_staff_testing' %}active{% endif %}" 
+        href="{% url 'oidc_provider_staff_testing' %}">
+            <span>{% trans 'Home' %}</span>
+        </a>
+    {% else %}
+        <a class="nav-link {% if request.resolver_match.view_name == 'oidc_provider_consent' %}active{% endif %}" 
+        href="{% url 'oidc_provider_consent' %}">
+            <span>{% trans 'Home' %}</span>
+        </a>
+    {% endif %}
 </li>
 <li class="nav-item">
     <a class="nav-link {% if request.resolver_match.view_name == 'oidc_provider_access_history' %}active{% endif %}" 
@@ -23,7 +30,7 @@
 {% block centered_container %}
 
 <div class="col-12">
-
+    
     <div class="row row-header border-bottom no-border-bottom-xs">
         <div class="wrap-container">
             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">

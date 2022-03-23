@@ -3,6 +3,22 @@
 {% load i18n %}
 {% load static %}
 
+{% block menu_links %}
+
+<li class="nav-item ">
+    <a class="nav-link {% if request.resolver_match.view_name == 'oidc_provider_staff_testing' %}active{% endif %}" 
+    href="{% url 'oidc_provider_staff_testing' %}">
+        <span>{% trans 'Home' %}</span>
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.view_name == 'oidc_provider_access_history' %}active{% endif %}" 
+    href="{% url 'oidc_provider_access_history' %}">
+        <span>{% trans 'Access History' %}</span>
+    </a>
+</li>
+
+{% endblock menu_links %}
 {% block container %}
 <div>
     <div class="container pt-2 p-3">
