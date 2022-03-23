@@ -50,7 +50,8 @@ After a successful submission the user is redirected to the list of registered e
 - from the admin panel a staff user can enable the entity as a FederationDescendant
 - all the required information are moved (copied) from the OnBoarding registration 
 - the staff user assigns a Descendant Profile (trust mark) to the onboarded entity
- (See the example in the documentation [CREATE_A_FEDERATION.md](../CREATE_A_FEDERATION.md#register-a-provider-in-the-federation) )
+ (See the example in the documentation [CREATE_A_FEDERATION.md](../CREATE_A_FEDERATION.md#register-an-entity-as-descendant) )
+ see "Register an entity as descendant".
 - the staff user in any time can add more profiles and trust marks through the FederationDescendant back office panel
 - an entity configuration with trust marks and metadata policy applied, signed by the Trust Anchor of the onboarding system,
  is now available to its __Resolve Entity Statement__ endpoint.
@@ -60,6 +61,6 @@ To enable the onboarded entity, the Federation Operator points its web browser t
 - Click OnBoarding Registrations
 - Select the entity you want to enable 
 - Select action "enable descendant"
-- submit
+- Submit
 
 ![admin enable descendant](../images/enable_descendant.png)
