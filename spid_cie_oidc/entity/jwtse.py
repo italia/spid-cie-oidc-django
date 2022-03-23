@@ -89,7 +89,9 @@ def verify_jws(jws: str, pub_jwk: dict, **kwargs) -> str:
 
     _head = unpad_jwt_head(jws)
     if _head.get("kid") != pub_jwk["kid"]:
-        raise Exception(f"kid error: {_head.get('kid')} != {pub_jwk['kid']}")
+        raise Exception(
+            f"kid error: {_head.get('kid')} != {pub_jwk['kid']}"
+        )
 
     _alg = _head["alg"]
     if _alg not in SIGNING_ALG_VALUES_SUPPORTED or not _alg:

@@ -43,7 +43,13 @@ class OnboardingRegistrationForm(forms.Form):
                 "Enter the url of the page where the SPID/CIE button is available"
             )
         },
-    ),
+    )
+
+    contact = forms.EmailField(
+        initial="",
+        label=_("contact email"),
+        error_messages={"required": _("Enter your contact email")},
+    )
 
     type = forms.ChoiceField(
         choices=[(i, i) for i in ENTITY_TYPES],
@@ -98,4 +104,19 @@ class OnboardingValidatingTrustMarkForm(forms.Form):
         initial = "",
         label=_("Enter trust mark"),
         required=False
+    )
+
+
+class OnboardingDecodeForm(forms.Form):
+
+    jwt = forms.CharField(
+        initial="",
+        label=_("jwt"),
+        error_messages={"required": _("Enter a jwt")},
+    )
+
+    jwk = forms.JSONField(
+        initial=dict,
+        label=_("jwk"),
+        required=False,
     )

@@ -42,9 +42,8 @@ class RefreshTokenTest(TestCase):
         )
         self.trust_chain = TrustChain.objects.create(
             sub=RP_SUB,
-            type="openid_relying_party",
             exp=datetime_from_timestamp(exp_from_now(33)),
-            metadata=RP_METADATA["openid_relying_party"],
+            metadata=RP_METADATA,
             status="valid",
             trust_anchor=self.ta_fes,
             is_active=True,
@@ -70,7 +69,7 @@ class RefreshTokenTest(TestCase):
             user=User.objects.create(username = "username"),
             user_uid="",
             nonce="",
-            authz_request={"scope": "openid", "nonce": "123", "acr_values":["https://www.spid.gov.it/SpidL2"]},
+            authz_request={"scope": "offline_access", "prompt": "consent", "nonce": "123", "acr_values":["https://www.spid.gov.it/SpidL2"]},
             client_id="",
             auth_code="code",
         )
@@ -91,6 +90,7 @@ class RefreshTokenTest(TestCase):
             grant_type="refresh_token",
             code = "code",
             code_verifier = "code_verifier"
+
         )
         res = client.post(url, request)
         self.assertTrue(res.status_code == 200)

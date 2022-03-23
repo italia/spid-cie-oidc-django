@@ -54,9 +54,9 @@
                         {% for provider in spid_providers %}
                             <li>
                                 <a href="{% url 'spid_cie_rp_begin' %}?provider={{provider.sub}}&profile=spid">
-                                    <span class="spid-sr-only">{{ provider.metadata.organization_name }}</span>
-                                    {% if provider.metadata.logo_uri %}
-                                    <img src="{{ provider.metadata.logo_uri }}" alt="{{ provider.metadata.organization_name }}">
+                                    <span class="spid-sr-only">{{ provider.metadata.openid_provider.organization_name }}</span>
+                                    {% if provider.metadata.openid_provider.logo_uri %}
+                                    <img src="{{ provider.metadata.openid_provider.logo_uri }}" alt="{{ provider.metadata.organization_name }}">
                                     {% else %}
                                     <img src="{% static 'svg/no_image_available.svg' %}" alt="{{ provider.metadata.organization_name }}">
                                     {% endif %}
@@ -67,7 +67,7 @@
                 </div>
 
             </span>
-            
+
             <span
                 class="badge square-corners mb-3 mr-2 ml-0 pr-10 p-2 mw-100"
                 style="font-size: 100%">
@@ -88,9 +88,9 @@
                         {% for provider in cie_providers %}
                             <li>
                                 <a href="{% url 'spid_cie_rp_begin' %}?provider={{provider.sub}}&profile=cie">
-                                    <span class="spid-sr-only">{{ provider.metadata.organization_name }}</span>
-                                    {% if provider.metadata.logo_uri %}
-                                    <img src="{{ provider.metadata.logo_uri }}" alt="{{ provider.metadata.organization_name }}">
+                                    <span class="spid-sr-only">{{ provider.metadata.openid_provider.organization_name }}</span>
+                                    {% if provider.metadata.openid_provider.logo_uri %}
+                                    <img src="{{ provider.metadata.openid_provider.logo_uri }}" alt="{{ provider.metadata.organization_name }}">
                                     {% else %}
                                     <img src="{% static 'svg/no_image_available.svg' %}" alt="{{ provider.metadata.organization_name }}">
                                     {% endif %}

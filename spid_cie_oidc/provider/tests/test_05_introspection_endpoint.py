@@ -74,9 +74,8 @@ class IntrospectionEndpointTest(TestCase):
         )
         self.trust_chain = TrustChain.objects.create(
             sub=self.RP_SUB,
-            type="openid_relying_party",
             exp=datetime_from_timestamp(exp_from_now(33)),
-            metadata=RP_METADATA["openid_relying_party"],
+            metadata=RP_METADATA,
             status="valid",
             trust_anchor=self.ta_fes,
             is_active=True,
@@ -95,3 +94,16 @@ class IntrospectionEndpointTest(TestCase):
         res = client.post(url, request)
         self.assertTrue(res.status_code == 200)
         self.assertTrue("openid" in res.content.decode())
+
+    def test_introspection_endpoint_validation_error(self):
+        client = Client()
+        url = reverse("introspection_endpoint")
+        request = {
+            "client_assertion" : self.ca_jws,
+            "client_assertion_type" : "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+            "token" : self.jwt_token
+
+        }
+        res = client.post(url, request)
+        self.assertTrue(res.status_code == 400)
+        self.assertTrue(res.json()["error"] == "invalid_request")

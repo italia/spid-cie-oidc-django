@@ -1,0 +1,262 @@
+import json
+import logging
+
+from django.conf import settings
+from django.contrib.auth import get_user_model, login
+from django.http import HttpResponseRedirect, JsonResponse
+from django.shortcuts import render
+from django.urls import reverse
+from django.utils.translation import gettext as _
+from django.views import View
+from spid_cie_oidc.entity.jwtse import (
+    unpad_jwt_head,
+    unpad_jwt_payload,
+    verify_jws
+)
+from spid_cie_oidc.entity.models import FederationEntityConfiguration
+from spid_cie_oidc.entity.settings import HTTPC_PARAMS
+from spid_cie_oidc.relying_party.exceptions import ValidationException
+
+from ..models import OidcAuthentication, OidcAuthenticationToken
+from ..oauth2 import *
+from ..oidc import *
+from ..settings import (
+    RP_ATTR_MAP,
+    RP_USER_CREATE,
+    RP_USER_LOOKUP_FIELD,
+)
+from ..utils import process_user_attributes
+
+from . import SpidCieOidcRp
+
+logger = logging.getLogger(__name__)
+
+
+class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2AuthorizationCodeGrant):
+    """
+        View which processes an Authorization Response
+        https://tools.ietf.org/html/rfc6749#section-4.1.2
+
+        eg:
+        /redirect_uri?code=tYkP854StRqBVcW4Kg4sQfEN5Qz&state=R9EVqaazGsj3wg5JgxIgm8e8U4BMvf7W
+    """
+
+    error_template = "rp_error.html"
+
+    def user_reunification(self, user_attrs: dict):
+        user_model = get_user_model()
+        lookup = {
+            f"attributes__{RP_USER_LOOKUP_FIELD}": user_attrs[RP_USER_LOOKUP_FIELD]
+        }
+        user = user_model.objects.filter(**lookup).first()
+        if user:
+            user.attributes.update(user_attrs)
+            user.save()
+            logger.info(f"{RP_USER_LOOKUP_FIELD} matched on user {user}")
+            return user
+        elif RP_USER_CREATE:
+            user = user_model.objects.create(
+                username=user_attrs.get("username", user_attrs["sub"]),
+                first_name=user_attrs.get("given_name", user_attrs["sub"]),
+                last_name=user_attrs.get("family_name", user_attrs["sub"]),
+                email=user_attrs.get("email", ""),
+                attributes=user_attrs,
+            )
+            logger.info(f"Created new user {user}")
+            return user
+
+    def get_jwk_from_jwt(self, jwt: str, provider_jwks: dict) -> dict:
+        """
+            docs here
+        """
+        head = unpad_jwt_head(jwt)
+        kid = head["kid"]
+        for jwk in provider_jwks:
+            if jwk["kid"] == kid:
+                return jwk
+        return {}
+
+    def get(self, request, *args, **kwargs):
+        """
+            The Authorization callback, the redirect uri where the auth code lands
+        """
+        request_args = {k: v for k, v in request.GET.items()}
+        if "error" in request_args:
+            return render(
+                request,
+                self.error_template,
+                request_args,
+                status=401
+            )
+        authz = OidcAuthentication.objects.filter(
+            state=request_args.get("state"),
+        )
+        try:
+            self.validate_json_schema(
+                request.GET.dict(),
+                "authn_response",
+                "Authn response object validation failed"
+            )
+        except ValidationException:
+            return JsonResponse(
+                {
+                    "error": "invalid_request",
+                    "error_description": "Authn response object validation failed",
+                },
+                status = 400
+            )
+
+        if not authz:
+            # TODO: verify error message and status
+            context = {
+                "error": "unauthorized request",
+                "error_description": _("Authentication not found"),
+            }
+            return render(request, self.error_template, context, status=401)
+        else:
+            authz = authz.last()
+
+        code = request.GET.get("code")
+        if not code:
+            # TODO: verify error message and status
+            context = {
+                "error": "invalid request",
+                "error_description": _("Request MUST contain code"),
+            }
+            return render(request, self.error_template, context, status=400)
+
+        authz_token = OidcAuthenticationToken.objects.create(
+            authz_request=authz, code=code
+        )
+        self.rp_conf = FederationEntityConfiguration.objects.filter(
+            sub=authz_token.authz_request.client_id
+        ).first()
+        if not self.rp_conf:
+            # TODO: verify error message and status
+            context = {
+                "error": "invalid request",
+                "error_description": _("Relay party not found"),
+            }
+            return render(request, self.error_template, context, status=400)
+        authz_data = json.loads(authz.data)
+        token_response = self.access_token_request(
+            redirect_uri=authz_data["redirect_uri"],
+            state=authz.state,
+            code=code,
+            issuer_id=authz.provider_id,
+            client_conf=self.rp_conf,
+            token_endpoint_url=authz.provider_configuration["token_endpoint"],
+            audience=[authz.provider_id],
+            code_verifier=authz_data.get("code_verifier"),
+        )
+        if not token_response:
+            # TODO: verify error message
+            context = {
+                "error": "invalid token response",
+                "error_description": _("Token response seems not to be valid"),
+            }
+            return render(request, self.error_template, context, status=400)
+
+        else:
+            try:
+                self.validate_json_schema(
+                    token_response,
+                    "token_response",
+                    "Token response object validation failed"
+                )
+            except ValidationException:
+                return JsonResponse(
+                    {
+                        "error": "invalid_request",
+                        "error_description": "Token response object validation failed",
+                    },
+                    status = 400
+                )
+        jwks = authz.provider_configuration["jwks"]["keys"]
+        access_token = token_response["access_token"]
+        id_token = token_response["id_token"]
+        op_ac_jwk = self.get_jwk_from_jwt(access_token, jwks)
+        op_id_jwk = self.get_jwk_from_jwt(id_token, jwks)
+
+        if not op_ac_jwk or not op_id_jwk:
+            # TODO: verify error message and status
+            context = {
+                "error": "invalid token",
+                "error_description": _("Authentication token seems not to be valid."),
+            }
+            return render(request, self.error_template, context, status=403)
+
+        try:
+            verify_jws(access_token, op_ac_jwk)
+        except Exception:
+            # TODO: verify error message
+            context = {
+                "error": "token verification failed",
+                "error_description": _("Authentication token validation error."),
+            }
+            return render(request, self.error_template, context, status=403)
+
+        try:
+            verify_jws(id_token, op_id_jwk)
+        except Exception:
+            # TODO: verify error message
+            context = {
+                "error": "token verification failed",
+                "error_description": _("ID token validation error."),
+            }
+            return render(request, self.error_template, context, status=403)
+
+        decoded_id_token = unpad_jwt_payload(id_token)
+        logger.debug(decoded_id_token)
+
+        decoded_access_token = unpad_jwt_payload(access_token)
+        logger.debug(decoded_access_token)
+
+        authz_token.access_token = access_token
+        authz_token.id_token = id_token
+        authz_token.scope = token_response.get("scope")
+        authz_token.token_type = token_response["token_type"]
+        authz_token.expires_in = token_response["expires_in"]
+        authz_token.save()
+        userinfo = self.get_userinfo(
+            authz.state,
+            authz_token.access_token,
+            authz.provider_configuration,
+            verify=HTTPC_PARAMS,
+        )
+        if not userinfo:
+            # TODO: verify error message
+            context = {
+                "error": "invalid userinfo response",
+                "error_description": _("UserInfo response seems not to be valid"),
+            }
+            return render(request, self.error_template, context, status=400)
+
+        # here django user attr mapping
+        user_attrs = process_user_attributes(userinfo, RP_ATTR_MAP, authz.__dict__)
+        if not user_attrs:
+            _msg = "No user attributes have been processed"
+            logger.warning(f"{_msg}: {userinfo}")
+            # TODO: verify error message and status
+            context = {
+                "error": "missing user attributes",
+                "error_description": _(f"{_msg}: {userinfo}"),
+            }
+            return render(request, self.error_template, context, status=403)
+
+        user = self.user_reunification(user_attrs)
+        if not user:
+            # TODO: verify error message and status
+            context = {"error": _("No user found"), "error_description": _("")}
+            return render(request, self.error_template, context, status=403)
+
+        # authenticate the user
+        login(request, user)
+        request.session["oidc_rp_user_attrs"] = user_attrs
+        authz_token.user = user
+        authz_token.save()
+        return HttpResponseRedirect(
+            getattr(
+                settings, "LOGIN_REDIRECT_URL", None
+            ) or reverse("spid_cie_rp_echo_attributes")
+        )

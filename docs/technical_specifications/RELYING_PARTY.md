@@ -71,13 +71,13 @@ RP_PROVIDER_PROFILES = getattr(
     "RP_PROVIDER_PROFILES",
     {
         "spid": {
-            "authorization_request": {"acr_values": AcrValuesSpid.l2.value},
+            "authorization_request": {"acr_values": AcrValues.l2.value},
             "rp_metadata": RPMetadataSpid,
             "authn_response": AuthenticationResponse,
             "token_response": TokenResponse
         },
         "cie": {
-            "authorization_request": {"acr_values": AcrValuesCie.l2.value},
+            "authorization_request": {"acr_values": AcrValues.l2.value},
             "rp_metadata": RPMetadataCie,
             "authn_response": AuthenticationResponseCie,
             "token_response": TokenResponse
@@ -136,10 +136,7 @@ LOGIN_REDIRECT_URL = "/oidc/rp/echo_attributes"
 `OIDCFED_ACR_PROFILES`, acr value required to OP Authentication Endpoint
 Example
 ````
-    dict(
-        spid = AcrValuesSpid.l2.value,
-        cie = AcrValuesCie.l2.value
-     )
+`OIDCFED_ACR_PROFILES` = AcrValues.l2.value
 ````
 
 `RP_DEFAULT_PROVIDER_PROFILES`, default profile for OP
@@ -173,9 +170,9 @@ As inherited from [__spid_cie_oidc.entity__](docs/tecnhical_specifications/ENTIT
 
 This endpoint is the starting point for OIDC SPID/CIE authentication.
 
-the webpath is customizable in the `urls.py` file and by default it's
+The webpath is customizable in the `urls.py` file and by default it's
 configured [here](https://github.com/peppelinux/spid-cie-oidc-django/blob/main/spid_cie_oidc/relying_party/urls.py#L13) 
-and correspond to `spid_cie_oidc.relying_party.views.SpidCieOidcRpBeginView`.
+and correspond to `spid_cie_oidc.relying_party.views.rp_begin.SpidCieOidcRpBeginView`.
 
 The request is of type GET and supports the following parameters:
 
@@ -189,11 +186,42 @@ The request is of type GET and supports the following parameters:
 
 ### auth code redirect
 
-WiP
+This endpoint corresponds to the redirect uri where the auth code lands.
+
+The webpath is customizable in the `urls.py` file and by default it's
+configured [here](https://github.com/italia/spid-cie-oidc-django/blob/main/spid_cie_oidc/relying_party/urls.py#L19) 
+and correspond to `spid_cie_oidc.relying_party.views.rp_callback.SpidCieOidcRpCallbackView`.
+
+This endpoint accepts a request with this parameters:
+
+- __code__, REQUIRED. Authorization code
+- __state__, REQUIRED. State value enclosed in the authentication request
+- __iss__, REQUIRED only for cie. Issuer identifier of the OP
+
+This endpoint first call OP's token endpoint and, after getting the access token, it calls the OP's userinfo endpont.
+
+The request to token endpoint is of type POST and supports the following parameters:
+
+- __client_id__, REQUIRED. RP's client id
+- __client_assertion__, REQUIRED. JWT signed by using the private key of the RP
+- __client_assertion_type__, REQUIRED.
+- __code__, REQUIRED. Authorization code recived from authorization endpoint
+- __code_verifier__, REQUIRED
+- __grant_type__, REQUIRED. Specified the way RP gets the OIDC-Core tokens. It may be "authorization_code" or "refresh_token"
+- __refresh_token__, REQUIRED only if grant_type is refresh_token
+
+The request to userinfo endpoint is of type GET and access token is sent using the authorization header field.
+
 
 ### logout
 
-WiP
+This endpoint calls the token revocation endpoint of the op.
+
+The webpath is customizable in the `urls.py` file and by default it's
+configured [here](https://github.com/italia/spid-cie-oidc-django/blob/main/spid_cie_oidc/relying_party/urls.py#L36) 
+and correspond to `spid_cie_oidc.relying_party.views.rp_initiated_logout.oidc_rpinitiated_logout`.
+
+The request contains user to logout
 
 ## SPID/CIE QAD and compliances tests
 

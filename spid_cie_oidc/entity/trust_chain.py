@@ -42,7 +42,6 @@ class TrustChainBuilder:
         max_authority_hints: int = 10,
         subject_configuration: EntityConfiguration = None,
         required_trust_marks: list = [],
-        metadata_type="openid_provider",
         # TODO - prefetch cache?
         # pre_fetched_entity_configurations = {},
         # pre_fetched_statements = {},
@@ -67,8 +66,6 @@ class TrustChainBuilder:
 
         # dynamically valued
         self.max_path_len = 0
-
-        self.metadata_type = metadata_type
         self.final_metadata: dict = {}
 
         self.verified_trust_marks = []
@@ -117,13 +114,10 @@ class TrustChainBuilder:
         # once I filtered a concrete and unique trust path I can apply the metadata policy
         if path_found:
             logger.info(f"Found a trust path: {self.trust_path}")
-            self.final_metadata = self.subject_configuration.payload.get(
-                "metadata", {}
-            ).get(self.metadata_type)
+            self.final_metadata = self.subject_configuration.payload.get("metadata", {})
             if not self.final_metadata:
                 logger.error(
-                    f"Missing {self.metadata_type} in "
-                    f"{self.subject_configuration.payload['metadata']}"
+                    f"Missing metadata in {self.subject_configuration.payload['metadata']}"
                 )
                 return
 
@@ -132,9 +126,13 @@ class TrustChainBuilder:
                 _pol = (
                     self.trust_path[i]
                     .verified_descendant_statements.get("metadata_policy", {})
-                    .get(self.metadata_type, {})
                 )
-                self.final_metadata = apply_policy(self.final_metadata, _pol)
+                for md_type, md in _pol.items():
+                    if not self.final_metadata.get(md_type):
+                        continue
+                    self.final_metadata[md_type] = apply_policy(
+                        self.final_metadata[md_type], _pol[md_type]
+                    )
 
         # set exp
         self.set_exp()

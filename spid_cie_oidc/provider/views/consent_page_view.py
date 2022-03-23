@@ -8,7 +8,6 @@ from django.http import (
     HttpResponseRedirect,
 )
 from django.shortcuts import redirect, render
-from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views import View
 from spid_cie_oidc.entity.models import (
@@ -39,7 +38,7 @@ class ConsentPageView(OpBase, View):
 
         tc = TrustChain.objects.filter(
             sub=session.client_id,
-            type="openid_relying_party",
+            metadata__openid_relying_party__isnull=False,
             is_active = True
         ).first()
 
@@ -66,8 +65,8 @@ class ConsentPageView(OpBase, View):
     def post(self, request, *args, **kwargs):
         try:
             session = self.check_session(request)
-        except Exception:
-            logger.warning("Invalid session")
+        except Exception as e:
+            logger.warning(f"Invalid session: {e}")
             return HttpResponseForbidden()
 
         self.payload = session.authz_request

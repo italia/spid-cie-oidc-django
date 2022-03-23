@@ -1,12 +1,10 @@
 from django.urls import path
 
-from .views import (
-    oidc_rp_landing,
-    oidc_rpinitiated_logout,
-    SpidCieOidcRpBeginView,
-    SpidCieOidcRpCallbackEchoAttributes,
-    SpidCieOidcRpCallbackView,
-)
+from .views.rp_begin import SpidCieOidcRpBeginView
+from .views.rp_callback import SpidCieOidcRpCallbackView
+from .views.rp_callback_echo_attributes import SpidCieOidcRpCallbackEchoAttributes
+from .views.rp_initiated_logout import oidc_rpinitiated_logout
+from .views.rp_landing import oidc_rp_landing
 
 urlpatterns = []
 urlpatterns += (

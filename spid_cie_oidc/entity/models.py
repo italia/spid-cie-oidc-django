@@ -293,13 +293,6 @@ class TrustChain(TimeStampedModel):
         help_text=_("URL that identifies this Entity in the Federation. "),
     )
     trust_anchor = models.ForeignKey(FetchedEntityStatement, on_delete=models.CASCADE)
-    type = models.CharField(
-        max_length=33,
-        blank=True,
-        default="openid_provider",
-        choices=[(i, i) for i in ENTITY_TYPES],
-        help_text=_("OpenID Connect Federation entity type"),
-    )
     exp = models.DateTimeField()
     iat = models.DateTimeField(auto_now_add=True)
     chain = models.JSONField(
@@ -347,7 +340,7 @@ class TrustChain(TimeStampedModel):
     class Meta:
         verbose_name = "Trust Chain"
         verbose_name_plural = "Trust Chains"
-        unique_together = ("sub", "type", "trust_anchor")
+        unique_together = ("sub", "trust_anchor")
 
     @property
     def subject(self):
@@ -372,4 +365,6 @@ class TrustChain(TimeStampedModel):
     # TODO: property is_expired
 
     def __str__(self):
-        return "{} [{}] [{}]".format(self.sub, self.type, self.is_valid)
+        return "{} [{}] [{}]".format(
+            self.sub, self.trust_anchor, self.is_valid
+        )
