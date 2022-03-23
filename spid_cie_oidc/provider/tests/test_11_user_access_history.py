@@ -68,4 +68,5 @@ class UserAccessHistoryTest(TestCase):
         url = reverse("oidc_provider_revoke_session")
         res = client.get(url, {"auth_code": "auth_code"})
         self.assertTrue(res.status_code == 302)
-        self.assertTrue("/oidc/op/history/" in res.url)
+        url_history = reverse("oidc_provider_access_history")
+        self.assertTrue(url_history in res.url)
