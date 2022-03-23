@@ -117,7 +117,6 @@ AUTHN_REQUEST_SPID_NO_CORRECT_UI_LOCALES["ui_locales"] = "nocorrect"
 AUTHN_REQUEST_CIE = deepcopy(AUTHN_REQUEST_SPID)
 AUTHN_REQUEST_CIE["scope"] = ["openid", "offline_access", "email", "profile"]
 AUTHN_REQUEST_CIE["prompt"] = "consent login"
-AUTHN_REQUEST_CIE["acr_values"] = ["CIE_L2", "CIE_L1"]
 AUTHN_REQUEST_CIE["claims"] = CLAIMS_CIE
 
 AUTHN_REQUEST_CIE_NO_ACR_VALUES = deepcopy(AUTHN_REQUEST_CIE)

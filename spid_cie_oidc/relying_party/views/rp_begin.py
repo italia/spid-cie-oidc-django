@@ -122,7 +122,6 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             )
             redirect_uri = client_conf["redirect_uris"][0]
         _profile = request.GET.get("profile", "spid")
-        _acr = OIDCFED_ACR_PROFILES[_profile]
         authz_data = dict(
             scope= request.GET.get("scope", None) or "openid",
             redirect_uri=redirect_uri,
@@ -131,7 +130,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             state=random_string(32),
             client_id=client_conf["client_id"],
             endpoint=authz_endpoint,
-            acr_values= _acr,
+            acr_values= OIDCFED_ACR_PROFILES,
             iat=int(timezone.localtime().timestamp()),
             aud=[tc.sub, authz_endpoint],
             claims=RP_REQUEST_CLAIM_BY_PROFILE[_profile],
