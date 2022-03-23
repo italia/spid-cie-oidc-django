@@ -69,7 +69,7 @@ class RefreshTokenTest(TestCase):
             user=User.objects.create(username = "username"),
             user_uid="",
             nonce="",
-            authz_request={"scope": "openid", "nonce": "123", "acr_values":["https://www.spid.gov.it/SpidL2"]},
+            authz_request={"scope": "offline_access", "prompt": "consent", "nonce": "123", "acr_values":["https://www.spid.gov.it/SpidL2"]},
             client_id="",
             auth_code="code",
         )
@@ -90,6 +90,7 @@ class RefreshTokenTest(TestCase):
             grant_type="refresh_token",
             code = "code",
             code_verifier = "code_verifier"
+
         )
         res = client.post(url, request)
         self.assertTrue(res.status_code == 200)
