@@ -38,7 +38,7 @@
                             </span>
                         </label>
                         <textarea id="id_{{ form_field.html_name }}" rows="6" 
-                        name="{{ form_field.name }}">{% if form.jwk.value != 'null'%}{{ form.jwk.value }}{% endif %}</textarea>
+                        name="{{ form_field.name }}">{{ form.jwk.value }}</textarea>
                     </div>
                     
                     {% endif %}
