@@ -35,6 +35,7 @@ class TokenEndpoint(OpBase, View):
         code_challenge = base64.urlsafe_b64encode(code_challenge).decode("utf-8")
         code_challenge = code_challenge.replace("=", "")
         if code_challenge != self.authz.authz_request["code_challenge"]:
+            logger.warning(f"PCKE validation failed for {self.authz.authz_request}")
             return HttpResponseForbidden()
         #
 
@@ -160,8 +161,12 @@ class TokenEndpoint(OpBase, View):
                 request.POST['client_id'],
                 request.POST['client_assertion']
             )
-        except Exception:
+        except Exception as e:
             # TODO: coverage test
+            logger.warning(
+                "Client authentication failed for "
+                f"{request.POST.get('client_id', 'unknow')}: {e}"
+            )
             return JsonResponse(
                 # TODO: error message here
                 {
