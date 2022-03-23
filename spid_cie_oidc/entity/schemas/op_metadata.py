@@ -25,16 +25,10 @@ class GrantTypeSupported(str, Enum):
     authorization_code = "authorization_code"
 
 
-class AcrValuesSupportedSpid(str, Enum):
+class AcrValuesSupported(str, Enum):
     spid_l1 = "https://www.spid.gov.it/SpidL1"
     spid_l2 = "https://www.spid.gov.it/SpidL2"
     spid_l3 = "https://www.spid.gov.it/SpidL3"
-
-
-class AcrValuesSupportedCie(str, Enum):
-    cie_l1 = "CIE_L1"
-    cie_l2 = "CIE_L2"
-    cie_l3 = "CIE_L3"
 
 
 class SigningAlgValuesSupported(str, Enum):
@@ -112,6 +106,7 @@ class OPMetadata(BaseModel):
     token_endpoint_auth_methods_supported = ["private_key_jwt"]
     subject_types_supported = ["pairwise"]
     request_parameter_supported = True
+    acr_values_supported: List[AcrValuesSupported]
 
 
 class OPMetadataCie(OPMetadata):
@@ -121,7 +116,6 @@ class OPMetadataCie(OPMetadata):
     response_types_supported = ["code"]
     response_modes_supported: List[ResponseModesSupported]
     grant_types_supported: List[GrantTypeSupported]
-    acr_values_supported: List[AcrValuesSupportedCie]
     claims_supported: List[ClaimsSupported]
     claims_parameter_supported = True
     tls_client_certificate_bound_access_tokens = True
@@ -143,7 +137,6 @@ class OPMetadataSpid(OPMetadata):
     op_name: str
     # TODO: Could be specified in multiple languages
     op_uri: str
-    acr_values_supported: List[AcrValuesSupportedSpid]
 
     @validator("jwks_uri")
     def validate_jwks_uri(cls, jwks_uri, values):

@@ -97,3 +97,26 @@ class RpCallBack(TestCase):
         res = client.get(url, {"state": STATE, "code": CODE})
         self.assertTrue(res.status_code == 400)
         self.assertTrue("invalid token response" in res.content.decode())
+
+    @override_settings(HTTP_CLIENT_SYNC=True)
+    @patch("requests.post", return_value=MockedTokenEndPointResponse())
+    @patch("requests.get", return_value=MockedUserInfoResponse())
+    def test_rp_callback_no_rp_conf(self, mocked, mocked_2):
+        FederationEntityConfiguration.objects.filter(
+            sub = self.rp_config["sub"]
+        ).delete()
+        client = Client()
+        url = reverse("spid_cie_rp_callback")
+        res = client.get(url, {"state": STATE, "code": CODE})
+        self.assertTrue("Relay party not found" in res.content.decode())
+
+
+    @override_settings(HTTP_CLIENT_SYNC=True)
+    @patch("requests.post", return_value=MockedTokenEndPointResponse())
+    @patch("requests.get", return_value=MockedUserInfoResponse())
+    def test_rp_callback_no_authz(self, mocked, mocked_2):
+        OidcAuthentication.objects.all().delete()
+        client = Client()
+        url = reverse("spid_cie_rp_callback")
+        res = client.get(url, {"state": STATE, "code": CODE})
+        self.assertTrue("Authentication not found" in res.content.decode())

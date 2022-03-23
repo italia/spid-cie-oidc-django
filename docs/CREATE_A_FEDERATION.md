@@ -158,6 +158,7 @@ An example of metadata[here](https://github.com/italia/spid-cie-oidc-django/blob
 
 ![RP federation entity](images/rp_federation_entity.png)
 
+## Register an entity as descendant
 
 Now that you configured your Provider Entity you have to register it in the federation.
 Access to the Federation Authority admin backend and configure your RP as descendant and assign to it a profile.

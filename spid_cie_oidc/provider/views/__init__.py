@@ -156,14 +156,17 @@ class OpBase:
     def check_client_assertion(self, client_id: str, client_assertion: str) -> bool:
         head = unpad_jwt_head(client_assertion)
         payload = unpad_jwt_payload(client_assertion)
-        if payload['sub'] != client_id:
+        _sub = payload.get('sub', None)
+        if _sub != client_id:
+            logger.warning(
+                f"Client assertion failed: {_sub} != {client_id}"
+            )
             # TODO Specialize exceptions
             raise Exception()
 
         tc = TrustChain.objects.get(sub=client_id, is_active=True)
         jwk = self.find_jwk(head, tc.metadata['openid_relying_party']['jwks']['keys'])
         verify_jws(client_assertion, jwk)
-
         return True
 
     def validate_json_schema(self, payload, schema_type, error_description):
