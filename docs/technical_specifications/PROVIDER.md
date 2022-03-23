@@ -115,11 +115,14 @@ OIDCFED_PROVIDER_AUTH_CODE_MAX_AGE = getattr(
 )
 ````
 
-- `DEFAULT_ACR` default acr value in the Authentication Request if not sumbmitted by RP.
+- `OIDCFED_PROVIDER_PROFILES_DEFAULT_ACR` default acr value in the Authentication Request if not sumbmitted by RP.
 
 Example
 ````
-DEFAULT_ACR = spid = AcrValues.l2.value
+OIDCFED_PROVIDER_PROFILES_DEFAULT_ACR = dict(
+    spid = AcrValues.l2.value,
+    cie = AcrValues.l2.value
+)
 ````
 
 - `OIDCFED_ATTRNAME_I18N`, attributes internationalization, an example [here](, an example [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/provider/settings.py#L125))

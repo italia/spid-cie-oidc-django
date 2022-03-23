@@ -118,10 +118,13 @@ OIDCFED_PROVIDER_AUTH_CODE_MAX_AGE = getattr(
 )
 
 
-DEFAULT_ACR = getattr(
+OIDCFED_PROVIDER_PROFILES_DEFAULT_ACR = getattr(
     settings,
-    "DEFAULT_ACR",
-    AcrValues.l2.value
+    "OIDCFED_PROVIDER_PROFILES_DEFAULT_ACR",
+    dict(
+        spid = AcrValues.l2.value,
+        cie = AcrValues.l2.value
+    )
 )
 
 OIDCFED_ATTRNAME_I18N = {
