@@ -96,7 +96,6 @@ class ToolsTests(TestCase):
         self.assertEqual(res.status_code, 200)
         res = self.client.post(url, {"jwt":jwt})
         self.assertEqual(res.status_code, 200)
-        self.assertIsNotNone(res.context['jwt'])
         self.assertIsNotNone(res.context['payload'])
         self.assertIsNotNone(res.context['head'])
         jwkError = {"jwkerror":"error"}
