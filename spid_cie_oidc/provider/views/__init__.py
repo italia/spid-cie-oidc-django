@@ -269,7 +269,7 @@ class OpBase:
     ) -> dict:
         # refresh token is scope offline_access and prompt == consent
         refresh_acrs = OIDCFED_PROVIDER_PROFILES_ACR_4_REFRESH[OIDCFED_DEFAULT_PROVIDER_PROFILE]
-        acrs = authz.authz_request.get('acr_values', "").split(' ')
+        acrs = authz.authz_request.get('acr_values', [])
         if (
             "offline_access" in authz.authz_request['scope'] and
             'consent' in authz.authz_request['prompt'] and 
