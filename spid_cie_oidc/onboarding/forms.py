@@ -1,3 +1,4 @@
+from dis import dis
 import logging
 from django import forms
 from django.utils.translation import gettext_lazy as _
@@ -116,7 +117,7 @@ class OnboardingDecodeForm(forms.Form):
     )
 
     jwk = forms.JSONField(
+        initial=dict,
         label=_("jwk"),
         required=False,
-        error_messages={"required": _("Enter a jwk to decode your jwt")}
     )
