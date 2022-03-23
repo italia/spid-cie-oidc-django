@@ -120,8 +120,8 @@ OIDCFED_PROVIDER_AUTH_CODE_MAX_AGE = getattr(
 Example
 ````
 OIDCFED_PROVIDER_PROFILES_DEFAULT_ACR = dict(
-    spid = AcrValuesSpid.l2.value,
-    cie = AcrValuesCie.l2.value
+    spid = AcrValues.l2.value,
+    cie = AcrValues.l2.value
 )
 ````
 
