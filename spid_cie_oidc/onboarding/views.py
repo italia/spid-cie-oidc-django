@@ -262,7 +262,7 @@ def onboarding_decode_jwt(request):
         form = OnboardingDecodeForm(request.POST)
 
     context = {'form': form}
-    
+
     if form.is_valid():
         form_dict = {**form.cleaned_data}
         jwt = form_dict['jwt']
@@ -278,6 +278,7 @@ def onboarding_decode_jwt(request):
         except Exception as e:
             messages.error(request, f"Jws verification failed: {e}")
     return render(request, "onboarding_decode_jwt.html", context)
+
 
 def onboarding_apply_policy(request):
     context = {
