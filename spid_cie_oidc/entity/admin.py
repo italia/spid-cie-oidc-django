@@ -1,4 +1,3 @@
-from types import new_class
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from django.contrib import messages
@@ -65,20 +64,18 @@ class TrustChainAdmin(admin.ModelAdmin):
             sub = tc.sub
             ta = tc.trust_anchor.sub
             try :
-                n_tc = get_or_create_trust_chain(
+                get_or_create_trust_chain(
                         subject=sub,
                         trust_anchor=ta,
                         httpc_params=settings.HTTPC_PARAMS,
                         required_trust_marks=getattr(
                             settings, "OIDCFED_REQUIRED_TRUST_MARKS", []
                         ),
-                    )
-                n_tc.is_valid
+                )
                 messages.success(request, f"reload trust chain successfully")
             except Exception as e:
                 messages.error(request, f"Failed to update {sub} due to: {e}")
                 continue
-
 
     list_display = ("sub", "exp", "modified", "is_valid")
     list_filter = ("exp", "modified", "is_active")
