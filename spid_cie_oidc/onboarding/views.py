@@ -253,34 +253,7 @@ def onboarding_validate_ec(request):
             messages.error(request, f"Validation Failed: {e}")
             return render(request, 'onboarding_validate_ec.html', context)
     return render(request, 'onboarding_validate_ec.html', context)
-
-
-# def onboarding_decode_jwt(request):
-#     context = {
-#             "jwt": "",
-#             "jwk": "",
-#             "head": "",
-#             "payload": ""
-#     }
-#     if request.POST.get('jwt'):
-#         jwt = request.POST['jwt']
-#         head = unpad_jwt_head(jwt)
-#         payload = unpad_jwt_payload(jwt)
-#         context["jwt"] = jwt
-#         context["head"] = json.dumps(head, indent=4)
-#         context["payload"] = json.dumps(payload, indent=4)
-#         if request.POST.get('jwk'):
-#             jwk_str = request.POST['jwk']
-#             context["jwk"] = jwk_str
-#             jwk_str_double_quote = jwk_str.replace("'", '"')
-#             try:
-#                 jwk = json.loads(jwk_str_double_quote)
-#                 verify_jws(jwt, jwk)
-#                 messages.success(request, _('Your jws is verified'))
-#             except Exception:
-#                 messages.error(request, _("Jws verification failed"))
-#                 render(request, 'onboarding_decode_jwt.html', context)
-#     return render(request, 'onboarding_decode_jwt.html', context)
+    
 
 def onboarding_decode_jwt(request):
     form = OnboardingDecodeForm()
