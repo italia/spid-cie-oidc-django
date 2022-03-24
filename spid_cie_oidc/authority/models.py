@@ -325,7 +325,7 @@ class StaffToken(TimeStampedModel):
         blank=False,
         null=False,
         default = random_token,
-        help_text=_("any kind of contact type, usually an email."),
+        help_text=_("it will be generated automatically."),
     )
     expire_at = models.DateTimeField(blank=True, null=True)
     is_active = models.BooleanField(
