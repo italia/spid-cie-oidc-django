@@ -38,7 +38,6 @@ Lists all the descendant entities.
  - `http://127.0.0.1:8000/list/?type=openid_provider`
 
 
-
 #### Advanced entity listing endpoint
 
 The advanced entity listing endpoint extends Listings endpoint.
@@ -78,9 +77,6 @@ A response example:
     "prev_page_path": ""
 }
 ```` 
-
-
-
 
 #### Resolve entity statement
 

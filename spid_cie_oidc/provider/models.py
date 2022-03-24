@@ -35,11 +35,16 @@ class OidcSession(TimeStampedModel):
 
     def set_sid(self, request):
         try:
-            # Session.objects.get(session_key=request.session.session_key)
+            Session.objects.get(session_key=request.session.session_key)
             self.sid = request.session.session_key
-            self.save()
         except Exception:
-            logger.warning(f"Error setting SID for OidcSession {self}")
+            logger.warning(
+                f"Error setting SID for OidcSession {self} "
+                "due to multiple authentication with different users with "
+                "the same browser."
+            )
+            self.sid = self.auth_code
+        self.save()
 
     def revoke(self, destroy_session=True):
         session = Session.objects.filter(session_key=self.sid)

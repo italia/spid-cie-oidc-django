@@ -12,3 +12,7 @@ class RevokedSession(Exception):
 
 class ValidationException(Exception):
     pass
+
+
+class ExpiredAuthCode(Exception):
+    pass

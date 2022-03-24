@@ -31,7 +31,6 @@ class AuthzRequestView(OpBase, View):
         View which processes the actual Authz request and
         returns a Http Redirect
     """
-
     template = "op_user_login.html"
 
     def validate_authz(self, payload: dict):
@@ -43,6 +42,14 @@ class AuthzRequestView(OpBase, View):
                     payload[i] = payload[i].split(' ')
                 else:
                     payload[i] = [payload[i]]
+
+        if (
+            'offline_access' in payload['scope'] and
+            'consent' not in payload['prompt'] 
+        ):
+            raise ValidationError(
+                "scope with offline_access without prompt = consent"
+            )
 
         redirect_uri = payload.get("redirect_uri", "")
         p = urllib.parse.urlparse(redirect_uri)
@@ -172,6 +179,7 @@ class AuthzRequestView(OpBase, View):
         username = form.cleaned_data.get("username")
         password = form.cleaned_data.get("password")
         user = authenticate(username=username, password=password)
+
         if not user:
             errors = form._errors.setdefault("username", ErrorList())
             errors.append(_("invalid username or password"))
