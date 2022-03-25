@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 HTTPC_PARAMS = getattr(settings, "HTTPC_PARAMS", entity_settings.HTTPC_PARAMS)
 try:  # pragma: no cover
     OIDCFED_TRUST_ANCHORS = getattr(settings, "OIDCFED_TRUST_ANCHORS")
-except AttributeError:
+except AttributeError: # pragma: no cover
     OIDCFED_TRUST_ANCHORS = []
     logger.warning("OIDCFED_TRUST_ANCHORS not configured in your settings file.")
 
@@ -32,7 +32,7 @@ def validate_entity_configuration(value):
         raise ValidationError(
             f"Failed to fetch Entity Configuration for {value}: {e}"
         )
-    if not jwt:
+    if not jwt: # pragma: no cover
         raise ValidationError(
             "failed to get a valid Entity Configuration from "
             f"{value}{OIDCFED_FEDERATION_WELLKNOWN_URL}"
@@ -41,7 +41,7 @@ def validate_entity_configuration(value):
     try:
         ec = EntityConfiguration(jwt, httpc_params=HTTPC_PARAMS)
         ec.validate_by_itself()
-    except Exception as e:
+    except Exception as e: # pragma: no cover
         raise ValidationError(
             f"Failed to fetch Entity Configuration for {value}: {e}"
         )

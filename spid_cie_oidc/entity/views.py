@@ -18,10 +18,10 @@ def entity_configuration(request):
         is_active=True,
     ).first()
 
-    if not conf:
+    if not conf: # pragma: no cover
         raise Http404()
 
-    if request.GET.get("format") == "json":
+    if request.GET.get("format") == "json": # pragma: no cover
         return JsonResponse(conf.entity_configuration_as_dict, safe=False)
     else:
         return HttpResponse(

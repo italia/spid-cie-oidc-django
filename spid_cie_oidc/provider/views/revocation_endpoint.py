@@ -28,7 +28,7 @@ class RevocationEndpoint(OpBase,View):
                 request.POST['client_id'],
                 request.POST['client_assertion']
             )
-        except ValidationException:
+        except ValidationException: # pragma: no cover
             return JsonResponse(
                 {
                     "error": "invalid_request",

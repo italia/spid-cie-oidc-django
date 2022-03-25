@@ -39,10 +39,10 @@ class UserInfoEndpointTest(TestCase):
 
     def define_db(self):
         session = OidcSession.objects.create(
-            user=User.objects.create(username = "username"),
+            user=User.objects.create(username = "username", attributes = {"email" : "test@test.it"}),
             user_uid="",
             nonce="",
-            authz_request={"scope": "openid", "nonce": "123", "claims":{"userinfo":{}}},
+            authz_request={"scope": "openid", "nonce": "123", "claims":{"userinfo":{"email": None}}},
             client_id=self.RP_SUB,
         )
 
@@ -102,3 +102,4 @@ class UserInfoEndpointTest(TestCase):
         url = reverse("oidc_provider_userinfo_endpoint")
         res = client.get(url, data  = {}, **headers)
         self.assertTrue(res.status_code == 200)
+

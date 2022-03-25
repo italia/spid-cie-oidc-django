@@ -73,7 +73,7 @@ class OidcAuthenticationAdmin(admin.ModelAdmin):
         ),
     )
 
-    def json_preview(self, obj):
+    def json_preview(self, obj): # pragma: no cover
         return html_json_preview(obj.data)
 
     json_preview.short_description = "Authentication Request data"

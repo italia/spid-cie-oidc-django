@@ -95,3 +95,32 @@ class RefreshTokenTest(TestCase):
         res = client.post(url, request)
         self.assertTrue(res.status_code == 200)
         self.assertTrue(res.json().get("access_token"))
+
+    def test_token_endpoint_no_client_id(self):
+        client = Client()
+        url = reverse("oidc_provider_token_endpoint")
+        request = dict(
+            client_assertion = self.ca_jws,
+            client_assertion_type = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+            grant_type="authorization_code",
+            code = "code",
+            code_verifier = "code_verifier"
+        )
+        res = client.post(url, request)
+        self.assertTrue(res.status_code == 400)
+        self.assertTrue("invalid_request" == res.json().get("error"))
+
+    def test_token_endpoint_no_session(self):
+        OidcSession.objects.all().delete()
+        client = Client()
+        url = reverse("oidc_provider_token_endpoint")
+        request = dict(
+            client_id = RP_CLIENT_ID,
+            client_assertion = self.ca_jws,
+            client_assertion_type = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+            grant_type="authorization_code",
+            code = "code",
+            code_verifier = "code_verifier"
+        )
+        res = client.post(url, request)
+        self.assertTrue(res.status_code == 400)

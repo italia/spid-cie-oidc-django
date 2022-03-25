@@ -32,7 +32,7 @@ class OnBoardingRegistrationAdmin(admin.ModelAdmin):
                 contact = contact,
                 type = "email"
             )
-        except IntegrityError:
+        except IntegrityError: # pragma: no cover
             messages.error(request, f"Already exists a descendant with subject: {sub}")
 
     list_display = (

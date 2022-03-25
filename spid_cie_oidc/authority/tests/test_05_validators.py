@@ -7,6 +7,7 @@ from spid_cie_oidc.authority.tests.settings import (
     RP_CONF_AS_JSON,
      RP_METADATA_JWK1
 )
+from spid_cie_oidc.authority.utils import random_token
 from spid_cie_oidc.authority.validators import validate_entity_configuration
 from spid_cie_oidc.entity.exceptions import MissingAuthorityHintsClaim, NotDescendant
 from spid_cie_oidc.entity.jwtse import create_jws
@@ -38,4 +39,8 @@ class ValidatorTest(TestCase):
         with self.assertRaises(NotDescendant):
             validate_entity_configuration(["url_entity"])
 
-    
+
+class UtilityTests(TestCase):
+
+    def test_random_token(self):
+        self.assertTrue(random_token())

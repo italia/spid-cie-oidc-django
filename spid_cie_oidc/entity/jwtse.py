@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 def unpad_jwt_element(jwt: str, position: int) -> dict:
     b = jwt.split(".")[position]
     padded = f"{b}{'=' * divmod(len(b),4)[1]}"
-    data = json.loads(base64.b64decode(padded))
+    data = json.loads(base64.urlsafe_b64decode(padded))
     return data
 
 
@@ -53,7 +53,7 @@ def decrypt_jwe(jwe: str, jwk_dict: dict) -> dict:
     # get header
     try:
         jwe_header = unpad_jwt_head(jwe)
-    except (binascii.Error, Exception) as e:
+    except (binascii.Error, Exception) as e: # pragma: no cover
         logger.error(f"Failed to extract JWT header: {e}")
         raise VerificationError("The JWT is not valid")
 
@@ -61,7 +61,7 @@ def decrypt_jwe(jwe: str, jwk_dict: dict) -> dict:
     _enc = jwe_header.get("enc", DEFAULT_JWE_ENC)
     jwe_header.get("kid")
 
-    if _alg not in ENCRYPTION_ALG_VALUES_SUPPORTED:
+    if _alg not in ENCRYPTION_ALG_VALUES_SUPPORTED: # pragma: no cover
         raise UnsupportedAlgorithm(f"{_alg} has beed disabled for security reason")
 
     _decryptor = factory(jwe, alg=_alg, enc=_enc)
@@ -88,13 +88,13 @@ def verify_jws(jws: str, pub_jwk: dict, **kwargs) -> str:
     _key = key_from_jwk_dict(pub_jwk)
 
     _head = unpad_jwt_head(jws)
-    if _head.get("kid") != pub_jwk["kid"]:
+    if _head.get("kid") != pub_jwk["kid"]: # pragma: no cover
         raise Exception(
             f"kid error: {_head.get('kid')} != {pub_jwk['kid']}"
         )
 
     _alg = _head["alg"]
-    if _alg not in SIGNING_ALG_VALUES_SUPPORTED or not _alg:
+    if _alg not in SIGNING_ALG_VALUES_SUPPORTED or not _alg: # pragma: no cover
         raise UnsupportedAlgorithm(f"{_alg} has beed disabled for security reason")
 
     verifier = JWS(alg=_head["alg"], **kwargs)
