@@ -41,7 +41,7 @@
                                     {% for form_field in form.visible_fields %}
                                     <div class="form-row pr-4">
                                         <div class="col-12 form-group my-3">
-                                            <label for="id_{{ form_field.html_name }}">
+                                            <label for="id_{{ form_field.html_name }}" id="label_{{form_field.html_name}}">
                                                 <span class="form-label-content">
                                                     {{ form_field.label }}
                                                 </span>
@@ -71,6 +71,7 @@
                                         </a>
 
                                         <button
+                                            id="submit"
                                             class="italia-it-button italia-it-button-size-m button-login"
                                             type="submit">
                                             <span class="italia-it-button-icon">
@@ -89,7 +90,7 @@
             </div>
 
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                <div class="mt-5 ml-4">
+                <div class="mt-2 ml-4">
                     <div class="row">
                         <div class="alert alert-info mt-2" role="alert">
                             {% blocktrans %} 
@@ -98,6 +99,23 @@
                             {% endblocktrans %} 
                         </div>
                     </div>
+                </div>
+                <div id="collapseDiv-sc" class="collapse-div collapse-background-active ml-4" role="tablist">
+                    
+                    <div class="collapse-header" id="heading1-sc1">
+                        <button data-toggle="collapse" data-target="#collapse1-sc1" 
+                            aria-expanded="false" aria-controls="collapse1-sc1">
+                            {% trans "params request" %}
+                        </button>
+                    </div>
+                    <div id="collapse1-sc1" class="collapse"
+                    role="tabpanel" aria-labelledby="heading1-sc1">
+                        <div class="collapse-body" >
+                            <pre>{{ obj_request }}</pre>
+                            
+                        </div>
+                    </div>
+                   
                 </div>
             </div>
         </div>
