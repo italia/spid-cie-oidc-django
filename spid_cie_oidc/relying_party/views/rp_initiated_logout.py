@@ -77,7 +77,7 @@ def oidc_rpinitiated_logout(request):
         )
         try:
             requests.post(revocation_endpoint_url, data = revocation_request)
-        except Exception as e:
+        except Exception as e: # pragma: no cover
             logger.warning(f"Token revocation failed: {e}")
         auth_tokens.update(revoked = timezone.localtime())
         return HttpResponseRedirect(default_logout_url)

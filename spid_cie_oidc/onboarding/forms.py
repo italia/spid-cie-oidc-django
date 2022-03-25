@@ -13,7 +13,7 @@ try:
     OIDCFED_TRUST_ANCHORS = getattr(
         settings, "OIDCFED_TRUST_ANCHORS"
     )
-except AttributeError:
+except AttributeError: # pragma: no cover
     OIDCFED_TRUST_ANCHORS = []
     logger.warning(
         "OIDCFED_TRUST_ANCHORS not configured in your settings file."

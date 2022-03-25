@@ -90,7 +90,6 @@ class TrustChainAdmin(admin.ModelAdmin):
         "chain",
         "iat",
     )
-
     actions = [update_trust_chain]
 
 

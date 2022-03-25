@@ -15,7 +15,6 @@ class OidcUserInfo(object):
         for jwk in jwks:
             if jwk["kid"] == kid:
                 return jwk
-        # else
         raise UnknownKid()
 
     def get_userinfo(
@@ -30,7 +29,7 @@ class OidcUserInfo(object):
             provider_conf["userinfo_endpoint"], headers=headers, verify=verify
         )
 
-        if authz_userinfo.status_code != 200:
+        if authz_userinfo.status_code != 200: # pragma: no cover
             logger.error(
                 f"Something went wrong with {state}: {authz_userinfo.status_code}"
             )
@@ -51,7 +50,7 @@ class OidcUserInfo(object):
                 logger.debug(f"Userinfo endpoint result: {decoded_jwt}")
                 return decoded_jwt
 
-            except KeyError as e:
+            except KeyError as e: # pragma: no cover
                 logger.error(f"Userinfo response error {state}: {e}")
                 return False
             except UnknownKid as e:

@@ -1,3 +1,4 @@
+import json
 
 from unittest.mock import patch
 
@@ -76,10 +77,12 @@ class ResolveEntityStatementTest(TestCase):
         data = {"sub" : rp_conf["sub"], "anchor" : ta_conf_data["sub"]}
         request = self.factory.get(url, data, **{'HTTP_AUTHORIZATION': "secret-token"})
         self.patcher = patch(
-            "spid_cie_oidc.entity.trust_chain_operations.get_or_create_trust_chain", 
+            "spid_cie_oidc.authority.views.get_or_create_trust_chain", 
             return_value = create_tc()
         )
         self.patcher.start()
-        res = resolve_entity_statement(request)
-        self.assertTrue(res.json().get("iss") == ta_conf_data["sub"])
-        self.assertTrue(res.json().get("sub") == rp_conf["sub"])
+        res = resolve_entity_statement(request, format='json')
+        self.patcher.stop()
+        _json = json.loads(res.content.decode())
+        self.assertTrue(_json.get("iss") == ta_conf_data["sub"])
+        self.assertTrue(_json.get("sub") == rp_conf["sub"])

@@ -62,7 +62,7 @@ class OAuth2AuthorizationCodeGrant(object):
             timeout=HTTPC_TIMEOUT,
         )
 
-        if token_request.status_code != 200:
+        if token_request.status_code != 200: # pragma: no cover
             logger.error(
                 f"Something went wrong with {state}: {token_request.status_code}"
             )

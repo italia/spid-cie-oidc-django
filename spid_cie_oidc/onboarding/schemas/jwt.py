@@ -14,7 +14,7 @@ try:
     MAX_ACCEPTED_TIMEDIFF = getattr(
         settings, "MAX_ACCEPTED_TIMEDIFF", entity_settings.MAX_ACCEPTED_TIMEDIFF
     )
-except ImportError:
+except ImportError: # pragma: no cover
     NOW = datetime.datetime.now()
     MAX_ACCEPTED_TIMEDIFF = 5
 

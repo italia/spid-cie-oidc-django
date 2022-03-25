@@ -4,7 +4,7 @@ import asyncio
 
 async def fetch(session, url, httpc_params: dict = {}):
     async with session.get(url, **httpc_params.get("connection", {})) as response:
-        if response.status != 200:
+        if response.status != 200: # pragma: no cover
             # response.raise_for_status()
             return ""
         return await response.text()
@@ -25,7 +25,7 @@ async def http_get(urls, httpc_params: dict = {}):
         return text
 
 
-if __name__ == "__main__":
+if __name__ == "__main__": # pragma: no cover
     httpc_params = {
         "connection": {"ssl": True},
         "session": {"timeout": aiohttp.ClientTimeout(total=4)},

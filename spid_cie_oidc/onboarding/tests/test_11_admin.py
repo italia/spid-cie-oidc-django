@@ -16,6 +16,7 @@ class AdminTest(TestCase):
             type = "openid_relying_party",
             contact = "ops@rp.example.it"
         )
+        print(self.onb_regist)
 
     def test_make_published(self):
         queryset = [self.onb_regist]
