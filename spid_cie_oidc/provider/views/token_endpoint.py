@@ -4,6 +4,7 @@ import hashlib
 import logging
 
 from djagger.decorators import schema
+from djagger.utils import schema_set_examples
 from django.conf import settings
 from django.http import (
     HttpResponseBadRequest,
@@ -17,6 +18,7 @@ from pydantic import BaseModel
 from spid_cie_oidc.entity.jwtse import unpad_jwt_payload
 from spid_cie_oidc.onboarding.schemas.token_requests import TokenAuthnCodeRequest, TokenRefreshRequest
 from spid_cie_oidc.onboarding.schemas.token_response import TokenErrorResponse, TokenRefreshResponse, TokenResponse
+from spid_cie_oidc.onboarding.tests.token_request_settings import TOKEN_AUTHN_CODE_REQUEST
 from spid_cie_oidc.provider.exceptions import ValidationException
 from spid_cie_oidc.provider.models import IssuedToken, OidcSession
 
@@ -42,6 +44,9 @@ logger = logging.getLogger(__name__)
 )
 @method_decorator(csrf_exempt, name="dispatch")
 class TokenEndpoint(OpBase, View):
+    schema = {}
+    schema["authn_request"] = schema_set_examples({}, TokenAuthnCodeRequest)
+    schema["refresh_request"] =  schema_set_examples({}, TokenRefreshRequest)
 
     def get(self, request, *args, **kwargs):
         return HttpResponseBadRequest()
