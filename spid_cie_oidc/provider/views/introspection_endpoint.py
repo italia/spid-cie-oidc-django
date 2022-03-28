@@ -7,6 +7,7 @@ from django.http import (
     JsonResponse
 )
 from django.views import View
+from pydantic import BaseModel
 from spid_cie_oidc.onboarding.schemas.introspection_request import IntrospectionRequest
 from spid_cie_oidc.onboarding.schemas.introspection_response import IntrospectionErrorResponseSpid, IntrospectionResponse
 from spid_cie_oidc.provider.exceptions import ValidationException
@@ -18,13 +19,13 @@ logger = logging.getLogger(__name__)
 
 @schema(
     methods=['GET', 'POST'],
-    dj_post_request_schema=IntrospectionRequest,
-    dj_post_response_schema= {
+    post_request_schema=IntrospectionRequest,
+    post_response_schema= {
             "200":IntrospectionResponse,
             "400": IntrospectionErrorResponseSpid
     },
-    dj_get_response_schema= {
-            "400": {}
+    get_response_schema= {
+            "400": BaseModel
     },
 )
 class IntrospectionEndpoint(OpBase, View):

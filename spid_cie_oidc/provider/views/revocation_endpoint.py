@@ -19,8 +19,8 @@ logger = logging.getLogger(__name__)
 
 @schema(
     methods=['POST'],
-    dj_post_request_schema = RevocationRequest,
-    dj_post_response_schema = {
+    post_request_schema = RevocationRequest,
+    post_response_schema = {
             "200": {},
             "400": RevocationErrorResponseCie
     },

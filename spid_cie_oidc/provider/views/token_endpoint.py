@@ -13,6 +13,7 @@ from django.http import (
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
+from pydantic import BaseModel
 from spid_cie_oidc.entity.jwtse import unpad_jwt_payload
 from spid_cie_oidc.onboarding.schemas.token_requests import TokenAuthnCodeRequest, TokenRefreshRequest
 from spid_cie_oidc.onboarding.schemas.token_response import TokenErrorResponse, TokenRefreshResponse, TokenResponse
@@ -25,18 +26,18 @@ logger = logging.getLogger(__name__)
 
 @schema(
     methods=['GET','POST'],
-    dj_post_request_schema = {
+    post_request_schema = {
         "authn_request": TokenAuthnCodeRequest,
         "refresh_request": TokenRefreshRequest,
 
     },
-    dj_post_response_schema = {
+    post_response_schema = {
             "200": TokenResponse,
             "200": TokenRefreshResponse,
             "400": TokenErrorResponse
     },
-    dj_get_response_schema = {
-            "400": {}
+    get_response_schema = {
+            "400": BaseModel
     },
 )
 @method_decorator(csrf_exempt, name="dispatch")

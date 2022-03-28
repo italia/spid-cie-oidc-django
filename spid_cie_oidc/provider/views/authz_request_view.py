@@ -29,8 +29,8 @@ logger = logging.getLogger(__name__)
 
 @schema(
     methods=['GET', 'POST'],
-    dj_get_request_schema=AuthenticationRequestSpid,
-    dj_post_response_schema= {
+    get_request_schema=AuthenticationRequestSpid,
+    post_response_schema= {
             "302":AuthenticationResponse,
             "403": AuthenticationErrorResponse
     },
