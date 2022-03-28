@@ -92,10 +92,10 @@
                         </ul>
                         <div class="col-sm-12 pt-4">
                             <a href="{% url 'oidc_provider_not_consent' %}?redirect_uri={{ redirect_uri }}"
-                                class="italia-it-button italia-it-button-cancel-m button-cancel">
+                                class="italia-it-button italia-it-button-cancel-m button-cancel" id="do_not_agree">
                                 <span class="italia-it-buttons-text">{% trans "DO NOT AGREE" %}</span>
                             </a>
-                            <button class="italia-it-button italia-it-button-size-m button-login" type="submit">
+                            <button id="agree" class="italia-it-button italia-it-button-size-m button-login" type="submit">
                             <span class="italia-it-buttons-text">{% trans "AGREE" %}</span></button>
                         </div>
                     </div>

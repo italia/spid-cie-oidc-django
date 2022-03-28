@@ -9,12 +9,23 @@
 <div class="col-12">
     <div class="row row-header border-bottom no-border-bottom-xs">
         <div class="wrap-container">
-            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                <a href="/" title="torna alla home">
-                    <img src="{% oidc_provider_logo %}" alt="SPID" class="w-100 p-3">
-                </a>
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                    <a href="/" title="torna alla home">
+                        <img src="{% oidc_provider_logo %}" alt="SPID" width="120">
+                    </a>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 {% oidc_provider_arc_value_position %}">
+                    <div class="mt-2 ml-2">
+                        <label class="pl-1 pr-1 ml-4 mt-2 font-weight-bold
+                            {% if acr_value == 'l1'%}complementary-3-bg-b3 text-white
+                            {% elif acr_value == 'l2'%}complementary-2-bg-b1 text-dark
+                            {% else %}complementary-1-bg-a6 text-white{% endif%}">
+                            {{ acr_value | capfirst }}</label>
+                    </div>
+                </div>
             </div>
-            <div class="clear"></div>
+            <div class="clear pt-2"></div>
         </div>
     </div>
 
@@ -99,23 +110,6 @@
                             {% endblocktrans %} 
                         </div>
                     </div>
-                </div>
-                <div id="collapseDiv-sc" class="collapse-div collapse-background-active ml-4" role="tablist">
-                    
-                    <div class="collapse-header" id="heading1-sc1">
-                        <button data-toggle="collapse" data-target="#collapse1-sc1" 
-                            aria-expanded="false" aria-controls="collapse1-sc1">
-                            {% trans "params request" %}
-                        </button>
-                    </div>
-                    <div id="collapse1-sc1" class="collapse"
-                    role="tabpanel" aria-labelledby="heading1-sc1">
-                        <div class="collapse-body" >
-                            <pre>{{ obj_request }}</pre>
-                            
-                        </div>
-                    </div>
-                   
                 </div>
             </div>
         </div>

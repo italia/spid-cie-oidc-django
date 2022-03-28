@@ -53,12 +53,12 @@
                         aria-labelledby="spid-idp">
                         {% for provider in spid_providers %}
                             <li>
-                                <a href="{% url 'spid_cie_rp_begin' %}?provider={{provider.sub}}&profile=spid">
+                                <a href="{% url 'spid_cie_rp_begin' %}?provider={{provider.sub}}&profile=spid" id="provider-spid">
                                     <span class="spid-sr-only">{{ provider.metadata.openid_provider.organization_name }}</span>
                                     {% if provider.metadata.openid_provider.logo_uri %}
-                                    <img src="{{ provider.metadata.openid_provider.logo_uri }}" alt="{{ provider.metadata.organization_name }}">
+                                    <img src="{{ provider.metadata.openid_provider.logo_uri }}" alt="{{ provider.metadata.openid_provider.organization_name }}">
                                     {% else %}
-                                    <img src="{% static 'svg/no_image_available.svg' %}" alt="{{ provider.metadata.organization_name }}">
+                                    <img src="{% static 'svg/no_image_available.svg' %}" alt="{{ provider.metadata.openid_provider.organization_name }}">
                                     {% endif %}
                                 </a>
                             </li>
@@ -87,7 +87,7 @@
                         aria-labelledby="cie-idp">
                         {% for provider in cie_providers %}
                             <li>
-                                <a href="{% url 'spid_cie_rp_begin' %}?provider={{provider.sub}}&profile=cie">
+                                <a href="{% url 'spid_cie_rp_begin' %}?provider={{provider.sub}}&profile=cie" id="{{ provider.metadata.organization_name }}">
                                     <span class="spid-sr-only">{{ provider.metadata.openid_provider.organization_name }}</span>
                                     {% if provider.metadata.openid_provider.logo_uri %}
                                     <img src="{{ provider.metadata.openid_provider.logo_uri }}" alt="{{ provider.metadata.organization_name }}">
