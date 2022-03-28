@@ -17,8 +17,7 @@ INSTALL_REQUIRES = [
     "aiohttp",
     "requests",
     "pydantic",
-    "pydantic[email]",
-    "djagger"
+    "pydantic[email]"
 ]
 
 with open(os.path.join(os.path.dirname(__file__), 'README.md'), encoding='utf-8') as readme:
