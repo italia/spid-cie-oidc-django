@@ -77,7 +77,6 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             # TODO: RPs multitenancy?
             # sub = request.build_absolute_uri()
         ).first()
-
         if not entity_conf:
             context = {
                 "error": "request rejected",
@@ -86,7 +85,6 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             return render(request, self.error_template, context, status=404)
 
         client_conf = entity_conf.metadata["openid_relying_party"]
-
         if not (
             # TODO
             # provider_metadata.get("jwks_uri", None)
