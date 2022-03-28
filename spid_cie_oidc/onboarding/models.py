@@ -28,6 +28,13 @@ class OnBoardingRegistration(TimeStampedModel):
         help_text=_("URL of the page where the SPID/CIE button is available."),
     )
 
+    auth_request_url = models.CharField(
+        max_length=254, 
+        blank=True,
+        null= True,
+        help_text=_("SPID/CIE authentication request trigger url."),
+    )
+
     public_jwks = models.JSONField(
         blank=False,
         help_text=_("Public jwks of the Entities"),

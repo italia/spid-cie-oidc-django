@@ -2,6 +2,7 @@ import hashlib
 import logging
 import urllib.parse
 import uuid
+import json
 
 from djagger.decorators import schema
 from django.conf import settings
@@ -17,8 +18,9 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views import View
 from spid_cie_oidc.entity.exceptions import InvalidEntityConfiguration
-from spid_cie_oidc.onboarding.schemas.authn_requests import AuthenticationRequest, AuthenticationRequestCie, AuthenticationRequestSpid
+from spid_cie_oidc.onboarding.schemas.authn_requests import AuthenticationRequestSpid
 from spid_cie_oidc.onboarding.schemas.authn_response import AuthenticationErrorResponse, AuthenticationResponse
+from spid_cie_oidc.onboarding.schemas.authn_requests import AcrValues
 from spid_cie_oidc.provider.forms import AuthLoginForm, AuthzHiddenForm
 from spid_cie_oidc.provider.models import OidcSession
 from spid_cie_oidc.provider.exceptions import AuthzRequestReplay, ValidationException
@@ -146,13 +148,16 @@ class AuthzRequestView(OpBase, View):
 
         # stores the authz request in a hidden field in the form
         form = self.get_login_form()()
+        acr_value = AcrValues(self.payload["acr_values"][0])
         context = {
             "client_organization_name": tc.metadata.get(
                 "client_name", self.payload["client_id"]
             ),
             "hidden_form": AuthzHiddenForm(dict(authz_request_object=req)),
             "form": form,
-            "redirect_uri": self.payload["redirect_uri"]
+            "redirect_uri": self.payload["redirect_uri"],
+            "obj_request": json.dumps(self.payload, indent=2),
+            "acr_value": acr_value.name
         }
         return render(request, self.template, context)
 
