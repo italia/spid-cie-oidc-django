@@ -117,7 +117,7 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
             authz = authz.last()
 
         code = request.GET.get("code")
-       
+
         authz_token = OidcAuthenticationToken.objects.create(
             authz_request=authz, code=code
         )

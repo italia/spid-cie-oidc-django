@@ -131,7 +131,6 @@ class TrustMark:
         return f"{self.id} to {self.sub} issued by {self.iss}"
 
 
-
 class EntityConfiguration:
     """
     The self issued/signed statement of a federation entity
