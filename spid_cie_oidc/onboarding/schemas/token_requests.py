@@ -21,13 +21,13 @@ class TokenAuthnCodeRequest(TokenRequest):
     grant_type: Literal["authorization_code"]
 
     def example():
-        return TokenAuthnCodeRequest( # noqa: F722
-            client_id = "http://example.com",  # noqa: F722
-            client_assertion = "string.string.string", # noqa: F722
-            client_assertion_type = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",  # noqa: F722
-            code = "string", # noqa: F722
-            code_verifier = "string", # noqa: F722
-            grant_type = "authorization_code"  # noqa: F722
+        return TokenAuthnCodeRequest( # noqa: E722
+            client_id = "http://example.com",  # noqa: E722
+            client_assertion = "string.string.string", # noqa: E722
+            client_assertion_type = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",  # noqa: E722
+            code = "string", # noqa: E722
+            code_verifier = "string", # noqa: E722
+            grant_type = "authorization_code"  # noqa: E722
         )
 
 
@@ -36,10 +36,10 @@ class TokenRefreshRequest(TokenRequest):
     refresh_token: str
 
     def example():
-        return TokenRefreshRequest(  # noqa: F722
-            client_id = "http://example.com",  # noqa: F722
-            client_assertion = "string.string.string", # noqa: F722
-            client_assertion_type = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",  # noqa: F722
-            refresh_token = "string", # noqa: F722
-            grant_type = "refresh_token" # noqa: F722
+        return TokenRefreshRequest(  # noqa: E722
+            client_id = "http://example.com",  # noqa: E722
+            client_assertion = "string.string.string", # noqa: E722
+            client_assertion_type = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",  # noqa: E722
+            refresh_token = "string", # noqa: E722
+            grant_type = "refresh_token" # noqa: E722
         )
