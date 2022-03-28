@@ -173,7 +173,6 @@ class TokenEndpoint(OpBase, View):
 
         self.commons = self.get_jwt_common_data()
         self.issuer = self.get_issuer()
-
         self.authz = OidcSession.objects.filter(
             auth_code=request.POST["code"],
             revoked=False
