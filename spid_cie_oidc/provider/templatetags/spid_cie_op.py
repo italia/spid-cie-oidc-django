@@ -16,6 +16,7 @@ def oidc_provider_logo():
         OIDCFED_DEFAULT_PROVIDER_PROFILE, {}
     ).get('logo', "")}"""
 
+
 @register.simple_tag
 def oidc_provider_arc_value_position():
     return f"""{OIDCFED_PROVIDER_PROFILES_MEDIA.get(

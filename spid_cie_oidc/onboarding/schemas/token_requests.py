@@ -41,5 +41,5 @@ class TokenRefreshRequest(TokenRequest):
             client_assertion = "string.string.string", # noqa: F722
             client_assertion_type = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
             refresh_token = "string", # noqa: F722
-            grant_type = "refresh_token"
+            grant_type = "refresh_token" # noqa: F722
         )

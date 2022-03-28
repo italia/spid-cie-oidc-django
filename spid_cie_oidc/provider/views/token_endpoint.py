@@ -18,7 +18,6 @@ from pydantic import BaseModel
 from spid_cie_oidc.entity.jwtse import unpad_jwt_payload
 from spid_cie_oidc.onboarding.schemas.token_requests import TokenAuthnCodeRequest, TokenRefreshRequest
 from spid_cie_oidc.onboarding.schemas.token_response import TokenErrorResponse, TokenRefreshResponse, TokenResponse
-from spid_cie_oidc.onboarding.tests.token_request_settings import TOKEN_AUTHN_CODE_REQUEST
 from spid_cie_oidc.provider.exceptions import ValidationException
 from spid_cie_oidc.provider.models import IssuedToken, OidcSession
 
@@ -46,7 +45,7 @@ logger = logging.getLogger(__name__)
 class TokenEndpoint(OpBase, View):
     schema = {}
     schema["authn_request"] = schema_set_examples({}, TokenAuthnCodeRequest)
-    schema["refresh_request"] =  schema_set_examples({}, TokenRefreshRequest)
+    schema["refresh_request"] = schema_set_examples({}, TokenRefreshRequest)
 
     def get(self, request, *args, **kwargs):
         return HttpResponseBadRequest()
