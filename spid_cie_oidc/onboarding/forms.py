@@ -45,6 +45,12 @@ class OnboardingRegistrationForm(forms.Form):
         },
     )
 
+    auth_request_url = forms.CharField(
+        initial="",
+        label=_("authentication request url"),
+        required = False
+    )
+
     contact = forms.EmailField(
         initial="",
         label=_("contact email"),
