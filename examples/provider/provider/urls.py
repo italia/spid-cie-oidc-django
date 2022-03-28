@@ -17,7 +17,7 @@ from django.conf import settings
 from django.contrib import admin
 
 from django.views.static import serve
-from django.urls import path, re_path
+from django.urls import include, path, re_path
 
 from spid_cie_oidc.entity.urls import urlpatterns as entity_urlpatterns
 
@@ -54,3 +54,6 @@ if 'spid_cie_oidc.provider' in settings.INSTALLED_APPS:
             ),
         ]
     )
+
+if 'djagger' in settings.INSTALLED_APPS:
+    urlpatterns.append(path('rest/', include('djagger.urls')))
