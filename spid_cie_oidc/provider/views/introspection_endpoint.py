@@ -1,11 +1,14 @@
 import logging
 
+from djagger.decorators import schema
 from django.http import (
     HttpResponseBadRequest,
     HttpResponseForbidden,
     JsonResponse
 )
 from django.views import View
+from spid_cie_oidc.onboarding.schemas.introspection_request import IntrospectionRequest
+from spid_cie_oidc.onboarding.schemas.introspection_response import IntrospectionErrorResponseSpid, IntrospectionResponse
 from spid_cie_oidc.provider.exceptions import ValidationException
 from spid_cie_oidc.provider.models import IssuedToken
 
@@ -13,6 +16,17 @@ from . import OpBase
 logger = logging.getLogger(__name__)
 
 
+@schema(
+    methods=['GET', 'POST'],
+    dj_post_request_schema=IntrospectionRequest,
+    dj_post_response_schema= {
+            "200":IntrospectionResponse,
+            "400": IntrospectionErrorResponseSpid
+    },
+    dj_get_response_schema= {
+            "400": {}
+    },
+)
 class IntrospectionEndpoint(OpBase, View):
     def get(self, request, *args, **kwargs):
         return HttpResponseBadRequest()

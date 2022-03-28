@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf import settings
 from django.contrib import admin
-from django.urls import path, re_path
+from django.urls import include, path, re_path
 from django.views.static import serve
 
 from spid_cie_oidc.entity.urls import urlpatterns as entity_urlpatterns
@@ -45,9 +45,9 @@ urlpatterns.extend(
                 # 'show_indexes': True
             }
         ),
+        
     )
 )
-
 
 if 'spid_cie_oidc.relying_party' in settings.INSTALLED_APPS:
     from spid_cie_oidc.relying_party.urls import urlpatterns as rp_urlpatterns
@@ -77,10 +77,13 @@ if 'spid_cie_oidc.provider' in settings.INSTALLED_APPS:
                 f"oidc/op/.well-known/openid-federation",
                 entity_configuration,
                 name="op_entity_configuration",
-            ),
+            )
         ]
     )
 
 if 'spid_cie_oidc.relying_party_test' in settings.INSTALLED_APPS:
     from spid_cie_oidc.relying_party_test.urls import urlpatterns as rp_urlpatterns_test
     urlpatterns.extend(rp_urlpatterns_test)
+
+if 'djagger' in settings.INSTALLED_APPS:
+    urlpatterns.append(path('rest/', include('djagger.urls')))
