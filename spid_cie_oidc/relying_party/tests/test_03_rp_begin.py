@@ -14,45 +14,45 @@ from spid_cie_oidc.entity.tests.settings import TA_SUB
 from spid_cie_oidc.entity.utils import datetime_from_timestamp, exp_from_now, iat_now
 from spid_cie_oidc.provider.tests.settings import op_conf
 
-def create_tc():
-    NOW = datetime_from_timestamp(iat_now())
-    EXP = datetime_from_timestamp(exp_from_now(33))
-    ta_fes = FetchedEntityStatement.objects.create(
-        sub=TA_SUB,
-        iss=TA_SUB,
-        exp=EXP,
-        iat=NOW,
-    )
-    return TrustChain.objects.create(
-        sub=op_conf["sub"],
-        exp=EXP,
-        status="valid",
-        trust_anchor=ta_fes,
-        is_active=True,
-    )
-
-def create_tc_metadata_no_correct():
-    NOW = datetime_from_timestamp(iat_now())
-    EXP = datetime_from_timestamp(exp_from_now(33))
-    ta_fes = FetchedEntityStatement.objects.create(
-        sub=TA_SUB,
-        iss=TA_SUB,
-        exp=EXP,
-        iat=NOW,
-    )
-    local_op_conf = deepcopy(op_conf)
-    metadata = local_op_conf["metadata"]
-    metadata["openid_provider"]["jwks"] = {"keys": []}
-    return TrustChain.objects.create(
-        sub=op_conf["sub"],
-        exp=EXP,
-        status="valid",
-        metadata=metadata,
-        trust_anchor=ta_fes,
-        is_active=True,
-    )
 
 class RPBeginTest(TestCase):
+    def create_tc():
+        NOW = datetime_from_timestamp(iat_now())
+        EXP = datetime_from_timestamp(exp_from_now(33))
+        ta_fes = FetchedEntityStatement.objects.create(
+            sub=TA_SUB,
+            iss=TA_SUB,
+            exp=EXP,
+            iat=NOW,
+        )
+        return TrustChain.objects.create(
+            sub=op_conf["sub"],
+            exp=EXP,
+            status="valid",
+            trust_anchor=ta_fes,
+            is_active=True,
+        )
+
+    def create_tc_metadata_no_correct():
+        NOW = datetime_from_timestamp(iat_now())
+        EXP = datetime_from_timestamp(exp_from_now(33))
+        ta_fes = FetchedEntityStatement.objects.create(
+            sub=TA_SUB,
+            iss=TA_SUB,
+            exp=EXP,
+            iat=NOW,
+        )
+        local_op_conf = deepcopy(op_conf)
+        metadata = local_op_conf["metadata"]
+        metadata["openid_provider"]["jwks"] = {"keys": []}
+        return TrustChain.objects.create(
+            sub=op_conf["sub"],
+            exp=EXP,
+            status="valid",
+            metadata=metadata,
+            trust_anchor=ta_fes,
+            is_active=True,
+        )
     def setUp(self):
         self.req = HttpRequest()
         NOW = datetime_from_timestamp(iat_now())
