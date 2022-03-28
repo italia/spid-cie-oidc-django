@@ -133,10 +133,6 @@ TEMPLATE_LOADERS = (
 'django.template.loaders.eggs.Loader'
 )
 
-DJAGGER_CONFIG = {
-    "global_prefix" : "dj_"
-}
-
 DJAGGER_DOCUMENT = {
     "app_names" : ['spid_cie_oidc'],
 }
