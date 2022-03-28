@@ -117,14 +117,7 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
             authz = authz.last()
 
         code = request.GET.get("code")
-        if not code:
-            # TODO: verify error message and status
-            context = {
-                "error": "invalid request",
-                "error_description": _("Request MUST contain code"),
-            }
-            return render(request, self.error_template, context, status=400)
-
+       
         authz_token = OidcAuthenticationToken.objects.create(
             authz_request=authz, code=code
         )
@@ -181,7 +174,7 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
         if not op_ac_jwk or not op_id_jwk:
             # TODO: verify error message and status
             context = {
-                "error": "invalid token",
+                "error": "invalid_token",
                 "error_description": _("Authentication token seems not to be valid."),
             }
             return render(request, self.error_template, context, status=403)

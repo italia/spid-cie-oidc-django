@@ -98,7 +98,6 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
                 "error_description": _("Invalid provider Metadata."),
             }
             return render(request, self.error_template, context, status=404)
-
         if provider_metadata.get("jwks", None):
             jwks_dict = provider_metadata["jwks"]
         else:

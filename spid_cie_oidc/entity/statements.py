@@ -103,23 +103,25 @@ class TrustMark:
             self.issuer_entity_configuration = get_entity_configurations(
                 self.iss, self.httpc_params
             )
-
-        if not self.issuer_entity_configuration.validate_by_itself():
-            self.is_valid = False
-            logger.warning(f"Issuer {self.iss} of trust mark {self.id} is not valid.")
-            return False
-
-        if self.header.get("kid") not in self.issuer_entity_configuration.kids:
-            raise UnknownKid(
+        try:
+            ec = EntityConfiguration(self.issuer_entity_configuration[0])
+            ec.validate_by_itself()
+        except UnknownKid as e:
+            logger.warning(
                 f"Trust Mark validation failed by its Issuer: "
                 f"{self.header.get('kid')} not found in "
-                f"{self.issuer_entity_configuration.jwks}"
-            )
+                f"{self.issuer_entity_configuration.jwks}")
+            return False
+        except Exception as e:
+            logger.warning(f"Issuer {self.iss} of trust mark {self.id} is not valid.")
+            self.is_valid = False
+            return False
+
         # verify signature
         payload = verify_jws(
             self.jwt,
-            self.issuer_entity_configuration.jwks[
-                self.issuer_entity_configuration.kids.index(self.header["kid"])
+            ec.jwks[
+                ec.kids.index(self.header["kid"])
             ],
         )
         self.is_valid = True
@@ -127,6 +129,7 @@ class TrustMark:
 
     def __repr__(self) -> str:
         return f"{self.id} to {self.sub} issued by {self.iss}"
+
 
 
 class EntityConfiguration:
