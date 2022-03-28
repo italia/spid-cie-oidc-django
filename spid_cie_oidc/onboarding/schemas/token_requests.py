@@ -23,9 +23,9 @@ class TokenAuthnCodeRequest(TokenRequest):
     def example():
         return TokenAuthnCodeRequest(
             client_id = "http://example.com",
-            client_assertion = "string.string.string",
+            client_assertion = "string.string.string", # noqa: F722
             client_assertion_type = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-            code = "string",
+            code = "string", # noqa: F722
             code_verifier = "string", # noqa: F722
             grant_type = "authorization_code"
         )
@@ -38,7 +38,7 @@ class TokenRefreshRequest(TokenRequest):
     def example():
         return TokenRefreshRequest(
             client_id = "http://example.com",
-            client_assertion = "string.string.string",
+            client_assertion = "string.string.string", # noqa: F722
             client_assertion_type = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
             refresh_token = "string", # noqa: F722
             grant_type = "refresh_token"
