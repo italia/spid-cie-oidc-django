@@ -2,8 +2,6 @@ from typing import Literal
 
 from pydantic import BaseModel, HttpUrl, constr
 
-from spid_cie_oidc.onboarding.tests.token_request_settings import TOKEN_AUTHN_CODE_REQUEST
-
 
 class TokenRequest(BaseModel):
     client_id: HttpUrl
@@ -20,14 +18,14 @@ class TokenAuthnCodeRequest(TokenRequest):
     code_verifier: str
     grant_type: Literal["authorization_code"]
 
-    def example():# noqa: F722
-        return TokenAuthnCodeRequest( # noqa: F722
-            client_id = "http://example.com",  # noqa: F722
+    def example():
+        return TokenAuthnCodeRequest( 
+            client_id = "http://example.com",  
             client_assertion = "string.string.string", # noqa: F722
-            client_assertion_type = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",  # noqa: F722
+            client_assertion_type = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",  
             code = "string", # noqa: F722
             code_verifier = "string", # noqa: F722
-            grant_type = "authorization_code"  # noqa: F722
+            grant_type = "authorization_code"  
         )
 
 
@@ -35,11 +33,11 @@ class TokenRefreshRequest(TokenRequest):
     grant_type: Literal["refresh_token"]
     refresh_token: str
 
-    def example():# noqa: F722
-        return TokenRefreshRequest(  # noqa: F722
-            client_id = "http://example.com",  # noqa: F722
+    def example():
+        return TokenRefreshRequest(  
+            client_id = "http://example.com",  
             client_assertion = "string.string.string", # noqa: F722
-            client_assertion_type = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",  # noqa: F722
+            client_assertion_type = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",  
             refresh_token = "string", # noqa: F722
-            grant_type = "refresh_token" # noqa: F722
+            grant_type = "refresh_token" 
         )
