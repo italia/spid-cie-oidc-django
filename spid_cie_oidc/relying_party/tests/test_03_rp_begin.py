@@ -14,8 +14,46 @@ from spid_cie_oidc.entity.tests.settings import TA_SUB
 from spid_cie_oidc.entity.utils import datetime_from_timestamp, exp_from_now, iat_now
 from spid_cie_oidc.provider.tests.settings import op_conf
 
+def create_tc():
+    NOW = datetime_from_timestamp(iat_now())
+    EXP = datetime_from_timestamp(exp_from_now(33))
+    ta_fes = FetchedEntityStatement.objects.create(
+        sub=TA_SUB,
+        iss=TA_SUB,
+        exp=EXP,
+        iat=NOW,
+    )
+    return TrustChain.objects.create(
+        sub=op_conf["sub"],
+        exp=EXP,
+        status="valid",
+        trust_anchor=ta_fes,
+        is_active=True,
+    )
+
+def create_tc_metadata_no_correct():
+    NOW = datetime_from_timestamp(iat_now())
+    EXP = datetime_from_timestamp(exp_from_now(33))
+    ta_fes = FetchedEntityStatement.objects.create(
+        sub=TA_SUB,
+        iss=TA_SUB,
+        exp=EXP,
+        iat=NOW,
+    )
+    local_op_conf = deepcopy(op_conf)
+    metadata = local_op_conf["metadata"]
+    metadata["openid_provider"]["jwks"] = {"keys": []}
+    return TrustChain.objects.create(
+        sub=op_conf["sub"],
+        exp=EXP,
+        status="valid",
+        metadata=metadata,
+        trust_anchor=ta_fes,
+        is_active=True,
+    )
 
 class RPBeginTest(TestCase):
+
     def setUp(self):
         self.req = HttpRequest()
         NOW = datetime_from_timestamp(iat_now())
@@ -26,15 +64,17 @@ class RPBeginTest(TestCase):
             iss=TA_SUB,
             exp=EXP,
             iat=NOW,
-        )
+        ) 
+        metadata = deepcopy(op_conf["metadata"])
         self.trust_chain = TrustChain.objects.create(
             sub=op_conf["sub"],
             exp=EXP,
-            metadata=op_conf["metadata"],
+            metadata=metadata,
             status="valid",
             trust_anchor=self.ta_fes,
             is_active=True,
         )
+   
 
     @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB, OIDCFED_TRUST_ANCHORS=[TA_SUB])
     def test_rp_begin(self):
@@ -116,3 +156,34 @@ class RPBeginTest(TestCase):
         
         self.assertTrue(res.status_code == 404)
         self.assertTrue("request rejected" in res.content.decode())
+
+    def test_rp_begin_tc_no_metadata(self):
+        client = Client()
+        url = reverse("spid_cie_rp_begin")
+        self.patcher = patch(
+            "spid_cie_oidc.relying_party.views.rp_begin.SpidCieOidcRpBeginView.get_oidc_op", 
+            return_value = create_tc()
+        )
+        self.patcher.start()
+        res = client.get(url, {"provider": op_conf["sub"], "trust_anchor": TA_SUB})
+        self.assertTrue("request rejected" in res.content.decode())
+        self.patcher.stop()
+    
+    @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB, OIDCFED_TRUST_ANCHORS=[TA_SUB])
+    def test_rp_begin_tc_no_redirect_uri(self):
+        FederationEntityConfiguration.objects.all().delete()
+        local_rp_conf = deepcopy(rp_conf)
+        local_rp_conf["metadata"]["openid_relying_party"]["redirect_uris"] = ["http://rp-test.it/oidc/rp/callback-test/"],
+        self.rp_conf = FederationEntityConfiguration.objects.create(**local_rp_conf)        
+        client = Client()
+        url = reverse("spid_cie_rp_begin")
+        all_tc = TrustChain.objects.all()
+        res = client.get(
+            url, 
+            {
+                "provider": op_conf["sub"], 
+                "trust_anchor": TA_SUB,
+                "redirect_uri": "http://rp-test.it/oidc/rp/callback"
+            }
+        )
+        self.assertTrue("callback-test" in  res.url)

@@ -4,30 +4,40 @@ import urllib.parse
 import uuid
 import json
 
+from djagger.decorators import schema
 from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.forms import ValidationError
 from django.forms.utils import ErrorList
 from django.http import (
+    HttpResponseBadRequest,
     HttpResponseForbidden,
-    HttpResponseRedirect,
+    HttpResponseRedirect
 )
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views import View
 from spid_cie_oidc.entity.exceptions import InvalidEntityConfiguration
+from spid_cie_oidc.onboarding.schemas.authn_requests import AuthenticationRequestSpid
+from spid_cie_oidc.onboarding.schemas.authn_response import AuthenticationErrorResponse, AuthenticationResponse
 from spid_cie_oidc.onboarding.schemas.authn_requests import AcrValues
 from spid_cie_oidc.provider.forms import AuthLoginForm, AuthzHiddenForm
 from spid_cie_oidc.provider.models import OidcSession
-
 from spid_cie_oidc.provider.exceptions import AuthzRequestReplay, ValidationException
 from spid_cie_oidc.provider.settings import OIDCFED_DEFAULT_PROVIDER_PROFILE, OIDCFED_PROVIDER_PROFILES_DEFAULT_ACR
-
 from . import OpBase
 logger = logging.getLogger(__name__)
 
 
+@schema(
+    methods=['GET', 'POST'],
+    get_request_schema=AuthenticationRequestSpid,
+    post_response_schema= {
+            "302":AuthenticationResponse,
+            "403": AuthenticationErrorResponse
+    },
+)
 class AuthzRequestView(OpBase, View):
     """
         View which processes the actual Authz request and
@@ -47,9 +57,9 @@ class AuthzRequestView(OpBase, View):
 
         if (
             'offline_access' in payload['scope'] and
-            'consent' not in payload['prompt'] 
+            'consent' not in payload['prompt']
         ):
-            raise ValidationError(
+            raise ValidationException(
                 "scope with offline_access without prompt = consent"
             )
 
@@ -57,7 +67,7 @@ class AuthzRequestView(OpBase, View):
         p = urllib.parse.urlparse(redirect_uri)
         scheme_fqdn = f"{p.scheme}://{p.hostname}"
         if payload.get("client_id", None) in scheme_fqdn:
-            raise ValidationError("client_id not in redirect_uri")
+            raise ValidationException("client_id not in redirect_uri")
 
         self.validate_json_schema(
             payload,
@@ -74,19 +84,12 @@ class AuthzRequestView(OpBase, View):
         it's validated and a login prompt is rendered to the user
         """
         req = request.GET.get("request", None)
-        # FIXME: invalid check: if not request-> no payload-> no redirect_uri
         if not req:
             logger.error(
                 f"Missing Authz request object in {dict(request.GET)} "
                 f"error=invalid_request"
             )
-            return self.redirect_response_data(
-                self.payload["redirect_uri"],
-                error="invalid_request",
-                error_description=_("Missing Authz request object"),
-                # No req -> no payload -> no state
-                state="",
-            )
+            return HttpResponseBadRequest()
         # yes, again. We MUST.
         tc = None
         try:

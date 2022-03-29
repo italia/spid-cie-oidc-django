@@ -29,7 +29,7 @@ class OnBoardingRegistration(TimeStampedModel):
     )
 
     auth_request_url = models.CharField(
-        max_length=254, 
+        max_length=254,
         blank=True,
         null= True,
         help_text=_("SPID/CIE authentication request trigger url."),

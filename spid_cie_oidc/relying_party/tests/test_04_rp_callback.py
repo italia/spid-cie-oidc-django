@@ -4,6 +4,7 @@ from unittest.mock import patch
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
+from spid_cie_oidc.accounts.models import User
 from spid_cie_oidc.entity.models import FederationEntityConfiguration
 
 from spid_cie_oidc.relying_party.models import OidcAuthentication
@@ -11,7 +12,12 @@ from spid_cie_oidc.authority.tests.settings import rp_conf
 from spid_cie_oidc.provider.tests.settings import op_conf
 from spid_cie_oidc.onboarding.tests.authn_request_settings import AUTHN_REQUEST_SPID
 
-from spid_cie_oidc.relying_party.tests.mocked_response import MockedTokenEndPointResponse, MockedUserInfoResponse
+from spid_cie_oidc.relying_party.tests.mocked_response import (
+    MockedTokenEndPointNoCorrectIdTokenResponse,
+    MockedTokenEndPointNoCorrectResponse, 
+    MockedTokenEndPointResponse, 
+    MockedUserInfoResponse
+)
 
 
 STATE = "fyZiOL9Lf2CeKuNT2JzxiLRDink0uPcd"
@@ -120,3 +126,36 @@ class RpCallBack(TestCase):
         url = reverse("spid_cie_rp_callback")
         res = client.get(url, {"state": STATE, "code": CODE})
         self.assertTrue("Authentication not found" in res.content.decode())
+
+    @override_settings(HTTP_CLIENT_SYNC=True)
+    @patch("requests.post", return_value=MockedTokenEndPointResponse())
+    @patch("requests.get", return_value=MockedUserInfoResponse())
+    def test_rp_callback_reunification(self, mocked, mocked_2):
+        user = User.objects.create(username = "username", attributes = {"fiscal_number" : "sdfsfs908df09s8df90s8fd0"}),
+        client = Client()
+        url = reverse("spid_cie_rp_callback")
+        res = client.get(url, {"state": STATE, "code": CODE})
+        user = get_user_model().objects.first()
+        self.assertTrue(
+            user.attributes['fiscal_number'] == "sdfsfs908df09s8df90s8fd0"
+        )
+
+    @override_settings(HTTP_CLIENT_SYNC=True)
+    @patch("requests.post", return_value=MockedTokenEndPointNoCorrectResponse())
+    @patch("requests.get", return_value=MockedUserInfoResponse())
+    def test_rp_callback_no_correct_token_response(self, mocked, mocked1):
+        client = Client()
+        url = reverse("spid_cie_rp_callback")
+        res = client.get(url, {"state": STATE, "code": CODE})
+        self.assertTrue(res.status_code == 400)
+        self.assertTrue("invalid_request" in res.content.decode())
+
+    @override_settings(HTTP_CLIENT_SYNC=True)
+    @patch("requests.post", return_value=MockedTokenEndPointNoCorrectIdTokenResponse())
+    @patch("requests.get", return_value=MockedUserInfoResponse())
+    def test_rp_callback_no_correct_id_token_response(self, mocked, mocked1):
+        client = Client()
+        url = reverse("spid_cie_rp_callback")
+        res = client.get(url, {"state": STATE, "code": CODE})
+        self.assertTrue(res.status_code == 403)
+        self.assertTrue("invalid_token" in res.content.decode())

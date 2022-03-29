@@ -140,18 +140,18 @@ class OpBase:
 
         if not session:
             raise InvalidSession("Unknown Session")
-        
+
         if session.user != request.user:
             raise InvalidSession(
                 f"Different user, session is of {session.user} "
                 f"but request user is {request.user}"
             )
-        
+
         if session.revoked:
             raise RevokedSession(
                 "Session was revoked"
             )
-        
+
         session_not_after = session.created + timezone.timedelta(
             minutes = OIDCFED_PROVIDER_AUTH_CODE_MAX_AGE
         )
@@ -272,7 +272,7 @@ class OpBase:
         acrs = authz.authz_request.get('acr_values', [])
         if (
             "offline_access" in authz.authz_request['scope'] and
-            'consent' in authz.authz_request['prompt'] and 
+            'consent' in authz.authz_request['prompt'] and
             set(refresh_acrs).intersection(set(acrs))
         ):
             refresh_token = {

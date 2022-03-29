@@ -126,8 +126,16 @@ INSTALLED_APPS = [
     'spid_cie_oidc.relying_party',
     'spid_cie_oidc.relying_party_test',
     'spid_cie_oidc.provider',
-    
+    'djagger'
 ]
+
+TEMPLATE_LOADERS = (
+'django.template.loaders.eggs.Loader'
+)
+
+DJAGGER_DOCUMENT = {
+    "app_names" : ['spid_cie_oidc'],
+}
 
 DATABASES = {
     # if you need more power

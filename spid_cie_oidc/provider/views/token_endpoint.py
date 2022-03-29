@@ -3,6 +3,8 @@ import base64
 import hashlib
 import logging
 
+from djagger.decorators import schema
+from djagger.utils import schema_set_examples
 from django.conf import settings
 from django.http import (
     HttpResponseBadRequest,
@@ -12,7 +14,10 @@ from django.http import (
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
+from pydantic import BaseModel
 from spid_cie_oidc.entity.jwtse import unpad_jwt_payload
+from spid_cie_oidc.onboarding.schemas.token_requests import TokenAuthnCodeRequest, TokenRefreshRequest
+from spid_cie_oidc.onboarding.schemas.token_response import TokenErrorResponse, TokenRefreshResponse, TokenResponse
 from spid_cie_oidc.provider.exceptions import ValidationException
 from spid_cie_oidc.provider.models import IssuedToken, OidcSession
 
@@ -20,8 +25,27 @@ from . import OpBase
 logger = logging.getLogger(__name__)
 
 
+@schema(
+    methods=['GET','POST'],
+    post_request_schema = {
+        "authn_request": TokenAuthnCodeRequest,
+        "refresh_request": TokenRefreshRequest,
+
+    },
+    post_response_schema = {
+            "200": TokenResponse,
+            "200": TokenRefreshResponse,
+            "400": TokenErrorResponse
+    },
+    get_response_schema = {
+            "400": BaseModel
+    },
+)
 @method_decorator(csrf_exempt, name="dispatch")
 class TokenEndpoint(OpBase, View):
+    schema = {}
+    schema["authn_request"] = schema_set_examples({}, TokenAuthnCodeRequest)
+    schema["refresh_request"] = schema_set_examples({}, TokenRefreshRequest)
 
     def get(self, request, *args, **kwargs):
         return HttpResponseBadRequest()
@@ -101,7 +125,7 @@ class TokenEndpoint(OpBase, View):
             )
 
         session = issued_token.session
-        if not self.is_token_renewable(session):
+        if not self.is_token_renewable(session): # pragma: no cover
             return JsonResponse(
                     {
                         "error": "invalid_request",
@@ -149,7 +173,6 @@ class TokenEndpoint(OpBase, View):
 
         self.commons = self.get_jwt_common_data()
         self.issuer = self.get_issuer()
-
         self.authz = OidcSession.objects.filter(
             auth_code=request.POST["code"],
             revoked=False
@@ -164,8 +187,7 @@ class TokenEndpoint(OpBase, View):
                 request.POST['client_id'],
                 request.POST['client_assertion']
             )
-        except Exception as e:
-            # TODO: coverage test
+        except Exception as e: # pragma: no cover
             logger.warning(
                 "Client authentication failed for "
                 f"{request.POST.get('client_id', 'unknow')}: {e}"
@@ -184,4 +206,4 @@ class TokenEndpoint(OpBase, View):
             return self.grant_refresh_token(request)
         else:
             # Token exchange? :-)
-            raise NotImplementedError()
+            raise NotImplementedError() 
