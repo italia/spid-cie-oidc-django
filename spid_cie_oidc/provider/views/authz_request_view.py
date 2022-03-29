@@ -24,17 +24,22 @@ from spid_cie_oidc.onboarding.schemas.authn_requests import AcrValues
 from spid_cie_oidc.provider.forms import AuthLoginForm, AuthzHiddenForm
 from spid_cie_oidc.provider.models import OidcSession
 from spid_cie_oidc.provider.exceptions import AuthzRequestReplay, ValidationException
-from spid_cie_oidc.provider.settings import OIDCFED_DEFAULT_PROVIDER_PROFILE, OIDCFED_PROVIDER_PROFILES_DEFAULT_ACR
+from spid_cie_oidc.provider.settings import (
+    OIDCFED_DEFAULT_PROVIDER_PROFILE, 
+    OIDCFED_PROVIDER_PROFILES, 
+    OIDCFED_PROVIDER_PROFILES_DEFAULT_ACR
+)
 from . import OpBase
 logger = logging.getLogger(__name__)
 
 
+schema_profile = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
 @schema(
     methods=['GET', 'POST'],
-    get_request_schema=AuthenticationRequestSpid,
+    get_request_schema=schema_profile["authorization_request"],
     post_response_schema= {
-            "302":AuthenticationResponse,
-            "403": AuthenticationErrorResponse
+            "302":schema_profile["authorization_response"],
+            "403": schema_profile["authorization_error_response"]
     },
 )
 class AuthzRequestView(OpBase, View):

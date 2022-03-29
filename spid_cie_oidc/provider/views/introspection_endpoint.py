@@ -12,17 +12,22 @@ from spid_cie_oidc.onboarding.schemas.introspection_request import Introspection
 from spid_cie_oidc.onboarding.schemas.introspection_response import IntrospectionErrorResponseSpid, IntrospectionResponse
 from spid_cie_oidc.provider.exceptions import ValidationException
 from spid_cie_oidc.provider.models import IssuedToken
+from spid_cie_oidc.provider.settings import (
+    OIDCFED_DEFAULT_PROVIDER_PROFILE, 
+    OIDCFED_PROVIDER_PROFILES
+)
 
 from . import OpBase
 logger = logging.getLogger(__name__)
 
 
+schema_profile = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
 @schema(
     methods=['GET', 'POST'],
-    post_request_schema=IntrospectionRequest,
+    post_request_schema=schema_profile["introspection_request"],
     post_response_schema= {
-            "200":IntrospectionResponse,
-            "400": IntrospectionErrorResponseSpid
+            "200":schema_profile["introspection_response"],
+            "400":schema_profile["introspection_error_response"],
     },
     get_response_schema= {
             "400": BaseModel

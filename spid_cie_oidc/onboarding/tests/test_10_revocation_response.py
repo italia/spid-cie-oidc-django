@@ -8,28 +8,28 @@ from spid_cie_oidc.onboarding.tests.revocation_response_settings import (
     REVOCATION_RESPONSE_CIE_NO_ERROR_DESCRIPTION,
 )
 from spid_cie_oidc.onboarding.schemas.revocation_response import (
-    RevocationErrorResponseCie,
+    RevocationErrorResponse,
 )
 
 
 class RevocationResponseTest(TestCase):
     def test_validate_revocation_response(self):
-        RevocationErrorResponseCie(**REVOCATION_RESPONSE_CIE)
+        RevocationErrorResponse(**REVOCATION_RESPONSE_CIE)
 
     def test_validate_revocation_response_no_error(self):
         with self.assertRaises(ValidationError):
-            RevocationErrorResponseCie(**REVOCATION_RESPONSE_CIE_NO_ERROR)
+            RevocationErrorResponse(**REVOCATION_RESPONSE_CIE_NO_ERROR)
 
     def test_validate_revocation_response_no_correct_error(self):
         with self.assertRaises(ValidationError):
-            RevocationErrorResponseCie(**REVOCATION_RESPONSE_CIE_NO_CORRECT_ERROR)
+            RevocationErrorResponse(**REVOCATION_RESPONSE_CIE_NO_CORRECT_ERROR)
 
     def test_validate_revocation_response_no_error_description(self):
         with self.assertRaises(ValidationError):
-            RevocationErrorResponseCie(**REVOCATION_RESPONSE_CIE_NO_ERROR_DESCRIPTION)
+            RevocationErrorResponse(**REVOCATION_RESPONSE_CIE_NO_ERROR_DESCRIPTION)
 
     def test_validate_revocation_response_no_correct_error_description(self):
         with self.assertRaises(ValidationError):
-            RevocationErrorResponseCie(
+            RevocationErrorResponse(
                 **REVOCATION_RESPONSE_CIE_NO_CORRECT_ERROR_DESCRIPTION
             )

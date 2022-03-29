@@ -1,6 +1,7 @@
 from copy import deepcopy
 from django.conf import settings
 from django.utils.translation import gettext as _
+from pydantic import BaseModel
 from spid_cie_oidc.entity.schemas.op_metadata import (
     OPMetadataCie,
     OPMetadataSpid
@@ -10,9 +11,13 @@ from spid_cie_oidc.onboarding.schemas.authn_requests import (
     AuthenticationRequestCie,
     AuthenticationRequestSpid
 )
+from spid_cie_oidc.onboarding.schemas.authn_response import AuthenticationErrorResponse, AuthenticationErrorResponseCie, AuthenticationResponse, AuthenticationResponseCie
 from spid_cie_oidc.onboarding.schemas.introspection_request import IntrospectionRequest
+from spid_cie_oidc.onboarding.schemas.introspection_response import IntrospectionErrorResponseCie, IntrospectionErrorResponseSpid, IntrospectionResponse
 from spid_cie_oidc.onboarding.schemas.revocation_request import RevocationRequest
+from spid_cie_oidc.onboarding.schemas.revocation_response import RevocationErrorResponse
 from spid_cie_oidc.onboarding.schemas.token_requests import TokenAuthnCodeRequest, TokenRefreshRequest
+from spid_cie_oidc.onboarding.schemas.token_response import TokenErrorResponse, TokenRefreshResponse, TokenResponse
 
 
 OIDCFED_PROVIDER_PROFILES_MEDIA = getattr(
@@ -89,19 +94,35 @@ OIDCFED_PROVIDER_PROFILES = getattr(
     {
         "spid": {
             "authorization_request": AuthenticationRequestSpid,
+            "authorization_response": AuthenticationResponse,
+            "authorization_error_response": AuthenticationErrorResponse,
             "op_metadata": OPMetadataSpid,
             "authorization_code": TokenAuthnCodeRequest,
+            "authorization_code_response": TokenResponse,
             "refresh_token": TokenRefreshRequest,
+            "refresh_token_response": TokenRefreshResponse,
+            "token_error_response": TokenErrorResponse,
             "revocation_request": RevocationRequest,
+            "revocation_response": RevocationErrorResponse,
             "introspection_request" : IntrospectionRequest,
+            "introspection_response" : IntrospectionResponse,
+            "introspection_error_response" : IntrospectionErrorResponseSpid,
         },
         "cie": {
             "authorization_request": AuthenticationRequestCie,
+            "authorization_response": AuthenticationResponseCie,
+            "authorization_error_response": AuthenticationErrorResponseCie,
             "op_metadata": OPMetadataCie,
             "authorization_code": TokenAuthnCodeRequest,
+            "authorization_code_response": TokenResponse,
             "refresh_token": TokenRefreshRequest,
+            "refresh_token_response": TokenRefreshResponse,
+            "token_error_response": TokenErrorResponse,
             "revocation_request": RevocationRequest,
+            "revocation_response": RevocationErrorResponse,
             "introspection_request" : IntrospectionRequest,
+            "introspection_response" : IntrospectionResponse,
+            "introspection_error_response" : IntrospectionErrorResponseCie,
         },
     },
 )
