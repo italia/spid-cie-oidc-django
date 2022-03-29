@@ -134,7 +134,26 @@ TEMPLATE_LOADERS = (
 )
 
 DJAGGER_DOCUMENT = {
-    "app_names" : ['spid_cie_oidc'],
+    "url_names": [
+        # Federation Authority
+        'oidcfed_fetch',
+        'oidcfed_resolve',
+        'oidcfed_list',
+        'oidcfed_trust_mark_status',
+        'oidcfed_advanced_entity_listing',
+
+        # Provider
+        'oidc_provider_authnrequest',
+        'oidc_provider_token_endpoint',
+        'oidc_provider_userinfo_endpoint',
+        'introspection_endpoint',
+        'oidc_provider_revoke_session',
+
+        # Relying Party
+        'spid_cie_rp_begin',
+        'spid_cie_rp_callback',
+        'spid_cie_rpinitiated_logout'
+    ]
 }
 
 DATABASES = {

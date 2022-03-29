@@ -45,6 +45,7 @@ schema_profile = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
     get_response_schema = {
             "400": BaseModel
     },
+    tags = ['Provider']
 )
 @method_decorator(csrf_exempt, name="dispatch")
 class TokenEndpoint(OpBase, View):

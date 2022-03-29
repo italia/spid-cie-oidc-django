@@ -35,12 +35,19 @@ logger = logging.getLogger(__name__)
 
 schema_profile = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
 @schema(
-    methods=['GET', 'POST'],
-    get_request_schema=schema_profile["authorization_request"],
-    post_response_schema= {
+    summary="OIDC Provider Authorization endpoint",
+    methods=['GET'],
+    request_schema=schema_profile["authorization_request"],
+    response_schema= {
             "302":schema_profile["authorization_response"],
             "403": schema_profile["authorization_error_response"]
     },
+    description = "The Authorization request endpoint",
+    external_docs = {
+        "alt_text": "AgID SPID OIDC Guidelines",
+        "url": "https://www.agid.gov.it/it/agenzia/stampa-e-comunicazione/notizie/2021/12/06/openid-connect-spid-adottate-linee-guida"
+    },
+    tags = ['Provider']
 )
 class AuthzRequestView(OpBase, View):
     """
