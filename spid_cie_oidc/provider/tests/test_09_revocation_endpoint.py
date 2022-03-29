@@ -84,7 +84,7 @@ class RevocationEndponitTest(TestCase):
 
     def test_revocation_endpoint(self):
         client = Client()
-        url = reverse("end_session_endpoint")
+        url = reverse("oidc_provider_end_session_endpoint")
         res = client.post(url, self.request)
         self.assertTrue(res.status_code == 200)
 
@@ -92,13 +92,13 @@ class RevocationEndponitTest(TestCase):
         client = Client()
         request = deepcopy(self.request)
         request["client_assertion"] = "q.q.q"
-        url = reverse("end_session_endpoint")
+        url = reverse("oidc_provider_end_session_endpoint")
         res = client.post(url, request)
         self.assertTrue(res.status_code == 400)
 
     def test_revocation_endpoint_no_issued_token(self):
         client = Client()
         IssuedToken.objects.all().delete()
-        url = reverse("end_session_endpoint")
+        url = reverse("oidc_provider_end_session_endpoint")
         res = client.post(url, self.request)
         self.assertTrue(res.status_code == 400)
