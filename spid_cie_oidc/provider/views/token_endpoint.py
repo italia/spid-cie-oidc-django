@@ -17,11 +17,10 @@ from django.views.decorators.csrf import csrf_exempt
 from pydantic import BaseModel
 from spid_cie_oidc.entity.jwtse import unpad_jwt_payload
 from spid_cie_oidc.onboarding.schemas.token_requests import TokenAuthnCodeRequest, TokenRefreshRequest
-from spid_cie_oidc.onboarding.schemas.token_response import TokenErrorResponse, TokenRefreshResponse, TokenResponse
 from spid_cie_oidc.provider.exceptions import ValidationException
 from spid_cie_oidc.provider.models import IssuedToken, OidcSession
 from spid_cie_oidc.provider.settings import (
-    OIDCFED_DEFAULT_PROVIDER_PROFILE, 
+    OIDCFED_DEFAULT_PROVIDER_PROFILE,
     OIDCFED_PROVIDER_PROFILES
 )
 
@@ -30,6 +29,8 @@ logger = logging.getLogger(__name__)
 
 
 schema_profile = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
+
+
 @schema(
     methods=['GET','POST'],
     post_request_schema = {

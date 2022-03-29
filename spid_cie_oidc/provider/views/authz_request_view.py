@@ -18,15 +18,13 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views import View
 from spid_cie_oidc.entity.exceptions import InvalidEntityConfiguration
-from spid_cie_oidc.onboarding.schemas.authn_requests import AuthenticationRequestSpid
-from spid_cie_oidc.onboarding.schemas.authn_response import AuthenticationErrorResponse, AuthenticationResponse
 from spid_cie_oidc.onboarding.schemas.authn_requests import AcrValues
 from spid_cie_oidc.provider.forms import AuthLoginForm, AuthzHiddenForm
 from spid_cie_oidc.provider.models import OidcSession
 from spid_cie_oidc.provider.exceptions import AuthzRequestReplay, ValidationException
 from spid_cie_oidc.provider.settings import (
-    OIDCFED_DEFAULT_PROVIDER_PROFILE, 
-    OIDCFED_PROVIDER_PROFILES, 
+    OIDCFED_DEFAULT_PROVIDER_PROFILE,
+    OIDCFED_PROVIDER_PROFILES,
     OIDCFED_PROVIDER_PROFILES_DEFAULT_ACR
 )
 from . import OpBase
@@ -34,6 +32,8 @@ logger = logging.getLogger(__name__)
 
 
 schema_profile = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
+
+
 @schema(
     summary="OIDC Provider Authorization endpoint",
     methods=['GET', 'POST'],

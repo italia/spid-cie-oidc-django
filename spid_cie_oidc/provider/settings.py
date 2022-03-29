@@ -1,7 +1,6 @@
 from copy import deepcopy
 from django.conf import settings
 from django.utils.translation import gettext as _
-from pydantic import BaseModel
 from spid_cie_oidc.entity.schemas.op_metadata import (
     OPMetadataCie,
     OPMetadataSpid

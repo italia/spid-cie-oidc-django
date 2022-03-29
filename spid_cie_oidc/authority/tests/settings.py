@@ -101,3 +101,16 @@ RP_METADATA = {
         "subject_type": "pairwise",
     }
 }
+TA_SUB = "http://testserver.it/"
+RESOLVE_REQUEST = {
+    "iss": rp_conf["sub"],
+    "sub": rp_conf["sub"],
+    "anchor" : TA_SUB,
+    "format" :"json",
+}
+
+FETCH_REQUEST = {
+    "iss": rp_conf["sub"],
+    "sub": rp_conf["sub"],
+    "format" :"json",
+}
