@@ -10,6 +10,7 @@ from django.contrib.auth import authenticate, login
 from django.forms import ValidationError
 from django.forms.utils import ErrorList
 from django.http import (
+    HttpResponseBadRequest,
     HttpResponseForbidden,
     HttpResponseRedirect
 )
@@ -89,13 +90,15 @@ class AuthzRequestView(OpBase, View):
                 f"Missing Authz request object in {dict(request.GET)} "
                 f"error=invalid_request"
             )
-            return self.redirect_response_data(
-                self.payload["redirect_uri"],
-                error="invalid_request",
-                error_description=_("Missing Authz request object"),
-                # No req -> no payload -> no state
-                state="",
-            )
+            return HttpResponseBadRequest()
+            # FRANCESCA: levato redirect
+            # return self.redirect_response_data(
+            #     self.payload["redirect_uri"],
+            #     error="invalid_request",
+            #     error_description=_("Missing Authz request object"),
+            #     # No req -> no payload -> no state
+            #     state="",
+            # )
         # yes, again. We MUST.
         tc = None
         try:

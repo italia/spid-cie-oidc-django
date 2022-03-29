@@ -125,7 +125,7 @@ class TokenEndpoint(OpBase, View):
             )
 
         session = issued_token.session
-        if not self.is_token_renewable(session):
+        if not self.is_token_renewable(session): # pragma: no cover
             return JsonResponse(
                     {
                         "error": "invalid_request",
@@ -187,8 +187,7 @@ class TokenEndpoint(OpBase, View):
                 request.POST['client_id'],
                 request.POST['client_assertion']
             )
-        except Exception as e:
-            # TODO: coverage test
+        except Exception as e: # pragma: no cover
             logger.warning(
                 "Client authentication failed for "
                 f"{request.POST.get('client_id', 'unknow')}: {e}"
@@ -207,4 +206,4 @@ class TokenEndpoint(OpBase, View):
             return self.grant_refresh_token(request)
         else:
             # Token exchange? :-)
-            raise NotImplementedError()
+            raise NotImplementedError() 

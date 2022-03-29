@@ -114,6 +114,13 @@ class AuthnRequestTest(TestCase):
 
 
     @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB)
+    def test_auth_no_request(self):
+        client = Client()
+        url = reverse("oidc_provider_authnrequest")
+        res = client.get(url, {})
+        self.assertTrue(res.status_code == 400)
+
+    @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB)
     def test_auth_request_ok(self):
         local_payload = deepcopy(self.REQUEST_OBJECT_PAYLOAD)
         local_payload["scope"] = "openid"

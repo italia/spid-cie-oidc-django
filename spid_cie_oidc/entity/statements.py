@@ -15,7 +15,7 @@ import requests
 
 try:
     from django.conf import settings
-except ImportError:
+except ImportError:  # pragma: no cover
     from . import settings
 
 

@@ -58,7 +58,7 @@ class RevocationEndpoint(OpBase,View):
             )
 
         access_token = request.POST.get('token', None)
-        if not access_token:
+        if not access_token: # pragma: no cover
             return JsonResponse(
                 {
                     "error": "invalid_request",
@@ -83,7 +83,7 @@ class RevocationEndpoint(OpBase,View):
                 status = 400
             )
 
-        if token.is_revoked:
+        if token.is_revoked: # pragma: no cover
             return JsonResponse(
                 {
                     "error": "invalid_grant",

@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 )
 class IntrospectionEndpoint(OpBase, View):
     def get(self, request, *args, **kwargs):
-        return HttpResponseBadRequest()
+        return HttpResponseBadRequest() 
 
     def post(self, request, *args, **kwargs):
         try:
@@ -52,7 +52,7 @@ class IntrospectionEndpoint(OpBase, View):
                 },
                 status = 400
             )
-        except Exception:
+        except Exception: # pragma: no cover
             return HttpResponseForbidden()
         required_token = request.POST['token']
         # query con client_id, access token
