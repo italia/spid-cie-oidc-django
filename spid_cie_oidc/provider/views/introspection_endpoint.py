@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 )
 class IntrospectionEndpoint(OpBase, View):
     def get(self, request, *args, **kwargs):
-        return HttpResponseBadRequest() 
+        return HttpResponseBadRequest()
 
     def post(self, request, *args, **kwargs):
         try:

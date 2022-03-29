@@ -106,13 +106,13 @@ class TrustMark:
         try:
             ec = EntityConfiguration(self.issuer_entity_configuration[0])
             ec.validate_by_itself()
-        except UnknownKid as e: # pragma: no cover
-            logger.warning( 
+        except UnknownKid:
+            logger.warning(
                 f"Trust Mark validation failed by its Issuer: "
                 f"{self.header.get('kid')} not found in "
                 f"{self.issuer_entity_configuration.jwks}")
             return False
-        except Exception as e: # pragma: no cover
+        except Exception:
             logger.warning(f"Issuer {self.iss} of trust mark {self.id} is not valid.")
             self.is_valid = False
             return False
@@ -428,7 +428,7 @@ class EntityConfiguration:
                     "Missing federation_fetch_endpoint in  "
                     f"federation_entity metadata for {self.sub} by {ec.sub}."
                 )
-                self.invalid_superiors[ec.sub] = None
+                self.failed_superiors[ec.sub] = None
                 continue
 
             else:

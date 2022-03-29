@@ -12,7 +12,7 @@ from spid_cie_oidc.authority.tests.settings import (
     RP_PROFILE,
     rp_onboarding_data
 )
-from spid_cie_oidc.entity.statements import TrustMark, EntityConfiguration, get_entity_configurations
+from spid_cie_oidc.entity.statements import TrustMark
 
 class StatementTest(TestCase):
 

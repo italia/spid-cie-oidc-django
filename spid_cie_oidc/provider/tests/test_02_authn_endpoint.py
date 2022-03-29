@@ -345,7 +345,7 @@ class AuthnRequestTest(TestCase):
     def test_auth_request_no_correct_authz_request(self):
         self.user.is_staff = True
         self.user.save()
-        jws = create_jws(self.REQUEST_OBJECT_PAYLOAD, RP_METADATA_JWK1)
+        create_jws(self.REQUEST_OBJECT_PAYLOAD, RP_METADATA_JWK1)
         client = Client()
         url = reverse("oidc_provider_authnrequest")
         res = client.post(
