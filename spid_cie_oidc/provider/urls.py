@@ -39,7 +39,7 @@ urlpatterns = [
     path(
         f"{_PREF}/revocation/",
         RevocationEndpoint.as_view(),
-        name="end_session_endpoint",
+        name="oidc_provider_end_session_endpoint",
     ),
     path(
         f"{_PREF}/introspection/",
