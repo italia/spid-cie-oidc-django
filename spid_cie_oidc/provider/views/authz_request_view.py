@@ -91,7 +91,7 @@ class AuthzRequestView(OpBase, View):
             tc = self.validate_authz_request_object(req)
         except InvalidEntityConfiguration as e:
             # FIXME: to do test
-            logger.error(f" {e}")
+            logger.error(f"Invalid Entity Configuration: {e}")
             return self.redirect_response_data(
                 self.payload["redirect_uri"],
                 error = "invalid_request",
