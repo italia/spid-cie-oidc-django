@@ -4,6 +4,9 @@ import os
 import sys
 import logging
 
+from spid_cie_oidc import __version__
+
+
 if len(sys.argv) > 1 and sys.argv[1] == 'test':
     logging.disable(logging.CRITICAL)
 
@@ -130,10 +133,29 @@ INSTALLED_APPS = [
 ]
 
 TEMPLATE_LOADERS = (
-'django.template.loaders.eggs.Loader'
+  'django.template.loaders.eggs.Loader'
 )
 
 DJAGGER_DOCUMENT = {
+    "info": dict(
+        title = "SPID/CIE OIDC OpenAPI 3.0 Documentation",
+        description = "OpenAPI 3.0 Document Description",
+        termsOfService = "",
+        contact = {
+            "email": "contatti@developers.italia.it",
+            "url": "https://github.com/italia/spid-cie-oidc-django",
+            "name" : "Developers Italia"
+        },
+        license = {
+            "name": "CC BY 4.0",
+            "url": "https://creativecommons.org/licenses/by/4.0/"
+        },
+        version = __version__,
+        x_logo = {
+            "name": "Developers italia",
+            "url": "https://developers.italia.it/assets/icons/logo-it.svg"
+        }
+    ),
     "url_names": [
         # Federation Authority
         'oidcfed_fetch',
