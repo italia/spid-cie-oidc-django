@@ -7,6 +7,7 @@ from pydantic import BaseModel, HttpUrl, Json
 class AdvancedEntityListRequest(BaseModel):
     page : Optional[int]
 
+
 class AdvancedEntityListResponse(BaseModel):
     iss: HttpUrl
     iat: int

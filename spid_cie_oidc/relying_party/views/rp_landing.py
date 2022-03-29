@@ -1,6 +1,7 @@
 import logging
 import random
-from copy import deepcopy
+
+
 from django.conf import settings
 from django.shortcuts import render
 from spid_cie_oidc.entity.models import TrustChain
@@ -10,16 +11,16 @@ logger = logging.getLogger(__name__)
 
 def oidc_rp_landing(request):
     spid_providers = {
-        k: {"sub": v} for k, v in 
+        k: {"sub": v} for k, v in
         settings.OIDCFED_IDENTITY_PROVIDERS.get("spid", {}).items()
     }
     cie_providers = {
-        k: {"sub": v} for k, v in 
+        k: {"sub": v} for k, v in
         settings.OIDCFED_IDENTITY_PROVIDERS.get("cie", {}).items()
     }
-    
+
     tcs = TrustChain.objects.filter(
-        sub__in = list(spid_providers.keys())+list(cie_providers.keys()),
+        sub__in = list(spid_providers.keys()) + list(cie_providers.keys()),
         metadata__openid_provider__isnull=False,
         is_active=True
     )

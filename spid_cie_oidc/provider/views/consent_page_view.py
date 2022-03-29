@@ -2,6 +2,7 @@ import logging
 from django.core.paginator import Paginator
 import urllib.parse
 
+from djagger.decorators import schema
 from django.contrib.auth import logout
 from django.http import (
     HttpResponseForbidden,
@@ -129,6 +130,10 @@ class UserAccessHistoryView(OpBase, View):
         return render(request, "op_user_history.html", context)
 
 
+@schema(
+    methods = [],
+    djagger_exclude=True
+)
 class RevokeSessionView(OpBase, View):
 
     def get(self, request, *args, **kwargs):
