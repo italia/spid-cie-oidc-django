@@ -43,7 +43,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if not options["from"]:
-            return
+            return # pragma: no cover
 
         res = []
         rp_subs = []

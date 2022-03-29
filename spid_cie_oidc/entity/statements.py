@@ -42,7 +42,7 @@ def get_http_url(urls: list, httpc_params: dict = {}) -> list:
             res = requests.get(i, **httpc_params)
             responses.append(res.content.decode())
     else:
-        responses = asyncio.run(http_get(urls, httpc_params))
+        responses = asyncio.run(http_get(urls, httpc_params)) # pragma: no cover
     return responses
 
 
@@ -89,7 +89,7 @@ class TrustMark:
         # TODO: pydantic entity configuration validation here
 
         if self.header.get("kid") not in ec.kids:
-            raise UnknownKid(
+            raise UnknownKid( # pragma: no cover
                 f"Trust Mark validation failed: "
                 f"{self.header.get('kid')} not found in {ec.jwks}"
             )
@@ -106,13 +106,13 @@ class TrustMark:
         try:
             ec = EntityConfiguration(self.issuer_entity_configuration[0])
             ec.validate_by_itself()
-        except UnknownKid as e:
-            logger.warning(
+        except UnknownKid as e: # pragma: no cover
+            logger.warning( 
                 f"Trust Mark validation failed by its Issuer: "
                 f"{self.header.get('kid')} not found in "
                 f"{self.issuer_entity_configuration.jwks}")
             return False
-        except Exception as e:
+        except Exception as e: # pragma: no cover
             logger.warning(f"Issuer {self.iss} of trust mark {self.id} is not valid.")
             self.is_valid = False
             return False
@@ -187,7 +187,7 @@ class EntityConfiguration:
         """
         # TODO: pydantic entity configuration validation here
         if self.header.get("kid") not in self.kids:
-            raise UnknownKid(f"{self.header.get('kid')} not found in {self.jwks}")
+            raise UnknownKid(f"{self.header.get('kid')} not found in {self.jwks}") # pragma: no cover
         # verify signature
         verify_jws(self.jwt, self.jwks[self.kids.index(self.header["kid"])])
         self.is_valid = True
