@@ -29,6 +29,7 @@ schema_profile = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
             "200": {},
             "400": schema_profile["revocation_response"]
     },
+    tags = ['Provider']
 )
 @method_decorator(csrf_exempt, name="dispatch")
 class RevocationEndpoint(OpBase,View):

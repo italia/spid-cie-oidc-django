@@ -36,9 +36,9 @@ logger = logging.getLogger(__name__)
 schema_profile = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
 @schema(
     summary="OIDC Provider Authorization endpoint",
-    methods=['GET'],
-    request_schema=schema_profile["authorization_request"],
-    response_schema= {
+    methods=['GET', 'POST'],
+    get_request_schema=schema_profile["authorization_request"],
+    post_response_schema= {
             "302":schema_profile["authorization_response"],
             "403": schema_profile["authorization_error_response"]
     },

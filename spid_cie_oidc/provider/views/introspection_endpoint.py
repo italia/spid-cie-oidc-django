@@ -32,6 +32,7 @@ schema_profile = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
     get_response_schema= {
             "400": BaseModel
     },
+    tags = ['Provider']
 )
 class IntrospectionEndpoint(OpBase, View):
     def get(self, request, *args, **kwargs):
