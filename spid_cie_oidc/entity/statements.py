@@ -42,7 +42,7 @@ def get_http_url(urls: list, httpc_params: dict = {}) -> list:
             res = requests.get(i, **httpc_params)
             responses.append(res.content.decode())
     else:
-        responses = asyncio.run(http_get(urls, httpc_params))
+        responses = asyncio.run(http_get(urls, httpc_params)) # pragma: no cover
     return responses
 
 
@@ -89,7 +89,7 @@ class TrustMark:
         # TODO: pydantic entity configuration validation here
 
         if self.header.get("kid") not in ec.kids:
-            raise UnknownKid(
+            raise UnknownKid( # pragma: no cover
                 f"Trust Mark validation failed: "
                 f"{self.header.get('kid')} not found in {ec.jwks}"
             )
@@ -187,7 +187,7 @@ class EntityConfiguration:
         """
         # TODO: pydantic entity configuration validation here
         if self.header.get("kid") not in self.kids:
-            raise UnknownKid(f"{self.header.get('kid')} not found in {self.jwks}")
+            raise UnknownKid(f"{self.header.get('kid')} not found in {self.jwks}") # pragma: no cover
         # verify signature
         verify_jws(self.jwt, self.jwks[self.kids.index(self.header["kid"])])
         self.is_valid = True
