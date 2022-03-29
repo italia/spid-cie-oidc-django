@@ -426,7 +426,7 @@ class EntityConfiguration:
                     "Missing federation_fetch_endpoint in  "
                     f"federation_entity metadata for {self.sub} by {ec.sub}."
                 )
-                self.invalid_superiors[ec.sub] = None
+                self.failed_superiors[ec.sub] = None
                 continue
 
             else:
