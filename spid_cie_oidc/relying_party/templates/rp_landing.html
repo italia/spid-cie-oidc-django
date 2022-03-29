@@ -59,6 +59,7 @@
                                     <img src="{{ attrs.logo_uri }}" alt="{{ attrs.organization_name }}">
                                     {% else %}
                                     <img src="{% static 'svg/no_image_available.svg' %}" alt="{{ sub }}">
+                                    <p>{{ sub }}</p>
                                     {% endif %}
                                 </a>
                             </li>
@@ -76,27 +77,28 @@
                     cie-idp-button="#cie-idp-button-medium-get">
                     <span class="italia-it-button-icon"><img
                             src="{% static 'svg/cie-ico-circle-bb.svg' %}"
-                            alt=""></span>
+                            alt="">
+                    </span>
                     <span class="italia-it-button-text">{% trans "Entra con CIE" %}</span>
                 </a>
                 <div id="cie-idp-button-medium-get"
                     class="cie-idp-button cie-idp-button-tip cie-idp-button-relative"
                     style="display: none; left: 56.5px; top: 46.05px;">
 
-                    <ul id="cie-idp-list-medium-root-get" class="cie-idp-button-menu"
-                        aria-labelledby="cie-idp">
-                        {% for provider in cie_providers %}
+                    <ul id="cie-idp-list-medium-root-get" class="cie-idp-button-menu" aria-labelledby="cie-idp">
+                        {% for sub, attrs in cie_providers.items %}
                             <li>
-                                <a href="{% url 'spid_cie_rp_begin' %}?provider={{provider.trust.sub}}&profile=cie">
-                                    <span class="spid-sr-only">{{ provider.trust.metadata.openid_provider.organization_name }}</span>
-                                    {% if provider.trust %}
-                                    <img src="{{ provider.trust.metadata.openid_provider.logo_uri }}" 
-                                        alt="{{ provider.trust.metadata.openid_provider.organization_name }}">
-                                    {% else %}
-                                    <img src="{% static 'svg/no_image_available.svg' %}" alt="{{ provider.metadata.organization_name }}">
-                                    {% endif %}
-                                </a>
-                            </li>
+                                <li>
+                                    <a href="{% url 'spid_cie_rp_begin' %}?provider={{sub}}&profile=cie" id="provider-cie">
+                                        <span class="spid-sr-only">{{ attrs.organization_name }}</span>
+                                        {% if attrs.logo_uri %}
+                                        <img src="{{ attrs.logo_uri }}" alt="{{ attrs.organization_name }}">
+                                        {% else %}
+                                        <img src="{% static 'svg/no_image_available.svg' %}" alt="{{ sub }}">
+                                        <p>{{ sub }}</p>
+                                        {% endif %}
+                                    </a>
+                                </li>
                         {% endfor %}
                     </ul>
                 </div>
