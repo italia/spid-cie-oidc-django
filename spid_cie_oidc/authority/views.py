@@ -38,7 +38,9 @@ logger = logging.getLogger(__name__)
 
 @schema(
     methods=['GET'],
-    get_request_schema = FetchRequest,
+    get_request_schema = {
+        "application/x-www-form-urlencoded": FetchRequest
+    },
     get_response_schema = {
             "400": FedAPIErrorResponse,
             "404": FedAPIErrorResponse,
@@ -90,7 +92,9 @@ def fetch(request):
 
 @schema(
     methods=['GET'],
-    get_request_schema = ListRequest,
+    get_request_schema = {
+        "application/x-www-form-urlencoded": ListRequest
+    },
     get_response_schema = {
             "400": FedAPIErrorResponse,
             "404": FedAPIErrorResponse,
@@ -119,7 +123,9 @@ def entity_list(request):
 
 @schema(
     methods=['GET'],
-    get_request_schema = AdvancedEntityListRequest,
+    get_request_schema = {
+        "application/x-www-form-urlencoded": AdvancedEntityListRequest
+    },
     get_response_schema = {
             "400": FedAPIErrorResponse,
             "404": FedAPIErrorResponse,
@@ -178,7 +184,9 @@ def advanced_entity_listing(request):
 
 @schema(
     methods=['GET'],
-    get_request_schema = ResolveRequest,
+    get_request_schema = {
+        "application/x-www-form-urlencoded": ResolveRequest
+    },
     get_response_schema = {
             "400": FedAPIErrorResponse,
             "404": FedAPIErrorResponse,
@@ -259,7 +267,9 @@ def resolve_entity_statement(request, format: str = "jose"):
 
 @schema(
     methods=['GET'],
-    get_request_schema = TrustMarkRequest,
+    get_request_schema = {
+        "application/x-www-form-urlencoded": TrustMarkRequest
+    },
     get_response_schema = {
             "400": FedAPIErrorResponse,
             "404": FedAPIErrorResponse,
