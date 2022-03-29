@@ -4,9 +4,12 @@ from django.http import (
     HttpResponse,
     JsonResponse
 )
+from djagger.decorators import schema
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
+from spid_cie_oidc.onboarding.schemas.revocation_request import RevocationRequest
+from spid_cie_oidc.onboarding.schemas.revocation_response import RevocationErrorResponseCie
 from spid_cie_oidc.provider.exceptions import ValidationException
 from spid_cie_oidc.provider.models import IssuedToken
 
@@ -14,6 +17,14 @@ from . import OpBase
 logger = logging.getLogger(__name__)
 
 
+@schema(
+    methods=['POST'],
+    post_request_schema = RevocationRequest,
+    post_response_schema = {
+            "200": {},
+            "400": RevocationErrorResponseCie
+    },
+)
 @method_decorator(csrf_exempt, name="dispatch")
 class RevocationEndpoint(OpBase,View):
 
@@ -47,7 +58,7 @@ class RevocationEndpoint(OpBase,View):
             )
 
         access_token = request.POST.get('token', None)
-        if not access_token:
+        if not access_token: # pragma: no cover
             return JsonResponse(
                 {
                     "error": "invalid_request",
@@ -72,7 +83,7 @@ class RevocationEndpoint(OpBase,View):
                 status = 400
             )
 
-        if token.is_revoked:
+        if token.is_revoked: # pragma: no cover
             return JsonResponse(
                 {
                     "error": "invalid_grant",

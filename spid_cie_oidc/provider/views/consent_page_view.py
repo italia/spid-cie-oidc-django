@@ -110,7 +110,7 @@ class UserAccessHistoryView(OpBase, View):
     def get(self, request, *args, **kwargs):
         try:
             session = self.check_session(request)
-        except Exception:
+        except Exception: # pragma: no cover
             logger.warning("Invalid session on Access History page")
             return HttpResponseForbidden()
         user_access_history = OidcSession.objects.filter(
@@ -134,7 +134,7 @@ class RevokeSessionView(OpBase, View):
     def get(self, request, *args, **kwargs):
         try:
             self.check_session(request)
-        except Exception:
+        except Exception: # pragma: no cover
             logger.warning("Invalid session on revoke page")
             return HttpResponseForbidden()
 
