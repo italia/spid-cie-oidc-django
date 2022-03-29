@@ -1,8 +1,10 @@
 import logging
+
 from django.http import (
     HttpResponse,
     HttpResponseForbidden,
 )
+from djagger.decorators import schema
 from django.utils import timezone
 from django.views import View
 from spid_cie_oidc.entity.jwtse import (
@@ -15,14 +17,32 @@ from spid_cie_oidc.entity.models import (
 )
 from spid_cie_oidc.provider.models import IssuedToken
 
-
 from . import OpBase
 logger = logging.getLogger(__name__)
 
 
+@schema(
+    summary="OIDC Provider UserInfo endpoint",
+    methods=['GET'],
+    securitySchemes=dict(
+        description = "",
+        name = "",
+        bearerFormat = "JWT",
+    ),
+    external_docs = {
+        "alt_text": "AgID SPID OIDC Guidelines",
+        "url": "https://www.agid.gov.it/it/agenzia/stampa-e-comunicazione/notizie/2021/12/06/openid-connect-spid-adottate-linee-guida"
+    },
+    tags = ['Provider']
+)
 class UserInfoEndpoint(OpBase, View):
     def get(self, request, *args, **kwargs):
+        """
+            Userinfo endpoint just needs a HTTP GET with the Access Token 
+            in a Authorization Http Header like this:
 
+            Authorization: Bearer $JWT
+        """
         ah = request.headers.get("Authorization", None)
         if not ah or "Bearer " not in ah:
             return HttpResponseForbidden()

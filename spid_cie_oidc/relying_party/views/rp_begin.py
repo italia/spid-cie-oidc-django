@@ -2,6 +2,7 @@ import json
 import logging
 from copy import deepcopy
 
+from djagger.decorators import schema
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.utils import timezone
@@ -12,6 +13,7 @@ from spid_cie_oidc.entity.exceptions import InvalidTrustchain
 from spid_cie_oidc.entity.jwtse import create_jws
 from spid_cie_oidc.entity.models import FederationEntityConfiguration
 from spid_cie_oidc.relying_party.settings import OIDCFED_ACR_PROFILES
+from spid_cie_oidc.onboarding.schemas.authn_requests import AuthenticationRequestSpid
 
 from ..models import OidcAuthentication
 from ..settings import (
@@ -28,6 +30,16 @@ from . import SpidCieOidcRp
 logger = logging.getLogger(__name__)
 
 
+@schema(
+    summary="OIDC Relying Party Authorization begin",
+    methods=['GET'],
+    request_schema=AuthenticationRequestSpid,
+    external_docs = {
+        "alt_text": "AgID SPID OIDC Guidelines",
+        "url": "https://www.agid.gov.it/it/agenzia/stampa-e-comunicazione/notizie/2021/12/06/openid-connect-spid-adottate-linee-guida"
+    },
+    tags = ['Relying Party']
+)
 class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
     """
         View which processes the actual Authz request and
@@ -38,8 +50,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
 
     def get(self, request, *args, **kwargs):
         """
-        http://localhost:8001/oidc/rp/authorization?
-        provider=http://127.0.0.1:8002/
+        http://localhost:8001/oidc/rp/authorization?provider=http://127.0.0.1:8002/
         """
         try:
             tc = self.get_oidc_op(request)

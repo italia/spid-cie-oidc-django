@@ -1,5 +1,6 @@
 import logging
 
+from djagger.decorators import schema
 from django.http import (
     HttpResponse,
     JsonResponse
