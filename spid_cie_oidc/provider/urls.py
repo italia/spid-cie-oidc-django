@@ -44,7 +44,7 @@ urlpatterns = [
     path(
         f"{_PREF}/introspection/",
         IntrospectionEndpoint.as_view(),
-        name="introspection_endpoint",
+        name="oidc_provider_introspection_endpoint",
     ),
     path(
         f"{_PREF}/notconsent/",

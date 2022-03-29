@@ -40,6 +40,7 @@ logger = logging.getLogger(__name__)
     get_response_schema = {
             "400": BaseModel
     },
+    tags = ['Provider']
 )
 @method_decorator(csrf_exempt, name="dispatch")
 class TokenEndpoint(OpBase, View):
