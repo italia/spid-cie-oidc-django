@@ -206,4 +206,4 @@ class TokenEndpoint(OpBase, View):
             return self.grant_refresh_token(request)
         else:
             # Token exchange? :-)
-            raise NotImplementedError() 
+            raise NotImplementedError()

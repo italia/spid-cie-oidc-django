@@ -7,7 +7,6 @@ import json
 from djagger.decorators import schema
 from django.conf import settings
 from django.contrib.auth import authenticate, login
-from django.forms import ValidationError
 from django.forms.utils import ErrorList
 from django.http import (
     HttpResponseBadRequest,

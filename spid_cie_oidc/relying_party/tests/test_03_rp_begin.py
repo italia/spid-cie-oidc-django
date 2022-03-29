@@ -177,7 +177,7 @@ class RPBeginTest(TestCase):
         self.rp_conf = FederationEntityConfiguration.objects.create(**local_rp_conf)        
         client = Client()
         url = reverse("spid_cie_rp_begin")
-        all_tc = TrustChain.objects.all()
+        TrustChain.objects.all()
         res = client.get(
             url, 
             {
