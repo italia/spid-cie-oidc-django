@@ -129,3 +129,7 @@ TRUST_MARK_REQUEST = {
     "id" : rp_conf["sub"],
     "trust_mark" : TRUST_MARK
 }
+
+ADVANCED_LIST_REQUEST = {
+    "page": 1,
+}
