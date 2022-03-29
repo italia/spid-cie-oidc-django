@@ -8,22 +8,28 @@ from djagger.decorators import schema
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-from spid_cie_oidc.onboarding.schemas.revocation_request import RevocationRequest
-from spid_cie_oidc.onboarding.schemas.revocation_response import RevocationErrorResponseCie
 from spid_cie_oidc.provider.exceptions import ValidationException
 from spid_cie_oidc.provider.models import IssuedToken
+from spid_cie_oidc.provider.settings import (
+    OIDCFED_DEFAULT_PROVIDER_PROFILE,
+    OIDCFED_PROVIDER_PROFILES
+)
 
 from . import OpBase
 logger = logging.getLogger(__name__)
 
 
+schema_profile = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
+
+
 @schema(
     methods=['POST'],
-    post_request_schema = RevocationRequest,
+    post_request_schema = schema_profile["revocation_request"],
     post_response_schema = {
             "200": {},
-            "400": RevocationErrorResponseCie
+            "400": schema_profile["revocation_response"]
     },
+    tags = ['Provider']
 )
 @method_decorator(csrf_exempt, name="dispatch")
 class RevocationEndpoint(OpBase,View):

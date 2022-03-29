@@ -3,7 +3,7 @@ from typing import Literal
 from pydantic import BaseModel
 
 
-class RevocationErrorResponseCie(BaseModel):
+class RevocationErrorResponse(BaseModel):
     error: Literal[
         "invalid_request",
         "invalid_client",

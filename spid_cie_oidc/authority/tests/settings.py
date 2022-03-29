@@ -101,3 +101,35 @@ RP_METADATA = {
         "subject_type": "pairwise",
     }
 }
+
+TA_SUB = "http://testserver.it/"
+
+RESOLVE_REQUEST = {
+    "iss": rp_conf["sub"],
+    "sub": rp_conf["sub"],
+    "anchor" : TA_SUB,
+    "format" :"json",
+}
+
+FETCH_REQUEST = {
+    "iss": rp_conf["sub"],
+    "sub": rp_conf["sub"],
+    "format" :"json",
+}
+
+LIST_REQUEST = {
+    "is_leaf": True,
+    "type": "openid_relying_party",
+}
+
+TRUST_MARK = "eyJhbGciOiJSUzI1NiIsImtpZCI6IkZpZll4MDNibm9zRDhtNmdZUUlmTkhOUDljTV9TYW05VGM1bkxsb0lJcmMiLCJ0eXAiOiJ0cnVzdC1tYXJrK2p3dCJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvIiwic3ViIjoiaHR0cDovLzEyNy4wLjAuMTo4MDAyL29pZGMvb3AvIiwiaWF0IjoxNjQ4NTcxMTk4LCJpZCI6Imh0dHBzOi8vd3d3LnNwaWQuZ292Lml0L2NlcnRpZmljYXRpb24vb3AiLCJtYXJrIjoiaHR0cHM6Ly93d3cuYWdpZC5nb3YuaXQvdGhlbWVzL2N1c3RvbS9hZ2lkL2xvZ28uc3ZnIiwicmVmIjoiaHR0cHM6Ly9kb2NzLml0YWxpYS5pdC9pdGFsaWEvc3BpZC9zcGlkLXJlZ29sZS10ZWNuaWNoZS1vaWRjL2l0L3N0YWJpbGUvaW5kZXguaHRtbCJ9.mN-AMOmcxOKh9w8SIw9T0N4_wsmjrnMsPp_M2k3irErz0ikrRNtOQ0iPXhJ33szXUxZQJc0jlxu3glCliViv34u6FyAUK-WyVHWf2QKHL5oPbZj45Lx6u1ZMTgU9gKEAUl6MdkGtIEU6F0-q87-BKIKTvJmErH3pdrQG7ed5fR2lvFCN7QQ4rHnVYHVMEnlZxe2oMPtRILsSHaa30yPGCYfp36BpZx9rdmrV0bb8sIsRYFin7GIhkzl4FxqEQ0J6i1A4elgP9tVQsOu1Yd4E54t62KdVtTgfI4qfmP15NoPiNZFHLIFIMsUmqHMh5nuq9KWBb2IC1dfHM6AoxCpqtQ"
+
+TRUST_MARK_REQUEST = {
+    "sub": rp_conf["sub"],
+    "id" : rp_conf["sub"],
+    "trust_mark" : TRUST_MARK
+}
+
+ADVANCED_LIST_REQUEST = {
+    "page": 1,
+}

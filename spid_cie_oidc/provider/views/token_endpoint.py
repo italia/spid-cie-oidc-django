@@ -17,25 +17,31 @@ from django.views.decorators.csrf import csrf_exempt
 from pydantic import BaseModel
 from spid_cie_oidc.entity.jwtse import unpad_jwt_payload
 from spid_cie_oidc.onboarding.schemas.token_requests import TokenAuthnCodeRequest, TokenRefreshRequest
-from spid_cie_oidc.onboarding.schemas.token_response import TokenErrorResponse, TokenRefreshResponse, TokenResponse
 from spid_cie_oidc.provider.exceptions import ValidationException
 from spid_cie_oidc.provider.models import IssuedToken, OidcSession
+from spid_cie_oidc.provider.settings import (
+    OIDCFED_DEFAULT_PROVIDER_PROFILE,
+    OIDCFED_PROVIDER_PROFILES
+)
 
 from . import OpBase
 logger = logging.getLogger(__name__)
 
 
+schema_profile = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
+
+
 @schema(
     methods=['GET','POST'],
     post_request_schema = {
-        "authn_request": TokenAuthnCodeRequest,
-        "refresh_request": TokenRefreshRequest,
+        "authn_request": schema_profile["authorization_code"],
+        "refresh_request": schema_profile["refresh_token"],
 
     },
     post_response_schema = {
-            "200": TokenResponse,
-            "200": TokenRefreshResponse,
-            "400": TokenErrorResponse
+            "200": schema_profile["authorization_code_response"],
+            "200": schema_profile["refresh_token_response"],
+            "400": schema_profile["token_error_response"],
     },
     get_response_schema = {
             "400": BaseModel

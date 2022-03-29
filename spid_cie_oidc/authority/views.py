@@ -54,11 +54,11 @@ def fetch(request):
 
     if request.GET.get("format") == "json":
         return JsonResponse(
-            sub.entity_statement_as_dict(iss.sub, request.GET.get("aud")), safe=False
+            sub.entity_statement_as_dict(iss.sub, request.GET.get("aud",[])), safe=False
         )
     else:
         return HttpResponse(
-            sub.entity_statement_as_jws(iss.sub, request.GET.get("aud")),
+            sub.entity_statement_as_jws(iss.sub, request.GET.get("aud",[])),
             content_type="application/entity-statement+jwt",
         )
 
