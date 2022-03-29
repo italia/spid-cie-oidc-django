@@ -90,8 +90,7 @@ class AuthzRequestView(OpBase, View):
 
     def get(self, request, *args, **kwargs):
         """
-        authz request object is received here
-        it's validated and a login prompt is rendered to the user
+        The Authorization request of a RPs is validated and a login prompt is rendered to the user
         """
         req = request.GET.get("request", None)
         if not req:
