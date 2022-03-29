@@ -84,21 +84,12 @@ class AuthzRequestView(OpBase, View):
         it's validated and a login prompt is rendered to the user
         """
         req = request.GET.get("request", None)
-        # FIXME: invalid check: if not request-> no payload-> no redirect_uri
         if not req:
             logger.error(
                 f"Missing Authz request object in {dict(request.GET)} "
                 f"error=invalid_request"
             )
             return HttpResponseBadRequest()
-            # FRANCESCA: levato redirect
-            # return self.redirect_response_data(
-            #     self.payload["redirect_uri"],
-            #     error="invalid_request",
-            #     error_description=_("Missing Authz request object"),
-            #     # No req -> no payload -> no state
-            #     state="",
-            # )
         # yes, again. We MUST.
         tc = None
         try:
