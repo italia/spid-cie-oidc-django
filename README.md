@@ -78,11 +78,11 @@ Please do your customizations in each _settingslocal.py_ files and/or in the exa
 
 Create volumes
 ````
-docker volume create --name=trust_anchor_project
+sudo docker volume create --name=trust_anchor_project
 ````
 
 Where the data are
-`docker volume ls`
+`sudo docker volume ls`
 
 
 Copy files in destination volumes
@@ -97,6 +97,8 @@ In our example we rename:
 
 ````
 export SUB_AT='s\http://127.0.0.1:8000/\http://trust-anchor.org:8000/\g'
+export SUB_OP='s\http://127.0.0.1:8002/\http://cie-provider.org.org:8002/\g'
+export SUB_RP='s\http://127.0.0.1:8001/\http://relying-party.org:8001/\g'
 export TARGET_PATH=$(docker volume inspect trust_anchor_project | jq .[0].Mountpoint | sed 's/"//g')
 sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/federation_authority/dumps/example.json > $TARGET_PATH/dumps/example.json
 sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/federation_authority/federation_authority/settingslocal.py.example > $TARGET_PATH/federation_authority/settingslocal.py
@@ -104,6 +106,7 @@ sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/federation_authority/federation_au
 
 Feel free to customize the example data and settings. then check if everything is ok, for example:
 ````
+sudo su
 ls `docker volume inspect trust_anchor_project | jq .[0].Mountpoint | sed 's/"//g'`
 ````
 
