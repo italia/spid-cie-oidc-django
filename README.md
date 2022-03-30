@@ -97,7 +97,7 @@ In our example we rename:
 
 ````
 export SUB_AT='s\http://127.0.0.1:8000/\http://trust-anchor.org:8000/\g'
-export SUB_OP='s\http://127.0.0.1:8002/\http://cie-provider.org.org:8002/\g'
+export SUB_OP='s\http://127.0.0.1:8002/\http://cie-provider.org:8002/\g'
 export SUB_RP='s\http://127.0.0.1:8001/\http://relying-party.org:8001/\g'
 export TARGET_PATH=$(docker volume inspect trust_anchor_project | jq .[0].Mountpoint | sed 's/"//g')
 sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/federation_authority/dumps/example.json > $TARGET_PATH/dumps/example.json
