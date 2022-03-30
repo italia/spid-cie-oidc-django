@@ -104,7 +104,6 @@ export SUB_AT='s\http://127.0.0.1:8000/\http://trust-anchor.org:8000/\g'
 export TARGET_PATH_AT=$(docker volume inspect trust_anchor_project | jq .[0].Mountpoint | sed 's/"//g')
 sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/federation_authority/dumps/example.json > $TARGET_PATH_AT/dumps/example.json
 sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/federation_authority/federation_authority/settingslocal.py.example > $TARGET_PATH_AT/federation_authority/settingslocal.py
-
 ````
 - http://127.0.0.1:8001 to http://relying-party.org:8001/
 
