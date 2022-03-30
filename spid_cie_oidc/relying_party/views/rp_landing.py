@@ -1,3 +1,4 @@
+from copy import deepcopy
 import logging
 import random
 
@@ -5,6 +6,7 @@ import random
 from django.conf import settings
 from django.shortcuts import render
 from spid_cie_oidc.entity.models import TrustChain
+from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
 
 logger = logging.getLogger(__name__)
 
@@ -19,11 +21,26 @@ def oidc_rp_landing(request):
         settings.OIDCFED_IDENTITY_PROVIDERS.get("cie", {}).items()
     }
 
-    tcs = TrustChain.objects.filter(
-        sub__in = list(spid_providers.keys()) + list(cie_providers.keys()),
-        metadata__openid_provider__isnull=False,
-        is_active=True
-    )
+    providers = deepcopy(spid_providers)
+    providers.update(cie_providers)
+    subs= list(spid_providers.keys()) + list(cie_providers.keys())
+    # tcs = TrustChain.objects.get(
+    #     sub__in = subs,
+    #     metadata__openid_provider__isnull=False,
+    #     is_active=True
+    # )
+    tcs = []
+    for sub in subs:
+        try:
+            tc = get_or_create_trust_chain(
+                subject=sub,
+                trust_anchor= providers[sub]["sub"]
+            )
+            tcs.append(tc)
+        except Exception as e:
+            logger.warning(
+                f"Failed trust chain for {sub} to {providers[sub]}: {e}"
+            )
 
     for i in tcs:
         if i.sub in settings.OIDCFED_IDENTITY_PROVIDERS.get("spid", {}):
