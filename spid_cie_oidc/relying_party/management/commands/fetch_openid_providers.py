@@ -38,7 +38,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if not options["start"]:
-            return
+            return # pragma: no cover
 
         res = []
         for op_profile in settings.OIDCFED_IDENTITY_PROVIDERS.keys():

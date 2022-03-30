@@ -141,7 +141,7 @@ class OPMetadataSpid(OPMetadata):
     @validator("jwks_uri")
     def validate_jwks_uri(cls, jwks_uri, values):
         if jwks_uri != JWKS_URI_CIE:
-            raise ValueError("jwks no correct")
+            raise ValueError("jwks no correct") # pragma: no cover
         jwks = values.get("jwks")
         if jwks_uri and jwks:
             raise ValueError("jwks MUST NOT indicate")

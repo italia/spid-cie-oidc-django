@@ -6,7 +6,7 @@ import json
 
 from djagger.decorators import schema
 from django.conf import settings
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.forms.utils import ErrorList
 from django.http import (
     HttpResponseBadRequest,
@@ -57,16 +57,21 @@ class AuthzRequestView(OpBase, View):
     """
     template = "op_user_login.html"
 
-    def validate_authz(self, payload: dict):
-
-        must_list = ("scope", "acr_values")
+    def string_to_list(self, payload, must_list):
         for i in must_list:
             if isinstance(payload.get(i, None), str):
                 if ' ' in payload[i]:
                     payload[i] = payload[i].split(' ')
                 else:
                     payload[i] = [payload[i]]
+        return payload
 
+
+
+    def validate_authz(self, payload: dict):
+
+        must_list = ("scope", "acr_values")
+        payload = self.string_to_list(payload, must_list)
         if (
             'offline_access' in payload['scope'] and
             'consent' not in payload['prompt']
@@ -85,7 +90,20 @@ class AuthzRequestView(OpBase, View):
             "authorization_request",
             "Authen request object validation failed "
         )
-    
+
+    def get_url_consent(self, user): 
+        url = reverse("oidc_provider_consent")
+        if (
+                user.is_staff and
+                'spid_cie_oidc.relying_party_test' in settings.INSTALLED_APPS
+        ):
+            try:
+                url = reverse("oidc_provider_staff_testing")
+            except Exception as e:  # pragma: no cover
+                logger.error(f"testigng page url reverse failed: {e}")
+        return url
+
+
     def get_login_form(self):
         return AuthLoginForm
 
@@ -104,7 +122,7 @@ class AuthzRequestView(OpBase, View):
         tc = None
         try:
             tc = self.validate_authz_request_object(req)
-        except InvalidEntityConfiguration as e:
+        except InvalidEntityConfiguration as e: 
             # FIXME: to do test
             logger.error(f"Invalid Entity Configuration: {e}")
             return self.redirect_response_data(
@@ -152,10 +170,26 @@ class AuthzRequestView(OpBase, View):
         except InvalidRefreshRequestException as e:
             logger.warning(f"Invalid session: {e}")
             return HttpResponseForbidden()
+        
+        acr_value = AcrValues(self.payload["acr_values"][0])
+        prompt = self.payload["prompt"]
+        user = request.user
+        if user:
+            if user.is_authenticated and acr_value == AcrValues.l1 and "login" not in prompt:
+                try:
+                    session = self.check_session(request)
+                    if session.acr != AcrValues.l1.value:
+                        logout(request)
+                        return self.get(request)
+                    else:
+                        url = self.get_url_consent(user)
+                        return HttpResponseRedirect(url)
+                except Exception:
+                    logout(request)
+                    return self.get(request)      
 
         # stores the authz request in a hidden field in the form
         form = self.get_login_form()()
-        acr_value = AcrValues(self.payload["acr_values"][0])
         context = {
             "client_organization_name": tc.metadata.get(
                 "client_name", self.payload["client_id"]
@@ -235,6 +269,8 @@ class AuthzRequestView(OpBase, View):
             OIDCFED_DEFAULT_PROVIDER_PROFILE
         )
         default_acr = OIDCFED_PROVIDER_PROFILES_DEFAULT_ACR[_provider_profile]
+        self.payload = self.string_to_list(self.payload, ["acr_values"])
+        len_acr = len(self.payload.get("acr_values",[]))
         session = OidcSession.objects.create(
             user=user,
             user_uid=user.username,
@@ -243,20 +279,11 @@ class AuthzRequestView(OpBase, View):
             client_id=self.payload["client_id"],
             auth_code=auth_code,
             acr=(
-                self.payload["acr_values"][-1]
-                if len(self.payload.get("acr_values",[])) > 0
+                self.payload["acr_values"][len_acr-1]
+                if len_acr > 0
                 else default_acr
             )
         )
-        session.set_sid(request)
-        url = reverse("oidc_provider_consent")
-        if (
-                user.is_staff and
-                'spid_cie_oidc.relying_party_test' in settings.INSTALLED_APPS
-        ):
-            try:
-                url = reverse("oidc_provider_staff_testing")
-            except Exception as e:
-                logger.error(f"testigng page url reverse failed: {e}")
-
+        session.set_sid(request)        
+        url = self.get_url_consent(user)
         return HttpResponseRedirect(url)
