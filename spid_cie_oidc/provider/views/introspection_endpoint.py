@@ -6,7 +6,9 @@ from django.http import (
     HttpResponseForbidden,
     JsonResponse
 )
+from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.decorators.csrf import csrf_exempt
 from pydantic import BaseModel
 from spid_cie_oidc.provider.exceptions import ValidationException
 from spid_cie_oidc.provider.models import IssuedToken
@@ -36,6 +38,7 @@ schema_profile = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
     },
     tags = ['Provider']
 )
+@method_decorator(csrf_exempt, name="dispatch")
 class IntrospectionEndpoint(OpBase, View):
     def get(self, request, *args, **kwargs):
         return HttpResponseBadRequest()

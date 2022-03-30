@@ -11,6 +11,11 @@ from spid_cie_oidc.authority.tests.settings import (
     LIST_REQUEST,
     TRUST_MARK_REQUEST,
     ADVANCED_LIST_REQUEST,
+    TRUST_MARK_REQUEST_NO_SUB_ID,
+    TRUST_MARK_REQUEST_NO_TRUST_MARK,
+    TRUST_MARK_REQUEST_TRUST_MARK_NO_ID_NO_TRUST_MARK,
+    TRUST_MARK_REQUEST_TRUST_MARK_NO_SUB,
+    TRUST_MARK_REQUEST_TRUST_MARK_NO_SUB_NO_TRUST_MARK,
 )
 
 class SchemaTest(TestCase):
@@ -29,6 +34,23 @@ class SchemaTest(TestCase):
 
     def test_trust_mark_request(self):
         TrustMarkRequest(**TRUST_MARK_REQUEST)
+
+    def test_trust_mark_request_no_sub_id(self):
+        TrustMarkRequest(**TRUST_MARK_REQUEST_NO_SUB_ID)
+
+    def test_trust_mark_request_no_rust_mark(self):
+        TrustMarkRequest(**TRUST_MARK_REQUEST_NO_TRUST_MARK)
+
+    def test_trust_mark_request_no_sub(self):
+        TrustMarkRequest(**TRUST_MARK_REQUEST_TRUST_MARK_NO_SUB)
+
+    def test_trust_mark_request_no_id_no_tust_mark(self):
+        with self.assertRaises(ValueError):
+            TrustMarkRequest(**TRUST_MARK_REQUEST_TRUST_MARK_NO_ID_NO_TRUST_MARK)
+        
+    def test_trust_mark_request_no_sub_no_tust_mark(self):
+        with self.assertRaises(ValueError):
+            TrustMarkRequest(**TRUST_MARK_REQUEST_TRUST_MARK_NO_SUB_NO_TRUST_MARK)
 
     def test_advanced_list_request(self):
         AdvancedEntityListRequest(**ADVANCED_LIST_REQUEST)
