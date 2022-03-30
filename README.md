@@ -29,6 +29,7 @@ each of these can be installed separately within a django project. These are the
 * [Setup](#setup)
 * [Docker compose](#docker-compose)
 * [Usage](#usage)
+* [OpenAPI Schema 3](#openapi)
 * [Contribute](#contribute)
     * [Contribute as end user](#contribute-as-end-user)
     * [Contribute as developer](#contribute-as-developer)
@@ -134,6 +135,15 @@ Examples Users and Passwords:
 
  - __admin__ __oidcadmin__
  - __user__ __oidcuser__
+
+
+## OpenAPI Schema 3
+
+Each applications has an exportable OAS3 available at `/rest/schema.json` with a browsable reDoc UI at `/rest/api/docs` 
+
+![RP Auth demo](docs/images/redoc.png)
+_The reDoc OAS3 browsable page._
+
 
 ### Tools
 
