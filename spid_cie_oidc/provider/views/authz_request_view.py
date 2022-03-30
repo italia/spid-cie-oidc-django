@@ -21,7 +21,7 @@ from spid_cie_oidc.entity.exceptions import InvalidEntityConfiguration
 from spid_cie_oidc.onboarding.schemas.authn_requests import AcrValues
 from spid_cie_oidc.provider.forms import AuthLoginForm, AuthzHiddenForm
 from spid_cie_oidc.provider.models import OidcSession
-from spid_cie_oidc.provider.exceptions import AuthzRequestReplay, ValidationException
+from spid_cie_oidc.provider.exceptions import AuthzRequestReplay, InvalidRefreshRequestException, ValidationException
 from spid_cie_oidc.provider.settings import (
     OIDCFED_DEFAULT_PROVIDER_PROFILE,
     OIDCFED_PROVIDER_PROFILES,
@@ -71,10 +71,9 @@ class AuthzRequestView(OpBase, View):
             'offline_access' in payload['scope'] and
             'consent' not in payload['prompt']
         ):
-            raise ValidationException(
+            raise InvalidRefreshRequestException(
                 "scope with offline_access without prompt = consent"
             )
-
         redirect_uri = payload.get("redirect_uri", "")
         p = urllib.parse.urlparse(redirect_uri)
         scheme_fqdn = f"{p.scheme}://{p.hostname}"
@@ -86,7 +85,7 @@ class AuthzRequestView(OpBase, View):
             "authorization_request",
             "Authen request object validation failed "
         )
-
+    
     def get_login_form(self):
         return AuthLoginForm
 
@@ -150,6 +149,9 @@ class AuthzRequestView(OpBase, View):
                 error_description=_("Authorization request validation error"),
                 state = self.payload.get("state", "")
             )
+        except InvalidRefreshRequestException as e:
+            logger.warning(f"Invalid session: {e}")
+            return HttpResponseForbidden()
 
         # stores the authz request in a hidden field in the form
         form = self.get_login_form()()
