@@ -8,6 +8,7 @@ from spid_cie_oidc.entity.schemas.op_metadata import (
 from spid_cie_oidc.onboarding.schemas.authn_requests import (
     AcrValues,
     AuthenticationRequestCie,
+    AuthenticationRequestDoc,
     AuthenticationRequestSpid
 )
 from spid_cie_oidc.onboarding.schemas.authn_response import AuthenticationErrorResponse, AuthenticationErrorResponseCie, AuthenticationResponse, AuthenticationResponseCie
@@ -93,6 +94,7 @@ OIDCFED_PROVIDER_PROFILES = getattr(
     {
         "spid": {
             "authorization_request": AuthenticationRequestSpid,
+            "authorization_request_doc": AuthenticationRequestDoc,
             "authorization_response": AuthenticationResponse,
             "authorization_error_response": AuthenticationErrorResponse,
             "op_metadata": OPMetadataSpid,
@@ -109,6 +111,7 @@ OIDCFED_PROVIDER_PROFILES = getattr(
         },
         "cie": {
             "authorization_request": AuthenticationRequestCie,
+            "authorization_request_doc": AuthenticationRequestDoc,
             "authorization_response": AuthenticationResponseCie,
             "authorization_error_response": AuthenticationErrorResponseCie,
             "op_metadata": OPMetadataCie,

@@ -9,6 +9,13 @@ class FetchRequest(BaseModel):
     iss : Optional[HttpUrl]
     aud: Optional[List[HttpUrl]]
 
+    def example():
+        return FetchRequest(
+            sub= "http://127.0.0.1:8000/oidc/rp/",
+            iss= "http://127.0.0.1:8000/",
+            aud=["https://idp.it/"]
+        )
+
 
 class FetchResponse(BaseModel):
     jose : constr(regex=r"^[a-zA-Z\_\-0-9]+\.[a-zA-Z\_\-0-9]+\.[a-zA-Z\_\-0-9]+") # noqa: F722

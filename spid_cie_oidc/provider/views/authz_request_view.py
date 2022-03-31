@@ -38,7 +38,8 @@ schema_profile = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
     summary="OIDC Provider Authorization endpoint",
     methods=['GET', 'POST'],
     get_request_schema = {
-        "application/x-www-form-urlencoded": schema_profile["authorization_request"]
+        "application/x-www-form-urlencoded": schema_profile["authorization_request_doc"],
+        "request object - jwt payload": schema_profile["authorization_request"]
     },
     post_response_schema= {
             "302":schema_profile["authorization_response"],
@@ -55,6 +56,7 @@ class AuthzRequestView(OpBase, View):
         View which processes the actual Authz request and
         returns a Http Redirect
     """
+
     template = "op_user_login.html"
 
     def validate_authz(self, payload: dict):

@@ -17,7 +17,7 @@ from spid_cie_oidc.entity.jwtse import (
 from spid_cie_oidc.entity.models import FederationEntityConfiguration
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.relying_party.exceptions import ValidationException
-from spid_cie_oidc.onboarding.schemas.authn_response import AuthenticationResponseCie
+from spid_cie_oidc.relying_party.settings import RP_PROVIDER_PROFILES, RP_DEFAULT_PROVIDER_PROFILES
 
 from ..models import OidcAuthentication, OidcAuthenticationToken
 from ..oauth2 import *
@@ -33,11 +33,15 @@ from . import SpidCieOidcRp
 
 logger = logging.getLogger(__name__)
 
+schema_profile = RP_PROVIDER_PROFILES[RP_DEFAULT_PROVIDER_PROFILES]
+
 
 @schema(
     summary="OIDC Relying Party auth code Callback",
     methods=['GET'],
-    request_schema=AuthenticationResponseCie,
+    request_schema={
+        "application/x-www-form-urlencoded" : schema_profile["authn_response"],
+    },
     external_docs = {
         "alt_text": "AgID SPID OIDC Guidelines",
         "url": "https://www.agid.gov.it/it/agenzia/stampa-e-comunicazione/notizie/2021/12/06/openid-connect-spid-adottate-linee-guida"

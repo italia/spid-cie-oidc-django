@@ -1,12 +1,14 @@
-import asyncio, time
+import asyncio
+import time
 from pyppeteer import launch
 import os
 import json
 
-BASE_FOLDER =os.path.join(".","spid_cie_oidc","relying_party_test","snippets","results")
+BASE_FOLDER = os.path.join(".","spid_cie_oidc","relying_party_test","snippets","results")
+
 
 class Crawler:
-    
+
     def __init__(self, url: str, username: str, password: str, testname: str, browser=None):
         self.url = url
         self.username = username
@@ -17,17 +19,17 @@ class Crawler:
             self.browser = browser
 
     def make_dir_result(self):
-        self.folder =os.path.join(BASE_FOLDER, self.testname)
+        self.folder = os.path.join(BASE_FOLDER, self.testname)
         if not os.path.exists(self.folder):
             os.mkdir(self.folder)
 
     async def start(self, page= None):
-        self.browser = await launch(headless=False, args= [ '--start-maximized' ])
+        self.browser = await launch(headless=False, args= ['--start-maximized'])
         if page:
             self.page = page
         else:
             self.page = await self.browser.newPage()
-            await self.page.setViewport({ "width": 1866, "height": 900})
+            await self.page.setViewport({"width": 1866, "height": 900})
 
         page = await self.page.goto(self.url)
         self.status = page.status
@@ -41,10 +43,9 @@ class Crawler:
     #     else:
     #         self.page = await self.browser.newPage()
     #         await self.page.setViewport({ "width": 1866, "height": 900})
-    
+
     # async def goto_url(self):
     #     await self.page.goto(self.url)
-        
 
     async def goto_login_provider(self):
         spid_button = await self.page.querySelector(".italia-it-button-icon")
@@ -64,7 +65,7 @@ class Crawler:
         await submit.click()
         page = await asyncio.ensure_future(self.page.waitForNavigation(self.waiting))
         self.status = page.status
-    
+
     async def consent(self, selector:str):
         button = await self.page.querySelector(selector)
         await button.click()

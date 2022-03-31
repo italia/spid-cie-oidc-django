@@ -41,7 +41,7 @@ logger = logging.getLogger(__name__)
 class UserInfoEndpoint(OpBase, View):
     def get(self, request, *args, **kwargs):
         """
-            Userinfo endpoint just needs a HTTP GET with the Access Token 
+            Userinfo endpoint just needs a HTTP GET with the Access Token
             in a Authorization Http Header like this:
 
             Authorization: Bearer $JWT

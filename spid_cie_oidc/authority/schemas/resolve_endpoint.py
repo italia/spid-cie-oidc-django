@@ -10,6 +10,14 @@ class ResolveRequest(BaseModel):
     iss: Optional[HttpUrl]
     format :Literal["json"]
 
+    def example():
+        return ResolveRequest(
+            sub= "http://127.0.0.1:8000/oidc/rp/",
+            anchor= "http://127.0.0.1:8000/",
+            iss= "http://127.0.0.1:8000/",
+            format= "json",
+        )
+
 
 class ResolveResponse(BaseModel):
     iss : HttpUrl
