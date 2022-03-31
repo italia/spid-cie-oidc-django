@@ -89,9 +89,9 @@ Where the data are
 
 Copy files in destination volumes
 ````
-cp -R examples/federation_authority/* `docker volume inspect trust_anchor_project | jq .[0].Mountpoint | sed 's/"//g'`
-cp -R examples/provider/* `docker volume inspect provider_project | jq .[0].Mountpoint | sed 's/"//g'`
-cp -R examples/relying_party/* `docker volume inspect relying_party_project | jq .[0].Mountpoint | sed 's/"//g'`
+sudo cp -R examples/federation_authority/* `docker volume inspect trust_anchor_project | jq .[0].Mountpoint | sed 's/"//g'`
+sudo cp -R examples/provider/* `docker volume inspect provider_project | jq .[0].Mountpoint | sed 's/"//g'`
+sudo cp -R examples/relying_party/* `docker volume inspect relying_party_project | jq .[0].Mountpoint | sed 's/"//g'`
 ````
 
 Change hostnames from 127.0.0.1 to which one configured in the compose file, in the settingslocal.py files and in the dumps/example.json files.
