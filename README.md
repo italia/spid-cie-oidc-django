@@ -115,21 +115,18 @@ export SUB_RP='s\http://127.0.0.1:8001/\http://relying-party.org:8001/\g'
 In our example we rename:
 
 - http://127.0.0.1:8000 to http://trust-anchor.org:8000/
-
-
 ````
 sudo sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/federation_authority/dumps/example.json > $TARGET_PATH_AT/dumps/example.json
 sudo sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/federation_authority/federation_authority/settingslocal.py.example > $TARGET_PATH_AT/federation_authority/settingslocal.py
 ````
-- http://127.0.0.1:8001 to http://relying-party.org:8001/
 
+- http://127.0.0.1:8001 to http://relying-party.org:8001/
 ```
 sudo sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/relying_party/dumps/example.json > $TARGET_PATH_RP/dumps/example.json
 sudo sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/relying_party/relying_party/settingslocal.py.example > $TARGET_PATH_RP/relying_party/settingslocal.py
 ```
 
 - http://127.0.0.1:8002 to http://cie-provider.org:8002/
-
 ```
 sudo sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/provider/dumps/example.json > $TARGET_PATH_OP/dumps/example.json
 sudo sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/provider/provider/settingslocal.py.example > $TARGET_PATH_OP/provider/settingslocal.py
@@ -149,7 +146,6 @@ sudo docker-compose up
 ````
 
 Configure a proper DNS resolution for trust-anchor.org. In GNU/Linux we can configure it in `/etc/hosts`:
-
 ````
 127.0.0.1   localhost  trust-anchor.org relying-party.org cie-provider.org
 ````
