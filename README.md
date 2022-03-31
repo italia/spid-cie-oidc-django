@@ -79,6 +79,8 @@ Please do your customizations in each _settingslocal.py_ files and/or in the exa
 Create volumes
 ````
 sudo docker volume create --name=trust_anchor_project
+sudo docker volume create --name=provider_project
+sudo docker volume create --name=relying_party_project
 ````
 
 Where the data are
@@ -88,6 +90,8 @@ Where the data are
 Copy files in destination volumes
 ````
 cp -R examples/federation_authority/* `docker volume inspect trust_anchor_project | jq .[0].Mountpoint | sed 's/"//g'`
+cp -R examples/provider/* `docker volume inspect provider_project | jq .[0].Mountpoint | sed 's/"//g'`
+cp -R examples/relying_party/* `docker volume inspect relying_party_project | jq .[0].Mountpoint | sed 's/"//g'`
 ````
 
 Change hostnames from 127.0.0.1 to which one configured in the compose file, in the settingslocal.py files and in the dumps/example.json files.
@@ -97,12 +101,29 @@ In our example we rename:
 
 ````
 export SUB_AT='s\http://127.0.0.1:8000/\http://trust-anchor.org:8000/\g'
-export SUB_OP='s\http://127.0.0.1:8002/\http://cie-provider.org:8002/\g'
-export SUB_RP='s\http://127.0.0.1:8001/\http://relying-party.org:8001/\g'
-export TARGET_PATH=$(docker volume inspect trust_anchor_project | jq .[0].Mountpoint | sed 's/"//g')
-sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/federation_authority/dumps/example.json > $TARGET_PATH/dumps/example.json
-sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/federation_authority/federation_authority/settingslocal.py.example > $TARGET_PATH/federation_authority/settingslocal.py
+export TARGET_PATH_AT=$(docker volume inspect trust_anchor_project | jq .[0].Mountpoint | sed 's/"//g')
+sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/federation_authority/dumps/example.json > $TARGET_PATH_AT/dumps/example.json
+sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/federation_authority/federation_authority/settingslocal.py.example > $TARGET_PATH_AT/federation_authority/settingslocal.py
+
 ````
+- http://127.0.0.1:8001 to http://relying-party.org:8001/
+
+```
+export SUB_RP='s\http://127.0.0.1:8001/\http://relying-party.org:8001/\g'
+export TARGET_PATH_RP=$(docker volume inspect relying_party_project | jq .[0].Mountpoint | sed 's/"//g')
+sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/relying_party/dumps/example.json > $TARGET_PATH_RP/dumps/example.json
+sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/relying_party/relying_party/settingslocal.py.example > $TARGET_PATH_RP/relying_party/settingslocal.py
+```
+
+- http://127.0.0.1:8002 to http://cie-provider.org:8002/
+
+```
+export SUB_OP='s\http://127.0.0.1:8002/\http://cie-provider.org:8002/\g'
+export TARGET_PATH_OP=$(docker volume inspect provider_project | jq .[0].Mountpoint | sed 's/"//g')
+sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/provider/dumps/example.json > $TARGET_PATH_OP/dumps/example.json
+sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/provider/provider/settingslocal.py.example > $TARGET_PATH_OP/provider/settingslocal.py
+```
+
 
 Feel free to customize the example data and settings. then check if everything is ok, for example:
 ````
