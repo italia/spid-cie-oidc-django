@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 def is_leaf(statement_metadata):
     for _typ in ENTITY_TYPE_LEAFS:
         if _typ in statement_metadata:
-            return True
+            return True # pragma: no cover
 
 
 class FederationEntityConfiguration(TimeStampedModel):
@@ -218,7 +218,7 @@ class FederationEntityConfiguration(TimeStampedModel):
 
         if self.authority_hints:
             conf["authority_hints"] = self.authority_hints
-        elif self.is_leaf:
+        elif self.is_leaf: # pragma: no cover
             _msg = f"Entity {self.sub} is a leaf and requires authority_hints valued"
             logger.error(_msg)
 
@@ -344,7 +344,7 @@ class TrustChain(TimeStampedModel):
 
     @property
     def subject(self):
-        return self.sub
+        return self.sub # pragma: no cover
 
     @property
     def is_expired(self):

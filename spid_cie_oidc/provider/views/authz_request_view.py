@@ -209,6 +209,8 @@ class AuthzRequestView(OpBase, View):
                 {
                     "form": form,
                     "hidden_form": AuthzHiddenForm(request.POST),
+                    "redirect_uri": self.payload["redirect_uri"],
+                    "state": self.payload["state"]
                 }
             )
         else:
