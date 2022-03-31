@@ -29,7 +29,8 @@ each of these can be installed separately within a django project. These are the
 * [Setup](#setup)
 * [Docker compose](#docker-compose)
 * [Usage](#usage)
-* [OpenAPI Schema 3](#openapi)
+* [OpenAPI Schema 3](#openapi-schema)
+* [Tools](#tools)
 * [Contribute](#contribute)
     * [Contribute as end user](#contribute-as-end-user)
     * [Contribute as developer](#contribute-as-developer)
@@ -126,7 +127,7 @@ Each applications has an exportable OAS3 available at `/rest/schema.json` with a
 _The reDoc OAS3 browsable page._
 
 
-### Tools
+## Tools
 
 The OnBoarding app comes with the following collection of tools:
 
