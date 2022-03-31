@@ -70,8 +70,8 @@ Read the [setup documentation](docs/SETUP.md) to get started.
 
 Install Docker using the packages distributed from the official website and the following tools.
 ````
-apt install jq
-pip install docker-compose
+sudo apt install jq
+sudo pip install docker-compose
 ````
 
 Please do your customizations in each _settingslocal.py_ files and/or in the example dumps json file.
@@ -79,7 +79,9 @@ Please do your customizations in each _settingslocal.py_ files and/or in the exa
 Create volumes
 ````
 sudo docker volume create --name=trust_anchor_project
+
 sudo docker volume create --name=provider_project
+
 sudo docker volume create --name=relying_party_project
 ````
 
@@ -89,55 +91,61 @@ Where the data are
 
 Copy files in destination volumes
 ````
-cp -R examples/federation_authority/* `docker volume inspect trust_anchor_project | jq .[0].Mountpoint | sed 's/"//g'`
-cp -R examples/provider/* `docker volume inspect provider_project | jq .[0].Mountpoint | sed 's/"//g'`
-cp -R examples/relying_party/* `docker volume inspect relying_party_project | jq .[0].Mountpoint | sed 's/"//g'`
+export TARGET_PATH_AT=$(docker volume inspect trust_anchor_project | jq .[0].Mountpoint | sed 's/"//g')
+export TARGET_PATH_OP=$(docker volume inspect provider_project | jq .[0].Mountpoint | sed 's/"//g')
+export TARGET_PATH_RP=$(docker volume inspect relying_party_project | jq .[0].Mountpoint | sed 's/"//g')
+
+sudo cp -R examples/federation_authority/* $TARGET_PATH_AT
+
+sudo cp -R examples/provider/* $TARGET_PATH_OP
+
+sudo cp -R examples/relying_party/* $TARGET_PATH_RP
 ````
 
 Change hostnames from 127.0.0.1 to which one configured in the compose file, in the settingslocal.py files and in the dumps/example.json files.
-In our example we rename:
 
-- http://127.0.0.1:8000 to http://trust-anchor.org:8000/
+Configure the rewrite rules:
 
 ````
 export SUB_AT='s\http://127.0.0.1:8000/\http://trust-anchor.org:8000/\g'
-export TARGET_PATH_AT=$(docker volume inspect trust_anchor_project | jq .[0].Mountpoint | sed 's/"//g')
-sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/federation_authority/dumps/example.json > $TARGET_PATH_AT/dumps/example.json
-sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/federation_authority/federation_authority/settingslocal.py.example > $TARGET_PATH_AT/federation_authority/settingslocal.py
-
-````
-- http://127.0.0.1:8001 to http://relying-party.org:8001/
-
-```
+export SUB_OP='s\http://127.0.0.1:8002/\http://cie-provider.org:8002/\g'
 export SUB_RP='s\http://127.0.0.1:8001/\http://relying-party.org:8001/\g'
-export TARGET_PATH_RP=$(docker volume inspect relying_party_project | jq .[0].Mountpoint | sed 's/"//g')
-sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/relying_party/dumps/example.json > $TARGET_PATH_RP/dumps/example.json
-sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/relying_party/relying_party/settingslocal.py.example > $TARGET_PATH_RP/relying_party/settingslocal.py
+````
+
+In our example we rename:
+
+- http://127.0.0.1:8000 to http://trust-anchor.org:8000/
+````
+sudo sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/federation_authority/dumps/example.json > $TARGET_PATH_AT/dumps/example.json
+sudo sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/federation_authority/federation_authority/settingslocal.py.example > $TARGET_PATH_AT/federation_authority/settingslocal.py
+````
+
+- http://127.0.0.1:8001 to http://relying-party.org:8001/
+```
+sudo sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/relying_party/dumps/example.json > $TARGET_PATH_RP/dumps/example.json
+sudo sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/relying_party/relying_party/settingslocal.py.example > $TARGET_PATH_RP/relying_party/settingslocal.py
 ```
 
 - http://127.0.0.1:8002 to http://cie-provider.org:8002/
-
 ```
-export SUB_OP='s\http://127.0.0.1:8002/\http://cie-provider.org:8002/\g'
-export TARGET_PATH_OP=$(docker volume inspect provider_project | jq .[0].Mountpoint | sed 's/"//g')
-sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/provider/dumps/example.json > $TARGET_PATH_OP/dumps/example.json
-sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/provider/provider/settingslocal.py.example > $TARGET_PATH_OP/provider/settingslocal.py
+sudo sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/provider/dumps/example.json > $TARGET_PATH_OP/dumps/example.json
+sudo sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/provider/provider/settingslocal.py.example > $TARGET_PATH_OP/provider/settingslocal.py
 ```
 
 
 Feel free to customize the example data and settings. then check if everything is ok, for example:
 ````
-sudo su
-ls `docker volume inspect trust_anchor_project | jq .[0].Mountpoint | sed 's/"//g'`
+sudo ls $TARGET_PATH_AT
+sudo ls $TARGET_PATH_RP
+sudo ls $TARGET_PATH_OP
 ````
 
 Run the stack
 ````
-docker-compose up
+sudo docker-compose up
 ````
 
 Configure a proper DNS resolution for trust-anchor.org. In GNU/Linux we can configure it in `/etc/hosts`:
-
 ````
 127.0.0.1   localhost  trust-anchor.org relying-party.org cie-provider.org
 ````
