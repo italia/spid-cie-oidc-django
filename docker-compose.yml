@@ -8,7 +8,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./examples/federation_authority:/django-project
+      - ./examples-docker/federation_authority:/django-project
     networks:
       - oidcfed
     command: |
@@ -26,7 +26,7 @@ services:
     ports:
       - "8002:8002"
     volumes:
-      - ./examples/provider:/django-project
+      - ./examples-docker/provider:/django-project
     networks:
       - oidcfed
     depends_on:
@@ -46,7 +46,7 @@ services:
     ports:
       - "8001:8001"
     volumes:
-      - ./examples/relying_party:/django-project
+      - ./examples-docker/relying_party:/django-project
     networks:
       - oidcfed
     depends_on:
