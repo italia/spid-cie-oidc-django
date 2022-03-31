@@ -175,6 +175,28 @@ class AuthenticationRequestSpid(AuthenticationRequest):
     def get_claims() -> dict:
         return CLAIMS_SPID
 
+    def example():
+        return AuthenticationRequestSpid(  # nosec B106
+            client_id= "https://rp.cie.it/callback1/",
+            response_type= "code",
+            scope= ["openid", "offline_access"],
+            code_challenge= "codeChallenge",
+            code_challenge_method= "S256",
+            nonce= "12345678123456781234567812345678inpiu",
+            prompt= "verify",
+            redirect_uri= "https://rp.cie.it/callback1/",
+            acr_values= ["https://www.spid.gov.it/SpidL2", "https://www.spid.gov.it/SpidL1"],
+            claims= {},
+            state= "fyZiOL9Lf2CeKuNT2JzxiLRDink0uPcd",
+            ui_locales= ["codice1", "codice2", "codice3"],
+            sub= "https://rp.cie.it/",
+            iss= "https://op.spid.agid.gov.it/",
+            aud= ["https://rp.spid.agid.gov.it/auth"],
+            iat= 1648591200,
+            exp= 1648592200,
+            jti= "a72d5df0-2415-4c7c-a44f-3988b354040b",
+        )
+
 
 class AuthenticationRequestCie(AuthenticationRequest):
     scope: List[ScopeCie]
@@ -182,3 +204,22 @@ class AuthenticationRequestCie(AuthenticationRequest):
 
     def get_claims() -> dict:
         return CLAIMS_CIE
+
+
+class AuthenticationRequestDoc(BaseModel):
+    client_id: HttpUrl
+    response_type: Literal["code"]
+    scope: List[str]
+    code_challenge: str
+    code_challenge_method: Literal["S256"]
+    request: constr(regex=r"^[a-zA-Z\_\-0-9]+\.[a-zA-Z\_\-0-9]+\.[a-zA-Z\_\-0-9]+") # noqa: F722
+
+    def example():
+        return AuthenticationRequestDoc(  # nosec B106
+            client_id= "https://rp.cie.it/callback1/",
+            response_type= "code",
+            scope= ["openid", "offline_access"],
+            code_challenge= "codeChallenge",
+            code_challenge_method= "S256",
+            request= "eyJhbGciOiJSUzI1NiIsImtpZCI6ImsyYmRjIn0.ew0KICJpc3MiOiAiczZCaGRSa3F0MyIsDQogImF1ZCI6ICJodHRwczovL3NlcnZlci5leGFtcGxlLmNvbSIsDQogInJlc3BvbnNlX3R5cGUiOiAiY29kZSBpZF90b2tlbiIsDQogImNsaWVudF9pZCI6ICJzNkJoZFJrcXQzIiwNCiAicmVkaXJlY3RfdXJpIjogImh0dHBzOi8vY2xpZW50LmV4YW1wbGUub3JnL2NiIiwNCiAic2NvcGUiOiAib3BlbmlkIiwNCiAic3RhdGUiOiAiYWYwaWZqc2xka2oiLA0KICJub25jZSI6ICJuLTBTNl9XekEyTWoiLA0KICJtYXhfYWdlIjogODY0MDAsDQogImNsYWltcyI6IA0KICB7DQogICAidXNlcmluZm8iOiANCiAgICB7DQogICAgICJnaXZlbl9uYW1lIjogeyJlc3NlbnRpYWwiOiB0cnVlfSwNCiAgICAgI.qq",
+        )

@@ -12,8 +12,7 @@ from django.views import View
 from spid_cie_oidc.entity.exceptions import InvalidTrustchain
 from spid_cie_oidc.entity.jwtse import create_jws
 from spid_cie_oidc.entity.models import FederationEntityConfiguration
-from spid_cie_oidc.relying_party.settings import OIDCFED_ACR_PROFILES
-from spid_cie_oidc.onboarding.schemas.authn_requests import AuthenticationRequestSpid
+from spid_cie_oidc.relying_party.settings import OIDCFED_ACR_PROFILES, RP_PROVIDER_PROFILES, RP_DEFAULT_PROVIDER_PROFILES
 
 from ..models import OidcAuthentication
 from ..settings import (
@@ -29,12 +28,15 @@ from . import SpidCieOidcRp
 
 logger = logging.getLogger(__name__)
 
+schema_profile = RP_PROVIDER_PROFILES[RP_DEFAULT_PROVIDER_PROFILES]
+
 
 @schema(
     summary="OIDC Relying Party Authorization begin",
     methods=['GET'],
-    request_schema= {
-        "application/x-www-form-urlencoded": AuthenticationRequestSpid,
+    encoding = "application/x-www-form-urlencoded",
+    get_response_schema= {
+        "302": schema_profile["authorization_request_doc"],
     },
     external_docs = {
         "alt_text": "AgID SPID OIDC Guidelines",
@@ -47,12 +49,11 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
         View which processes the actual Authz request and
         returns a Http Redirect
     """
-
     error_template = "rp_error.html"
 
     def get(self, request, *args, **kwargs):
         """
-        http://localhost:8001/oidc/rp/authorization?provider=http://127.0.0.1:8002/
+        http://localhost:8001/oidc/rp/authorization?provider=http://127.0.0.1:8002/&profile=spid
         """
         try:
             tc = self.get_oidc_op(request)

@@ -16,7 +16,6 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from pydantic import BaseModel
 from spid_cie_oidc.entity.jwtse import unpad_jwt_payload
-from spid_cie_oidc.onboarding.schemas.token_requests import TokenAuthnCodeRequest, TokenRefreshRequest
 from spid_cie_oidc.provider.exceptions import ValidationException
 from spid_cie_oidc.provider.models import IssuedToken, OidcSession
 from spid_cie_oidc.provider.settings import (
@@ -50,9 +49,12 @@ schema_profile = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
 )
 @method_decorator(csrf_exempt, name="dispatch")
 class TokenEndpoint(OpBase, View):
+    """
+        Request content type is 'application/x-www-form-urlencoded'
+    """
     schema = {}
-    schema["authn_request"] = schema_set_examples({}, TokenAuthnCodeRequest)
-    schema["refresh_request"] = schema_set_examples({}, TokenRefreshRequest)
+    schema["authn_request"] = schema_set_examples({}, schema_profile["authorization_code"])
+    schema["refresh_request"] = schema_set_examples({}, schema_profile["refresh_token"])
 
     def get(self, request, *args, **kwargs):
         return HttpResponseBadRequest()
