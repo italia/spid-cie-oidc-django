@@ -6,7 +6,6 @@ from spid_cie_oidc.entity.schemas.op_metadata import OPMetadataCie, OPMetadataSp
 from spid_cie_oidc.entity.tests.op_metadata_settings import (
     OP_METADATA_CIE,
     OP_METADATA_CIE_JWKS_AND_JWKS_URI,
-    OP_METADATA_CIE_JWKS_URI_NO_CORRECT,
     OP_METADATA_SPID,
     OP_METADATA_SPID_JWKS_AND_JWKS_URI,
     OP_METADATA_SPID_JWKS_EC_NO_CORRECT,
@@ -23,10 +22,6 @@ class OpMetadataTest(TestCase):
     def test_op_metatada_cie_jwks_and_jwks_uri(self):
         with self.assertRaises(ValidationError):
             OPMetadataCie(**OP_METADATA_CIE_JWKS_AND_JWKS_URI)
-
-    def test_op_metatada_cie_jwks_uri_no_correct(self):
-        with self.assertRaises(ValidationError):
-            OPMetadataCie(**OP_METADATA_CIE_JWKS_URI_NO_CORRECT)
 
     def test_op_metatada_spid(self):
         OPMetadataSpid(**OP_METADATA_SPID)
