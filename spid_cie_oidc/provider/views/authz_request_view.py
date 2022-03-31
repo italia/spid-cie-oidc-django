@@ -198,7 +198,8 @@ class AuthzRequestView(OpBase, View):
             "form": form,
             "redirect_uri": self.payload["redirect_uri"],
             "obj_request": json.dumps(self.payload, indent=2),
-            "acr_value": acr_value.name
+            "acr_value": acr_value.name,
+            "state": self.payload["state"]
         }
         return render(request, self.template, context)
 
@@ -244,6 +245,8 @@ class AuthzRequestView(OpBase, View):
                 {
                     "form": form,
                     "hidden_form": AuthzHiddenForm(request.POST),
+                    "redirect_uri": self.payload["redirect_uri"],
+                    "state": self.payload["state"]
                 }
             )
         else:

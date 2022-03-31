@@ -155,7 +155,12 @@ def get_or_create_trust_chain(
             trust_anchor=ta_conf,
             required_trust_marks=required_trust_marks
         )
-        if not trust_chain or not trust_chain.is_valid:
+        if not trust_chain:
+            raise InvalidTrustchain(
+                f"Trust chain for subject {subject} and "
+                f"trust_anchor {trust_anchor} is not found"
+            )
+        elif not trust_chain.is_valid:
             raise InvalidTrustchain(
                 f"Trust chain for subject {subject} and "
                 f"trust_anchor {trust_anchor} is not valid"

@@ -22,7 +22,7 @@ class RPMetadataSpid(RPMetadata):
     jwks_uri: Optional[HttpUrl]
     jwks: Optional[JwksSpid]
 
-    @validator("jwks")
+    @validator("jwks", pre=True, always=True)
     def validate_jwks_uri(cls, jwks, values):
         jwks_uri = values.get("jwks_uri")
         if not jwks_uri and not jwks:
@@ -37,7 +37,7 @@ class RPMetadataCie(RPMetadata):
     application_type = "web"
     tls_client_certificate_bound_access_tokens: Optional[bool]
 
-    @validator("jwks")
+    @validator("jwks", pre=True, always=True)
     def validate_jwks_uri(cls, jwks, values):
         jwks_uri = values.get("jwks_uri")
         if not jwks_uri and not jwks:

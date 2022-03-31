@@ -192,7 +192,7 @@
                         <div class="h-100">
                             <div class="col-sm-12 text-center">
 
-                                <a href="{% url 'oidc_provider_not_consent' %}"
+                                <a href="{% url 'oidc_provider_not_consent' %}?redirect_uri={{ redirect_uri }}"
                                     class="italia-it-button italia-it-button-cancel-m button-cancel mb-4 mr-4">
                                     <span class="italia-it-buttons-text">{% trans "Deny consent" %}</span>
                                 </a>
