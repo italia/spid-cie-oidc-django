@@ -83,7 +83,7 @@ class IntrospectionEndpointTest(TestCase):
 
     def test_introspection_endpoint(self):
         client = Client()
-        url = reverse("introspection_endpoint")
+        url = reverse("oidc_provider_introspection_endpoint")
         request = {
             "client_assertion" : self.ca_jws,
             "client_assertion_type" : "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
@@ -95,9 +95,22 @@ class IntrospectionEndpointTest(TestCase):
         self.assertTrue(res.status_code == 200)
         self.assertTrue("openid" in res.content.decode())
 
+    def test_introspection_endpoint_get(self):
+        client = Client()
+        url = reverse("oidc_provider_introspection_endpoint")
+        request = {
+            "client_assertion" : self.ca_jws,
+            "client_assertion_type" : "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+            "client_id" : self.RP_SUB,
+            "token" : self.jwt_token
+
+        }
+        res = client.get(url, request)
+        self.assertTrue(res.status_code == 400)
+
     def test_introspection_endpoint_validation_error(self):
         client = Client()
-        url = reverse("introspection_endpoint")
+        url = reverse("oidc_provider_introspection_endpoint")
         request = {
             "client_assertion" : self.ca_jws,
             "client_assertion_type" : "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",

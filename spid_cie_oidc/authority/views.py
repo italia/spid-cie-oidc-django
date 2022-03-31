@@ -2,6 +2,7 @@ import logging
 import math
 import urllib.parse
 
+from djagger.decorators import schema
 from django.conf import settings
 from django.core.paginator import Paginator
 from django.http import (
@@ -27,11 +28,38 @@ from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
 from spid_cie_oidc.entity.utils import iat_now
 
+from . schemas.fetch_endpoint_request import FetchRequest, FedAPIErrorResponse, FetchResponse
+from . schemas.list_endpoint import ListRequest, ListResponse
+from . schemas.advanced_entity_list_endpoint import AdvancedEntityListRequest, AdvancedEntityListResponse
+from . schemas.resolve_endpoint import ResolveRequest, ResolveResponse
+from . schemas.trust_mark_status_endpoint import TrustMarkRequest, TrustMarkResponse
 
 logger = logging.getLogger(__name__)
 
-
+@schema(
+    methods=['GET'],
+    get_request_schema = {
+        "application/x-www-form-urlencoded": FetchRequest
+    },
+    get_response_schema = {
+            "400": FedAPIErrorResponse,
+            "404": FedAPIErrorResponse,
+            "200": FetchResponse
+    },
+    tags = ['Federation API']
+)
 def fetch(request):
+    """
+    All entities that are expected to publish entity statements 
+    about other entities MUST expose a Fetch endpoint.
+
+    Fetching entity statements is performed to collect entity statements 
+    one by one to gather trust chains.
+
+    To fetch an entity statement, an entity needs to know the identifier 
+    of the entity to ask (the issuer), the fetch endpoint of that entity 
+    and the identifier of the entity that you want the statement to be about (the subject).
+    """
     if request.GET.get("iss"):
         iss = get_first_self_trust_anchor(sub=request.GET["iss"])
     else:
@@ -54,15 +82,26 @@ def fetch(request):
 
     if request.GET.get("format") == "json":
         return JsonResponse(
-            sub.entity_statement_as_dict(iss.sub, request.GET.get("aud")), safe=False
+            sub.entity_statement_as_dict(iss.sub, request.GET.get("aud",[])), safe=False
         )
     else:
         return HttpResponse(
-            sub.entity_statement_as_jws(iss.sub, request.GET.get("aud")),
+            sub.entity_statement_as_jws(iss.sub, request.GET.get("aud",[])),
             content_type="application/entity-statement+jwt",
         )
 
-
+@schema(
+    methods=['GET'],
+    get_request_schema = {
+        "application/x-www-form-urlencoded": ListRequest
+    },
+    get_response_schema = {
+            "400": FedAPIErrorResponse,
+            "404": FedAPIErrorResponse,
+            "200": ListResponse
+    },
+    tags = ['Federation API']
+)
 def entity_list(request):
     is_leaf = request.GET.get("is_leaf", "").lower()
     if is_leaf == "true":
@@ -82,6 +121,18 @@ def entity_list(request):
     return JsonResponse(list(set(entries)), safe=False)
 
 
+@schema(
+    methods=['GET'],
+    get_request_schema = {
+        "application/x-www-form-urlencoded": AdvancedEntityListRequest
+    },
+    get_response_schema = {
+            "400": FedAPIErrorResponse,
+            "404": FedAPIErrorResponse,
+            "200": AdvancedEntityListResponse
+    },
+    tags = ['Federation API']
+)
 def advanced_entity_listing(request):
     desecendants = FederationDescendant.objects.filter(
         is_active = True,
@@ -131,7 +182,18 @@ def advanced_entity_listing(request):
     }
     return JsonResponse(res, safe=False)
 
-
+@schema(
+    methods=['GET'],
+    get_request_schema = {
+        "application/x-www-form-urlencoded": ResolveRequest
+    },
+    get_response_schema = {
+            "400": FedAPIErrorResponse,
+            "404": FedAPIErrorResponse,
+            "200": ResolveResponse
+    },
+    tags = ['Federation API']
+)
 def resolve_entity_statement(request, format: str = "jose"):
     """
     resolves the final metadata of its descendants
@@ -203,6 +265,18 @@ def resolve_entity_statement(request, format: str = "jose"):
         )
 
 
+@schema(
+    methods=['GET'],
+    get_request_schema = {
+        "application/x-www-form-urlencoded": TrustMarkRequest
+    },
+    get_response_schema = {
+            "400": FedAPIErrorResponse,
+            "404": FedAPIErrorResponse,
+            "200": TrustMarkResponse
+    },
+    tags = ['Federation API']
+)
 def trust_mark_status(request):
     failed_data = {"active": False}
     if request.GET.get("sub", "") and request.GET.get("id", ""):

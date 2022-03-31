@@ -2,6 +2,7 @@ import logging
 from django.core.paginator import Paginator
 import urllib.parse
 
+from djagger.decorators import schema
 from django.contrib.auth import logout
 from django.http import (
     HttpResponseForbidden,
@@ -58,7 +59,8 @@ class ConsentPageView(OpBase, View):
                 "client_name", session.client_id
             ),
             "user_claims": sorted(set(i18n_user_claims),),
-            "redirect_uri": session.authz_request["redirect_uri"]
+            "redirect_uri": session.authz_request["redirect_uri"],
+            "state": session.authz_request["state"]
         }
         return render(request, self.template, context)
 
@@ -94,12 +96,14 @@ class ConsentPageView(OpBase, View):
 
 def oidc_provider_not_consent(request):
     redirect_uri = request.GET.get("redirect_uri")
+    state = request.GET.get("state", "")
     logout(request)
     kwargs = dict(
         error = "invalid_request",
         error_description = _(
             "Authentication request rejected by user"
-        )
+        ),
+        state = state
     )
     url = f'{redirect_uri}?{urllib.parse.urlencode(kwargs)}'
     return HttpResponseRedirect(url)
@@ -110,7 +114,7 @@ class UserAccessHistoryView(OpBase, View):
     def get(self, request, *args, **kwargs):
         try:
             session = self.check_session(request)
-        except Exception:
+        except Exception: # pragma: no cover
             logger.warning("Invalid session on Access History page")
             return HttpResponseForbidden()
         user_access_history = OidcSession.objects.filter(
@@ -129,12 +133,16 @@ class UserAccessHistoryView(OpBase, View):
         return render(request, "op_user_history.html", context)
 
 
+@schema(
+    methods = [],
+    djagger_exclude=True
+)
 class RevokeSessionView(OpBase, View):
 
     def get(self, request, *args, **kwargs):
         try:
             self.check_session(request)
-        except Exception:
+        except Exception: # pragma: no cover
             logger.warning("Invalid session on revoke page")
             return HttpResponseForbidden()
 

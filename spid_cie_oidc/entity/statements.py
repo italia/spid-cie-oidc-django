@@ -15,7 +15,7 @@ import requests
 
 try:
     from django.conf import settings
-except ImportError:
+except ImportError:  # pragma: no cover
     from . import settings
 
 
@@ -42,7 +42,7 @@ def get_http_url(urls: list, httpc_params: dict = {}) -> list:
             res = requests.get(i, **httpc_params)
             responses.append(res.content.decode())
     else:
-        responses = asyncio.run(http_get(urls, httpc_params))
+        responses = asyncio.run(http_get(urls, httpc_params)) # pragma: no cover
     return responses
 
 
@@ -89,7 +89,7 @@ class TrustMark:
         # TODO: pydantic entity configuration validation here
 
         if self.header.get("kid") not in ec.kids:
-            raise UnknownKid(
+            raise UnknownKid( # pragma: no cover
                 f"Trust Mark validation failed: "
                 f"{self.header.get('kid')} not found in {ec.jwks}"
             )
@@ -103,23 +103,25 @@ class TrustMark:
             self.issuer_entity_configuration = get_entity_configurations(
                 self.iss, self.httpc_params
             )
-
-        if not self.issuer_entity_configuration.validate_by_itself():
-            self.is_valid = False
-            logger.warning(f"Issuer {self.iss} of trust mark {self.id} is not valid.")
-            return False
-
-        if self.header.get("kid") not in self.issuer_entity_configuration.kids:
-            raise UnknownKid(
+        try:
+            ec = EntityConfiguration(self.issuer_entity_configuration[0])
+            ec.validate_by_itself()
+        except UnknownKid:
+            logger.warning(
                 f"Trust Mark validation failed by its Issuer: "
                 f"{self.header.get('kid')} not found in "
-                f"{self.issuer_entity_configuration.jwks}"
-            )
+                f"{self.issuer_entity_configuration.jwks}")
+            return False
+        except Exception:
+            logger.warning(f"Issuer {self.iss} of trust mark {self.id} is not valid.")
+            self.is_valid = False
+            return False
+
         # verify signature
         payload = verify_jws(
             self.jwt,
-            self.issuer_entity_configuration.jwks[
-                self.issuer_entity_configuration.kids.index(self.header["kid"])
+            ec.jwks[
+                ec.kids.index(self.header["kid"])
             ],
         )
         self.is_valid = True
@@ -185,7 +187,7 @@ class EntityConfiguration:
         """
         # TODO: pydantic entity configuration validation here
         if self.header.get("kid") not in self.kids:
-            raise UnknownKid(f"{self.header.get('kid')} not found in {self.jwks}")
+            raise UnknownKid(f"{self.header.get('kid')} not found in {self.jwks}") # pragma: no cover
         # verify signature
         verify_jws(self.jwt, self.jwks[self.kids.index(self.header["kid"])])
         self.is_valid = True
@@ -426,7 +428,7 @@ class EntityConfiguration:
                     "Missing federation_fetch_endpoint in  "
                     f"federation_entity metadata for {self.sub} by {ec.sub}."
                 )
-                self.invalid_superiors[ec.sub] = None
+                self.failed_superiors[ec.sub] = None
                 continue
 
             else:

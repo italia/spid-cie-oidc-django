@@ -84,4 +84,5 @@ class FetchRPTest(TestCase):
         )
         self.patcher.start()
         self.exec('fetch_openid_relying_parties', '--from', 'url')
+        self.patcher.stop()
 

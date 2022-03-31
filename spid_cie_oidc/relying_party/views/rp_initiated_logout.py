@@ -1,6 +1,8 @@
 import logging
 
 import requests
+
+from djagger.decorators import schema
 from django.conf import settings
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
@@ -16,6 +18,15 @@ from ..oidc import *
 logger = logging.getLogger(__name__)
 
 
+@schema(
+    summary="OIDC Relying party logout",
+    methods=['GET'],
+    external_docs = {
+        "alt_text": "AgID SPID OIDC Guidelines",
+        "url": "https://www.agid.gov.it/it/agenzia/stampa-e-comunicazione/notizie/2021/12/06/openid-connect-spid-adottate-linee-guida"
+    },
+    tags = ['Relying Party']
+)
 @login_required
 def oidc_rpinitiated_logout(request):
     """

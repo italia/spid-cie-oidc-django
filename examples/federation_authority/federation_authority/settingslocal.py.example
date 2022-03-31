@@ -4,6 +4,9 @@ import os
 import sys
 import logging
 
+from spid_cie_oidc import __version__
+
+
 if len(sys.argv) > 1 and sys.argv[1] == 'test':
     logging.disable(logging.CRITICAL)
 
@@ -126,8 +129,54 @@ INSTALLED_APPS = [
     'spid_cie_oidc.relying_party',
     'spid_cie_oidc.relying_party_test',
     'spid_cie_oidc.provider',
-    
+    'djagger'
 ]
+
+TEMPLATE_LOADERS = (
+  'django.template.loaders.eggs.Loader'
+)
+
+DJAGGER_DOCUMENT = {
+    "info": dict(
+        title = "SPID/CIE OIDC OpenAPI 3.0 Documentation",
+        description = "OpenAPI 3.0 Document Description",
+        termsOfService = "",
+        contact = {
+            "email": "contatti@developers.italia.it",
+            "url": "https://github.com/italia/spid-cie-oidc-django",
+            "name" : "Developers Italia"
+        },
+        license = {
+            "name": "CC BY 4.0",
+            "url": "https://creativecommons.org/licenses/by/4.0/"
+        },
+        version = __version__,
+        x_logo = {
+            "name": "Developers italia",
+            "url": "https://developers.italia.it/assets/icons/logo-it.svg"
+        }
+    ),
+    "url_names": [
+        # Federation Authority
+        'oidcfed_fetch',
+        'oidcfed_resolve',
+        'oidcfed_list',
+        'oidcfed_trust_mark_status',
+        'oidcfed_advanced_entity_listing',
+
+        # Provider
+        'oidc_provider_authnrequest',
+        'oidc_provider_token_endpoint',
+        'oidc_provider_userinfo_endpoint',
+        'introspection_endpoint',
+        'oidc_provider_revoke_session',
+
+        # Relying Party
+        'spid_cie_rp_begin',
+        'spid_cie_rp_callback',
+        'spid_cie_rpinitiated_logout'
+    ]
+}
 
 DATABASES = {
     # if you need more power

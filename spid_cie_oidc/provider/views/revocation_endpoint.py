@@ -1,19 +1,40 @@
 import logging
 
+from djagger.decorators import schema
 from django.http import (
     HttpResponse,
     JsonResponse
 )
+from djagger.decorators import schema
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from spid_cie_oidc.provider.exceptions import ValidationException
 from spid_cie_oidc.provider.models import IssuedToken
+from spid_cie_oidc.provider.settings import (
+    OIDCFED_DEFAULT_PROVIDER_PROFILE,
+    OIDCFED_PROVIDER_PROFILES
+)
 
 from . import OpBase
 logger = logging.getLogger(__name__)
 
 
+schema_profile = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
+
+
+@schema(
+    methods=['POST'],
+    post_request_schema = {
+        "application/x-www-form-urlencoded": schema_profile["revocation_request"],
+        "application/json": schema_profile["revocation_request"],
+    },
+    post_response_schema = {
+            "200": {},
+            "400": schema_profile["revocation_response"]
+    },
+    tags = ['Provider']
+)
 @method_decorator(csrf_exempt, name="dispatch")
 class RevocationEndpoint(OpBase,View):
 
@@ -47,7 +68,7 @@ class RevocationEndpoint(OpBase,View):
             )
 
         access_token = request.POST.get('token', None)
-        if not access_token:
+        if not access_token: # pragma: no cover
             return JsonResponse(
                 {
                     "error": "invalid_request",
@@ -72,7 +93,7 @@ class RevocationEndpoint(OpBase,View):
                 status = 400
             )
 
-        if token.is_revoked:
+        if token.is_revoked: # pragma: no cover
             return JsonResponse(
                 {
                     "error": "invalid_grant",

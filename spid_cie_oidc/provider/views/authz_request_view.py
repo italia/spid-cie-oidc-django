@@ -2,30 +2,54 @@ import hashlib
 import logging
 import urllib.parse
 import uuid
+import json
 
+from djagger.decorators import schema
 from django.conf import settings
 from django.contrib.auth import authenticate, login
-from django.forms import ValidationError
 from django.forms.utils import ErrorList
 from django.http import (
+    HttpResponseBadRequest,
     HttpResponseForbidden,
-    HttpResponseRedirect,
+    HttpResponseRedirect
 )
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views import View
 from spid_cie_oidc.entity.exceptions import InvalidEntityConfiguration
+from spid_cie_oidc.onboarding.schemas.authn_requests import AcrValues
 from spid_cie_oidc.provider.forms import AuthLoginForm, AuthzHiddenForm
 from spid_cie_oidc.provider.models import OidcSession
-
 from spid_cie_oidc.provider.exceptions import AuthzRequestReplay, ValidationException
-from spid_cie_oidc.provider.settings import OIDCFED_DEFAULT_PROVIDER_PROFILE, OIDCFED_PROVIDER_PROFILES_DEFAULT_ACR
-
+from spid_cie_oidc.provider.settings import (
+    OIDCFED_DEFAULT_PROVIDER_PROFILE,
+    OIDCFED_PROVIDER_PROFILES,
+    OIDCFED_PROVIDER_PROFILES_DEFAULT_ACR
+)
 from . import OpBase
 logger = logging.getLogger(__name__)
 
 
+schema_profile = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
+
+
+@schema(
+    summary="OIDC Provider Authorization endpoint",
+    methods=['GET', 'POST'],
+    get_request_schema = {
+        "application/x-www-form-urlencoded": schema_profile["authorization_request"]
+    },
+    post_response_schema= {
+            "302":schema_profile["authorization_response"],
+            "403": schema_profile["authorization_error_response"]
+    },
+    external_docs = {
+        "alt_text": "AgID SPID OIDC Guidelines",
+        "url": "https://www.agid.gov.it/it/agenzia/stampa-e-comunicazione/notizie/2021/12/06/openid-connect-spid-adottate-linee-guida"
+    },
+    tags = ['Provider']
+)
 class AuthzRequestView(OpBase, View):
     """
         View which processes the actual Authz request and
@@ -45,9 +69,9 @@ class AuthzRequestView(OpBase, View):
 
         if (
             'offline_access' in payload['scope'] and
-            'consent' not in payload['prompt'] 
+            'consent' not in payload['prompt']
         ):
-            raise ValidationError(
+            raise ValidationException(
                 "scope with offline_access without prompt = consent"
             )
 
@@ -55,7 +79,7 @@ class AuthzRequestView(OpBase, View):
         p = urllib.parse.urlparse(redirect_uri)
         scheme_fqdn = f"{p.scheme}://{p.hostname}"
         if payload.get("client_id", None) in scheme_fqdn:
-            raise ValidationError("client_id not in redirect_uri")
+            raise ValidationException("client_id not in redirect_uri")
 
         self.validate_json_schema(
             payload,
@@ -68,30 +92,22 @@ class AuthzRequestView(OpBase, View):
 
     def get(self, request, *args, **kwargs):
         """
-        authz request object is received here
-        it's validated and a login prompt is rendered to the user
+        The Authorization request of a RPs is validated and a login prompt is rendered to the user
         """
         req = request.GET.get("request", None)
-        # FIXME: invalid check: if not request-> no payload-> no redirect_uri
         if not req:
             logger.error(
                 f"Missing Authz request object in {dict(request.GET)} "
                 f"error=invalid_request"
             )
-            return self.redirect_response_data(
-                self.payload["redirect_uri"],
-                error="invalid_request",
-                error_description=_("Missing Authz request object"),
-                # No req -> no payload -> no state
-                state="",
-            )
+            return HttpResponseBadRequest()
         # yes, again. We MUST.
         tc = None
         try:
             tc = self.validate_authz_request_object(req)
         except InvalidEntityConfiguration as e:
             # FIXME: to do test
-            logger.error(f" {e}")
+            logger.error(f"Invalid Entity Configuration: {e}")
             return self.redirect_response_data(
                 self.payload["redirect_uri"],
                 error = "invalid_request",
@@ -137,13 +153,17 @@ class AuthzRequestView(OpBase, View):
 
         # stores the authz request in a hidden field in the form
         form = self.get_login_form()()
+        acr_value = AcrValues(self.payload["acr_values"][0])
         context = {
             "client_organization_name": tc.metadata.get(
                 "client_name", self.payload["client_id"]
             ),
             "hidden_form": AuthzHiddenForm(dict(authz_request_object=req)),
             "form": form,
-            "redirect_uri": self.payload["redirect_uri"]
+            "redirect_uri": self.payload["redirect_uri"],
+            "obj_request": json.dumps(self.payload, indent=2),
+            "acr_value": acr_value.name,
+            "state": self.payload["state"]
         }
         return render(request, self.template, context)
 
@@ -189,6 +209,8 @@ class AuthzRequestView(OpBase, View):
                 {
                     "form": form,
                     "hidden_form": AuthzHiddenForm(request.POST),
+                    "redirect_uri": self.payload["redirect_uri"],
+                    "state": self.payload["state"]
                 }
             )
         else:

@@ -5,7 +5,7 @@ from spid_cie_oidc.authority.models import FederationDescendant, FederationDesce
 from spid_cie_oidc.onboarding.admin import OnBoardingRegistrationAdmin
 from spid_cie_oidc.onboarding.models import OnBoardingRegistration
 
-from spid_cie_oidc.authority.tests.settings import *
+from spid_cie_oidc.authority.tests.settings import RP_METADATA_JWK1_pub, rp_conf
 class AdminTest(TestCase):
 
     def setUp(self):

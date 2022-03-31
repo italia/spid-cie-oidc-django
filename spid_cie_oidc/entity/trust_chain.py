@@ -140,7 +140,7 @@ class TrustChainBuilder:
 
     @property
     def exp_datetime(self) -> datetime.datetime:
-        if self.exp:
+        if self.exp:# pragma: no cover
             return datetime_from_timestamp(self.exp)
 
     def set_exp(self) -> int:
@@ -163,7 +163,6 @@ class TrustChainBuilder:
 
             sup_ecs = []
             for last_ec in last_ecs:
-
                 # Metadata discovery loop prevention
                 if last_ec.sub in ecs_history:
                     logger.warning(
@@ -205,7 +204,6 @@ class TrustChainBuilder:
         return self.is_valid
 
     def get_trust_anchor_configuration(self) -> None:
-
         if isinstance(self.trust_anchor, EntityConfiguration):
             self.trust_anchor_configuration = self.trust_anchor
 
@@ -213,12 +211,12 @@ class TrustChainBuilder:
             logger.info(f"Starting Metadata Discovery for {self.subject}")
             ta_jwt = get_entity_configurations(
                 self.trust_anchor, httpc_params=self.httpc_params
-            )
+            )[0]
             self.trust_anchor_configuration = EntityConfiguration(ta_jwt)
 
         try:
             self.trust_anchor_configuration.validate_by_itself()
-        except Exception as e:
+        except Exception as e: # pragma: no cover
             _msg = (
                 f"Trust Anchor Entity Configuration failed for {self.trust_anchor}. "
                 f"{e}"

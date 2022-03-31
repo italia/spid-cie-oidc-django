@@ -9,12 +9,23 @@
 <div class="col-12">
     <div class="row row-header border-bottom no-border-bottom-xs">
         <div class="wrap-container">
-            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                <a href="/" title="torna alla home">
-                    <img src="{% oidc_provider_logo %}" alt="SPID" class="w-100 p-3">
-                </a>
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                    <a href="/" title="torna alla home">
+                        <img src="{% oidc_provider_logo %}" alt="Home" width="120">
+                    </a>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 {% oidc_provider_arc_value_position %}">
+                    <div class="mt-2 ml-2">
+                        <label class="pl-1 pr-1 ml-4 mt-2 font-weight-bold
+                            {% if acr_value == 'l3'%}complementary-1-bg-a6 text-white
+                            {% elif acr_value == 'l2'%}complementary-2-bg-b1 text-dark
+                            {% else %}complementary-3-bg-b3 text-white{% endif%}">
+                            {{ acr_value | capfirst }}</label>
+                    </div>
+                </div>
             </div>
-            <div class="clear"></div>
+            <div class="clear pt-2"></div>
         </div>
     </div>
 
@@ -41,7 +52,7 @@
                                     {% for form_field in form.visible_fields %}
                                     <div class="form-row pr-4">
                                         <div class="col-12 form-group my-3">
-                                            <label for="id_{{ form_field.html_name }}">
+                                            <label for="id_{{ form_field.html_name }}" id="label_{{form_field.html_name}}">
                                                 <span class="form-label-content">
                                                     {{ form_field.label }}
                                                 </span>
@@ -65,14 +76,12 @@
                                     {% endfor %}
 
                                     <div class="col-sm-12 mt-2">
-                                        <a href="{% url 'oidc_provider_not_consent' %}?redirect_uri={{ redirect_uri }}"
-                                            class="italia-it-button italia-it-button-cancel-s button-cancel mb-4 mr-4">
+                                        <a href="{% url 'oidc_provider_not_consent' %}?redirect_uri={{ redirect_uri }}&state={{state}}"
+                                            class="italia-it-button italia-it-button-cancel-m button-cancel mb-4 mr-4">
                                             <span class="italia-it-buttons-text">{% trans "Cancel" %}</span>
                                         </a>
 
-                                        <button
-                                            class="italia-it-button italia-it-button-size-m button-login"
-                                            type="submit">
+                                        <button id="submit" class="italia-it-button italia-it-button-size-m button-login" type="submit">
                                             <span class="italia-it-button-icon">
                                                 <img src="{% static 'svg/spid-ico-circle-bb.svg' %}"
                                                     alt="">
@@ -89,7 +98,7 @@
             </div>
 
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                <div class="mt-5 ml-4">
+                <div class="mt-2 ml-4">
                     <div class="row">
                         <div class="alert alert-info mt-2" role="alert">
                             {% blocktrans %} 
