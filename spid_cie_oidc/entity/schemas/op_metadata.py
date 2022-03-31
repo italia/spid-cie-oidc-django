@@ -5,9 +5,6 @@ from pydantic import BaseModel, HttpUrl, validator
 
 from .jwks import JwksCie, JwksSpid
 
-JWKS_URI_CIE = "https://registry.cie.gov.it/.well-known/jwks.json"
-
-
 class ScopeSupported(str, Enum):
     openid = "openid"
     offline_access = "offline_access"
@@ -123,8 +120,6 @@ class OPMetadataCie(OPMetadata):
 
     @validator("jwks_uri")
     def validate_jwks_uri(cls, jwks_uri, values):
-        if jwks_uri != JWKS_URI_CIE:
-            raise ValueError("jwks_uri no correct")
         jwks = values.get("jwks")
         if jwks_uri and jwks:
             raise ValueError("jwks MUST NOT indicate")

@@ -122,9 +122,6 @@ class AuthnRequestTest(TestCase):
 
     @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB)
     def test_auth_request_ok(self):
-        local_payload = deepcopy(self.REQUEST_OBJECT_PAYLOAD)
-        local_payload["scope"] = "openid"
-        local_payload["acr_values"] = "https://www.spid.gov.it/SpidL1 https://www.spid.gov.it/SpidL2"
         jws = create_jws(self.REQUEST_OBJECT_PAYLOAD, RP_METADATA_JWK1)
         client = Client()
         url = reverse("oidc_provider_authnrequest")
@@ -317,17 +314,16 @@ class AuthnRequestTest(TestCase):
         self.assertTrue(res.status_code == 403)
 
     @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB)
-    def test_auth_request_no_correct_refresh_token_request(self):
+    def test_auth_request_no_correct_refresh_request(self):
         local_payload = deepcopy(self.REQUEST_OBJECT_PAYLOAD)
-        local_payload["scope"] = "offline_access openid"
+        local_payload["scope"] = "openid offline_access"
         local_payload["prompt"] = "login"
         jws = create_jws(local_payload, RP_METADATA_JWK1)
         client = Client()
         url = reverse("oidc_provider_authnrequest")
         res = client.get(url, {"request": jws})
-        self.assertTrue(res.status_code == 302)
-        self.assertIn("Authorization+request+validation+error", res.url)
-
+        self.assertTrue(res.status_code == 403)
+    
     @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB)
     def test_auth_request_user_staff(self):
         self.user.is_staff = True
@@ -352,3 +348,4 @@ class AuthnRequestTest(TestCase):
             url, {"username": "test", "password": "test", "authz_request_object": {}}
         )
         self.assertTrue(res.status_code == 403)
+
