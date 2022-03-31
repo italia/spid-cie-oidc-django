@@ -176,7 +176,11 @@ class AuthzRequestView(OpBase, View):
         acr_value = AcrValues(self.payload["acr_values"][0])
         prompt = self.payload["prompt"]
         if request.user:
-            if request.user.is_authenticated and acr_value == AcrValues.l1 and "login" not in prompt:
+            if (
+                    request.user.is_authenticated and 
+                    acr_value == AcrValues.l1 and 
+                    "login" not in prompt
+            ):
                 try:
                     session = self.check_session(request)
                     if session.acr != AcrValues.l1.value:

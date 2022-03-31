@@ -77,40 +77,17 @@ sudo pip install docker-compose
 Please do your customizations in each _settingslocal.py_ files and/or in the example dumps json file.
 
 Change hostnames from 127.0.0.1 to which one configured in the compose file, in the settingslocal.py files and in the dumps/example.json files.
-
-Configure the rewrite rules:
-
-````
-export SUB_AT='s\http://127.0.0.1:8000/\http://trust-anchor.org:8000/\g'
-export SUB_OP='s\http://127.0.0.1:8002/\http://cie-provider.org:8002/\g'
-export SUB_RP='s\http://127.0.0.1:8001/\http://relying-party.org:8001/\g'
-````
-
 In our example we rename:
 
 - http://127.0.0.1:8000 to http://trust-anchor.org:8000/
-````
-sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/federation_authority/dumps/example.json > examples/federation_authority/dumps/exampleTemp.json
-mv examples/federation_authority/dumps/exampleTemp.json examples/federation_authority/dumps/example.json
-sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/federation_authority/federation_authority/settingslocal.py.example > examples/federation_authority/federation_authority/settingslocal.py
-````
-
 - http://127.0.0.1:8001 to http://relying-party.org:8001/
-```
-sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/relying_party/dumps/example.json > examples/relying_party/dumps/exampleTemp.json
-mv examples/relying_party/dumps/exampleTemp.json examples/relying_party/dumps/example.json
-sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/relying_party/relying_party/settingslocal.py.example > examples/relying_party/relying_party/settingslocal.py
-```
-
 - http://127.0.0.1:8002 to http://cie-provider.org:8002/
-```
-sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/provider/dumps/example.json > examples/provider/dumps/exampleTemp.json
-mv examples/provider/dumps/exampleTemp.json examples/provider/dumps/example.json
-sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/provider/provider/settingslocal.py.example > examples/provider/provider/settingslocal.py
-```
 
+We can do that with the following steps:
 
-Feel free to customize the example data and settings. 
+- Execute `bash docker-prepare.sh`
+- Customize the example data and settings contained in `examples-docker/` if needed (not by default for a demo)
+
 
 Run the stack
 ````
@@ -122,7 +99,7 @@ Configure a proper DNS resolution for trust-anchor.org. In GNU/Linux we can conf
 127.0.0.1   localhost  trust-anchor.org relying-party.org cie-provider.org
 ````
 
-Point your web browser to `http://trust-anchor.org:8000/oidc/rp/landing` and do your first oidc authentication.
+Point your web browser to `http://relying-party.org:8001/oidc/rp/landing` and do your first oidc authentication.
 
 
 ## Usage

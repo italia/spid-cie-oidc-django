@@ -34,7 +34,6 @@ schema_profile = RP_PROVIDER_PROFILES[RP_DEFAULT_PROVIDER_PROFILES]
 @schema(
     summary="OIDC Relying Party Authorization begin",
     methods=['GET'],
-    encoding = "application/x-www-form-urlencoded",
     get_response_schema= {
         "302": schema_profile["authorization_request_doc"],
     },
