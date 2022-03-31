@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 
 def jwks_from_jwks_uri(jwks_uri: str, httpc_params: dict = {}) -> list:
-    return [json.loads(asyncio.run(http_get([jwks_uri], httpc_params)))]
+    return [json.loads(asyncio.run(http_get([jwks_uri], httpc_params)))] # pragma: no cover
 
 
 def get_jwks(jwt_payload: dict, httpc_params: dict = {}):
@@ -51,7 +51,7 @@ def get_entity_statements(urls: list, httpc_params: dict = {}) -> list:
     Fetches an entity statement/configuration
     """
     if isinstance(urls, str):
-        urls = [urls]
+        urls = [urls] # pragma: no cover
     for url in urls:
         logger.debug(f"Starting Entity Statement Request to {url}")
     return get_http_url(urls, httpc_params)
@@ -237,7 +237,7 @@ class EntityConfiguration:
                 trust_marks.append(trust_mark)
 
         if not trust_marks:
-            raise MissingTrustMark("Required Trust marks are missing.")
+            raise MissingTrustMark("Required Trust marks are missing.") # pragma: no cover
 
         trust_mark_issuers_by_id = self.trust_anchor_entity_conf.payload.get(
             "trust_mark_issuers", {}

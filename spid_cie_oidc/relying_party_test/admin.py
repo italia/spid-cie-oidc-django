@@ -23,6 +23,6 @@ class RelyingPartyTestAdmin(admin.ModelAdmin):
     readonly_fileds = ("screenshot_as_html",)
 
     def screenshot_as_html(self, obj):
-        return obj.screenshot
+        return obj.screenshot # pragma: no cover
 
     screenshot_as_html.short_description = "Screenshot"

@@ -8,7 +8,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - trust_anchor_project:/django-project
+      - ./examples-docker/federation_authority:/django-project
     networks:
       - oidcfed
     command: |
@@ -26,7 +26,7 @@ services:
     ports:
       - "8002:8002"
     volumes:
-      - provider_project:/django-project
+      - ./examples-docker/provider:/django-project
     networks:
       - oidcfed
     depends_on:
@@ -46,7 +46,7 @@ services:
     ports:
       - "8001:8001"
     volumes:
-      - relying_party_project:/django-project
+      - ./examples-docker/relying_party:/django-project
     networks:
       - oidcfed
     depends_on:
@@ -56,14 +56,6 @@ services:
         python3 manage.py migrate &&
         python3 manage.py loaddata dumps/example.json &&
         python3 manage.py runserver 0.0.0.0:8001"
-
-volumes:
-  trust_anchor_project:
-    external: true
-  provider_project:
-    external: true
-  relying_party_project:
-    external: true
 
 networks:
   oidcfed:

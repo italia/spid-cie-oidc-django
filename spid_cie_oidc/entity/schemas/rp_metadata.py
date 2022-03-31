@@ -41,6 +41,6 @@ class RPMetadataCie(RPMetadata):
     def validate_jwks_uri(cls, jwks, values):
         jwks_uri = values.get("jwks_uri")
         if not jwks_uri and not jwks:
-            raise ValueError("one of jwks_uri or jwks must be set")
+            raise ValueError("one of jwks_uri or jwks must be set") 
         if jwks_uri and jwks:
             raise ValueError("jwks MUST NOT indicate")

@@ -72,7 +72,7 @@ class IntrospectionEndpoint(OpBase, View):
         ).first()
         session = token.session
         if session.client_id != client_id:
-            return JsonResponse(
+            return JsonResponse( # pragma: no cover
                 error = "invalid_client",
                 error_description = "Client not recognized"
             )

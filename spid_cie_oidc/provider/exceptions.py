@@ -16,3 +16,7 @@ class ValidationException(Exception):
 
 class ExpiredAuthCode(Exception):
     pass
+
+
+class InvalidRefreshRequestException(Exception):
+    pass

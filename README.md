@@ -38,7 +38,7 @@ each of these can be installed separately within a django project. These are the
 
 ------------------------------------------------
 
-![RP Auth demo](docs/images/rp_auth_demo_3.gif)
+![RP Auth demo](docs/images/rp_auth_demo_4.gif)
 _An onboarded Relying Party with a succesfull authentication._
 
 ## Setup
@@ -76,69 +76,18 @@ sudo pip install docker-compose
 
 Please do your customizations in each _settingslocal.py_ files and/or in the example dumps json file.
 
-Create volumes
-````
-sudo docker volume create --name=trust_anchor_project
-
-sudo docker volume create --name=provider_project
-
-sudo docker volume create --name=relying_party_project
-````
-
-Where the data are
-`sudo docker volume ls`
-
-
-Copy files in destination volumes
-````
-export TARGET_PATH_AT=$(docker volume inspect trust_anchor_project | jq .[0].Mountpoint | sed 's/"//g')
-export TARGET_PATH_OP=$(docker volume inspect provider_project | jq .[0].Mountpoint | sed 's/"//g')
-export TARGET_PATH_RP=$(docker volume inspect relying_party_project | jq .[0].Mountpoint | sed 's/"//g')
-
-sudo cp -R examples/federation_authority/* $TARGET_PATH_AT
-
-sudo cp -R examples/provider/* $TARGET_PATH_OP
-
-sudo cp -R examples/relying_party/* $TARGET_PATH_RP
-````
-
 Change hostnames from 127.0.0.1 to which one configured in the compose file, in the settingslocal.py files and in the dumps/example.json files.
-
-Configure the rewrite rules:
-
-````
-export SUB_AT='s\http://127.0.0.1:8000/\http://trust-anchor.org:8000/\g'
-export SUB_OP='s\http://127.0.0.1:8002/\http://cie-provider.org:8002/\g'
-export SUB_RP='s\http://127.0.0.1:8001/\http://relying-party.org:8001/\g'
-````
-
 In our example we rename:
 
 - http://127.0.0.1:8000 to http://trust-anchor.org:8000/
-````
-sudo sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/federation_authority/dumps/example.json > $TARGET_PATH_AT/dumps/example.json
-sudo sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/federation_authority/federation_authority/settingslocal.py.example > $TARGET_PATH_AT/federation_authority/settingslocal.py
-````
-
 - http://127.0.0.1:8001 to http://relying-party.org:8001/
-```
-sudo sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/relying_party/dumps/example.json > $TARGET_PATH_RP/dumps/example.json
-sudo sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/relying_party/relying_party/settingslocal.py.example > $TARGET_PATH_RP/relying_party/settingslocal.py
-```
-
 - http://127.0.0.1:8002 to http://cie-provider.org:8002/
-```
-sudo sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/provider/dumps/example.json > $TARGET_PATH_OP/dumps/example.json
-sudo sed -e $SUB_AT -e $SUB_RP -e $SUB_OP examples/provider/provider/settingslocal.py.example > $TARGET_PATH_OP/provider/settingslocal.py
-```
 
+We can do that with the following steps:
 
-Feel free to customize the example data and settings. then check if everything is ok, for example:
-````
-sudo ls $TARGET_PATH_AT
-sudo ls $TARGET_PATH_RP
-sudo ls $TARGET_PATH_OP
-````
+- Execute `bash docker-prepare.sh`
+- Customize the example data and settings contained in `examples-docker/` if needed (not by default for a demo)
+
 
 Run the stack
 ````
@@ -150,7 +99,7 @@ Configure a proper DNS resolution for trust-anchor.org. In GNU/Linux we can conf
 127.0.0.1   localhost  trust-anchor.org relying-party.org cie-provider.org
 ````
 
-Point your web browser to `http://trust-anchor.org:8000/oidc/rp/landing` and do your first oidc authentication.
+Point your web browser to `http://relying-party.org:8001/oidc/rp/landing` and do your first oidc authentication.
 
 
 ## Usage

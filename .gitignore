@@ -131,6 +131,7 @@ dmypy.json
 .pyre/
 !*/logs/README.md
 */logs/*
+
 examples/federation_authority/logs/
 examples/provider/logs/
 examples/relying_party/logs/
@@ -139,3 +140,5 @@ examples/federation_authority/federation_authority/settingslocal.py
 examples/relying_party/relying_party/settingslocal.py
 examples/provider/provider/settingslocal.py
 
+examples-docker/
+docker-compose-externalrp.yml

@@ -36,6 +36,7 @@ from . schemas.trust_mark_status_endpoint import TrustMarkRequest, TrustMarkResp
 
 logger = logging.getLogger(__name__)
 
+
 @schema(
     methods=['GET'],
     get_request_schema = {
@@ -50,14 +51,14 @@ logger = logging.getLogger(__name__)
 )
 def fetch(request):
     """
-    All entities that are expected to publish entity statements 
+    All entities that are expected to publish entity statements
     about other entities MUST expose a Fetch endpoint.
 
-    Fetching entity statements is performed to collect entity statements 
+    Fetching entity statements is performed to collect entity statements
     one by one to gather trust chains.
 
-    To fetch an entity statement, an entity needs to know the identifier 
-    of the entity to ask (the issuer), the fetch endpoint of that entity 
+    To fetch an entity statement, an entity needs to know the identifier
+    of the entity to ask (the issuer), the fetch endpoint of that entity
     and the identifier of the entity that you want the statement to be about (the subject).
     """
     if request.GET.get("iss"):
@@ -89,6 +90,7 @@ def fetch(request):
             sub.entity_statement_as_jws(iss.sub, request.GET.get("aud",[])),
             content_type="application/entity-statement+jwt",
         )
+
 
 @schema(
     methods=['GET'],
@@ -181,6 +183,7 @@ def advanced_entity_listing(request):
             "prev_page_path": prev_page_path,
     }
     return JsonResponse(res, safe=False)
+
 
 @schema(
     methods=['GET'],

@@ -1,5 +1,5 @@
 from django.conf import settings
-from spid_cie_oidc.onboarding.schemas.authn_requests import AcrValues, AuthenticationRequestCie, AuthenticationRequestSpid
+from spid_cie_oidc.onboarding.schemas.authn_requests import AcrValues, AuthenticationRequestCie, AuthenticationRequestDoc, AuthenticationRequestSpid
 from spid_cie_oidc.entity.schemas.rp_metadata import RPMetadataSpid, RPMetadataCie
 from spid_cie_oidc.onboarding.schemas.authn_response import AuthenticationResponse, AuthenticationResponseCie
 from spid_cie_oidc.onboarding.schemas.token_response import TokenResponse
@@ -27,12 +27,14 @@ RP_PROVIDER_PROFILES = getattr(
     {
         "spid": {
             "authorization_request": AuthenticationRequestSpid,
+            "authorization_request_doc": AuthenticationRequestDoc,
             "rp_metadata": RPMetadataSpid,
             "authn_response": AuthenticationResponse,
             "token_response": TokenResponse
         },
         "cie": {
             "authorization_request": AuthenticationRequestCie,
+            "authorization_request_doc": AuthenticationRequestDoc,
             "rp_metadata": RPMetadataCie,
             "authn_response": AuthenticationResponseCie,
             "token_response": TokenResponse
