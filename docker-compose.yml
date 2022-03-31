@@ -17,45 +17,45 @@ services:
         python3 manage.py loaddata dumps/example.json &&
         python3 manage.py runserver 0.0.0.0:8000"
 
-  #cie-provider.org:
-    #build:
-      #context: .
-      #dockerfile: ./Dockerfile
-    #expose:
-      #- 8002
-    #ports:
-      #- "8002:8002"
-    #volumes:
-      #- provider_project:/django-project
-    #networks:
-      #- oidcfed
-    #depends_on:
-      #- trust-anchor.org
-    #command: |
-        #bash -c "cd /django-project/ &&
-        #python3 manage.py migrate &&
-        #python3 manage.py loaddata dumps/example.json &&
-        #python3 manage.py runserver 0.0.0.0:8002"
+  cie-provider.org:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    expose:
+      - 8002
+    ports:
+      - "8002:8002"
+    volumes:
+      - provider_project:/django-project
+    networks:
+      - oidcfed
+    depends_on:
+      - trust-anchor.org
+    command: |
+        bash -c "cd /django-project/ &&
+        python3 manage.py migrate &&
+        python3 manage.py loaddata dumps/example.json &&
+        python3 manage.py runserver 0.0.0.0:8002"
 
-  #relying-party.org:
-    #build:
-      #context: .
-      #dockerfile: ./Dockerfile
-    #expose:
-      #- 8001
-    #ports:
-      #- "8001:8001"
-    #volumes:
-      #- relying_party_project:/django-project
-    #networks:
-      #- oidcfed
-    #depends_on:
-      #- trust-anchor.org
-    #command: |
-        #bash -c "cd /django-project/ &&
-        #python3 manage.py migrate &&
-        #python3 manage.py loaddata dumps/example.json &&
-        #python3 manage.py runserver 0.0.0.0:8001"
+  relying-party.org:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    expose:
+      - 8001
+    ports:
+      - "8001:8001"
+    volumes:
+      - relying_party_project:/django-project
+    networks:
+      - oidcfed
+    depends_on:
+      - trust-anchor.org
+    command: |
+        bash -c "cd /django-project/ &&
+        python3 manage.py migrate &&
+        python3 manage.py loaddata dumps/example.json &&
+        python3 manage.py runserver 0.0.0.0:8001"
 
 volumes:
   trust_anchor_project:
