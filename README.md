@@ -87,7 +87,7 @@ In our example we rename:
 We can do that with the following steps:
 
 - Execute `bash docker-prepare.sh`
-- Customize the example data and settings contained in `examples-docker/` if needed (not by default for a demo)
+- Customize the example data and settings contained in `examples-docker/` if needed (not necessary for a quick demo)
 
 
 Run the stack
