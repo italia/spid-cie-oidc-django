@@ -27,9 +27,9 @@ each of these can be installed separately within a django project. These are the
 
 * [Features](#features)
 * [Setup](#setup)
-* [Docker compose](#docker-compose)
+* [Docker](#docker)
 * [Usage](#usage)
-* [OpenAPI Schema 3](#openapi-schema)
+* [OpenAPI Schema 3](#openapi-schema-3)
 * [Tools](#tools)
 * [Contribute](#contribute)
     * [Contribute as end user](#contribute-as-end-user)
@@ -67,7 +67,15 @@ __spid_cie_oidc.entity__ and __spid_cie_oidc.provider__ or __.relying_party__ as
 
 Read the [setup documentation](docs/SETUP.md) to get started.
 
-## Docker compose
+## Docker
+
+### Docker image
+
+````
+docker pull ghcr.io/italia/spid-cie-oidc-django:v0.6.1
+````
+
+### Docker compose
 
 Install Docker using the packages distributed from the official website and the following tools.
 ````

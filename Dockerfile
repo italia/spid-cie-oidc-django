@@ -11,6 +11,7 @@ RUN pip3 install --upgrade pip
 RUN pip3 install -e .
 RUN pip3 install design-django-theme
 
+# let compose do this
 # WORKDIR /django-project/
 # RUN ls -al .
 # RUN python3 manage.py migrate
