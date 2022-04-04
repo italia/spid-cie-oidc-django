@@ -18,7 +18,7 @@ __configure the federation entity__
 Click on _Federation Entity Configuration_ and create your entity, with the following information:
 
 - sub
-- jwks (if omitted they will auto provisioned)
+- jwks (if omitted it will auto provisioned)
 - metadata, containing the endpoints that matches to your urls webpaths
 - is_active, must set to True
 
