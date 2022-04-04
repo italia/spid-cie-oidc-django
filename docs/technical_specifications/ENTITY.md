@@ -28,4 +28,4 @@ Examples of requests to this endpoint are:
 
 ### API
 
-See [The Entity API documentation](../docs/FEDERATION_ENTITY_API.md).
+See [The Entity API documentation](../FEDERATION_ENTITY_API.md).
