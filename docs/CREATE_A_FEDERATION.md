@@ -15,7 +15,7 @@ __setup__
 
 __configure the federation entity__
 
-Click on _Federation Entity Configuration_ and create your entity, with this informations:
+Click on _Federation Entity Configuration_ and create your entity, with the following information:
 
 - sub
 - jwks (if omitted they will auto provisioned)
