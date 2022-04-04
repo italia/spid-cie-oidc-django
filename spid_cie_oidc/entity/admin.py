@@ -65,12 +65,13 @@ class TrustChainAdmin(admin.ModelAdmin):
             ta = tc.trust_anchor.sub
             try :
                 get_or_create_trust_chain(
-                        subject=sub,
-                        trust_anchor=ta,
-                        httpc_params=settings.HTTPC_PARAMS,
-                        required_trust_marks=getattr(
-                            settings, "OIDCFED_REQUIRED_TRUST_MARKS", []
-                        ),
+                    subject=sub,
+                    trust_anchor=ta,
+                    httpc_params=settings.HTTPC_PARAMS,
+                    required_trust_marks=getattr(
+                        settings, "OIDCFED_REQUIRED_TRUST_MARKS", [],
+                    ),
+                    force=True
                 )
                 messages.success(request, f"reload trust chain successfully")
             except Exception as e:
