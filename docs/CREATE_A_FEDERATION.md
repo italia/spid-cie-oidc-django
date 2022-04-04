@@ -96,7 +96,7 @@ see [unit tests](https://github.com/italia/spid-cie-oidc-django/blob/main/spid_c
 ### Register a Provider in the Federation
 
 In you project configure the settingslocal.py file and import it in your settings.py file, for all the
- provider configuration parameters see [here](https://github.com/italia/spid-cie-oidc-django/blob/newbranch/docs/technical_specifications/PROVIDER.md).
+ provider configuration parameters see [here](technical_specifications/PROVIDER.md).
  
 
 For CIE or Spid provider configure `OIDCFED_PROVIDER_PROFILE` parameter in settingslocal.py as "cie" or "spid"
