@@ -122,8 +122,8 @@ Access to the Federation Authority admin backend and configure your OP as a desc
 In the admin page of your Trust Anchor (http://127.0.0.1:8000/admin) create a descendant entity with the following paramenters:
 
 - OP name
-- sub (eg. 'http://127.0.0.1:8002/oidc/rp/')
-- Jwks, public jwks. If you don't have one please create a pair of private/public using the OnBoarding tool `Create a JWK`
+- sub (eg. 'http://127.0.0.1:8002/oidc/op/')
+- Jwks, public jwks available in the OP's entity configuration
 - is_active, must set to True
 
 ![OP as descendant](images/op_descendant.png)
