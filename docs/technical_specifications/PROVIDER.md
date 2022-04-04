@@ -6,7 +6,7 @@ AgID SPID guidelines and CIE id guidelines.
 ## General settings
 
 All the Provider settings paramenter are available at
-[spid_cie_oidc.provider.settings](../../spie_cie_oidc/provider/settings.py) and
+[spid_cie_oidc.provider.settings](../../spid_cie_oidc/provider/settings.py) and
 can be inherited in the general settings file of your project.
 
 These are the following:
