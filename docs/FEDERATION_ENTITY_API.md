@@ -10,7 +10,7 @@ An entity can be one of:
  - federation_entity (trust anchor or intermediary)
 
 To create an OIDC Federation you have to configure a Trust Anchor first.
-Read [FEDERATION_AUTHORITY](FEDERATION_AUTHORITY.md) to see how to do it.
+Read [FEDERATION_AUTHORITY](CREATE_A_FEDERATION.md) to see how to do it.
 
 ## EntityConfiguration
 
