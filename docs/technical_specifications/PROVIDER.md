@@ -6,7 +6,7 @@ AgID SPID guidelines and CIE id guidelines.
 ## General settings
 
 All the Provider settings paramenter are available at
-[spid_cie_oidc.provider.settings](spie_cie_oidc/provider/settings.py) and
+[spid_cie_oidc.provider.settings](../../spie_cie_oidc/provider/settings.py) and
 can be inherited in the general settings file of your project.
 
 These are the following:
@@ -76,10 +76,9 @@ Example
 OIDCFED_PROVIDER_MAX_REFRESH = 1
 ````
 
-- `OIDCFED_PROVIDER_ATTRIBUTES_SPID_MAP` map of attributes for a spid provider, an example [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/provider/settings.py#L31)
-- `OIDCFED_PROVIDER_ATTRIBUTES_CIE_MAP` map of attributes for a cie provider, an example [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/provider/settings.py#L60)
-- `OIDCFED_PROVIDER_ATTRIBUTES_MAP` map of all provider attributes, an example [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/provider/settings.py#L77)
-
+- `OIDCFED_PROVIDER_ATTRIBUTES_SPID_MAP` map of attributes for a spid provider, an example [here](https://github.com/italia/spid-cie-oidc-django/blob/main/spid_cie_oidc/provider/settings.py#L31)
+- `OIDCFED_PROVIDER_ATTRIBUTES_CIE_MAP` map of attributes for a cie provider, an example [here](https://github.com/italia/spid-cie-oidc-django/blob/main/spid_cie_oidc/provider/settings.py#L60)
+- `OIDCFED_PROVIDER_ATTRIBUTES_MAP` map of all provider attributes, an example [here](https://github.com/italia/spid-cie-oidc-django/blob/main/spid_cie_oidc/provider/settings.py#L77)
 - `OIDCFED_PROVIDER_PROFILES_ID_TOKEN_CLAIMS` claims that can be requested to token endpoint.
 
 Example
@@ -125,25 +124,25 @@ OIDCFED_PROVIDER_PROFILES_DEFAULT_ACR = dict(
 )
 ````
 
-- `OIDCFED_ATTRNAME_I18N`, attributes internationalization, an example [here](, an example [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/provider/settings.py#L125))
+- `OIDCFED_ATTRNAME_I18N`, attributes internationalization, an example [an example here](https://github.com/italia/spid-cie-oidc-django/blob/main/spid_cie_oidc/provider/settings.py#L125).
 
 ## Endpoints
 
-the webpath where the provider serve its features are the followins.
+The webpath where the provider serve its features are the following.
 
 ### entity configuration (.well-known/openid-federation)
 
-As inherited from [__spid_cie_oidc.entity__](docs/tecnhical_specifications/ENTITY.md).
+As inherited from [__spid_cie_oidc.entity__](ENTITY.md).
 
 ### authorization
 
 The webpath is customizable in the `urls.py` file and by default it's
-configured [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/provider/urls.py#L16) 
+configured [here](https://github.com/italia/spid-cie-oidc-django/blob/main/spid_cie_oidc/provider/urls.py#L16) 
 and correspond to `spid_cie_oidc.provider.views.AuthzRequestView`.
 
 The Authorization Endpoint support the use of the HTTP GET and POST methods.
 
-An exemple of accepted request is [heare](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/onboarding/tests/authn_request_settings.py#L30)
+An exemple of accepted request is [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/onboarding/tests/authn_request_settings.py#L30)
 
 In the case of successful user authentication, the response contains the following parameters:
 
