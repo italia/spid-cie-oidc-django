@@ -40,6 +40,8 @@ class TrustChainTest(TestCase):
         )
 
     def test_fetch_endpoint(self):
+        self.rp_profile.__str__()
+        self.rp_profile.trust_mark_template_as_json
         url = reverse("oidcfed_fetch")
         c = Client()
         res = c.get(url, data={"sub": self.rp.sub})

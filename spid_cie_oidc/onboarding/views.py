@@ -47,7 +47,7 @@ from spid_cie_oidc.relying_party.settings import RP_PROVIDER_PROFILES
 from spid_cie_oidc.provider.settings import OIDCFED_PROVIDER_PROFILES
 
 
-def onboarding_landing(request):
+def onboarding_landing(request):  # pragma: no cover
     return render(request, "onboarding_landing.html")
 
 

@@ -1,5 +1,4 @@
 import asyncio
-import time
 from pyppeteer import launch
 import os
 import json

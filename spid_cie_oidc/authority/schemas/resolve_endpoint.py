@@ -10,7 +10,7 @@ class ResolveRequest(BaseModel):
     iss: Optional[HttpUrl]
     format :Literal["json"]
 
-    def example():
+    def example():  # pragma: no cover
         return ResolveRequest(
             sub= "http://127.0.0.1:8000/oidc/rp/",
             anchor= "http://127.0.0.1:8000/",

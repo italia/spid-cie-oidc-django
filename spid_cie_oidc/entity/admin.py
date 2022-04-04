@@ -1,4 +1,3 @@
-from copy import deepcopy
 import logging
 
 from django.contrib import admin
@@ -33,7 +32,7 @@ class FederationEntityConfigurationAdmin(admin.ModelAdmin):
     # }
 
     @admin.action(description='update trust marks')
-    def update_trust_marks(modeladmin, request, queryset):
+    def update_trust_marks(modeladmin, request, queryset):  # pragma: no cover
         """
         fetch trust marks from all the authorities
         """
@@ -63,7 +62,7 @@ class FederationEntityConfigurationAdmin(admin.ModelAdmin):
                     logger.warning(_msg)
                     messages.error(_msg)
                     continue
-                
+
                 _url = f"{fetch_api_url}?sub={obj.sub}"
                 try:
                     logger.info(f"Getting entity statements from {_url}")
@@ -82,7 +81,7 @@ class FederationEntityConfigurationAdmin(admin.ModelAdmin):
             for i in obj.trust_marks:
                 positions[i['id']] = count
                 count += 1
-            
+
             if positions:
                 for k,v in trust_marks.items():
                     if positions.get(k, None):
@@ -93,13 +92,12 @@ class FederationEntityConfigurationAdmin(admin.ModelAdmin):
                 obj.trust_marks = [
                     {"id":k, "trust_mark":v} for k,v in trust_marks.items()
                 ]
-            
+
             obj.save()
             messages.success(
-                request, 
+                request,
                 f"Trust mark reloaded succesfully: {', '.join(trust_marks.keys())}"
             )
-
 
     list_display = (
         "sub",
@@ -119,7 +117,7 @@ class FederationEntityConfigurationAdmin(admin.ModelAdmin):
         "type",
     )
     actions = [update_trust_marks]
-    
+
     def pems_as_html(self, obj):
         res = ""
         data = dict()
@@ -139,7 +137,7 @@ class FederationEntityConfigurationAdmin(admin.ModelAdmin):
 class TrustChainAdmin(admin.ModelAdmin):
 
     @admin.action(description='reload trust chain')
-    def update_trust_chain(modeladmin, request, queryset):
+    def update_trust_chain(modeladmin, request, queryset): # pragma: no cover
         for tc in queryset:
             sub = tc.sub
             ta = tc.trust_anchor.sub
@@ -153,7 +151,9 @@ class TrustChainAdmin(admin.ModelAdmin):
                     ),
                     force=True
                 )
-                messages.success(request, f"reload trust chain successfully")
+                messages.success(
+                    request, f"Trust chain successfully reloaded for {sub}"
+                )
             except Exception as e:
                 messages.error(request, f"Failed to update {sub} due to: {e}")
                 continue

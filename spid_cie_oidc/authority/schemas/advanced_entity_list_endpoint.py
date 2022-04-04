@@ -7,7 +7,7 @@ from pydantic import BaseModel, HttpUrl, Json
 class AdvancedEntityListRequest(BaseModel):
     page : Optional[int]
 
-    def example():
+    def example():  # pragma: no cover
         return AdvancedEntityListRequest(
             page= 1,
         )
@@ -23,7 +23,7 @@ class AdvancedEntityListResponse(BaseModel):
     next_page_path: str
     prev_page_path: str
 
-    def example():
+    def example():  # pragma: no cover
         return AdvancedEntityListResponse(
             iss= "https://registry.spid.gov.it/",
             iat= 1620050972,

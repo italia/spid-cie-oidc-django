@@ -23,11 +23,7 @@ def oidc_rp_landing(request):
     providers = deepcopy(spid_providers)
     providers.update(cie_providers)
     subs = list(spid_providers.keys()) + list(cie_providers.keys())
-    # tcs = TrustChain.objects.get(
-    #     sub__in = subs,
-    #     metadata__openid_provider__isnull=False,
-    #     is_active=True
-    # )
+
     tcs = []
     for sub in subs:
         try:

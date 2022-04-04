@@ -68,8 +68,6 @@ class AuthzRequestView(OpBase, View):
                     payload[i] = [payload[i]]
         return payload
 
-
-
     def validate_authz(self, payload: dict):
 
         must_list = ("scope", "acr_values")
@@ -93,7 +91,7 @@ class AuthzRequestView(OpBase, View):
             "Authen request object validation failed "
         )
 
-    def get_url_consent(self, user): 
+    def get_url_consent(self, user):
         url = reverse("oidc_provider_consent")
         if (
                 user.is_staff and
@@ -104,7 +102,6 @@ class AuthzRequestView(OpBase, View):
             except Exception as e:  # pragma: no cover
                 logger.error(f"testigng page url reverse failed: {e}")
         return url
-
 
     def get_login_form(self):
         return AuthLoginForm
@@ -124,7 +121,7 @@ class AuthzRequestView(OpBase, View):
         tc = None
         try:
             tc = self.validate_authz_request_object(req)
-        except InvalidEntityConfiguration as e: 
+        except InvalidEntityConfiguration as e:
             # FIXME: to do test
             logger.error(f"Invalid Entity Configuration: {e}")
             return self.redirect_response_data(
@@ -172,13 +169,13 @@ class AuthzRequestView(OpBase, View):
         except InvalidRefreshRequestException as e:
             logger.warning(f"Invalid session: {e}")
             return HttpResponseForbidden()
-        
+
         acr_value = AcrValues(self.payload["acr_values"][0])
         prompt = self.payload["prompt"]
         if request.user:
             if (
-                    request.user.is_authenticated and 
-                    acr_value == AcrValues.l1 and 
+                    request.user.is_authenticated and
+                    acr_value == AcrValues.l1 and
                     "login" not in prompt
             ):
                 try:
@@ -194,7 +191,7 @@ class AuthzRequestView(OpBase, View):
                         f"Failed SSO check session for {request.user}"
                     )
                     logout(request)
-                    return self.get(request)      
+                    return self.get(request)
 
         # stores the authz request in a hidden field in the form
         form = self.get_login_form()()
@@ -290,11 +287,11 @@ class AuthzRequestView(OpBase, View):
             client_id=self.payload["client_id"],
             auth_code=auth_code,
             acr=(
-                self.payload["acr_values"][len_acr-1]
+                self.payload["acr_values"][len_acr - 1]
                 if len_acr > 0
                 else default_acr
             )
         )
-        session.set_sid(request)        
+        session.set_sid(request)
         url = self.get_url_consent(user)
         return HttpResponseRedirect(url)

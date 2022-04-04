@@ -5,6 +5,7 @@ from pydantic import BaseModel, HttpUrl, validator
 
 from .jwks import JwksCie, JwksSpid
 
+
 class ScopeSupported(str, Enum):
     openid = "openid"
     offline_access = "offline_access"
