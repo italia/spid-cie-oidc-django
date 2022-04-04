@@ -72,7 +72,7 @@ Read the [setup documentation](docs/SETUP.md) to get started.
 ### Docker image
 
 ````
-docker pull ghcr.io/italia/spid-cie-oidc-django:v0.6.1
+docker pull ghcr.io/italia/spid-cie-oidc-django:v0.6.2
 ````
 
 ### Docker compose
