@@ -14,7 +14,7 @@ class TrustMarkRequest(BaseModel):
         if (not values.get("trust_mark") and (not values.get("sub") or not id_value)):
             raise ValueError("sub an id must be present if not trust_mark")
 
-    def example():
+    def example():  # pragma: no cover
         return TrustMarkRequest(
             id= "https://www.spid.gov.it/openid-federation/agreement/op-public/",
             sub= "http://127.0.0.1:8000/oidc/op",

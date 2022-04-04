@@ -175,7 +175,7 @@ class AuthenticationRequestSpid(AuthenticationRequest):
     def get_claims() -> dict:
         return CLAIMS_SPID
 
-    def example():
+    def example():  # pragma: no cover
         return AuthenticationRequestSpid(  # nosec B106
             client_id= "https://rp.cie.it/callback1/",
             response_type= "code",
@@ -214,7 +214,7 @@ class AuthenticationRequestDoc(BaseModel):
     code_challenge_method: Literal["S256"]
     request: constr(regex=r"^[a-zA-Z\_\-0-9]+\.[a-zA-Z\_\-0-9]+\.[a-zA-Z\_\-0-9]+") # noqa: F722
 
-    def example():
+    def example():  # pragma: no cover
         return AuthenticationRequestDoc(  # nosec B106
             client_id= "https://rp.cie.it/callback1/",
             response_type= "code",

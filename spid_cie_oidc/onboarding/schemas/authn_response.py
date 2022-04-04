@@ -8,7 +8,7 @@ class AuthenticationResponse(BaseModel):
     code: str
     state: constr(min_length=32)
 
-    def example():
+    def example():  # pragma: no cover
         return AuthenticationResponse(  # nosec B106
             code= "usDwMnEzJPpG5oaV8x3j&",
             state= "fyZiOL9Lf2CeKuNT2JzxiLRDink0uPcd",
@@ -18,7 +18,7 @@ class AuthenticationResponse(BaseModel):
 class AuthenticationResponseCie(AuthenticationResponse):
     iss: HttpUrl
 
-    def example():
+    def example():  # pragma: no cover
         return AuthenticationResponse(  # nosec B106
             code= "usDwMnEzJPpG5oaV8x3j&",
             state= "fyZiOL9Lf2CeKuNT2JzxiLRDink0uPcd",

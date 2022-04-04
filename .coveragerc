@@ -1,6 +1,6 @@
 [run]
 branch = true
-omit = */tests/*, */migrations/*, */urls.py, */settings/*, */wsgi.py, manage.py, fabfile.py, /usr/local/*, ./setup.py, */manage.py, */examples/*
+omit = */tests/*, */migrations/*, */urls.py, */settings/*, */wsgi.py, manage.py, fabfile.py, /usr/local/*, ./setup.py, */manage.py, */examples/*, */relying_party_test/*, spid_cie_oidc/entity/policy.py
 source = .
 
 [report]
