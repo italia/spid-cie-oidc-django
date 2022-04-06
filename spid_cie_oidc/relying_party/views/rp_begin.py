@@ -111,8 +111,10 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             return render(request, self.error_template, context, status=404)
         if provider_metadata.get("jwks", None):
             jwks_dict = provider_metadata["jwks"]
-        else:
+        elif provider_metadata.get("jwks_uri", None):
             jwks_dict = self.get_jwks_from_jwks_uri(provider_metadata["jwks_uri"])
+        else:
+            jwks_dict = {}
         if not jwks_dict:
             _msg = f"Failed to get jwks from {tc.sub}"
             logger.error(_msg)

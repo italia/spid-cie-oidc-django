@@ -39,8 +39,6 @@ def is_leaf(statement_metadata):
 class FederationEntityConfiguration(TimeStampedModel):
     """
     Federation Authority configuration.
-
-    # TODO: validate metadata upon type field
     """
 
     def _create_jwks():

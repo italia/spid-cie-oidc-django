@@ -1,8 +1,7 @@
 from cryptojwt.jwk.jwk import key_from_jwk_dict
 from cryptojwt.jwk.rsa import new_rsa_key
-from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
-from cryptojwt.jwk.rsa import RSAKey, import_public_key_from_pem_data
+from cryptojwt.jwk.rsa import RSAKey
 
 
 import cryptography
@@ -61,16 +60,13 @@ def serialize_rsa_key(rsa_key, kind="public", hash_func="SHA-256"):
         data = {"pub_key": rsa_key}
     elif isinstance(rsa_key, cryptography.hazmat.backends.openssl.rsa._RSAPrivateKey):
         data = {"priv_key": rsa_key}
-    elif isinstance(rsa_key, (str, bytes)):
+    elif isinstance(rsa_key, (str, bytes)): # pragma: no cover
         if kind == "private":
             data = {
-                "priv_key": serialization.load_pem_private_key(
-                    rsa_key, password=None, backend=default_backend()
-                )
+                "priv_key": private_jwk_from_pem(rsa_key)
             }
         else:
-            _rsa_key = rsa_key.decode() if isinstance(rsa_key, bytes) else rsa_key
-            data = {"pub_key": import_public_key_from_pem_data(_rsa_key)}
+            data = {"pub_key": public_jwk_from_pem(rsa_key)}
 
     jwk_obj = RSAKey(**data)
     thumbprint = jwk_obj.thumbprint(hash_function=hash_func)

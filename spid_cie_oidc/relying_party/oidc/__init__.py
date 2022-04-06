@@ -13,9 +13,9 @@ class OidcUserInfo(object):
 
     def get_jwk(self, kid, jwks):
         for jwk in jwks:
-            if jwk["kid"] == kid:
+            if jwk.get("kid", None) and jwk["kid"] == kid:
                 return jwk
-        raise UnknownKid()
+        raise UnknownKid() # pragma: no cover
 
     def get_userinfo(
         self, state: str, access_token: str, provider_conf: dict, verify: bool

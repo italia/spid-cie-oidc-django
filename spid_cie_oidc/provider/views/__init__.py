@@ -40,18 +40,18 @@ class OpBase:
                 return jwk
 
     def validate_authz_request_object(self, req) -> TrustChain:
+        state = getattr(self, 'payload', {}).get("state", "")
         try:
             self.payload = unpad_jwt_payload(req)
             header = unpad_jwt_head(req)
         except Exception as e:
-            # FIXME: if not payload it's no possible to do redirect
-            state = self.payload.get("state", "")
-            logger.error(
+            _msg = (
                 f"Error in Authz request object {dict(req.GET)}: {e}."
                 f" error=invalid_request"
                 f"state={state}"
             )
-            raise Exception()
+            logger.error(_msg)
+            raise Exception(_msg)
 
         self.is_a_replay_authz()
         rp_trust_chain = TrustChain.objects.filter(
@@ -60,13 +60,13 @@ class OpBase:
             trust_anchor__sub=settings.OIDCFED_DEFAULT_TRUST_ANCHOR
         ).first()
         if rp_trust_chain and not rp_trust_chain.is_active:
-            state = self.payload.get("state", "")
-            logger.warning(
+            _msg = (
                 f"Disabled client {rp_trust_chain.sub} requests an authorization. "
                 "error = access_denied, "
                 f"state={state}"
             )
-            raise Exception()
+            logger.warning(_msg)
+            raise Exception(_msg)
 
         elif not rp_trust_chain or rp_trust_chain.is_expired:
             rp_trust_chain = get_or_create_trust_chain(
@@ -78,39 +78,36 @@ class OpBase:
                 ),
             )
             if not rp_trust_chain.is_valid:
-                # FIXME: to do test
-                state = self.payload.get("state", "")
-                logger.warning(
+                _msg = (
                     f"Failed trust chain validation for {self.payload['iss']}. "
                     "error=unauthorized_client, "
                     f"state={state}"
                 )
-                raise Exception()
+                logger.warning(_msg)
+                raise Exception(_msg)
 
         jwks = rp_trust_chain.metadata['openid_relying_party']["jwks"]["keys"]
         jwk = self.find_jwk(header, jwks)
         if not jwk:
-            state = self.payload.get("state", "")
-            logger.error(
+            _msg = (
                 f"Invalid jwk for {self.payload['iss']}. "
                 f"{header['kid']} not found in {jwks}. "
                 "error=unauthorized_client, "
                 f"state={state}"
             )
-            raise Exception()
+            logger.error(_msg)
+            raise Exception(_msg)
 
         try:
             verify_jws(req, jwk)
         except Exception as e:
-            # FIXME: to do test
-            state = self.payload.get("state", "")
-            logger.error(
+            _msg = (
                 "Authz request object signature validation failed "
                 f"for {self.payload['iss']}: {e}. "
-                "error=access_denied, "
-                f"state={state}"
+                f"error=access_denied, state={state}"
             )
-            raise Exception()
+            logger.error(_msg)
+            raise Exception(_msg)
 
         return rp_trust_chain
 
