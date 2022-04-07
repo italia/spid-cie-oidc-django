@@ -20,6 +20,6 @@ class AdminTest(TestCase):
 
     def test_make_published(self):
         queryset = [self.onb_regist]
-        OnBoardingRegistrationAdmin.make_published(None, request = {}, queryset = queryset)
+        OnBoardingRegistrationAdmin.enable_as_descendant(None, request = {}, queryset = queryset)
         self.assertTrue(len(FederationDescendantContact.objects.all()) == 1)
         self.assertTrue(len(FederationDescendant.objects.all()) == 1)
