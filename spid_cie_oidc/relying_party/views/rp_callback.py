@@ -188,7 +188,10 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
         op_id_jwk = self.get_jwk_from_jwt(id_token, jwks)
 
         if not op_ac_jwk or not op_id_jwk:
-            # TODO: verify error message and status
+            logger.warning(
+                "Token signature validation error, "
+                f"the tokens were signed with a different kid from: {jwks}."
+            )
             context = {
                 "error": "invalid_token",
                 "error_description": _("Authentication token seems not to be valid."),
@@ -197,8 +200,10 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
 
         try:
             verify_jws(access_token, op_ac_jwk)
-        except Exception:
-            # TODO: verify error message
+        except Exception as e:
+            logger.warning(
+                f"Access Token signature validation error: {e} "
+            )
             context = {
                 "error": "token verification failed",
                 "error_description": _("Authentication token validation error."),
@@ -207,8 +212,10 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
 
         try:
             verify_jws(id_token, op_id_jwk)
-        except Exception:
-            # TODO: verify error message
+        except Exception as e:
+            logger.warning(
+                f"ID Token signature validation error: {e} "
+            )
             context = {
                 "error": "token verification failed",
                 "error_description": _("ID token validation error."),
