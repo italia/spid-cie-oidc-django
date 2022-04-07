@@ -236,6 +236,10 @@ class FederationEntityConfiguration(TimeStampedModel):
             **kwargs,
         )
 
+    def save(self, *args, **kwargs):
+        self.entity_type = self.type[0]
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return "{} [{}]".format(self.sub, "active" if self.is_active else "--")
 
