@@ -15,10 +15,10 @@ __setup__
 
 __configure the federation entity__
 
-Click on _Federation Entity Configuration_ and create your entity, with this informations:
+Click on _Federation Entity Configuration_ and create your entity, with the following information:
 
 - sub
-- jwks (if omitted they will auto provisioned)
+- jwks (if omitted it will auto provisioned)
 - metadata, containing the endpoints that matches to your urls webpaths
 - is_active, must set to True
 
@@ -96,7 +96,7 @@ see [unit tests](https://github.com/italia/spid-cie-oidc-django/blob/main/spid_c
 ### Register a Provider in the Federation
 
 In you project configure the settingslocal.py file and import it in your settings.py file, for all the
- provider configuration parameters see [here](https://github.com/italia/spid-cie-oidc-django/blob/newbranch/docs/technical_specifications/PROVIDER.md).
+ provider configuration parameters see [here](technical_specifications/PROVIDER.md).
  
 
 For CIE or Spid provider configure `OIDCFED_PROVIDER_PROFILE` parameter in settingslocal.py as "cie" or "spid"
@@ -122,8 +122,8 @@ Access to the Federation Authority admin backend and configure your OP as a desc
 In the admin page of your Trust Anchor (http://127.0.0.1:8000/admin) create a descendant entity with the following paramenters:
 
 - OP name
-- sub (eg. 'http://127.0.0.1:8002/oidc/rp/')
-- Jwks, public jwks. If you don't have one please create a pair of private/public using the OnBoarding tool `Create a JWK`
+- sub (eg. 'http://127.0.0.1:8002/oidc/op/')
+- Jwks, public jwks available in the OP's entity configuration
 - is_active, must set to True
 
 ![OP as descendant](images/op_descendant.png)

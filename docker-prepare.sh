@@ -5,9 +5,9 @@ export EXPFOLDER="examples-docker"
 cp -R examples $EXPFOLDER
 
 # remove dev db
-rm $EXPFOLDER/relying_party/db.sqlite3 
-rm $EXPFOLDER/provider/db.sqlite3 
-rm $EXPFOLDER/federation_authority/db.sqlite3 
+rm -f $EXPFOLDER/relying_party/db.sqlite3 
+rm -f $EXPFOLDER/provider/db.sqlite3 
+rm -f $EXPFOLDER/federation_authority/db.sqlite3 
 
 # Configure the rewrite rules:
 export SUB_AT='s\http://127.0.0.1:8000/\http://trust-anchor.org:8000/\g'
