@@ -32,6 +32,8 @@ class OnBoardingRegistrationAdmin(admin.ModelAdmin):
                     contact = contact,
                     type = "email"
                 )
+                entity_onboarded.status = "onboarded"
+                entity_onboarded.save()
             except IntegrityError: # pragma: no cover
                 messages.error(request, f"Already exists a descendant with subject: {sub}")
 

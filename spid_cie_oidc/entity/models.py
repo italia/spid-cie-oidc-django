@@ -236,6 +236,26 @@ class FederationEntityConfiguration(TimeStampedModel):
             **kwargs,
         )
 
+    def save(self, *args, **kwargs):
+        self.entity_type = self.type[0]
+        super().save(*args, **kwargs)
+
+        if self.entity_type in ENTITY_TYPE_LEAFS:
+            valid_kids = set()
+            for jwk in self.jwks:
+                valid_kids.add(jwk.get("kid", None))
+            
+            for entity,metadata in self.metadata.items():
+                for oidc_jwk in metadata['jwks']['keys']:
+                    if oidc_jwk['kid'] not in valid_kids:
+                        logger.warning(
+                            f"Found a public jwk in {entity} that haven't a valid "
+                            f"jwk {oidc_jwk['kid']} in {self.jwks}."
+                        )
+        
+
+
+
     def __str__(self):
         return "{} [{}]".format(self.sub, "active" if self.is_active else "--")
 

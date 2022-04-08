@@ -147,7 +147,7 @@ class AuthzRequestView(OpBase, View):
             )
         except Exception as e:
             logger.error(
-                "Error during trust build for "
+                "Error during authz request validation for "
                 f"{request.GET.get('client_id', 'unknown')}: {e}"
             )
             return self.redirect_response_data(
