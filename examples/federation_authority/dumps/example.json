@@ -24,7 +24,7 @@
       "email": "that@ema.il",
       "fiscal_number": "8sada89s7da89sd7a98sd78",
       "sub": "5f32567af7e0e77ea09de8521ae5f6a0fd6984176e99a6bc694a8a0198231dc3",
-      "username": "http://127.0.0.1:8000/oidc/op/__5f32567af7e0e77ea09de8521ae5f6a0fd6984176e99a6bc694a8a0198231dc3",
+      "username": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/__5f32567af7e0e77ea09de8521ae5f6a0fd6984176e99a6bc694a8a0198231dc3",
       "first_name": "peppe",
       "last_name": "maradona"
     },
@@ -68,7 +68,7 @@
     "password": "",
     "last_login": "2022-03-25T15:21:54.634Z",
     "is_superuser": false,
-    "username": "http://127.0.0.1:8000/oidc/op/__da750f319fa08358b1342d9de6156f590c8f97c6b5d33a9dfd71657e121ecc58",
+    "username": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/__da750f319fa08358b1342d9de6156f590c8f97c6b5d33a9dfd71657e121ecc58",
     "is_staff": false,
     "date_joined": "2022-03-11T22:23:56.005Z",
     "first_name": "da750f319fa08358b1342d9de6156f590c8f97c6b5d33a9dfd71657e121ecc58",
@@ -78,7 +78,7 @@
     "origin": null,
     "attributes": {
       "sub": "da750f319fa08358b1342d9de6156f590c8f97c6b5d33a9dfd71657e121ecc58",
-      "username": "http://127.0.0.1:8000/oidc/op/__da750f319fa08358b1342d9de6156f590c8f97c6b5d33a9dfd71657e121ecc58",
+      "username": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/__da750f319fa08358b1342d9de6156f590c8f97c6b5d33a9dfd71657e121ecc58",
       "first_name": "antonio",
       "last_name": "rossi",
       "email": "antonio@email.it",
@@ -95,7 +95,7 @@
     "created": "2022-02-05T22:04:49.310Z",
     "modified": "2022-03-17T22:39:55.749Z",
     "uuid": "afd47731-7484-427f-a1db-4e470835fa86",
-    "sub": "http://127.0.0.1:8000/",
+    "sub": "http://trust-anchor.127.0.0.1.nip.io/",
     "default_exp": 33,
     "default_signature_alg": "RS256",
     "authority_hints": [],
@@ -130,12 +130,12 @@
         "contacts": [
           "ops@localhost"
         ],
-        "federation_fetch_endpoint": "http://127.0.0.1:8000/fetch/",
-        "federation_resolve_endpoint": "http://127.0.0.1:8000/resolve/",
-        "federation_status_endpoint": "http://127.0.0.1:8000/trust_mark_status/",
-        "homepage_uri": "http://127.0.0.1:8000",
+        "federation_fetch_endpoint": "http://trust-anchor.127.0.0.1.nip.io/fetch/",
+        "federation_resolve_endpoint": "http://trust-anchor.127.0.0.1.nip.io/resolve/",
+        "federation_status_endpoint": "http://trust-anchor.127.0.0.1.nip.io/trust_mark_status/",
+        "homepage_uri": "http://trust-anchor.127.0.0.1.nip.io",
         "name": "example TA",
-        "federation_list_endpoint": "http://127.0.0.1:8000/list/"
+        "federation_list_endpoint": "http://trust-anchor.127.0.0.1.nip.io/list/"
       }
     },
     "constraints": {
@@ -151,11 +151,11 @@
     "created": "2022-02-14T23:44:47.487Z",
     "modified": "2022-03-11T22:40:23.007Z",
     "uuid": "780373bb-7b4e-4511-8fef-ca920d66addb",
-    "sub": "http://127.0.0.1:8000/oidc/rp/",
+    "sub": "http://trust-anchor.127.0.0.1.nip.io/oidc/rp/",
     "default_exp": 2880,
     "default_signature_alg": "RS256",
     "authority_hints": [
-      "http://127.0.0.1:8000/"
+      "http://trust-anchor.127.0.0.1.nip.io/"
     ],
     "jwks": [
       {
@@ -179,7 +179,7 @@
     "metadata": {
       "openid_relying_party": {
         "application_type": "web",
-        "client_id": "http://127.0.0.1:8000/oidc/rp/",
+        "client_id": "http://trust-anchor.127.0.0.1.nip.io/oidc/rp/",
         "client_registration_types": [
           "automatic"
         ],
@@ -203,7 +203,7 @@
           "authorization_code"
         ],
         "redirect_uris": [
-          "http://127.0.0.1:8000/oidc/rp/callback"
+          "http://trust-anchor.127.0.0.1.nip.io/oidc/rp/callback"
         ],
         "response_types": [
           "code"
@@ -222,11 +222,11 @@
     "created": "2022-02-25T16:27:20.027Z",
     "modified": "2022-03-17T22:24:02.466Z",
     "uuid": "86834b2b-73be-480a-932d-000c1c7af69b",
-    "sub": "http://127.0.0.1:8000/oidc/op/",
+    "sub": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/",
     "default_exp": 2880,
     "default_signature_alg": "RS256",
     "authority_hints": [
-      "http://127.0.0.1:8000/"
+      "http://trust-anchor.127.0.0.1.nip.io/"
     ],
     "jwks": [
       {
@@ -244,8 +244,8 @@
     "entity_type": "openid_provider",
     "metadata": {
       "openid_provider": {
-        "authorization_endpoint": "http://127.0.0.1:8000/oidc/op/authorization",
-        "revocation_endpoint": "http://127.0.0.1:8000/oidc/op/revocation/",
+        "authorization_endpoint": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/authorization",
+        "revocation_endpoint": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/revocation/",
         "id_token_encryption_alg_values_supported": [
           "RSA-OAEP"
         ],
@@ -254,9 +254,9 @@
         ],
         "op_name": "Agenzia per l’Italia Digitale",
         "op_uri": "https://www.agid.gov.it",
-        "token_endpoint": "http://127.0.0.1:8000/oidc/op/token/",
-        "userinfo_endpoint": "http://127.0.0.1:8000/oidc/op/userinfo/",
-        "introspection_endpoint": "http://127.0.0.1:8000/oidc/op/introspection/",
+        "token_endpoint": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/token/",
+        "userinfo_endpoint": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/userinfo/",
+        "introspection_endpoint": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/introspection/",
         "claims_parameter_supported": true,
         "contacts": [
           "ops@https://idp.it"
@@ -304,7 +304,7 @@
           "RS256",
           "ES256"
         ],
-        "issuer": "http://127.0.0.1:8000/oidc/op/",
+        "issuer": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/",
         "jwks": {
           "keys": [
             {
@@ -320,9 +320,9 @@
           "openid",
           "offline_access"
         ],
-        "logo_uri": "http://127.0.0.1:8000/static/svg/spid-logo-c-lb.svg",
+        "logo_uri": "http://trust-anchor.127.0.0.1.nip.io/static/svg/spid-logo-c-lb.svg",
         "organization_name": "SPID OIDC identity provider",
-        "op_policy_uri": "http://127.0.0.1:8000/oidc/op/en/website/legal-information/",
+        "op_policy_uri": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/en/website/legal-information/",
         "request_parameter_supported": true,
         "request_uri_parameter_supported": true,
         "require_request_uri_registration": true,
@@ -404,15 +404,15 @@
   "fields": {
     "created": "2022-03-31T19:38:18.847Z",
     "modified": "2022-03-31T19:38:18.847Z",
-    "iss": "http://127.0.0.1:8000/",
-    "sub": "http://127.0.0.1:8000/",
+    "iss": "http://trust-anchor.127.0.0.1.nip.io/",
+    "sub": "http://trust-anchor.127.0.0.1.nip.io/",
     "exp": "2022-03-31T20:11:18Z",
     "iat": "2022-03-31T19:38:18Z",
     "statement": {
       "exp": 1648757478,
       "iat": 1648755498,
-      "iss": "http://127.0.0.1:8000/",
-      "sub": "http://127.0.0.1:8000/",
+      "iss": "http://trust-anchor.127.0.0.1.nip.io/",
+      "sub": "http://trust-anchor.127.0.0.1.nip.io/",
       "jwks": {
         "keys": [
           {
@@ -428,12 +428,12 @@
           "contacts": [
             "ops@localhost"
           ],
-          "federation_fetch_endpoint": "http://127.0.0.1:8000/fetch/",
-          "federation_resolve_endpoint": "http://127.0.0.1:8000/resolve/",
-          "federation_status_endpoint": "http://127.0.0.1:8000/trust_mark_status/",
-          "homepage_uri": "http://127.0.0.1:8000",
+          "federation_fetch_endpoint": "http://trust-anchor.127.0.0.1.nip.io/fetch/",
+          "federation_resolve_endpoint": "http://trust-anchor.127.0.0.1.nip.io/resolve/",
+          "federation_status_endpoint": "http://trust-anchor.127.0.0.1.nip.io/trust_mark_status/",
+          "homepage_uri": "http://trust-anchor.127.0.0.1.nip.io",
           "name": "example TA",
-          "federation_list_endpoint": "http://127.0.0.1:8000/list/"
+          "federation_list_endpoint": "http://trust-anchor.127.0.0.1.nip.io/list/"
         }
       },
       "trust_marks_issuers": {
@@ -462,15 +462,15 @@
   "fields": {
     "created": "2022-03-31T19:42:31.832Z",
     "modified": "2022-03-31T19:42:31.832Z",
-    "iss": "http://127.0.0.1:8001/",
-    "sub": "http://127.0.0.1:8001/",
+    "iss": "http://relying-party.127.0.0.1.nip.io/",
+    "sub": "http://relying-party.127.0.0.1.nip.io/",
     "exp": "2022-03-31T20:15:31Z",
     "iat": "2022-03-31T19:42:31Z",
     "statement": {
       "exp": 1648757731,
       "iat": 1648755751,
-      "iss": "http://127.0.0.1:8001/",
-      "sub": "http://127.0.0.1:8001/",
+      "iss": "http://relying-party.127.0.0.1.nip.io/",
+      "sub": "http://relying-party.127.0.0.1.nip.io/",
       "jwks": {
         "keys": [
           {
@@ -484,7 +484,7 @@
       "metadata": {
         "openid_relying_party": {
           "application_type": "web",
-          "client_id": "http://127.0.0.1:8001/",
+          "client_id": "http://relying-party.127.0.0.1.nip.io/",
           "client_registration_types": [
             "automatic"
           ],
@@ -508,7 +508,7 @@
             "authorization_code"
           ],
           "redirect_uris": [
-            "http://127.0.0.1:8001/oidc/rp/callback"
+            "http://relying-party.127.0.0.1.nip.io/oidc/rp/callback"
           ],
           "response_types": [
             "code"
@@ -533,15 +533,15 @@
   "fields": {
     "created": "2022-03-31T19:42:31.848Z",
     "modified": "2022-03-31T19:42:31.848Z",
-    "iss": "http://127.0.0.1:8000/",
-    "sub": "http://127.0.0.1:8001/",
+    "iss": "http://trust-anchor.127.0.0.1.nip.io/",
+    "sub": "http://relying-party.127.0.0.1.nip.io/",
     "exp": "2022-04-02T19:42:31Z",
     "iat": "2022-03-31T19:42:31Z",
     "statement": {
       "exp": 1648928551,
       "iat": 1648755751,
-      "iss": "http://127.0.0.1:8000/",
-      "sub": "http://127.0.0.1:8001/",
+      "iss": "http://trust-anchor.127.0.0.1.nip.io/",
+      "sub": "http://relying-party.127.0.0.1.nip.io/",
       "jwks": {
         "keys": [
           {
@@ -592,7 +592,7 @@
   "fields": {
     "created": "2022-03-31T19:42:31.861Z",
     "modified": "2022-03-31T19:42:31.861Z",
-    "sub": "http://127.0.0.1:8001/",
+    "sub": "http://relying-party.127.0.0.1.nip.io/",
     "trust_anchor": 117,
     "exp": "2022-03-31T20:11:18Z",
     "iat": "2022-03-31T19:42:31.861Z",
@@ -600,8 +600,8 @@
       {
         "exp": 1648757731,
         "iat": 1648755751,
-        "iss": "http://127.0.0.1:8001/",
-        "sub": "http://127.0.0.1:8001/",
+        "iss": "http://relying-party.127.0.0.1.nip.io/",
+        "sub": "http://relying-party.127.0.0.1.nip.io/",
         "jwks": {
           "keys": [
             {
@@ -615,7 +615,7 @@
         "metadata": {
           "openid_relying_party": {
             "application_type": "web",
-            "client_id": "http://127.0.0.1:8001/",
+            "client_id": "http://relying-party.127.0.0.1.nip.io/",
             "client_registration_types": [
               "automatic"
             ],
@@ -639,7 +639,7 @@
               "authorization_code"
             ],
             "redirect_uris": [
-              "http://127.0.0.1:8001/oidc/rp/callback"
+              "http://relying-party.127.0.0.1.nip.io/oidc/rp/callback"
             ],
             "response_types": [
               "code"
@@ -658,8 +658,8 @@
       {
         "exp": 1648757478,
         "iat": 1648755498,
-        "iss": "http://127.0.0.1:8000/",
-        "sub": "http://127.0.0.1:8000/",
+        "iss": "http://trust-anchor.127.0.0.1.nip.io/",
+        "sub": "http://trust-anchor.127.0.0.1.nip.io/",
         "jwks": {
           "keys": [
             {
@@ -675,12 +675,12 @@
             "contacts": [
               "ops@localhost"
             ],
-            "federation_fetch_endpoint": "http://127.0.0.1:8000/fetch/",
-            "federation_resolve_endpoint": "http://127.0.0.1:8000/resolve/",
-            "federation_status_endpoint": "http://127.0.0.1:8000/trust_mark_status/",
-            "homepage_uri": "http://127.0.0.1:8000",
+            "federation_fetch_endpoint": "http://trust-anchor.127.0.0.1.nip.io/fetch/",
+            "federation_resolve_endpoint": "http://trust-anchor.127.0.0.1.nip.io/resolve/",
+            "federation_status_endpoint": "http://trust-anchor.127.0.0.1.nip.io/trust_mark_status/",
+            "homepage_uri": "http://trust-anchor.127.0.0.1.nip.io",
             "name": "example TA",
-            "federation_list_endpoint": "http://127.0.0.1:8000/list/"
+            "federation_list_endpoint": "http://trust-anchor.127.0.0.1.nip.io/list/"
           }
         },
         "trust_marks_issuers": {
@@ -704,8 +704,8 @@
         {
           "exp": 1648928551,
           "iat": 1648755751,
-          "iss": "http://127.0.0.1:8000/",
-          "sub": "http://127.0.0.1:8001/",
+          "iss": "http://trust-anchor.127.0.0.1.nip.io/",
+          "sub": "http://relying-party.127.0.0.1.nip.io/",
           "jwks": {
             "keys": [
               {
@@ -752,7 +752,7 @@
     "metadata": {
       "openid_relying_party": {
         "application_type": "web",
-        "client_id": "http://127.0.0.1:8001/",
+        "client_id": "http://relying-party.127.0.0.1.nip.io/",
         "client_registration_types": [
           "automatic"
         ],
@@ -776,7 +776,7 @@
           "authorization_code"
         ],
         "redirect_uris": [
-          "http://127.0.0.1:8001/oidc/rp/callback"
+          "http://relying-party.127.0.0.1.nip.io/oidc/rp/callback"
         ],
         "response_types": [
           "code"
@@ -786,8 +786,8 @@
     },
     "trust_marks": [],
     "parties_involved": [
-      "http://127.0.0.1:8001/",
-      "http://127.0.0.1:8000/"
+      "http://relying-party.127.0.0.1.nip.io/",
+      "http://trust-anchor.127.0.0.1.nip.io/"
     ],
     "status": "valid",
     "log": "",
@@ -860,7 +860,7 @@
     "modified": "2022-03-31T19:36:49.894Z",
     "uid": "autouid-b0caa9d7-da0e-442f-a613-8623acf9d0c1",
     "name": "Test Relying Party",
-    "sub": "http://127.0.0.1:8000/oidc/rp/",
+    "sub": "http://trust-anchor.127.0.0.1.nip.io/oidc/rp/",
     "type": "openid_relying_party",
     "jwks": [
       {
@@ -900,8 +900,8 @@
     "created": "2022-02-25T16:33:11.970Z",
     "modified": "2022-03-31T19:36:39.762Z",
     "uid": "autouid-ecee6ac5-0525-4c3e-839e-9da92e6ce5bd",
-    "name": "http://127.0.0.1:8000/oidc/op/",
-    "sub": "http://127.0.0.1:8000/oidc/op/",
+    "name": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/",
+    "sub": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/",
     "type": "openid_provider",
     "jwks": [
       {
@@ -928,7 +928,7 @@
     "modified": "2022-03-31T19:42:18.432Z",
     "uid": "autouid-0b4008cd-b476-452a-b292-6aa3b570b0b3",
     "name": "cie provider",
-    "sub": "http://127.0.0.1:8002/oidc/op/",
+    "sub": "http://cie-provider.127.0.0.1.nip.io/oidc/op/",
     "type": "openid_provider",
     "jwks": [
       {
@@ -955,7 +955,7 @@
     "modified": "2022-03-31T19:41:06.318Z",
     "uid": "autouid-3a6f6af6-9041-4f68-8632-775740fe68f1",
     "name": "tel dei tali org",
-    "sub": "http://127.0.0.1:8001/",
+    "sub": "http://relying-party.127.0.0.1.nip.io/",
     "type": "openid_relying_party",
     "jwks": [
       {
