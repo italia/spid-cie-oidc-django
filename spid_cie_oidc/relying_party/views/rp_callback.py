@@ -145,6 +145,7 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
                 "error_description": _("Relay party not found"),
             }
             return render(request, self.error_template, context, status=400)
+
         authz_data = json.loads(authz.data)
         token_response = self.access_token_request(
             redirect_uri=authz_data["redirect_uri"],

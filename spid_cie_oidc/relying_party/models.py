@@ -18,9 +18,7 @@ class OidcAuthentication(models.Model):
     data = models.TextField(blank=True, null=True)
     successful = models.BooleanField(default=False)
 
-    provider = models.CharField(max_length=255, blank=True, null=True)
     provider_id = models.CharField(max_length=255, blank=True, null=True)
-    provider_jwks = models.JSONField(blank=True, null=True, default=dict)
     provider_configuration = models.JSONField(
         blank=True, null=True, default=dict
     )
