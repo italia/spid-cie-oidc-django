@@ -165,10 +165,8 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             state=authz_data["state"],
             endpoint=authz_endpoint,
             # TODO: better have here an organization name
-            provider=tc.sub,
             provider_id=tc.sub,
             data=json.dumps(authz_data),
-            provider_jwks=json.dumps(jwks_dict),
             provider_configuration=provider_metadata,
         )
 

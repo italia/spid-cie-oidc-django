@@ -38,7 +38,6 @@ class RpCallBack(TestCase):
         self.rp_config = deepcopy(rp_conf)
         authz_entry = dict(
             client_id=self.rp_config["metadata"]["openid_relying_party"]["client_id"],
-            provider=op_conf["sub"],
             provider_id=op_conf["sub"],
             data=json.dumps(data),
             state=STATE,
