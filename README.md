@@ -129,7 +129,7 @@ Examples Users and Passwords:
 
 ## OpenAPI Schema 3
 
-Each applications has an exportable OAS3 available at `/rest/schema.json` with a browsable reDoc UI at `/rest/api/docs` 
+Each application has an exportable OAS3 available at `/rest/schema.json` with a browsable reDoc UI at `/rest/api/docs`.
 
 ![RP Auth demo](docs/images/redoc.png)
 _The reDoc OAS3 browsable page._
