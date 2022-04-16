@@ -46,7 +46,7 @@
     "password": "",
     "last_login": "2022-03-31T19:42:38.609Z",
     "is_superuser": false,
-    "username": "http://127.0.0.1:8000/oidc/op/__7cbc6452f3655e9c2c0e3c51dbf11758668cbb88852360bb1b135ded34e0f834",
+    "username": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/__7cbc6452f3655e9c2c0e3c51dbf11758668cbb88852360bb1b135ded34e0f834",
     "is_staff": false,
     "date_joined": "2022-03-31T13:44:31.967Z",
     "first_name": "7cbc6452f3655e9c2c0e3c51dbf11758668cbb88852360bb1b135ded34e0f834",
@@ -56,7 +56,7 @@
     "origin": null,
     "attributes": {
       "sub": "7cbc6452f3655e9c2c0e3c51dbf11758668cbb88852360bb1b135ded34e0f834",
-      "username": "http://127.0.0.1:8000/oidc/op/__7cbc6452f3655e9c2c0e3c51dbf11758668cbb88852360bb1b135ded34e0f834",
+      "username": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/__7cbc6452f3655e9c2c0e3c51dbf11758668cbb88852360bb1b135ded34e0f834",
       "first_name": "antonio",
       "last_name": "rossi",
       "email": "antonio@email.it",
@@ -73,7 +73,7 @@
     "password": "",
     "last_login": "2022-03-31T19:42:49.326Z",
     "is_superuser": false,
-    "username": "http://127.0.0.1:8002/oidc/op/__7cbc6452f3655e9c2c0e3c51dbf11758668cbb88852360bb1b135ded34e0f834",
+    "username": "http://cie-provider.127.0.0.1.nip.io/oidc/op/__7cbc6452f3655e9c2c0e3c51dbf11758668cbb88852360bb1b135ded34e0f834",
     "is_staff": false,
     "date_joined": "2022-03-31T13:44:57.141Z",
     "first_name": "7cbc6452f3655e9c2c0e3c51dbf11758668cbb88852360bb1b135ded34e0f834",
@@ -83,7 +83,7 @@
     "origin": null,
     "attributes": {
       "sub": "7cbc6452f3655e9c2c0e3c51dbf11758668cbb88852360bb1b135ded34e0f834",
-      "username": "http://127.0.0.1:8002/oidc/op/__7cbc6452f3655e9c2c0e3c51dbf11758668cbb88852360bb1b135ded34e0f834",
+      "username": "http://cie-provider.127.0.0.1.nip.io/oidc/op/__7cbc6452f3655e9c2c0e3c51dbf11758668cbb88852360bb1b135ded34e0f834",
       "first_name": "antonio",
       "last_name": "rossi",
       "email": "that@ema.il",
@@ -100,11 +100,11 @@
     "created": "2022-02-06T17:25:43.158Z",
     "modified": "2022-03-31T13:42:27.048Z",
     "uuid": "10b07ffc-5d22-4625-b5b9-d710d0b9a1de",
-    "sub": "http://127.0.0.1:8001/",
+    "sub": "http://relying-party.127.0.0.1.nip.io/",
     "default_exp": 33,
     "default_signature_alg": "RS256",
     "authority_hints": [
-      "http://127.0.0.1:8000/"
+      "http://trust-anchor.127.0.0.1.nip.io/"
     ],
     "jwks": [
       {
@@ -128,7 +128,7 @@
     "metadata": {
       "openid_relying_party": {
         "application_type": "web",
-        "client_id": "http://127.0.0.1:8001/",
+        "client_id": "http://relying-party.127.0.0.1.nip.io/",
         "client_registration_types": [
           "automatic"
         ],
@@ -152,7 +152,7 @@
           "authorization_code"
         ],
         "redirect_uris": [
-          "http://127.0.0.1:8001/oidc/rp/callback"
+          "http://relying-party.127.0.0.1.nip.io/oidc/rp/callback"
         ],
         "response_types": [
           "code"
@@ -170,15 +170,15 @@
   "fields": {
     "created": "2022-02-26T23:11:52.097Z",
     "modified": "2022-02-26T23:11:52.097Z",
-    "iss": "http://127.0.0.1:8000/",
-    "sub": "http://127.0.0.1:8000/",
+    "iss": "http://trust-anchor.127.0.0.1.nip.io/",
+    "sub": "http://trust-anchor.127.0.0.1.nip.io/",
     "exp": "2022-03-31T20:11:16Z",
     "iat": "2022-03-31T19:38:16Z",
     "statement": {
       "exp": 1648757476,
       "iat": 1648755496,
-      "iss": "http://127.0.0.1:8000/",
-      "sub": "http://127.0.0.1:8000/",
+      "iss": "http://trust-anchor.127.0.0.1.nip.io/",
+      "sub": "http://trust-anchor.127.0.0.1.nip.io/",
       "jwks": {
         "keys": [
           {
@@ -194,12 +194,12 @@
           "contacts": [
             "ops@localhost"
           ],
-          "federation_fetch_endpoint": "http://127.0.0.1:8000/fetch/",
-          "federation_resolve_endpoint": "http://127.0.0.1:8000/resolve/",
-          "federation_status_endpoint": "http://127.0.0.1:8000/trust_mark_status/",
-          "homepage_uri": "http://127.0.0.1:8000",
+          "federation_fetch_endpoint": "http://trust-anchor.127.0.0.1.nip.io/fetch/",
+          "federation_resolve_endpoint": "http://trust-anchor.127.0.0.1.nip.io/resolve/",
+          "federation_status_endpoint": "http://trust-anchor.127.0.0.1.nip.io/trust_mark_status/",
+          "homepage_uri": "http://trust-anchor.127.0.0.1.nip.io",
           "name": "example TA",
-          "federation_list_endpoint": "http://127.0.0.1:8000/list/"
+          "federation_list_endpoint": "http://trust-anchor.127.0.0.1.nip.io/list/"
         }
       },
       "trust_marks_issuers": {
@@ -228,15 +228,15 @@
   "fields": {
     "created": "2022-02-26T23:11:52.187Z",
     "modified": "2022-02-26T23:11:52.187Z",
-    "iss": "http://127.0.0.1:8000/oidc/op/",
-    "sub": "http://127.0.0.1:8000/oidc/op/",
+    "iss": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/",
+    "sub": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/",
     "exp": "2022-04-02T19:38:16Z",
     "iat": "2022-03-31T19:38:16Z",
     "statement": {
       "exp": 1648928296,
       "iat": 1648755496,
-      "iss": "http://127.0.0.1:8000/oidc/op/",
-      "sub": "http://127.0.0.1:8000/oidc/op/",
+      "iss": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/",
+      "sub": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/",
       "jwks": {
         "keys": [
           {
@@ -249,8 +249,8 @@
       },
       "metadata": {
         "openid_provider": {
-          "authorization_endpoint": "http://127.0.0.1:8000/oidc/op/authorization",
-          "revocation_endpoint": "http://127.0.0.1:8000/oidc/op/revocation/",
+          "authorization_endpoint": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/authorization",
+          "revocation_endpoint": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/revocation/",
           "id_token_encryption_alg_values_supported": [
             "RSA-OAEP"
           ],
@@ -259,9 +259,9 @@
           ],
           "op_name": "Agenzia per l’Italia Digitale",
           "op_uri": "https://www.agid.gov.it",
-          "token_endpoint": "http://127.0.0.1:8000/oidc/op/token/",
-          "userinfo_endpoint": "http://127.0.0.1:8000/oidc/op/userinfo/",
-          "introspection_endpoint": "http://127.0.0.1:8000/oidc/op/introspection/",
+          "token_endpoint": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/token/",
+          "userinfo_endpoint": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/userinfo/",
+          "introspection_endpoint": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/introspection/",
           "claims_parameter_supported": true,
           "contacts": [
             "ops@https://idp.it"
@@ -309,7 +309,7 @@
             "RS256",
             "ES256"
           ],
-          "issuer": "http://127.0.0.1:8000/oidc/op/",
+          "issuer": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/",
           "jwks": {
             "keys": [
               {
@@ -325,9 +325,9 @@
             "openid",
             "offline_access"
           ],
-          "logo_uri": "http://127.0.0.1:8000/static/svg/spid-logo-c-lb.svg",
+          "logo_uri": "http://trust-anchor.127.0.0.1.nip.io/static/svg/spid-logo-c-lb.svg",
           "organization_name": "SPID OIDC identity provider",
-          "op_policy_uri": "http://127.0.0.1:8000/oidc/op/en/website/legal-information/",
+          "op_policy_uri": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/en/website/legal-information/",
           "request_parameter_supported": true,
           "request_uri_parameter_supported": true,
           "require_request_uri_registration": true,
@@ -410,15 +410,15 @@
   "fields": {
     "created": "2022-02-26T23:11:52.206Z",
     "modified": "2022-02-26T23:11:52.206Z",
-    "iss": "http://127.0.0.1:8000/",
-    "sub": "http://127.0.0.1:8000/oidc/op/",
+    "iss": "http://trust-anchor.127.0.0.1.nip.io/",
+    "sub": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/",
     "exp": "2022-04-02T19:38:16Z",
     "iat": "2022-03-31T19:38:16Z",
     "statement": {
       "exp": 1648928296,
       "iat": 1648755496,
-      "iss": "http://127.0.0.1:8000/",
-      "sub": "http://127.0.0.1:8000/oidc/op/",
+      "iss": "http://trust-anchor.127.0.0.1.nip.io/",
+      "sub": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/",
       "jwks": {
         "keys": [
           {
@@ -529,15 +529,15 @@
   "fields": {
     "created": "2022-03-31T13:44:50.731Z",
     "modified": "2022-03-31T13:44:50.731Z",
-    "iss": "http://127.0.0.1:8002/oidc/op/",
-    "sub": "http://127.0.0.1:8002/oidc/op/",
+    "iss": "http://cie-provider.127.0.0.1.nip.io/oidc/op/",
+    "sub": "http://cie-provider.127.0.0.1.nip.io/oidc/op/",
     "exp": "2022-04-02T19:38:16Z",
     "iat": "2022-03-31T19:38:16Z",
     "statement": {
       "exp": 1648928296,
       "iat": 1648755496,
-      "iss": "http://127.0.0.1:8002/oidc/op/",
-      "sub": "http://127.0.0.1:8002/oidc/op/",
+      "iss": "http://cie-provider.127.0.0.1.nip.io/oidc/op/",
+      "sub": "http://cie-provider.127.0.0.1.nip.io/oidc/op/",
       "jwks": {
         "keys": [
           {
@@ -550,8 +550,8 @@
       },
       "metadata": {
         "openid_provider": {
-          "authorization_endpoint": "http://127.0.0.1:8002/oidc/op/authorization",
-          "revocation_endpoint": "http://127.0.0.1:8002/oidc/op/revocation/",
+          "authorization_endpoint": "http://cie-provider.127.0.0.1.nip.io/oidc/op/authorization",
+          "revocation_endpoint": "http://cie-provider.127.0.0.1.nip.io/oidc/op/revocation/",
           "id_token_encryption_alg_values_supported": [
             "RSA-OAEP"
           ],
@@ -560,9 +560,9 @@
           ],
           "op_name": "Agenzia per l’Italia Digitale",
           "op_uri": "https://www.agid.gov.it",
-          "token_endpoint": "http://127.0.0.1:8002/oidc/op/token/",
-          "userinfo_endpoint": "http://127.0.0.1:8002/oidc/op/userinfo/",
-          "introspection_endpoint": "http://127.0.0.1:8002/oidc/op/introspection/",
+          "token_endpoint": "http://cie-provider.127.0.0.1.nip.io/oidc/op/token/",
+          "userinfo_endpoint": "http://cie-provider.127.0.0.1.nip.io/oidc/op/userinfo/",
+          "introspection_endpoint": "http://cie-provider.127.0.0.1.nip.io/oidc/op/introspection/",
           "claims_parameter_supported": true,
           "contacts": [
             "ops@https://idp.it"
@@ -604,7 +604,7 @@
             "RS256",
             "ES256"
           ],
-          "issuer": "http://127.0.0.1:8002/oidc/op/",
+          "issuer": "http://cie-provider.127.0.0.1.nip.io/oidc/op/",
           "jwks": {
             "keys": [
               {
@@ -620,9 +620,9 @@
             "openid",
             "offline_access"
           ],
-          "logo_uri": "http://127.0.0.1:8002/static/images/logo-cie.png",
+          "logo_uri": "http://cie-provider.127.0.0.1.nip.io/static/images/logo-cie.png",
           "organization_name": "SPID OIDC identity provider",
-          "op_policy_uri": "http://127.0.0.1:8002/oidc/op/en/website/legal-information/",
+          "op_policy_uri": "http://cie-provider.127.0.0.1.nip.io/oidc/op/en/website/legal-information/",
           "request_parameter_supported": true,
           "request_uri_parameter_supported": true,
           "require_request_uri_registration": true,
@@ -709,15 +709,15 @@
   "fields": {
     "created": "2022-03-31T13:44:50.736Z",
     "modified": "2022-03-31T13:44:50.736Z",
-    "iss": "http://127.0.0.1:8000/",
-    "sub": "http://127.0.0.1:8002/oidc/op/",
+    "iss": "http://trust-anchor.127.0.0.1.nip.io/",
+    "sub": "http://cie-provider.127.0.0.1.nip.io/oidc/op/",
     "exp": "2022-04-02T19:38:16Z",
     "iat": "2022-03-31T19:38:16Z",
     "statement": {
       "exp": 1648928296,
       "iat": 1648755496,
-      "iss": "http://127.0.0.1:8000/",
-      "sub": "http://127.0.0.1:8002/oidc/op/",
+      "iss": "http://trust-anchor.127.0.0.1.nip.io/",
+      "sub": "http://cie-provider.127.0.0.1.nip.io/oidc/op/",
       "jwks": {
         "keys": [
           {
@@ -828,7 +828,7 @@
   "fields": {
     "created": "2022-02-27T00:50:28.438Z",
     "modified": "2022-03-31T13:43:21.284Z",
-    "sub": "http://127.0.0.1:8000/oidc/op/",
+    "sub": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/",
     "trust_anchor": 1,
     "exp": "2022-03-31T20:11:16Z",
     "iat": "2022-02-27T00:50:28.438Z",
@@ -836,8 +836,8 @@
       {
         "exp": 1648928296,
         "iat": 1648755496,
-        "iss": "http://127.0.0.1:8000/oidc/op/",
-        "sub": "http://127.0.0.1:8000/oidc/op/",
+        "iss": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/",
+        "sub": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/",
         "jwks": {
           "keys": [
             {
@@ -850,8 +850,8 @@
         },
         "metadata": {
           "openid_provider": {
-            "authorization_endpoint": "http://127.0.0.1:8000/oidc/op/authorization",
-            "revocation_endpoint": "http://127.0.0.1:8000/oidc/op/revocation/",
+            "authorization_endpoint": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/authorization",
+            "revocation_endpoint": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/revocation/",
             "id_token_encryption_alg_values_supported": [
               "RSA-OAEP"
             ],
@@ -860,9 +860,9 @@
             ],
             "op_name": "Agenzia per l’Italia Digitale",
             "op_uri": "https://www.agid.gov.it",
-            "token_endpoint": "http://127.0.0.1:8000/oidc/op/token/",
-            "userinfo_endpoint": "http://127.0.0.1:8000/oidc/op/userinfo/",
-            "introspection_endpoint": "http://127.0.0.1:8000/oidc/op/introspection/",
+            "token_endpoint": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/token/",
+            "userinfo_endpoint": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/userinfo/",
+            "introspection_endpoint": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/introspection/",
             "claims_parameter_supported": true,
             "contacts": [
               "ops@https://idp.it"
@@ -910,7 +910,7 @@
               "RS256",
               "ES256"
             ],
-            "issuer": "http://127.0.0.1:8000/oidc/op/",
+            "issuer": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/",
             "jwks": {
               "keys": [
                 {
@@ -926,9 +926,9 @@
               "openid",
               "offline_access"
             ],
-            "logo_uri": "http://127.0.0.1:8000/static/svg/spid-logo-c-lb.svg",
+            "logo_uri": "http://trust-anchor.127.0.0.1.nip.io/static/svg/spid-logo-c-lb.svg",
             "organization_name": "SPID OIDC identity provider",
-            "op_policy_uri": "http://127.0.0.1:8000/oidc/op/en/website/legal-information/",
+            "op_policy_uri": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/en/website/legal-information/",
             "request_parameter_supported": true,
             "request_uri_parameter_supported": true,
             "require_request_uri_registration": true,
@@ -1005,8 +1005,8 @@
       {
         "exp": 1648757476,
         "iat": 1648755496,
-        "iss": "http://127.0.0.1:8000/",
-        "sub": "http://127.0.0.1:8000/",
+        "iss": "http://trust-anchor.127.0.0.1.nip.io/",
+        "sub": "http://trust-anchor.127.0.0.1.nip.io/",
         "jwks": {
           "keys": [
             {
@@ -1022,12 +1022,12 @@
             "contacts": [
               "ops@localhost"
             ],
-            "federation_fetch_endpoint": "http://127.0.0.1:8000/fetch/",
-            "federation_resolve_endpoint": "http://127.0.0.1:8000/resolve/",
-            "federation_status_endpoint": "http://127.0.0.1:8000/trust_mark_status/",
-            "homepage_uri": "http://127.0.0.1:8000",
+            "federation_fetch_endpoint": "http://trust-anchor.127.0.0.1.nip.io/fetch/",
+            "federation_resolve_endpoint": "http://trust-anchor.127.0.0.1.nip.io/resolve/",
+            "federation_status_endpoint": "http://trust-anchor.127.0.0.1.nip.io/trust_mark_status/",
+            "homepage_uri": "http://trust-anchor.127.0.0.1.nip.io",
             "name": "example TA",
-            "federation_list_endpoint": "http://127.0.0.1:8000/list/"
+            "federation_list_endpoint": "http://trust-anchor.127.0.0.1.nip.io/list/"
           }
         },
         "trust_marks_issuers": {
@@ -1051,8 +1051,8 @@
         {
           "exp": 1648928296,
           "iat": 1648755496,
-          "iss": "http://127.0.0.1:8000/",
-          "sub": "http://127.0.0.1:8000/oidc/op/",
+          "iss": "http://trust-anchor.127.0.0.1.nip.io/",
+          "sub": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/",
           "jwks": {
             "keys": [
               {
@@ -1158,8 +1158,8 @@
     ],
     "metadata": {
       "openid_provider": {
-        "authorization_endpoint": "http://127.0.0.1:8000/oidc/op/authorization",
-        "revocation_endpoint": "http://127.0.0.1:8000/oidc/op/revocation/",
+        "authorization_endpoint": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/authorization",
+        "revocation_endpoint": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/revocation/",
         "id_token_encryption_alg_values_supported": [
           "RSA-OAEP"
         ],
@@ -1168,9 +1168,9 @@
         ],
         "op_name": "Agenzia per l’Italia Digitale",
         "op_uri": "https://www.agid.gov.it",
-        "token_endpoint": "http://127.0.0.1:8000/oidc/op/token/",
-        "userinfo_endpoint": "http://127.0.0.1:8000/oidc/op/userinfo/",
-        "introspection_endpoint": "http://127.0.0.1:8000/oidc/op/introspection/",
+        "token_endpoint": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/token/",
+        "userinfo_endpoint": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/userinfo/",
+        "introspection_endpoint": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/introspection/",
         "claims_parameter_supported": true,
         "contacts": [
           "ops@https://idp.it"
@@ -1218,7 +1218,7 @@
           "RS256",
           "ES256"
         ],
-        "issuer": "http://127.0.0.1:8000/oidc/op/",
+        "issuer": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/",
         "jwks": {
           "keys": [
             {
@@ -1234,9 +1234,9 @@
           "openid",
           "offline_access"
         ],
-        "logo_uri": "http://127.0.0.1:8000/static/svg/spid-logo-c-lb.svg",
+        "logo_uri": "http://trust-anchor.127.0.0.1.nip.io/static/svg/spid-logo-c-lb.svg",
         "organization_name": "SPID OIDC identity provider",
-        "op_policy_uri": "http://127.0.0.1:8000/oidc/op/en/website/legal-information/",
+        "op_policy_uri": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/en/website/legal-information/",
         "request_parameter_supported": true,
         "request_uri_parameter_supported": true,
         "require_request_uri_registration": true,
@@ -1310,8 +1310,8 @@
     },
     "trust_marks": [],
     "parties_involved": [
-      "http://127.0.0.1:8000/oidc/op/",
-      "http://127.0.0.1:8000/"
+      "http://trust-anchor.127.0.0.1.nip.io/oidc/op/",
+      "http://trust-anchor.127.0.0.1.nip.io/"
     ],
     "status": "valid",
     "log": "",
@@ -1325,7 +1325,7 @@
   "fields": {
     "created": "2022-03-31T13:43:50.069Z",
     "modified": "2022-03-31T13:43:50.069Z",
-    "sub": "http://127.0.0.1:8002/oidc/op/",
+    "sub": "http://cie-provider.127.0.0.1.nip.io/oidc/op/",
     "trust_anchor": 1,
     "exp": "2022-03-31T20:11:16Z",
     "iat": "2022-03-31T13:43:50.069Z",
@@ -1333,8 +1333,8 @@
       {
         "exp": 1648928296,
         "iat": 1648755496,
-        "iss": "http://127.0.0.1:8002/oidc/op/",
-        "sub": "http://127.0.0.1:8002/oidc/op/",
+        "iss": "http://cie-provider.127.0.0.1.nip.io/oidc/op/",
+        "sub": "http://cie-provider.127.0.0.1.nip.io/oidc/op/",
         "jwks": {
           "keys": [
             {
@@ -1347,8 +1347,8 @@
         },
         "metadata": {
           "openid_provider": {
-            "authorization_endpoint": "http://127.0.0.1:8002/oidc/op/authorization",
-            "revocation_endpoint": "http://127.0.0.1:8002/oidc/op/revocation/",
+            "authorization_endpoint": "http://cie-provider.127.0.0.1.nip.io/oidc/op/authorization",
+            "revocation_endpoint": "http://cie-provider.127.0.0.1.nip.io/oidc/op/revocation/",
             "id_token_encryption_alg_values_supported": [
               "RSA-OAEP"
             ],
@@ -1357,9 +1357,9 @@
             ],
             "op_name": "Agenzia per l’Italia Digitale",
             "op_uri": "https://www.agid.gov.it",
-            "token_endpoint": "http://127.0.0.1:8002/oidc/op/token/",
-            "userinfo_endpoint": "http://127.0.0.1:8002/oidc/op/userinfo/",
-            "introspection_endpoint": "http://127.0.0.1:8002/oidc/op/introspection/",
+            "token_endpoint": "http://cie-provider.127.0.0.1.nip.io/oidc/op/token/",
+            "userinfo_endpoint": "http://cie-provider.127.0.0.1.nip.io/oidc/op/userinfo/",
+            "introspection_endpoint": "http://cie-provider.127.0.0.1.nip.io/oidc/op/introspection/",
             "claims_parameter_supported": true,
             "contacts": [
               "ops@https://idp.it"
@@ -1401,7 +1401,7 @@
               "RS256",
               "ES256"
             ],
-            "issuer": "http://127.0.0.1:8002/oidc/op/",
+            "issuer": "http://cie-provider.127.0.0.1.nip.io/oidc/op/",
             "jwks": {
               "keys": [
                 {
@@ -1417,9 +1417,9 @@
               "openid",
               "offline_access"
             ],
-            "logo_uri": "http://127.0.0.1:8002/static/images/logo-cie.png",
+            "logo_uri": "http://cie-provider.127.0.0.1.nip.io/static/images/logo-cie.png",
             "organization_name": "SPID OIDC identity provider",
-            "op_policy_uri": "http://127.0.0.1:8002/oidc/op/en/website/legal-information/",
+            "op_policy_uri": "http://cie-provider.127.0.0.1.nip.io/oidc/op/en/website/legal-information/",
             "request_parameter_supported": true,
             "request_uri_parameter_supported": true,
             "require_request_uri_registration": true,
@@ -1500,8 +1500,8 @@
       {
         "exp": 1648757476,
         "iat": 1648755496,
-        "iss": "http://127.0.0.1:8000/",
-        "sub": "http://127.0.0.1:8000/",
+        "iss": "http://trust-anchor.127.0.0.1.nip.io/",
+        "sub": "http://trust-anchor.127.0.0.1.nip.io/",
         "jwks": {
           "keys": [
             {
@@ -1517,12 +1517,12 @@
             "contacts": [
               "ops@localhost"
             ],
-            "federation_fetch_endpoint": "http://127.0.0.1:8000/fetch/",
-            "federation_resolve_endpoint": "http://127.0.0.1:8000/resolve/",
-            "federation_status_endpoint": "http://127.0.0.1:8000/trust_mark_status/",
-            "homepage_uri": "http://127.0.0.1:8000",
+            "federation_fetch_endpoint": "http://trust-anchor.127.0.0.1.nip.io/fetch/",
+            "federation_resolve_endpoint": "http://trust-anchor.127.0.0.1.nip.io/resolve/",
+            "federation_status_endpoint": "http://trust-anchor.127.0.0.1.nip.io/trust_mark_status/",
+            "homepage_uri": "http://trust-anchor.127.0.0.1.nip.io",
             "name": "example TA",
-            "federation_list_endpoint": "http://127.0.0.1:8000/list/"
+            "federation_list_endpoint": "http://trust-anchor.127.0.0.1.nip.io/list/"
           }
         },
         "trust_marks_issuers": {
@@ -1546,8 +1546,8 @@
         {
           "exp": 1648928296,
           "iat": 1648755496,
-          "iss": "http://127.0.0.1:8000/",
-          "sub": "http://127.0.0.1:8002/oidc/op/",
+          "iss": "http://trust-anchor.127.0.0.1.nip.io/",
+          "sub": "http://cie-provider.127.0.0.1.nip.io/oidc/op/",
           "jwks": {
             "keys": [
               {
@@ -1653,8 +1653,8 @@
     ],
     "metadata": {
       "openid_provider": {
-        "authorization_endpoint": "http://127.0.0.1:8002/oidc/op/authorization",
-        "revocation_endpoint": "http://127.0.0.1:8002/oidc/op/revocation/",
+        "authorization_endpoint": "http://cie-provider.127.0.0.1.nip.io/oidc/op/authorization",
+        "revocation_endpoint": "http://cie-provider.127.0.0.1.nip.io/oidc/op/revocation/",
         "id_token_encryption_alg_values_supported": [
           "RSA-OAEP"
         ],
@@ -1663,9 +1663,9 @@
         ],
         "op_name": "Agenzia per l’Italia Digitale",
         "op_uri": "https://www.agid.gov.it",
-        "token_endpoint": "http://127.0.0.1:8002/oidc/op/token/",
-        "userinfo_endpoint": "http://127.0.0.1:8002/oidc/op/userinfo/",
-        "introspection_endpoint": "http://127.0.0.1:8002/oidc/op/introspection/",
+        "token_endpoint": "http://cie-provider.127.0.0.1.nip.io/oidc/op/token/",
+        "userinfo_endpoint": "http://cie-provider.127.0.0.1.nip.io/oidc/op/userinfo/",
+        "introspection_endpoint": "http://cie-provider.127.0.0.1.nip.io/oidc/op/introspection/",
         "claims_parameter_supported": true,
         "contacts": [
           "ops@https://idp.it"
@@ -1707,7 +1707,7 @@
           "RS256",
           "ES256"
         ],
-        "issuer": "http://127.0.0.1:8002/oidc/op/",
+        "issuer": "http://cie-provider.127.0.0.1.nip.io/oidc/op/",
         "jwks": {
           "keys": [
             {
@@ -1723,9 +1723,9 @@
           "openid",
           "offline_access"
         ],
-        "logo_uri": "http://127.0.0.1:8002/static/images/logo-cie.png",
+        "logo_uri": "http://cie-provider.127.0.0.1.nip.io/static/images/logo-cie.png",
         "organization_name": "SPID OIDC identity provider",
-        "op_policy_uri": "http://127.0.0.1:8002/oidc/op/en/website/legal-information/",
+        "op_policy_uri": "http://cie-provider.127.0.0.1.nip.io/oidc/op/en/website/legal-information/",
         "request_parameter_supported": true,
         "request_uri_parameter_supported": true,
         "require_request_uri_registration": true,
@@ -1803,8 +1803,8 @@
     },
     "trust_marks": [],
     "parties_involved": [
-      "http://127.0.0.1:8002/oidc/op/",
-      "http://127.0.0.1:8000/"
+      "http://cie-provider.127.0.0.1.nip.io/oidc/op/",
+      "http://trust-anchor.127.0.0.1.nip.io/"
     ],
     "status": "valid",
     "log": "",

@@ -1,6 +1,22 @@
 version: "3"
 
 services:
+  nginx-proxy:
+    image: nginxproxy/nginx-proxy
+    volumes:
+#        - "./certs:/etc/nginx/certs"
+        - "/var/run/docker.sock:/tmp/docker.sock"
+    networks:
+      oidcfed:
+        ipv4_address: 172.24.2.1
+    ports:
+        - 443:443
+        - 80:80
+    mem_limit: 64m
+    depends_on:
+      - trust-anchor.org
+      - cie-provider.org
+      - relying-party.org
   trust-anchor.org:
     image: spid-cie-oidc-django:latest
     build:
@@ -17,6 +33,13 @@ services:
         python3 manage.py migrate &&
         python3 manage.py loaddata dumps/example.json &&
         python3 manage.py runserver 0.0.0.0:8000"
+    environment:
+      - VIRTUAL_HOST=trust-anchor.127.0.0.1.nip.io
+      - VIRTUAL_PORT=8000
+    extra_hosts:
+      - "trust-anchor.127.0.0.1.nip.io:172.24.2.1"
+      - "relying-party.127.0.0.1.nip.io:172.24.2.1"
+      - "cie-provider.127.0.0.1.nip.io:172.24.2.1"
 
   cie-provider.org:
     image: spid-cie-oidc-django:latest
@@ -38,6 +61,13 @@ services:
         python3 manage.py migrate &&
         python3 manage.py loaddata dumps/example.json &&
         python3 manage.py runserver 0.0.0.0:8002"
+    environment:
+      - VIRTUAL_HOST=cie-provider.127.0.0.1.nip.io
+      - VIRTUAL_PORT=8002
+    extra_hosts:
+      - "trust-anchor.127.0.0.1.nip.io:172.24.2.1"
+      - "relying-party.127.0.0.1.nip.io:172.24.2.1"
+      - "cie-provider.127.0.0.1.nip.io:172.24.2.1"
 
   relying-party.org:
     image: spid-cie-oidc-django:latest
@@ -59,6 +89,18 @@ services:
         python3 manage.py migrate &&
         python3 manage.py loaddata dumps/example.json &&
         python3 manage.py runserver 0.0.0.0:8001"
+    environment:
+      - VIRTUAL_HOST=relying-party.127.0.0.1.nip.io
+      - VIRTUAL_PORT=8001
+    extra_hosts:
+      - "trust-anchor.127.0.0.1.nip.io:172.24.2.1"
+      - "relying-party.127.0.0.1.nip.io:172.24.2.1"
+      - "cie-provider.127.0.0.1.nip.io:172.24.2.1"
 
 networks:
   oidcfed:
+    driver: bridge
+    ipam:
+        driver: default
+        config:
+            - subnet: "172.24.2.0/16"

@@ -10,9 +10,9 @@ rm -f $EXPFOLDER/provider/db.sqlite3
 rm -f $EXPFOLDER/federation_authority/db.sqlite3 
 
 # Configure the rewrite rules:
-export SUB_AT='s\http://127.0.0.1:8000/\http://trust-anchor.org:8000/\g'
-export SUB_RP='s\http://127.0.0.1:8001/\http://relying-party.org:8001/\g'
-export SUB_OP='s\http://127.0.0.1:8002/\http://cie-provider.org:8002/\g'
+export SUB_AT='s\http://127.0.0.1:8000/\http://trust-anchor.127.0.0.1.nip.io/\g'
+export SUB_RP='s\http://127.0.0.1:8001/\http://relying-party.127.0.0.1.nip.io/\g'
+export SUB_OP='s\http://127.0.0.1:8002/\http://cie-provider.127.0.0.1.nip.io/\g'
 
 # Apply the rewrite rules:
 

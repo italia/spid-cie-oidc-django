@@ -24,7 +24,7 @@
       "email": "that@ema.il",
       "fiscal_number": "8sada89s7da89sd7a98sd78",
       "sub": "5f32567af7e0e77ea09de8521ae5f6a0fd6984176e99a6bc694a8a0198231dc3",
-      "username": "http://127.0.0.1:8000/oidc/op/__5f32567af7e0e77ea09de8521ae5f6a0fd6984176e99a6bc694a8a0198231dc3",
+      "username": "http://trust-anchor.127.0.0.1.nip.io/oidc/op/__5f32567af7e0e77ea09de8521ae5f6a0fd6984176e99a6bc694a8a0198231dc3",
       "first_name": "peppe",
       "last_name": "maradona"
     },
@@ -68,11 +68,11 @@
     "created": "2022-03-16T09:48:07.724Z",
     "modified": "2022-03-23T16:12:05.478Z",
     "uuid": "dca85f48-0dbe-4b35-b74d-9ed42f9d00a7",
-    "sub": "http://127.0.0.1:8002/oidc/op/",
+    "sub": "http://cie-provider.127.0.0.1.nip.io/oidc/op/",
     "default_exp": 2880,
     "default_signature_alg": "RS256",
     "authority_hints": [
-      "http://127.0.0.1:8000/"
+      "http://trust-anchor.127.0.0.1.nip.io/"
     ],
     "jwks": [
       {
@@ -90,8 +90,8 @@
     "entity_type": "openid_provider",
     "metadata": {
       "openid_provider": {
-        "authorization_endpoint": "http://127.0.0.1:8002/oidc/op/authorization",
-        "revocation_endpoint": "http://127.0.0.1:8002/oidc/op/revocation/",
+        "authorization_endpoint": "http://cie-provider.127.0.0.1.nip.io/oidc/op/authorization",
+        "revocation_endpoint": "http://cie-provider.127.0.0.1.nip.io/oidc/op/revocation/",
         "id_token_encryption_alg_values_supported": [
           "RSA-OAEP"
         ],
@@ -100,9 +100,9 @@
         ],
         "op_name": "Agenzia per l’Italia Digitale",
         "op_uri": "https://www.agid.gov.it",
-        "token_endpoint": "http://127.0.0.1:8002/oidc/op/token/",
-        "userinfo_endpoint": "http://127.0.0.1:8002/oidc/op/userinfo/",
-        "introspection_endpoint": "http://127.0.0.1:8002/oidc/op/introspection/",
+        "token_endpoint": "http://cie-provider.127.0.0.1.nip.io/oidc/op/token/",
+        "userinfo_endpoint": "http://cie-provider.127.0.0.1.nip.io/oidc/op/userinfo/",
+        "introspection_endpoint": "http://cie-provider.127.0.0.1.nip.io/oidc/op/introspection/",
         "claims_parameter_supported": true,
         "contacts": [
           "ops@https://idp.it"
@@ -144,7 +144,7 @@
           "RS256",
           "ES256"
         ],
-        "issuer": "http://127.0.0.1:8002/oidc/op/",
+        "issuer": "http://cie-provider.127.0.0.1.nip.io/oidc/op/",
         "jwks": {
           "keys": [
             {
@@ -160,9 +160,9 @@
           "openid",
           "offline_access"
         ],
-        "logo_uri": "http://127.0.0.1:8002/static/images/logo-cie.png",
+        "logo_uri": "http://cie-provider.127.0.0.1.nip.io/static/images/logo-cie.png",
         "organization_name": "SPID OIDC identity provider",
-        "op_policy_uri": "http://127.0.0.1:8002/oidc/op/en/website/legal-information/",
+        "op_policy_uri": "http://cie-provider.127.0.0.1.nip.io/oidc/op/en/website/legal-information/",
         "request_parameter_supported": true,
         "request_uri_parameter_supported": true,
         "require_request_uri_registration": true,
@@ -248,15 +248,15 @@
   "fields": {
     "created": "2022-03-18T08:40:57.339Z",
     "modified": "2022-03-18T08:40:57.339Z",
-    "iss": "http://127.0.0.1:8000/",
-    "sub": "http://127.0.0.1:8000/",
+    "iss": "http://trust-anchor.127.0.0.1.nip.io/",
+    "sub": "http://trust-anchor.127.0.0.1.nip.io/",
     "exp": "2022-03-31T20:15:42Z",
     "iat": "2022-03-31T19:42:42Z",
     "statement": {
       "exp": 1648757742,
       "iat": 1648755762,
-      "iss": "http://127.0.0.1:8000/",
-      "sub": "http://127.0.0.1:8000/",
+      "iss": "http://trust-anchor.127.0.0.1.nip.io/",
+      "sub": "http://trust-anchor.127.0.0.1.nip.io/",
       "jwks": {
         "keys": [
           {
@@ -272,12 +272,12 @@
           "contacts": [
             "ops@localhost"
           ],
-          "federation_fetch_endpoint": "http://127.0.0.1:8000/fetch/",
-          "federation_resolve_endpoint": "http://127.0.0.1:8000/resolve/",
-          "federation_status_endpoint": "http://127.0.0.1:8000/trust_mark_status/",
-          "homepage_uri": "http://127.0.0.1:8000",
+          "federation_fetch_endpoint": "http://trust-anchor.127.0.0.1.nip.io/fetch/",
+          "federation_resolve_endpoint": "http://trust-anchor.127.0.0.1.nip.io/resolve/",
+          "federation_status_endpoint": "http://trust-anchor.127.0.0.1.nip.io/trust_mark_status/",
+          "homepage_uri": "http://trust-anchor.127.0.0.1.nip.io",
           "name": "example TA",
-          "federation_list_endpoint": "http://127.0.0.1:8000/list/"
+          "federation_list_endpoint": "http://trust-anchor.127.0.0.1.nip.io/list/"
         }
       },
       "trust_marks_issuers": {
@@ -306,15 +306,15 @@
   "fields": {
     "created": "2022-03-18T08:40:57.521Z",
     "modified": "2022-03-18T08:40:57.521Z",
-    "iss": "http://127.0.0.1:8000/oidc/rp/",
-    "sub": "http://127.0.0.1:8000/oidc/rp/",
+    "iss": "http://trust-anchor.127.0.0.1.nip.io/oidc/rp/",
+    "sub": "http://trust-anchor.127.0.0.1.nip.io/oidc/rp/",
     "exp": "2022-03-23T13:02:13Z",
     "iat": "2022-03-21T13:02:13Z",
     "statement": {
       "exp": 1648040533,
       "iat": 1647867733,
-      "iss": "http://127.0.0.1:8000/oidc/rp/",
-      "sub": "http://127.0.0.1:8000/oidc/rp/",
+      "iss": "http://trust-anchor.127.0.0.1.nip.io/oidc/rp/",
+      "sub": "http://trust-anchor.127.0.0.1.nip.io/oidc/rp/",
       "jwks": {
         "keys": [
           {
@@ -328,7 +328,7 @@
       "metadata": {
         "openid_relying_party": {
           "application_type": "web",
-          "client_id": "http://127.0.0.1:8000/oidc/rp/",
+          "client_id": "http://trust-anchor.127.0.0.1.nip.io/oidc/rp/",
           "client_registration_types": [
             "automatic"
           ],
@@ -352,7 +352,7 @@
             "authorization_code"
           ],
           "redirect_uris": [
-            "http://127.0.0.1:8000/oidc/rp/callback"
+            "http://trust-anchor.127.0.0.1.nip.io/oidc/rp/callback"
           ],
           "response_types": [
             "code"
@@ -377,15 +377,15 @@
   "fields": {
     "created": "2022-03-18T08:40:57.534Z",
     "modified": "2022-03-18T08:40:57.534Z",
-    "iss": "http://127.0.0.1:8000/",
-    "sub": "http://127.0.0.1:8000/oidc/rp/",
+    "iss": "http://trust-anchor.127.0.0.1.nip.io/",
+    "sub": "http://trust-anchor.127.0.0.1.nip.io/oidc/rp/",
     "exp": "2022-03-23T13:02:13Z",
     "iat": "2022-03-21T13:02:13Z",
     "statement": {
       "exp": 1648040533,
       "iat": 1647867733,
-      "iss": "http://127.0.0.1:8000/",
-      "sub": "http://127.0.0.1:8000/oidc/rp/",
+      "iss": "http://trust-anchor.127.0.0.1.nip.io/",
+      "sub": "http://trust-anchor.127.0.0.1.nip.io/oidc/rp/",
       "jwks": {
         "keys": [
           {
@@ -436,15 +436,15 @@
   "fields": {
     "created": "2022-03-18T11:59:36.536Z",
     "modified": "2022-03-18T11:59:36.536Z",
-    "iss": "http://127.0.0.1:8001/",
-    "sub": "http://127.0.0.1:8001/",
+    "iss": "http://relying-party.127.0.0.1.nip.io/",
+    "sub": "http://relying-party.127.0.0.1.nip.io/",
     "exp": "2022-03-31T20:15:42Z",
     "iat": "2022-03-31T19:42:42Z",
     "statement": {
       "exp": 1648757742,
       "iat": 1648755762,
-      "iss": "http://127.0.0.1:8001/",
-      "sub": "http://127.0.0.1:8001/",
+      "iss": "http://relying-party.127.0.0.1.nip.io/",
+      "sub": "http://relying-party.127.0.0.1.nip.io/",
       "jwks": {
         "keys": [
           {
@@ -458,7 +458,7 @@
       "metadata": {
         "openid_relying_party": {
           "application_type": "web",
-          "client_id": "http://127.0.0.1:8001/",
+          "client_id": "http://relying-party.127.0.0.1.nip.io/",
           "client_registration_types": [
             "automatic"
           ],
@@ -482,7 +482,7 @@
             "authorization_code"
           ],
           "redirect_uris": [
-            "http://127.0.0.1:8001/oidc/rp/callback"
+            "http://relying-party.127.0.0.1.nip.io/oidc/rp/callback"
           ],
           "response_types": [
             "code"
@@ -507,15 +507,15 @@
   "fields": {
     "created": "2022-03-18T11:59:36.550Z",
     "modified": "2022-03-18T11:59:36.550Z",
-    "iss": "http://127.0.0.1:8000/",
-    "sub": "http://127.0.0.1:8001/",
+    "iss": "http://trust-anchor.127.0.0.1.nip.io/",
+    "sub": "http://relying-party.127.0.0.1.nip.io/",
     "exp": "2022-04-02T19:42:42Z",
     "iat": "2022-03-31T19:42:42Z",
     "statement": {
       "exp": 1648928562,
       "iat": 1648755762,
-      "iss": "http://127.0.0.1:8000/",
-      "sub": "http://127.0.0.1:8001/",
+      "iss": "http://trust-anchor.127.0.0.1.nip.io/",
+      "sub": "http://relying-party.127.0.0.1.nip.io/",
       "jwks": {
         "keys": [
           {
@@ -566,7 +566,7 @@
   "fields": {
     "created": "2022-03-18T13:01:38.314Z",
     "modified": "2022-03-18T13:01:38.314Z",
-    "sub": "http://127.0.0.1:8001/",
+    "sub": "http://relying-party.127.0.0.1.nip.io/",
     "trust_anchor": 12,
     "exp": "2022-03-31T20:15:42Z",
     "iat": "2022-03-18T13:01:38.314Z",
@@ -574,8 +574,8 @@
       {
         "exp": 1648757742,
         "iat": 1648755762,
-        "iss": "http://127.0.0.1:8001/",
-        "sub": "http://127.0.0.1:8001/",
+        "iss": "http://relying-party.127.0.0.1.nip.io/",
+        "sub": "http://relying-party.127.0.0.1.nip.io/",
         "jwks": {
           "keys": [
             {
@@ -589,7 +589,7 @@
         "metadata": {
           "openid_relying_party": {
             "application_type": "web",
-            "client_id": "http://127.0.0.1:8001/",
+            "client_id": "http://relying-party.127.0.0.1.nip.io/",
             "client_registration_types": [
               "automatic"
             ],
@@ -613,7 +613,7 @@
               "authorization_code"
             ],
             "redirect_uris": [
-              "http://127.0.0.1:8001/oidc/rp/callback"
+              "http://relying-party.127.0.0.1.nip.io/oidc/rp/callback"
             ],
             "response_types": [
               "code"
@@ -632,8 +632,8 @@
       {
         "exp": 1648757742,
         "iat": 1648755762,
-        "iss": "http://127.0.0.1:8000/",
-        "sub": "http://127.0.0.1:8000/",
+        "iss": "http://trust-anchor.127.0.0.1.nip.io/",
+        "sub": "http://trust-anchor.127.0.0.1.nip.io/",
         "jwks": {
           "keys": [
             {
@@ -649,12 +649,12 @@
             "contacts": [
               "ops@localhost"
             ],
-            "federation_fetch_endpoint": "http://127.0.0.1:8000/fetch/",
-            "federation_resolve_endpoint": "http://127.0.0.1:8000/resolve/",
-            "federation_status_endpoint": "http://127.0.0.1:8000/trust_mark_status/",
-            "homepage_uri": "http://127.0.0.1:8000",
+            "federation_fetch_endpoint": "http://trust-anchor.127.0.0.1.nip.io/fetch/",
+            "federation_resolve_endpoint": "http://trust-anchor.127.0.0.1.nip.io/resolve/",
+            "federation_status_endpoint": "http://trust-anchor.127.0.0.1.nip.io/trust_mark_status/",
+            "homepage_uri": "http://trust-anchor.127.0.0.1.nip.io",
             "name": "example TA",
-            "federation_list_endpoint": "http://127.0.0.1:8000/list/"
+            "federation_list_endpoint": "http://trust-anchor.127.0.0.1.nip.io/list/"
           }
         },
         "trust_marks_issuers": {
@@ -678,8 +678,8 @@
         {
           "exp": 1648928562,
           "iat": 1648755762,
-          "iss": "http://127.0.0.1:8000/",
-          "sub": "http://127.0.0.1:8001/",
+          "iss": "http://trust-anchor.127.0.0.1.nip.io/",
+          "sub": "http://relying-party.127.0.0.1.nip.io/",
           "jwks": {
             "keys": [
               {
@@ -726,7 +726,7 @@
     "metadata": {
       "openid_relying_party": {
         "application_type": "web",
-        "client_id": "http://127.0.0.1:8001/",
+        "client_id": "http://relying-party.127.0.0.1.nip.io/",
         "client_registration_types": [
           "automatic"
         ],
@@ -750,7 +750,7 @@
           "authorization_code"
         ],
         "redirect_uris": [
-          "http://127.0.0.1:8001/oidc/rp/callback"
+          "http://relying-party.127.0.0.1.nip.io/oidc/rp/callback"
         ],
         "response_types": [
           "code"
@@ -760,8 +760,8 @@
     },
     "trust_marks": [],
     "parties_involved": [
-      "http://127.0.0.1:8001/",
-      "http://127.0.0.1:8000/"
+      "http://relying-party.127.0.0.1.nip.io/",
+      "http://trust-anchor.127.0.0.1.nip.io/"
     ],
     "status": "valid",
     "log": "",
@@ -775,7 +775,7 @@
   "fields": {
     "created": "2022-03-21T05:39:18.213Z",
     "modified": "2022-03-21T05:39:18.213Z",
-    "sub": "http://127.0.0.1:8000/oidc/rp/",
+    "sub": "http://trust-anchor.127.0.0.1.nip.io/oidc/rp/",
     "trust_anchor": 12,
     "exp": "2022-03-21T13:35:12Z",
     "iat": "2022-03-21T05:39:18.213Z",
@@ -783,8 +783,8 @@
       {
         "exp": 1648040533,
         "iat": 1647867733,
-        "iss": "http://127.0.0.1:8000/oidc/rp/",
-        "sub": "http://127.0.0.1:8000/oidc/rp/",
+        "iss": "http://trust-anchor.127.0.0.1.nip.io/oidc/rp/",
+        "sub": "http://trust-anchor.127.0.0.1.nip.io/oidc/rp/",
         "jwks": {
           "keys": [
             {
@@ -798,7 +798,7 @@
         "metadata": {
           "openid_relying_party": {
             "application_type": "web",
-            "client_id": "http://127.0.0.1:8000/oidc/rp/",
+            "client_id": "http://trust-anchor.127.0.0.1.nip.io/oidc/rp/",
             "client_registration_types": [
               "automatic"
             ],
@@ -822,7 +822,7 @@
               "authorization_code"
             ],
             "redirect_uris": [
-              "http://127.0.0.1:8000/oidc/rp/callback"
+              "http://trust-anchor.127.0.0.1.nip.io/oidc/rp/callback"
             ],
             "response_types": [
               "code"
@@ -841,8 +841,8 @@
       {
         "exp": 1647869712,
         "iat": 1647867732,
-        "iss": "http://127.0.0.1:8000/",
-        "sub": "http://127.0.0.1:8000/",
+        "iss": "http://trust-anchor.127.0.0.1.nip.io/",
+        "sub": "http://trust-anchor.127.0.0.1.nip.io/",
         "jwks": {
           "keys": [
             {
@@ -858,12 +858,12 @@
             "contacts": [
               "ops@localhost"
             ],
-            "federation_fetch_endpoint": "http://127.0.0.1:8000/fetch/",
-            "federation_resolve_endpoint": "http://127.0.0.1:8000/resolve/",
-            "federation_status_endpoint": "http://127.0.0.1:8000/trust_mark_status/",
-            "homepage_uri": "http://127.0.0.1:8000",
+            "federation_fetch_endpoint": "http://trust-anchor.127.0.0.1.nip.io/fetch/",
+            "federation_resolve_endpoint": "http://trust-anchor.127.0.0.1.nip.io/resolve/",
+            "federation_status_endpoint": "http://trust-anchor.127.0.0.1.nip.io/trust_mark_status/",
+            "homepage_uri": "http://trust-anchor.127.0.0.1.nip.io",
             "name": "example TA",
-            "federation_list_endpoint": "http://127.0.0.1:8000/list/"
+            "federation_list_endpoint": "http://trust-anchor.127.0.0.1.nip.io/list/"
           }
         },
         "trust_marks_issuers": {
@@ -887,8 +887,8 @@
         {
           "exp": 1648040533,
           "iat": 1647867733,
-          "iss": "http://127.0.0.1:8000/",
-          "sub": "http://127.0.0.1:8000/oidc/rp/",
+          "iss": "http://trust-anchor.127.0.0.1.nip.io/",
+          "sub": "http://trust-anchor.127.0.0.1.nip.io/oidc/rp/",
           "jwks": {
             "keys": [
               {
@@ -935,7 +935,7 @@
     "metadata": {
       "openid_relying_party": {
         "application_type": "web",
-        "client_id": "http://127.0.0.1:8000/oidc/rp/",
+        "client_id": "http://trust-anchor.127.0.0.1.nip.io/oidc/rp/",
         "client_registration_types": [
           "automatic"
         ],
@@ -959,7 +959,7 @@
           "authorization_code"
         ],
         "redirect_uris": [
-          "http://127.0.0.1:8000/oidc/rp/callback"
+          "http://trust-anchor.127.0.0.1.nip.io/oidc/rp/callback"
         ],
         "response_types": [
           "code"
@@ -969,8 +969,8 @@
     },
     "trust_marks": [],
     "parties_involved": [
-      "http://127.0.0.1:8000/oidc/rp/",
-      "http://127.0.0.1:8000/"
+      "http://trust-anchor.127.0.0.1.nip.io/oidc/rp/",
+      "http://trust-anchor.127.0.0.1.nip.io/"
     ],
     "status": "valid",
     "log": "",
