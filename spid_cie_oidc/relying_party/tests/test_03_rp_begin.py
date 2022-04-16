@@ -1,3 +1,5 @@
+import urllib
+
 from copy import deepcopy
 from unittest.mock import patch
 
@@ -10,6 +12,7 @@ from spid_cie_oidc.entity.models import (
     FetchedEntityStatement,
     TrustChain,
 )
+from spid_cie_oidc.entity.jwtse import unpad_jwt_payload
 from spid_cie_oidc.entity.tests.settings import TA_SUB
 from spid_cie_oidc.entity.utils import datetime_from_timestamp, exp_from_now, iat_now
 from spid_cie_oidc.provider.tests.settings import op_conf
@@ -171,9 +174,10 @@ class RPBeginTest(TestCase):
     
     @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB, OIDCFED_TRUST_ANCHORS=[TA_SUB])
     def test_rp_begin_tc_no_redirect_uri(self):
+        red_url = "http://rp-test.it/oidc/rp/callback-test/"
         FederationEntityConfiguration.objects.all().delete()
         local_rp_conf = deepcopy(rp_conf)
-        local_rp_conf["metadata"]["openid_relying_party"]["redirect_uris"] = ["http://rp-test.it/oidc/rp/callback-test/"],
+        local_rp_conf["metadata"]["openid_relying_party"]["redirect_uris"] = [red_url],
         self.rp_conf = FederationEntityConfiguration.objects.create(**local_rp_conf)        
         client = Client()
         url = reverse("spid_cie_rp_begin")
@@ -186,4 +190,6 @@ class RPBeginTest(TestCase):
                 "redirect_uri": "http://rp-test.it/oidc/rp/callback"
             }
         )
-        self.assertTrue("callback-test" in  res.url)
+        req = urllib.parse.parse_qs(res.url)['request'][0]
+        req_data = unpad_jwt_payload(req)
+        self.assertTrue(red_url in req_data['redirect_uri'])

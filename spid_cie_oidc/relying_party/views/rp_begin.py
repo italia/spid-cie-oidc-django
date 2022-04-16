@@ -181,7 +181,16 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
 
         request_obj = create_jws(authz_data_obj, entity_conf.jwks[0])
         authz_data["request"] = request_obj
-        uri_path = http_dict_to_redirect_uri_path(authz_data)
+        uri_path = http_dict_to_redirect_uri_path(
+            {
+                "client_id": authz_data["client_id"],
+                "scope" : authz_data["scope"],
+                "response_type": authz_data["response_type"],
+                "code_challenge": authz_data["code_challenge"],
+                "code_challenge_method": authz_data["code_challenge_method"],
+                "request": authz_data["request"]
+            }
+        )
         url = "?".join((authz_endpoint, uri_path))
         logger.info(f"Starting Authz request to {url}")
         return HttpResponseRedirect(url)
