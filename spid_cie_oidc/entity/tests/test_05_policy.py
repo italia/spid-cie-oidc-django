@@ -22,12 +22,12 @@ class PolicyTest(TestCase):
 
     def test_gather_polices_rp(self):
         combined_policy = gather_policies([{},rp_onboarding_data], "openid_relying_party")
-        self.assertTrue(combined_policy == {'scopes': {'value': ['openid']}})
+        self.assertTrue(combined_policy == {'scope': {'value': ['openid']}})
 
     def test_apply_policy(self):
         fa_policy = {}
-        fa_policy["scopes"] = FEDERATION_DEFAULT_POLICY["openid_relying_party"][
-            "scopes"
+        fa_policy["scope"] = FEDERATION_DEFAULT_POLICY["openid_relying_party"][
+            "scope"
         ]
         fa_policy["contacts"] = {"add": "ciao@email.it"}
         combined_policy = apply_policy(deepcopy(RP_METADATA), fa_policy)
@@ -43,15 +43,15 @@ class PolicyTest(TestCase):
 
     def test_apply_policy_subset_of(self):
         fa_policy = {}
-        fa_policy["scopes"] = {"subset_of": ["openid", "offline_access"]}
+        fa_policy["scope"] = {"subset_of": ["openid", "offline_access"]}
         combined_contacts = apply_policy(deepcopy(RP_METADATA), fa_policy)
-        self.assertTrue('profile' not in combined_contacts["scopes"])
+        self.assertTrue('profile' not in combined_contacts["scope"])
 
     def test_apply_policy_superset_of(self):
         fa_policy = {}
-        fa_policy["scopes"] = {"superset_of": ["openid"]}
+        fa_policy["scope"] = {"superset_of": ["openid"]}
         RP_METADATA_LOCAL = deepcopy(RP_METADATA)
-        RP_METADATA_LOCAL["scopes"] = ["offline_access"]
+        RP_METADATA_LOCAL["scope"] = ["offline_access"]
         with self.assertRaises(PolicyError):
             apply_policy(deepcopy(RP_METADATA_LOCAL), fa_policy)
 
@@ -82,8 +82,8 @@ class PolicyTest(TestCase):
 
     def test_diff_two_policy(self):
         fa_policy_old = {}
-        fa_policy_old["scopes"] = FEDERATION_DEFAULT_POLICY["openid_relying_party"][
-            "scopes"
+        fa_policy_old["scope"] = FEDERATION_DEFAULT_POLICY["openid_relying_party"][
+            "scope"
         ]
         fa_policy_new = deepcopy(fa_policy_old)
         fa_policy_new["contacts"] = {"add": "test@email.it"}

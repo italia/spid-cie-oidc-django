@@ -18,7 +18,7 @@ RP_METADATA = {
           "https://rp.example.it/logo_small.jpg",
           "https://rp.example.it/logo_big.jpg"
     ],
-    "scopes" : ["openid", "offline_access", "profile"],
+    "scope" : ["openid", "offline_access", "profile"],
 }
 
 RP_METADATA_CIE = deepcopy(RP_METADATA)
