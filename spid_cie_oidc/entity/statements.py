@@ -1,3 +1,4 @@
+from copy import deepcopy
 from .exceptions import (
     UnknownKid,
     MissingJwksClaim,
@@ -300,7 +301,7 @@ class EntityConfiguration:
         get superiors entity configurations
         """
         # apply limits if defined
-        authority_hints = authority_hints or self.payload.get("authority_hints", [])
+        authority_hints = authority_hints or deepcopy(self.payload.get("authority_hints", []))
         if (
             max_authority_hints
             and authority_hints != authority_hints[:max_authority_hints]
@@ -394,6 +395,7 @@ class EntityConfiguration:
         if is_valid:
             target = self.verified_by_superiors
             ec.verified_descendant_statements[self.sub] = payload
+            ec.verified_descendant_statements_as_jwt[self.sub] = jwt
             target[payload["iss"]] = ec
             self.is_valid = True
             return self.verified_by_superiors.get(ec.sub)
