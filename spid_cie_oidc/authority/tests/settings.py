@@ -12,7 +12,7 @@ rp_onboarding_data = dict(
     name="RP Test",
     sub="http://rp-test.it/oidc/rp/",
     type="openid_relying_party",
-    metadata_policy={"openid_relying_party": {"scopes": {"value": ["openid"]}}},
+    metadata_policy={"openid_relying_party": {"scope": {"value": ["openid"]}}},
     is_active=True,
     jwks = [RP_METADATA_JWK1_pub]
 )
@@ -67,7 +67,7 @@ intermediary_onboarding_data = dict(
     name="intermediary-test",
     sub="http://intermediary-test",
     type="federation_entity",
-    # metadata_policy = {"openid_relying_party": {"scopes": {"value": ["openid"]}}},
+    # metadata_policy = {"openid_relying_party": {"scope": {"value": ["openid"]}}},
     is_active=True,
     jwks = [INTERMEDIARY_JWK1_pub]
 )

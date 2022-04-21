@@ -268,10 +268,11 @@ class TrustChainBuilder:
     def serialize(self):
         res = []
         for stat in self.trust_path:
-            res.append(stat.payload)
+            res.append(stat.jwt)
             if stat.verified_descendant_statements:
                 res.append(
-                    [dict(i) for i in stat.verified_descendant_statements.values()]
+                    # [dict(i) for i in stat.verified_descendant_statements.values()]
+                    [i for i in stat.verified_descendant_statements_as_jwt.values()]
                 )
         return res
 
