@@ -398,7 +398,7 @@
       },
       "metadata_policy": {
         "openid_relying_party": {
-          "scopes": {
+          "scope": {
             "superset_of": [
               "openid"
             ],
@@ -534,7 +534,7 @@
               "refresh_token"
             ]
           },
-          "scopes": {
+          "scope": {
             "superset_of": [
               "openid"
             ],
@@ -698,7 +698,7 @@
                   "refresh_token"
                 ]
               },
-              "scopes": {
+              "scope": {
                 "superset_of": [
                   "openid"
                 ],
@@ -901,7 +901,7 @@
           },
           "metadata_policy": {
             "openid_relying_party": {
-              "scopes": {
+              "scope": {
                 "superset_of": [
                   "openid"
                 ],

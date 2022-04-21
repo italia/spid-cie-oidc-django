@@ -86,7 +86,7 @@ OIDCFED_DEFAULT_METADATA_POLICY = {
           "refresh_token"
          ]
       },
-      "scopes": {
+      "scope": {
         "superset_of": ["openid"],
         "subset_of": ["openid", "offline_access"]
     },

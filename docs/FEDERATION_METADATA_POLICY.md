@@ -31,7 +31,7 @@ metadata = {
 }
 
 policy = {
-    "scopes": {
+    "scope": {
         "default": ["openid"],
         "superset_of": ["openid"],
         "subset_of": ["openid", "offline_access", "profile", "email"],
@@ -57,7 +57,7 @@ apply_policy(metadata, policy)
  'redirect_uris': ['https://rp.example.it/spid/callback'],
  'response_types': ['code'],
  'subject_type': 'pairwise',
- 'scopes': ['openid']}
+ 'scope': ['openid']}
 ````
 
 Another example with OpenID Connect Provider

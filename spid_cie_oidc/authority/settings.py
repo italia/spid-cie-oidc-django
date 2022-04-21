@@ -48,7 +48,7 @@ FEDERATION_DEFAULT_POLICY = getattr(
         },
         "openid_relying_party": {
             "grant_types": {"subset_of": ["authorization_code", "refresh_token"]},
-            "scopes": {
+            "scope": {
                 "superset_of": ["openid"],
                 "subset_of": ["openid", "offline_access"],
             },
