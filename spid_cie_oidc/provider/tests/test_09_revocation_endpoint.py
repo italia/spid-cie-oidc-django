@@ -33,7 +33,6 @@ class RevocationEndponitTest(TestCase):
             iat=datetime_from_timestamp(iat_now()),
         )
         self.op_local_conf = deepcopy(op_conf)
-        self.op_local_conf["jwks"] = [op_conf_priv_jwk]
         CLIENT_ASSERTION = {
             "iss": RP_SUB,
             "sub": RP_SUB,

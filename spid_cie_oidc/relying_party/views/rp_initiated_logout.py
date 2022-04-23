@@ -74,7 +74,7 @@ def oidc_rpinitiated_logout(request):
                 "exp": exp_from_now(),
                 "jti": str(uuid.uuid4()),
             },
-            jwk_dict=rp_conf.jwks[0],
+            jwk_dict=rp_conf.jwks_core[0],
         )
 
         auth_token.logged_out = timezone.localtime()

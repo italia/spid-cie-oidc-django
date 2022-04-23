@@ -264,7 +264,7 @@ def resolve_entity_statement(request, format: str = "jose"):
         return JsonResponse(res, safe=False)
     else:
         return HttpResponse(
-            create_jws(res, iss.jwks[0]),
+            create_jws(res, iss.jwks_fed[0]),
             content_type="application/jose",
         )
 

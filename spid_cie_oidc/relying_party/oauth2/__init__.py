@@ -49,7 +49,7 @@ class OAuth2AuthorizationCodeGrant(object):
                     "exp": exp_from_now(),
                     "jti": str(uuid.uuid4()),
                 },
-                jwk_dict=client_conf.jwks[0],
+                jwk_dict=client_conf.jwks_core[0],
             ),
         )
 

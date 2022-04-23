@@ -227,7 +227,7 @@ class FederationDescendant(TimeStampedModel):
         issuer = get_first_self_trust_anchor(iss)
         return create_jws(
             self.entity_statement_as_dict(iss, aud),
-            issuer.jwks[0],
+            issuer.jwks_fed[0],
             alg=issuer.default_signature_alg,
             typ="entity-statement+jwt"
         )
@@ -263,7 +263,7 @@ class FederationEntityAssignedProfile(TimeStampedModel):
     def trust_mark_as_jws(self):
         return create_jws(
             self.trust_mark_as_dict,
-            self.issuer.jwks[0],
+            self.issuer.jwks_fed[0],
             alg=self.issuer.default_signature_alg,
             typ="trust-mark+jwt"
         )

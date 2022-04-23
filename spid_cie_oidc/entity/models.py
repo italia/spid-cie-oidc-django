@@ -73,10 +73,16 @@ class FederationEntityConfiguration(TimeStampedModel):
         help_text=_("only required if this Entity is an intermediary or leaf."),
         default=list,
     )
-    jwks = models.JSONField(
+    jwks_fed = models.JSONField(
         blank=False,
         null=False,
-        help_text=_("a list of private keys"),
+        help_text=_("a list of private keys for Federation ops"),
+        default=_create_jwks,
+    )
+    jwks_core = models.JSONField(
+        blank=False,
+        null=False,
+        help_text=_("a list of private keys for Core ops"),
         default=_create_jwks,
     )
     trust_marks = models.JSONField(
@@ -162,7 +168,7 @@ class FederationEntityConfiguration(TimeStampedModel):
     @property
     def public_jwks(self):
         res = []
-        for i in self.jwks:
+        for i in self.jwks_fed:
             skey = serialize_rsa_key(key_from_jwk_dict(i).public_key())
             skey["kid"] = i["kid"]
             res.append(skey)
@@ -171,7 +177,7 @@ class FederationEntityConfiguration(TimeStampedModel):
     @property
     def pems_as_dict(self):
         res = {}
-        for i in self.jwks:
+        for i in self.jwks_fed:
             res[i["kid"]] = {
                 "private": private_pem_from_jwk(i),
                 "public": public_pem_from_jwk(i),
@@ -184,7 +190,7 @@ class FederationEntityConfiguration(TimeStampedModel):
 
     @property
     def kids(self) -> list:
-        return [i["kid"] for i in self.jwks]
+        return [i["kid"] for i in self.jwks_fed]
 
     @property
     def type(self) -> list:
@@ -230,7 +236,7 @@ class FederationEntityConfiguration(TimeStampedModel):
     def entity_configuration_as_jws(self, **kwargs):
         return create_jws(
             self.entity_configuration_as_dict,
-            self.jwks[0],
+            self.jwks_fed[0],
             alg=self.default_signature_alg,
             typ="entity-statement+jwt",
             **kwargs,
@@ -242,7 +248,7 @@ class FederationEntityConfiguration(TimeStampedModel):
 
         if self.entity_type in ENTITY_TYPE_LEAFS:
             valid_kids = set()
-            for jwk in self.jwks:
+            for jwk in self.jwks_fed:
                 valid_kids.add(jwk.get("kid", None))
             
             for entity,metadata in self.metadata.items():
@@ -250,14 +256,13 @@ class FederationEntityConfiguration(TimeStampedModel):
                     if oidc_jwk['kid'] not in valid_kids:
                         logger.warning(
                             f"Found a public jwk in {entity} that haven't a valid "
-                            f"jwk {oidc_jwk['kid']} in {self.jwks}."
+                            f"jwk {oidc_jwk['kid']} in {self.jwks_fed}."
                         )
-        
-
-
 
     def __str__(self):
-        return "{} [{}]".format(self.sub, "active" if self.is_active else "--")
+        return "{} [{}]".format(
+            self.sub, "active" if self.is_active else "--"
+        )
 
 
 class FetchedEntityStatement(TimeStampedModel):

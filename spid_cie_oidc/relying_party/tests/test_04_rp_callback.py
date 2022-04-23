@@ -47,7 +47,7 @@ class RpCallBack(TestCase):
         self.rp_config["sub"] = self.rp_config["metadata"]["openid_relying_party"]["client_id"]
         FederationEntityConfiguration.objects.create(**self.rp_config)
         rp_conf_saved = FederationEntityConfiguration.objects.all().first()  
-        rp_conf_saved.metadata["openid_relying_party"]["jwks"]["keys"][0]["kid"] = rp_conf_saved.jwks[0]["kid"]
+        rp_conf_saved.metadata["openid_relying_party"]["jwks"]["keys"][0]["kid"] = rp_conf_saved.jwks_core[0]["kid"]
         rp_conf_saved.save()
         self.op_conf = FederationEntityConfiguration.objects.create(**op_conf)
 

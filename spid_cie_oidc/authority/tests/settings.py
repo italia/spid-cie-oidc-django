@@ -19,7 +19,8 @@ rp_onboarding_data = dict(
 
 rp_conf = {
     "sub": rp_onboarding_data["sub"],
-    "jwks" : [RP_METADATA_JWK1],
+    "jwks_fed" : [RP_METADATA_JWK1],
+    "jwks_core" : [RP_METADATA_JWK1],
     "metadata": {
         "openid_relying_party": {
             "application_type": "web",
@@ -61,7 +62,8 @@ intermediary_conf = {
     "trust_marks": [],
     "authority_hints": ["http://testserver/"],
     "is_active": True,
-    "jwks": [INTERMEDIARY_JWK1]
+    "jwks_core": [INTERMEDIARY_JWK1],
+    "jwks_fed": [INTERMEDIARY_JWK1]
 }
 intermediary_onboarding_data = dict(
     name="intermediary-test",

@@ -9,7 +9,7 @@ OP_METADATA = {
     "userinfo_endpoint": "https://idserver.servizicie.interno.gov.it/op/userinfo",
     "introspection_endpoint": "https://idserver.servizicie.interno.gov.it/op/introspect",
     "revocation_endpoint": "https://idserver.servizicie.interno.gov.it/op/revoke",
-    "jwks_uri": "https://registry.cie.gov.it/.well-known/jwks.json",
+    "jwks_uri": "https://idserver.servizicie.interno.gov.it/.well-known/jwks.json",
     "subject_types_supported": ["pairwise"],
     "token_endpoint_auth_signing_alg_values_supported" : ["ES256"],
     "id_token_encryption_alg_values_supported": ["RSA-OAEP"],
