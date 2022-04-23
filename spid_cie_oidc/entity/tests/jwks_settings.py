@@ -12,7 +12,7 @@ JWKS = {
         },
         {
             "kty": "EC",
-            "kid": "enc-ec256-0",
+            "kid": "enc-ec256-1",
             "use": "enc",
             "crv": "P-256",
             "x": "QI31cvWP4GwnWIi-Z0IYHauQ4nPCk8Vf1BHoPazGqEc",

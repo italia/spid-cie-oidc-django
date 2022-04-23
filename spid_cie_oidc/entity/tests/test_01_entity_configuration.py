@@ -52,4 +52,4 @@ class EntityConfigurationTest(TestCase):
         wk_url = reverse("entity_configuration")
         c = Client()
         res = c.get(wk_url)
-        verify_jws(res.content.decode(), self.ta_conf.jwks[0])
+        verify_jws(res.content.decode(), self.ta_conf.jwks_fed[0])

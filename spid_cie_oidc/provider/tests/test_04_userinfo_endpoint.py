@@ -28,7 +28,6 @@ class UserInfoEndpointTest(TestCase):
     def setUp(self):
         self.RP_SUB = rp_onboarding_data["sub"]
         self.op_local_conf = deepcopy(op_conf)
-        self.op_local_conf["jwks"] = [op_conf_priv_jwk]
         FederationEntityConfiguration.objects.create(**self.op_local_conf)
         self.ta_fes = FetchedEntityStatement.objects.create(
             sub=TA_SUB,
@@ -39,10 +38,16 @@ class UserInfoEndpointTest(TestCase):
 
     def define_db(self):
         session = OidcSession.objects.create(
-            user=User.objects.create(username = "username", attributes = {"email" : "test@test.it"}),
+            user=User.objects.create(
+                username = "username", attributes = {"email" : "test@test.it"}
+            ),
             user_uid="",
             nonce="",
-            authz_request={"scope": "openid", "nonce": "123", "claims":{"userinfo":{"email": None}}},
+            authz_request={
+                "scope": "openid", "nonce": "123", "claims":{
+                    "userinfo":{"email": None}
+                }
+            },
             client_id=self.RP_SUB,
         )
 

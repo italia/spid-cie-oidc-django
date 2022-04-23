@@ -32,7 +32,6 @@ class RefreshTokenTest(TestCase):
 
     def setUp(self): 
         self.op_local_conf = deepcopy(op_conf)
-        self.op_local_conf["jwks"] = [op_conf_priv_jwk]
         FederationEntityConfiguration.objects.create(**self.op_local_conf)
         self.ta_fes = FetchedEntityStatement.objects.create(
             sub=TA_SUB,

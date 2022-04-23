@@ -39,7 +39,7 @@ class IntrospectionEndpointTest(TestCase):
             "iat": iat_now(),
             "jti": "jti",
         }
-        self.ca_jws = create_jws(CLIENT_ASSERTION, rp_conf["jwks"][0])
+        self.ca_jws = create_jws(CLIENT_ASSERTION, rp_conf["jwks_core"][0])
         token = {
             "iss": self.RP_SUB,
             "sub": op_conf["sub"],
@@ -64,7 +64,6 @@ class IntrospectionEndpointTest(TestCase):
         )
         IssuedToken.objects.create(**iss_token_data)
         self.op_local_conf = deepcopy(op_conf)
-        self.op_local_conf["jwks"] = [op_conf_priv_jwk]
         FederationEntityConfiguration.objects.create(**self.op_local_conf)
         self.ta_fes = FetchedEntityStatement.objects.create(
             sub=TA_SUB,

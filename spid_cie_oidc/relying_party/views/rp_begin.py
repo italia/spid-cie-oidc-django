@@ -179,7 +179,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
         authz_data_obj["iss"] = client_conf["client_id"]
         authz_data_obj["sub"] = client_conf["client_id"]
 
-        request_obj = create_jws(authz_data_obj, entity_conf.jwks[0])
+        request_obj = create_jws(authz_data_obj, entity_conf.jwks_core[0])
         authz_data["request"] = request_obj
         uri_path = http_dict_to_redirect_uri_path(
             {

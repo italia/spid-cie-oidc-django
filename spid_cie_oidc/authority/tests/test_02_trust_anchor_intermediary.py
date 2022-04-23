@@ -45,7 +45,7 @@ class TrustChainTest(TestCase):
         url = reverse("oidcfed_fetch")
         c = Client()
         res = c.get(url, data={"sub": self.rp.sub})
-        data = verify_jws(res.content.decode(), self.ta_conf.jwks[0])
+        data = verify_jws(res.content.decode(), self.ta_conf.jwks_fed[0])
         self.assertTrue(data["jwks"])
 
     def test_list_endpoint(self):
@@ -253,7 +253,7 @@ class TrustChainTest(TestCase):
             }
         )
         self.assertTrue(res.status_code == 200)
-        verify_jws(res.content.decode(), self.ta_conf.jwks[0])
+        verify_jws(res.content.decode(), self.ta_conf.jwks_fed[0])
 
     def test_trust_mark_status_endpoint(self):
         url = reverse("oidcfed_trust_mark_status")

@@ -285,7 +285,7 @@ class OpBase:
         _sub = session.pairwised_sub()
         iss_sub = issuer.sub
         commons = self.get_jwt_common_data()
-        jwk = issuer.jwks[0]
+        jwk = issuer.jwks_core[0]
 
         access_token = self.get_access_token(iss_sub, _sub, session, commons)
         jwt_at = create_jws(access_token, jwk, typ="at+jwt")
