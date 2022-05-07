@@ -282,7 +282,7 @@ class OpBase:
             return refresh_token
 
     def get_iss_token_data(self, session : OidcSession, issuer: FederationEntityConfiguration):
-        _sub = session.pairwised_sub()
+        _sub = session.pairwised_sub(provider_id = issuer.sub)
         iss_sub = issuer.sub
         commons = self.get_jwt_common_data()
         jwk = issuer.jwks_core[0]
