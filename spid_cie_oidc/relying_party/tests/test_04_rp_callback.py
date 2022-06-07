@@ -64,6 +64,15 @@ class RpCallBack(TestCase):
         )
 
     @override_settings(HTTP_CLIENT_SYNC=True)
+    @patch("requests.post", return_value=MockedTokenEndPointResponse())
+    @patch("requests.get", return_value=MockedUserInfoResponse())
+    def test_rp_callback_mixups_attacks(self, mocked, mocked_2):
+        client = Client()
+        url = reverse("spid_cie_rp_callback")
+        res = client.get(url, {"state": STATE, "code": CODE, "iss": "WRONG"})
+        self.assertTrue(res.status_code == 400)
+
+    @override_settings(HTTP_CLIENT_SYNC=True)
     @patch("spid_cie_oidc.relying_party.views.rp_callback.process_user_attributes", return_value=None)
     @patch("requests.post", return_value=MockedTokenEndPointResponse())
     @patch("requests.get", return_value=MockedUserInfoResponse())
@@ -113,8 +122,7 @@ class RpCallBack(TestCase):
         client = Client()
         url = reverse("spid_cie_rp_callback")
         res = client.get(url, {"state": STATE, "code": CODE})
-        self.assertTrue("Relay party not found" in res.content.decode())
-
+        self.assertTrue("Relying party not found" in res.content.decode())
 
     @override_settings(HTTP_CLIENT_SYNC=True)
     @patch("requests.post", return_value=MockedTokenEndPointResponse())

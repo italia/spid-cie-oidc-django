@@ -132,6 +132,17 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
             authz = authz.last()
 
         code = request.GET.get("code")
+        # mixups attacks prevention
+        if request.GET.get('iss', None):
+            if request.GET['iss'] != authz.provider_id:
+                context = {
+                    "error": "invalid request",
+                    "error_description": _(
+                        "authn response validation failed: mixups attack prevention."
+                    ),
+                }
+                return render(request, self.error_template, context, status=400)
+            
 
         authz_token = OidcAuthenticationToken.objects.create(
             authz_request=authz, code=code
@@ -142,7 +153,7 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
         if not self.rp_conf:
             context = {
                 "error": "invalid request",
-                "error_description": _("Relay party not found"),
+                "error_description": _("Relying party not found"),
             }
             return render(request, self.error_template, context, status=400)
 
