@@ -106,15 +106,8 @@ def fetch(request):
     tags = ['Federation API']
 )
 def entity_list(request):
-    is_leaf = request.GET.get("is_leaf", "").lower()
-    if is_leaf == "true":
-        _q = {
-            "profile__profile_category__in": ("openid_relying_party", "openid_provider")
-        }
-    elif is_leaf == "false":
-        _q = {"profile__profile_category": "federation_entity"}
-    elif request.GET.get("type", "").lower():
-        _q = {"profile__profile_category": request.GET["type"]}
+    if request.GET.get("entity_type", "").lower():
+        _q = {"profile__profile_category": request.GET["entity_type"]}
     else:
         _q = {}
 

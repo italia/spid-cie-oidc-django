@@ -51,14 +51,6 @@ class TrustChainTest(TestCase):
     def test_list_endpoint(self):
         url = reverse("oidcfed_list")
         c = Client()
-        res = c.get(url, data={"is_leaf": True})
-        self.assertTrue(res.json()[0] == self.rp.sub)
-        self.assertEqual(res.status_code, 200)
-
-        res = c.get(url, data={"is_leaf": False})
-        self.assertFalse(res.json())
-        self.assertEqual(res.status_code, 200)
-
         res = c.get(url, data={})
         self.assertTrue(res.json())
         self.assertEqual(res.status_code, 200)
