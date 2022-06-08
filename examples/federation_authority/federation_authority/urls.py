@@ -54,6 +54,7 @@ if 'spid_cie_oidc.relying_party' in settings.INSTALLED_APPS:
     urlpatterns.extend(rp_urlpatterns)
 
     from spid_cie_oidc.entity.views import entity_configuration
+    from spid_cie_oidc.authority.views import resolve_entity_statement
 
     urlpatterns.extend(
         [
@@ -61,6 +62,11 @@ if 'spid_cie_oidc.relying_party' in settings.INSTALLED_APPS:
                 f"oidc/rp/.well-known/openid-federation",
                 entity_configuration,
                 name="rp_entity_configuration",
+            ),
+            path(
+                "oidc/rp/resolve",
+                resolve_entity_statement,
+                name="rp_entity_resolve",
             ),
         ]
     )
@@ -77,7 +83,12 @@ if 'spid_cie_oidc.provider' in settings.INSTALLED_APPS:
                 f"oidc/op/.well-known/openid-federation",
                 entity_configuration,
                 name="op_entity_configuration",
-            )
+            ),
+            path(
+                "oidc/op/resolve",
+                resolve_entity_statement,
+                name="op_entity_resolve",
+            ),
         ]
     )
 

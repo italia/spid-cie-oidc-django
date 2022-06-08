@@ -251,6 +251,7 @@ def resolve_entity_statement(request, format: str = "jose"):
         "exp": entity.exp_as_timestamp,
         "trust_marks": entity.trust_marks,
         "metadata": entity.metadata,
+        "trust_chain": entity.chain
     }
 
     if request.GET.get("format") == "json" or format == "json":

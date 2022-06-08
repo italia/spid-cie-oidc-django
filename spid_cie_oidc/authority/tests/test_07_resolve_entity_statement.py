@@ -86,3 +86,6 @@ class ResolveEntityStatementTest(TestCase):
         _json = json.loads(res.content.decode())
         self.assertTrue(_json.get("iss") == ta_conf_data["sub"])
         self.assertTrue(_json.get("sub") == rp_conf["sub"])
+
+        self.assertTrue("trust_chain" in _json)
+        self.assertTrue("metadata" in _json)

@@ -44,6 +44,7 @@ if 'spid_cie_oidc.provider' in settings.INSTALLED_APPS:
     urlpatterns.extend(op_urlpatterns)
 
     from spid_cie_oidc.entity.views import entity_configuration
+    from spid_cie_oidc.authority.views import resolve_entity_statement
 
     urlpatterns.extend(
         [
@@ -51,6 +52,11 @@ if 'spid_cie_oidc.provider' in settings.INSTALLED_APPS:
                 f"oidc/op/.well-known/openid-federation",
                 entity_configuration,
                 name="op_entity_configuration",
+            ),
+            path(
+                "oidc/op/resolve",
+                resolve_entity_statement,
+                name="op_entity_resolve",
             ),
         ]
     )
