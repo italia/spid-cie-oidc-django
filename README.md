@@ -79,7 +79,6 @@ docker pull ghcr.io/italia/spid-cie-oidc-django:latest
 
 Install Docker using the packages distributed from the official website and the following tools.
 ````
-sudo apt install jq
 sudo pip install docker-compose
 ````
 
