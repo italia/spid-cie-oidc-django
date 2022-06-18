@@ -140,7 +140,11 @@ class AuthenticationRequest(BaseModel):
     state: constr(min_length=32)
     # TODO: to be improved
     ui_locales: Optional[List[str]]
-    sub: HttpUrl
+    
+    # sub claim MUST not be used to prevent that this jwt
+    # could be reused as a private_key_jwt
+    # sub: HttpUrl
+    
     iss: HttpUrl
     iat: int
     exp: Optional[int]
