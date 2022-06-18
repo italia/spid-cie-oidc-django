@@ -200,6 +200,7 @@
     "entity_type": "openid_relying_party",
     "metadata": {
       "openid_relying_party": {
+        "organization_name": "that fancy RP",
         "application_type": "web",
         "client_id": "http://127.0.0.1:8000/oidc/rp/",
         "client_registration_types": [
@@ -465,7 +466,7 @@
           "federation_resolve_endpoint": "http://127.0.0.1:8000/resolve/",
           "federation_status_endpoint": "http://127.0.0.1:8000/trust_mark_status/",
           "homepage_uri": "http://127.0.0.1:8000",
-          "name": "example TA",
+          "organization_name": "example TA",
           "federation_list_endpoint": "http://127.0.0.1:8000/list/"
         }
       },
