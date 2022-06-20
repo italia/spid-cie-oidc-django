@@ -74,7 +74,7 @@ class RefreshTokenTest(TestCase):
             auth_code="code",
         )
         IssuedToken.objects.create(
-            access_token = create_jws(self.refresh_token, op_conf_priv_jwk),
+            access_token = create_jws(self.refresh_token, op_conf_priv_jwk, typ="at-jwt"),
             refresh_token = create_jws(self.refresh_token, op_conf_priv_jwk),
             session = session,
             expires = timezone.localtime()

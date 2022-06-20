@@ -203,10 +203,7 @@ def resolve_entity_statement(request, format: str = "jose"):
     if not all((request.GET.get("sub", None), request.GET.get("anchor", None))):
         raise Http404("sub and anchor parameters are REQUIRED.")
 
-    if request.GET.get("iss"):
-        iss = get_first_self_trust_anchor(sub=request.GET["iss"])
-    else:
-        iss = get_first_self_trust_anchor()
+    iss = get_first_self_trust_anchor()
 
     _q = dict(
         sub=request.GET["sub"],
