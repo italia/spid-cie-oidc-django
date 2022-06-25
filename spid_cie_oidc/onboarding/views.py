@@ -24,23 +24,23 @@ from spid_cie_oidc.entity.jwks import (
 from spid_cie_oidc.entity.jwtse import unpad_jwt_head, unpad_jwt_payload, verify_jws
 from spid_cie_oidc.authority.views import trust_mark_status, resolve_entity_statement
 from spid_cie_oidc.authority.validators import validate_entity_configuration
-from spid_cie_oidc.onboarding.schemas.authn_requests import AuthenticationRequestSpid
-from spid_cie_oidc.onboarding.schemas.authn_response import AuthenticationResponse
-from spid_cie_oidc.onboarding.schemas.authn_response import AuthenticationErrorResponse
-from spid_cie_oidc.onboarding.schemas.introspection_request import IntrospectionRequest
-from spid_cie_oidc.onboarding.schemas.introspection_response import IntrospectionResponse
-from spid_cie_oidc.onboarding.schemas.introspection_response import IntrospectionErrorResponseSpid
+from spid_cie_oidc.provider.schemas.authn_requests import AuthenticationRequestSpid
+from spid_cie_oidc.provider.schemas.authn_response import AuthenticationResponse
+from spid_cie_oidc.provider.schemas.authn_response import AuthenticationErrorResponse
+from spid_cie_oidc.provider.schemas.introspection_request import IntrospectionRequest
+from spid_cie_oidc.provider.schemas.introspection_response import IntrospectionResponse
+from spid_cie_oidc.provider.schemas.introspection_response import IntrospectionErrorResponseSpid
 from spid_cie_oidc.entity.schemas.op_metadata import OPMetadataSpid, OPMetadataCie
 from spid_cie_oidc.entity.schemas.rp_metadata import RPMetadataSpid,RPMetadataCie
-from spid_cie_oidc.onboarding.schemas.revocation_request import RevocationRequest
-from spid_cie_oidc.onboarding.schemas.token_requests import TokenAuthnCodeRequest
-from spid_cie_oidc.onboarding.schemas.token_response import TokenResponse
-from spid_cie_oidc.onboarding.schemas.token_response import TokenErrorResponse
+from spid_cie_oidc.provider.schemas.revocation_request import RevocationRequest
+from spid_cie_oidc.provider.schemas.token_requests import TokenAuthnCodeRequest
+from spid_cie_oidc.provider.schemas.token_response import TokenResponse
+from spid_cie_oidc.provider.schemas.token_response import TokenErrorResponse
 
-from spid_cie_oidc.onboarding.schemas.token_requests import TokenRefreshRequest
-from spid_cie_oidc.onboarding.schemas.token_response import TokenRefreshResponse
+from spid_cie_oidc.provider.schemas.token_requests import TokenRefreshRequest
+from spid_cie_oidc.provider.schemas.token_response import TokenRefreshResponse
 
-from spid_cie_oidc.onboarding.schemas.jwt import JwtStructure
+from spid_cie_oidc.provider.schemas.jwt import JwtStructure
 from spid_cie_oidc.entity.policy import apply_policy
 
 from spid_cie_oidc.relying_party.settings import RP_PROVIDER_PROFILES

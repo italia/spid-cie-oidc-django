@@ -1,8 +1,8 @@
 from django.conf import settings
-from spid_cie_oidc.onboarding.schemas.authn_requests import AcrValues, AuthenticationRequestCie, AuthenticationRequestDoc, AuthenticationRequestSpid
+from spid_cie_oidc.provider.schemas.authn_requests import AcrValues, AuthenticationRequestCie, AuthenticationRequestDoc, AuthenticationRequestSpid
 from spid_cie_oidc.entity.schemas.rp_metadata import RPMetadataSpid, RPMetadataCie
-from spid_cie_oidc.onboarding.schemas.authn_response import AuthenticationResponse, AuthenticationResponseCie
-from spid_cie_oidc.onboarding.schemas.token_response import TokenResponse
+from spid_cie_oidc.provider.schemas.authn_response import AuthenticationResponse, AuthenticationResponseCie
+from spid_cie_oidc.provider.schemas.token_response import TokenResponse
 
 
 RP_PREFS = {

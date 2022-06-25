@@ -18,7 +18,7 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views import View
 from spid_cie_oidc.entity.exceptions import InvalidEntityConfiguration
-from spid_cie_oidc.onboarding.schemas.authn_requests import AcrValues
+from spid_cie_oidc.provider.schemas.authn_requests import AcrValues
 from spid_cie_oidc.provider.forms import AuthLoginForm, AuthzHiddenForm
 from spid_cie_oidc.provider.models import OidcSession
 from spid_cie_oidc.provider.exceptions import AuthzRequestReplay, InvalidRefreshRequestException, ValidationException

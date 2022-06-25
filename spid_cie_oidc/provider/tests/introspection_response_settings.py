@@ -3,12 +3,12 @@ from copy import deepcopy
 
 INTROSPECTION_RESPONSE = {
     "active": True,
-    "scope": ["openid"],
-    "exp": 162545274,
-    "sub": "OP-1234567890",
-    "client_id": "https://rp.agid.gov.it/",
-    "iss": "https://op.spid.agid.gov.it/",
-    "aud": ["https://rp.spid.agid.gov.it/auth"],
+    # "scope": ["openid"],
+    # "exp": 162545274,
+    # "sub": "OP-1234567890",
+    # "client_id": "https://rp.agid.gov.it/",
+    # "iss": "https://op.spid.agid.gov.it/",
+    # "aud": ["https://rp.spid.agid.gov.it/auth"],
 }
 
 

@@ -10,7 +10,7 @@ from spid_cie_oidc.entity.models import FederationEntityConfiguration
 from spid_cie_oidc.relying_party.models import OidcAuthentication
 from spid_cie_oidc.authority.tests.settings import rp_conf
 from spid_cie_oidc.provider.tests.settings import op_conf
-from spid_cie_oidc.onboarding.tests.authn_request_settings import AUTHN_REQUEST_SPID
+from spid_cie_oidc.provider.tests.authn_request_settings import AUTHN_REQUEST_SPID
 
 from spid_cie_oidc.relying_party.tests.mocked_response import (
     MockedTokenEndPointNoCorrectIdTokenResponse,

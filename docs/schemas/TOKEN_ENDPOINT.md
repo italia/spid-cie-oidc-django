@@ -7,7 +7,7 @@ The Token Endpoint issues Access Tokens, ID Tokens, and Refresh Tokens; there ar
 
 After receiving and validating a Token Request from the RP, the OP’s Token Endpoint returns a successful response, if the Token Request (both ID Token and Refresh Token) is invalid or unauthorized, the OP constructs the error response.
 
-In spid_cie_oidc.onboarding.schemas there are functions to generate the json schema of the Token Request to the OP's Token Endpoint from RP and the related OP's response to RP.
+In spid_cie_oidc.provider.schemas there are functions to generate the json schema of the Token Request to the OP's Token Endpoint from RP and the related OP's response to RP.
 
 With the same functions is possible to validate request and response.
 
@@ -16,7 +16,7 @@ With the same functions is possible to validate request and response.
 
 ````
 ./manage.py shell
-from spid_cie_oidc.onboarding.schemas.token_requests import TokenAuthnCodeRequest
+from spid_cie_oidc.provider.schemas.token_requests import TokenAuthnCodeRequest
 print(TokenAuthnCodeRequest.schema_json(indent=2))
 ````
 
@@ -27,11 +27,11 @@ print(TokenAuthnCodeRequest.schema_json(indent=2))
 ````
 Import a token authn code request example
 ````
-from spid_cie_oidc.onboarding.tests.token_request_settings import TOKEN_AUTHN_CODE_REQUEST
+from spid_cie_oidc.provider.tests.token_request_settings import TOKEN_AUTHN_CODE_REQUEST
 ````
 Then to validate
 ````
-from spid_cie_oidc.onboarding.schemas.token_requests import TokenAuthnCodeRequest
+from spid_cie_oidc.provider.schemas.token_requests import TokenAuthnCodeRequest
 TokenAuthnCodeRequest(**TOKEN_AUTHN_CODE_REQUEST)
 ````
 
@@ -39,7 +39,7 @@ TokenAuthnCodeRequest(**TOKEN_AUTHN_CODE_REQUEST)
 
 ````
 ./manage.py shell
-from spid_cie_oidc.onboarding.schemas.token_requests import TokenRefreshRequest
+from spid_cie_oidc.provider.schemas.token_requests import TokenRefreshRequest
 print(TokenRefreshRequest.schema_json(indent=2))
 ````
 
@@ -50,11 +50,11 @@ print(TokenRefreshRequest.schema_json(indent=2))
 ````
 Import a token refresh request example
 ````
-from spid_cie_oidc.onboarding.tests.token_request_settings import TOKEN_REFRESH_REQUEST
+from spid_cie_oidc.provider.tests.token_request_settings import TOKEN_REFRESH_REQUEST
 ````
 Then to validate
 ````
-from spid_cie_oidc.onboarding.schemas.token_requests import TokenRefreshRequest
+from spid_cie_oidc.provider.schemas.token_requests import TokenRefreshRequest
 TokenRefreshRequest(**TOKEN_REFRESH_REQUEST)
 ````
 
@@ -62,7 +62,7 @@ TokenRefreshRequest(**TOKEN_REFRESH_REQUEST)
 
 ````
 ./manage.py shell
-from spid_cie_oidc.onboarding.schemas.token_response import TokenResponse
+from spid_cie_oidc.provider.schemas.token_response import TokenResponse
 print(TokenResponse.schema_json(indent=2))
 ````
 
@@ -73,11 +73,11 @@ print(TokenResponse.schema_json(indent=2))
 ````
 Import a token authn code response example
 ````
-from spid_cie_oidc.onboarding.tests.token_response_settings import TOKEN_RESPONSE
+from spid_cie_oidc.provider.tests.token_response_settings import TOKEN_RESPONSE
 ````
 Then to validate
 ````
-from spid_cie_oidc.onboarding.schemas.token_response import TokenResponse
+from spid_cie_oidc.provider.schemas.token_response import TokenResponse
 TokenResponse(**TOKEN_RESPONSE)
 ````
 
@@ -85,7 +85,7 @@ TokenResponse(**TOKEN_RESPONSE)
 
 ````
 ./manage.py shell
-from spid_cie_oidc.onboarding.schemas.token_response import TokenRefreshResponse
+from spid_cie_oidc.provider.schemas.token_response import TokenRefreshResponse
 print(TokenRefreshResponse.schema_json(indent=2))
 ````
 
@@ -96,11 +96,11 @@ print(TokenRefreshResponse.schema_json(indent=2))
 ````
 Import a token refresh response example
 ````
-from spid_cie_oidc.onboarding.tests.token_response_settings import TOKEN_REFRESH_RESPONSE
+from spid_cie_oidc.provider.tests.token_response_settings import TOKEN_REFRESH_RESPONSE
 ````
 Then to validate
 ````
-from spid_cie_oidc.onboarding.schemas.token_response import TokenRefreshResponse
+from spid_cie_oidc.provider.schemas.token_response import TokenRefreshResponse
 TokenRefreshResponse(**TOKEN_REFRESH_RESPONSE)
 ````
 
@@ -108,7 +108,7 @@ TokenRefreshResponse(**TOKEN_REFRESH_RESPONSE)
 
 ````
 ./manage.py shell
-from spid_cie_oidc.onboarding.schemas.token_response import TokenErrorResponse
+from spid_cie_oidc.provider.schemas.token_response import TokenErrorResponse
 print(TokenErrorResponse.schema_json(indent=2))
 ````
 
@@ -119,11 +119,11 @@ print(TokenErrorResponse.schema_json(indent=2))
 ````
 Import a token error response example
 ````
-from spid_cie_oidc.onboarding.tests.token_response_settings import TOKEN_ERROR_RESPONSE
+from spid_cie_oidc.provider.tests.token_response_settings import TOKEN_ERROR_RESPONSE
 ````
 Then to validate
 ````
-from spid_cie_oidc.onboarding.schemas.token_response import TokenErrorResponse
+from spid_cie_oidc.provider.schemas.token_response import TokenErrorResponse
 TokenErrorResponse(**TOKEN_ERROR_RESPONSE)
 ````
 
@@ -132,7 +132,7 @@ TokenErrorResponse(**TOKEN_ERROR_RESPONSE)
 
 ````
 ./manage.py shell
-from spid_cie_oidc.onboarding.schemas.jwt import JwtStructure
+from spid_cie_oidc.provider.schemas.jwt import JwtStructure
 print(JwtStructure.schema_json(indent=2))
 ````
 
@@ -144,10 +144,10 @@ print(JwtStructure.schema_json(indent=2))
 ````
 Import a jwt example
 ````
-from spid_cie_oidc.onboarding.tests.token_request_settings import JWT_CLIENT_ASSERTION
+from spid_cie_oidc.provider.tests.token_request_settings import JWT_CLIENT_ASSERTION
 ````
 Then to validate
 ````
-from spid_cie_oidc.onboarding.schemas.jwt import JwtStructure
+from spid_cie_oidc.provider.schemas.jwt import JwtStructure
 JwtStructure(**JWT_CLIENT_ASSERTION)
 ````

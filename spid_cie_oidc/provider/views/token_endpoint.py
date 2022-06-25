@@ -93,7 +93,6 @@ class TokenEndpoint(OpBase, View):
         )
         if issued_token.refresh_token:
             iss_token_data['refresh_token'] = issued_token.refresh_token
-
         return JsonResponse(iss_token_data)
 
     def is_token_renewable(self, session) -> bool:

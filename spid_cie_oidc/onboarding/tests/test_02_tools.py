@@ -25,7 +25,7 @@ from spid_cie_oidc.entity.jwks import (
 
 from spid_cie_oidc.entity.tests.op_metadata_settings import OP_METADATA_SPID
 from spid_cie_oidc.entity.tests.rp_metadata_settings import RP_METADATA_CIE
-from spid_cie_oidc.onboarding.tests.authn_request_settings import AUTHN_REQUEST_SPID
+from spid_cie_oidc.provider.tests.authn_request_settings import AUTHN_REQUEST_SPID
 from spid_cie_oidc.authority.tests.settings import RP_METADATA_JWK1, RP_METADATA_JWK1_pub
 
 class ToolsTests(TestCase):

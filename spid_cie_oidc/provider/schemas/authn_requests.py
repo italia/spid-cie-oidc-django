@@ -174,7 +174,7 @@ class AuthenticationRequest(BaseModel):
 
 class AuthenticationRequestSpid(AuthenticationRequest):
     scope: List[ScopeSpid]
-    prompt: Literal["consent", "consent login", "verify"]
+    prompt: Literal["consent", "consent login"]
 
     def get_claims() -> dict:
         return CLAIMS_SPID
@@ -187,7 +187,7 @@ class AuthenticationRequestSpid(AuthenticationRequest):
             code_challenge= "codeChallenge",
             code_challenge_method= "S256",
             nonce= "12345678123456781234567812345678inpiu",
-            prompt= "verify",
+            prompt= "consent",
             redirect_uri= "https://rp.cie.it/callback1/",
             acr_values= ["https://www.spid.gov.it/SpidL2", "https://www.spid.gov.it/SpidL1"],
             claims= {},
