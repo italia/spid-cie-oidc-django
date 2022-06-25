@@ -45,10 +45,6 @@ class SigningAlgValuesSupported(str, Enum):
 class EncryptionAlgValuesSupported(str, Enum):
     rsa_oaep = "RSA-OAEP"
     ras_oaep_256 = "RSA-OAEP-256"
-    ecdh_es = "ECDH-ES"
-    ecdh_es_a128kw = "ECDH-ES+A128KW"
-    ecdh_es_a192kw = "ECDH-ES+A192KW"
-    ecdh_es_a256kw = "ECDH-ES+A256KW"
 
 
 class EncryptionEncValuesSupported(str, Enum):
@@ -58,6 +54,7 @@ class EncryptionEncValuesSupported(str, Enum):
     a128gcm = "A128GCM"
     a192gcm = "A192GCM"
     a256gcm = "A256GCM"
+    rsa_oaep_256 = "RSA-OAEP-256"
 
 
 class ClaimsSupported(str, Enum):
@@ -85,6 +82,7 @@ class ClaimsSupported(str, Enum):
 
 
 class OPMetadata(BaseModel):
+    organization_name: str
     issuer: HttpUrl
     authorization_endpoint: HttpUrl
     token_endpoint: HttpUrl

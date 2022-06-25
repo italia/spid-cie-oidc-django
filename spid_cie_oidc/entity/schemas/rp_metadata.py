@@ -10,12 +10,14 @@ class GrantTypeSupported(str, Enum):
 
 
 class RPMetadata(BaseModel):
+    organization_name: str
     redirect_uris: List[HttpUrl]
     response_types = ["code"]
     grant_types: List[GrantTypeSupported]
     client_id: HttpUrl
     # TODO: Could be specified in multiple languages
     client_name: str
+
 
 
 class RPMetadataSpid(RPMetadata):

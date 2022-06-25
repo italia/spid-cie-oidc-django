@@ -4,6 +4,12 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.utils.translation import gettext as _
 
+from spid_cie_oidc.authority.schemas.fetch_endpoint_request import FetchRequest
+from spid_cie_oidc.authority.schemas.list_endpoint import ListRequest, ListResponse
+from spid_cie_oidc.authority.schemas.resolve_endpoint import ResolveRequest, ResolveResponse
+from spid_cie_oidc.authority.schemas.trust_mark_status_endpoint import TrustMarkRequest, TrustMarkResponse
+from spid_cie_oidc.entity.schemas.fa_metadata import FAMetadata
+
 
 from .forms import (
     OnboardingRegistrationForm,
@@ -332,20 +338,45 @@ def onboarding_schemas_introspection(request):
     return render(request, "onboarding_schemas.html", content)
 
 
+def onboarding_schemas_federation_entity_endpoints(request):
+    federation_entity_fetch_request = FetchRequest.schema_json(indent=2)
+    federation_entity_list_request = ListRequest.schema_json(indent=2)
+    federation_entity_list_response = ListResponse.schema_json(indent=2)
+    federation_entity_resolve_request = ResolveRequest.schema_json(indent=2)
+    federation_entity_resolve_response = ResolveResponse.schema_json(indent=2)
+    federation_entity_status_request = TrustMarkRequest.schema_json(indent=2)
+    federation_entity_status_response = TrustMarkResponse.schema_json(indent=2)
+    content = {
+        "title": "Schemas Federation entity endpoint",
+        "schemas": {
+            "Federation entity fetch": federation_entity_fetch_request,
+            "Federation entity list request": federation_entity_list_request,
+            "Federation entity list response": federation_entity_list_response,
+            "Federation entity resolve request": federation_entity_resolve_request,
+            "Federation entity resolve response": federation_entity_resolve_response,
+            "Federation entity status request": federation_entity_status_request,
+            "Federation entity status response": federation_entity_status_response
+        }
+    }
+    return render(request, "onboarding_schemas.html", content)
+
+
 def onboarding_schemas_metadata(request):
     op_meta_spid = OPMetadataSpid.schema_json(indent=2)
     op_meta_cie = OPMetadataCie.schema_json(indent=2)
     rp_meta_spid = RPMetadataSpid.schema_json(indent=2)
     rp_meta_cie = RPMetadataCie.schema_json(indent=2)
+    fed_entity = FAMetadata.schema_json(indent=2)
     content = {
         "title": "Schemas metadata Spid/Cie",
-        "schemas": {
-            "metadata OP Spid": op_meta_spid,
-            "metadata OP Cie": op_meta_cie,
-            "metadata RP Spid": rp_meta_spid,
-            "metadata RP Cie": rp_meta_cie
-        }
-    }
+         "schemas": {
+            "Federation entity": fed_entity,
+            "OP Spid": op_meta_spid,
+            "OP Cie": op_meta_cie,
+            "RP Spid": rp_meta_spid,
+            "RP Cie": rp_meta_cie
+         }
+     }
     return render(request, "onboarding_schemas.html", content)
 
 
