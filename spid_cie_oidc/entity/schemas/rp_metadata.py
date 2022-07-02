@@ -30,7 +30,7 @@ class RPMetadataSpid(RPMetadata):
         if not jwks_uri and not jwks:
             raise ValueError("one of jwks_uri or jwks must be set")
         if jwks_uri and jwks:
-            raise ValueError("jwks MUST NOT indicate")
+            raise ValueError("can't use jwks and jwks_uri together")
 
 
 class RPMetadataCie(RPMetadata):
@@ -45,4 +45,4 @@ class RPMetadataCie(RPMetadata):
         if not jwks_uri and not jwks:
             raise ValueError("one of jwks_uri or jwks must be set")
         if jwks_uri and jwks:
-            raise ValueError("jwks MUST NOT indicate")
+            raise ValueError("can't use jwks and jwks_uri together")
