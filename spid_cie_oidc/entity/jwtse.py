@@ -8,6 +8,7 @@ from cryptojwt.jwe.jwe import factory
 from cryptojwt.jwe.jwe_rsa import JWE_RSA
 from cryptojwt.jwk.jwk import key_from_jwk_dict
 from cryptojwt.jws.jws import JWS
+from typing import Union
 
 from .settings import (
     DEFAULT_JWE_ALG,
@@ -35,7 +36,7 @@ def unpad_jwt_payload(jwt: str) -> dict:
     return unpad_jwt_element(jwt, position=1)
 
 
-def encrypt_dict(plain_dict: dict, jwk_dict: dict) -> str:
+def create_jwe(plain_dict: Union[dict, None], jwk_dict: dict) -> str:
     logger.debug(f"Encrypting dict as JWE: " f"{plain_dict}")
     _key = key_from_jwk_dict(jwk_dict)
     _rsa = JWE_RSA(

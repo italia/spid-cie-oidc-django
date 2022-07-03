@@ -9,7 +9,7 @@ from django.utils import timezone
 from django.views import View
 from spid_cie_oidc.entity.jwtse import (
     create_jws,
-    encrypt_dict,
+    create_jwe,
     unpad_jwt_payload
 )
 from spid_cie_oidc.entity.models import (
@@ -87,7 +87,7 @@ class UserInfoEndpoint(OpBase, View):
         jws = create_jws(jwt, issuer.jwks_core[0])
 
         # encrypt the data
-        jwe = encrypt_dict(
+        jwe = create_jwe(
             jws,
             get_jwks(
                 rp_tc.metadata['openid_relying_party'],

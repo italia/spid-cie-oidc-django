@@ -4,7 +4,7 @@ from django.urls import reverse
 from copy import deepcopy
 from spid_cie_oidc.entity.jwtse import create_jws
 
-from spid_cie_oidc.onboarding.tests.tools_settings import jwk_priv, jwt
+from spid_cie_oidc.onboarding.tests.tools_settings import jwk_priv, jwt, jwe
 from spid_cie_oidc.entity.tests.settings import ta_conf_data
 from spid_cie_oidc.authority.models import (
     FederationEntityConfiguration,
@@ -107,6 +107,18 @@ class ToolsTests(TestCase):
         res = self.client.post(url, {"jwt":jwt, "jwk": jwk})
         self.assertEqual(res.status_code, 200)
         self.assertIn("alert-success", res.content.decode())
+
+    def test_decode_and_verify_jwe(self):
+        
+        # first failed because no jwks is submitted
+        url = reverse("oidc_onboarding_tools_decode_jwt")
+        res = self.client.get(url)
+        self.assertEqual(res.status_code, 200)
+        res = self.client.post(url, {"jwt":jwe})
+        self.assertEqual(res.status_code, 400)
+        
+        res = self.client.post(url, {"jwt": jwe, "jwk": json.dumps(jwk_priv)})
+        self.assertEqual(res.status_code, 200)
 
     def test_resolve_statement(self):
         url = reverse("oidc_onboarding_resolve_statement")

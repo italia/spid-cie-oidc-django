@@ -27,7 +27,7 @@ from spid_cie_oidc.entity.jwks import (
     public_jwk_from_pem
 )
 
-from spid_cie_oidc.entity.jwtse import unpad_jwt_head, unpad_jwt_payload, verify_jws
+from spid_cie_oidc.entity.jwtse import unpad_jwt_head, unpad_jwt_payload, verify_jws, decrypt_jwe
 from spid_cie_oidc.authority.views import trust_mark_status, resolve_entity_statement
 from spid_cie_oidc.authority.validators import validate_entity_configuration
 from spid_cie_oidc.provider.schemas.authn_requests import AuthenticationRequestSpid
@@ -274,6 +274,28 @@ def onboarding_decode_jwt(request):
         jwt = form_dict['jwt']
         try:
             head = unpad_jwt_head(jwt)
+        except Exception as e:
+            messages.error(
+                request, 
+                f"JWS verification failed due to missing JWT header: {e}"
+            )
+            return render(request, "onboarding_decode_jwt.html", context)
+
+        if head.get('enc', None):
+            if not form_dict.get('jwk'):
+                messages.error(
+                    request, 
+                    f"JWE needs a private jwk to be decrypted"
+                )
+                return render(
+                    request, "onboarding_decode_jwt.html", context, status = 400
+                )
+            # JWE here
+            jwk = form_dict['jwk']
+            jwt = decrypt_jwe(jwt, jwk)
+
+        try:
+            
             payload = unpad_jwt_payload(jwt)
             context["head"] = json.dumps(head, indent=4)
             context["payload"] = json.dumps(payload, indent=4)
@@ -282,7 +304,8 @@ def onboarding_decode_jwt(request):
                 verify_jws(jwt, jwk)
                 messages.success(request, _('Your jws is verified'))
         except Exception as e:
-            messages.error(request, f"Jws verification failed: {e}")
+            messages.error(request, f"JWS verification failed: {e}")
+
     return render(request, "onboarding_decode_jwt.html", context)
 
 
