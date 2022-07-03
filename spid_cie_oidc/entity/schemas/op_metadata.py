@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import List, Optional
 
-from pydantic import BaseModel, HttpUrl, validator
+from pydantic import BaseModel, HttpUrl, validator, root_validator
 
 from .jwks import JwksCie, JwksSpid
 
@@ -103,11 +103,30 @@ class OPMetadata(BaseModel):
     subject_types_supported = ["pairwise"]
     request_parameter_supported = True
     acr_values_supported: List[AcrValuesSupported]
+    signed_jwks_uri: Optional[HttpUrl]
+    jwks_uri: Optional[HttpUrl]
+    jwks: Optional[JwksCie]
+    
+    @root_validator(pre=False)
+    def validate(cls, values):
+        jwks = values.get("jwks")
+        jwks_uri = values.get("jwks_uri")
+        signed_jwks_uri = values.get("signed_jwks_uri")
+        if not jwks_uri and not jwks and not signed_jwks_uri:
+            raise ValueError(
+                "one of signed_jwks_uri or jwks_uri or jwks must be set"
+            )
+        if jwks_uri and jwks:
+            raise ValueError("can't use jwks and jwks_uri together")
+        elif jwks_uri and signed_jwks_uri:
+            raise ValueError(
+                "can't use signed_jwks_uri and jwks_uri together"
+            )
+        return values
 
+    
 
 class OPMetadataCie(OPMetadata):
-    jwks: Optional[JwksCie]
-    jwks_uri: Optional[HttpUrl]
     scopes_supported: List[ScopeSupported]
     response_types_supported = ["code"]
     response_modes_supported: List[ResponseModesSupported]
@@ -117,23 +136,9 @@ class OPMetadataCie(OPMetadata):
     tls_client_certificate_bound_access_tokens = True
     authorization_response_iss_parameter_supported = True
 
-    @validator("jwks_uri")
-    def validate_jwks_uri(cls, jwks_uri, values):
-        jwks = values.get("jwks")
-        if jwks_uri and jwks:
-            raise ValueError("jwks MUST NOT indicate")
-
 
 class OPMetadataSpid(OPMetadata):
-    jwks: Optional[JwksSpid]
-    jwks_uri: Optional[HttpUrl]
     # TODO: Could be specified in multiple languages
     op_name: str
     # TODO: Could be specified in multiple languages
     op_uri: str
-
-    @validator("jwks_uri")
-    def validate_jwks_uri(cls, jwks_uri, values):
-        jwks = values.get("jwks")
-        if jwks_uri and jwks:
-            raise ValueError("jwks MUST NOT indicate")
