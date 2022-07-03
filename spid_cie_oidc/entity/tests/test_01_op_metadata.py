@@ -36,3 +36,4 @@ class OpMetadataTest(TestCase):
     def test_op_metatada_spid_jws_ec_no_correct(self):
         with self.assertRaises(ValidationError):
             OPMetadataSpid(**OP_METADATA_SPID_JWKS_EC_NO_CORRECT)
+        

@@ -24,6 +24,7 @@ from spid_cie_oidc.authority.tests.settings import *
 
 from unittest.mock import patch
 
+import copy
 import datetime
 
 
@@ -288,3 +289,41 @@ class TrustChainTest(TestCase):
         )
         self.assertTrue(res.status_code == 200)
         self.assertTrue(res.json() == {"active": False})
+
+class TrustChainWithSignedJwksUriTest(TestCase):
+    def setUp(self):
+        self.ta_conf = FederationEntityConfiguration.objects.create(**ta_conf_data)
+        
+        _rp_conf = copy.deepcopy(rp_conf)
+        _rp_conf['metadata']['openid_relying_party'].pop('jwks')
+        _rp_conf['metadata']['openid_relying_party']['signed_jwks_uri'] = f"{_rp_conf['sub']}signed_jwks.jose"
+        self.rp_conf = FederationEntityConfiguration.objects.create(**_rp_conf)
+
+        self.rp_profile = FederationEntityProfile.objects.create(**RP_PROFILE)
+        self.rp = FederationDescendant.objects.create(**rp_onboarding_data)
+ 
+        self.rp_assigned_profile = FederationEntityAssignedProfile.objects.create(
+            descendant=self.rp, profile=self.rp_profile, issuer=self.ta_conf
+        )
+
+    @override_settings(HTTP_CLIENT_SYNC=True)
+    @patch("requests.get", return_value=EntityResponseNoIntermediateSignedJwksUri())
+    def test_signed_jwks_uri(self, mocked):
+
+        self.ta_conf.constraints = {"max_path_length": 0}
+        self.ta_conf.save()
+
+        jwt = get_entity_configurations(self.ta_conf.sub)
+        trust_anchor_ec = EntityConfiguration(jwt[0])
+
+        trust_chain = trust_chain_builder(
+            subject=rp_onboarding_data["sub"],
+            trust_anchor=trust_anchor_ec
+        )
+        _jwks = get_jwks(
+            trust_chain.final_metadata['openid_relying_party'],
+            trust_chain.subject_configuration.jwks
+        )
+        self.assertTrue(
+            verify_jws(_jwks, self.rp_conf.jwks_fed[0])
+        )

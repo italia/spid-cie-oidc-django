@@ -2,11 +2,13 @@ from django.test import Client
 from django.urls import reverse
 
 from spid_cie_oidc.entity.models import FederationEntityConfiguration
-from spid_cie_oidc.entity.jwtse import unpad_jwt_payload
+from spid_cie_oidc.entity.jwtse import unpad_jwt_payload, create_jws
 from spid_cie_oidc.entity.exceptions import HttpError
 from spid_cie_oidc.entity.tests.settings import ta_conf_data
-from .settings import rp_onboarding_data, intermediary_conf
 
+from .settings import rp_onboarding_data, intermediary_conf, rp_conf
+
+import copy
 import logging
 
 logger = logging.getLogger(__name__)
@@ -64,6 +66,28 @@ class EntityResponseNoIntermediate(EntityResponse):
         elif self.req_counter == 2:
             self.result = self.fetch_rp_from_ta()
         elif self.req_counter > 2:
+            raise NotImplementedError(
+                "The mocked resposes seems to be not aligned with the correct flow"
+            )
+
+        return self.result_as_jws()
+
+class EntityResponseNoIntermediateSignedJwksUri(EntityResponse):
+    @property
+    def content(self):
+        if self.req_counter == 0:
+            self.result = self.trust_anchor_ec()
+        elif self.req_counter == 1:
+            self.result = self.rp_ec()
+        elif self.req_counter == 2:
+            self.result = self.fetch_rp_from_ta()
+        elif self.req_counter == 3:
+            metadata = copy.deepcopy(rp_conf['metadata']['openid_relying_party'])
+            _jwks = metadata.pop('jwks')
+            fed_jwks = rp_conf['jwks_fed'][0]
+            self.result = create_jws(_jwks, fed_jwks)
+            return self.result.encode()
+        elif self.req_counter > 3:
             raise NotImplementedError(
                 "The mocked resposes seems to be not aligned with the correct flow"
             )

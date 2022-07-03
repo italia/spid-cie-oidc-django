@@ -39,15 +39,13 @@ def get_jwks(metadata: dict, federation_jwks:list = []) -> dict:
         except Exception as e:
             logger.error(f"Failed to download jwks from {jwks_uri}: {e}")
     elif metadata.get('signed_jwks_uri'):
-        # TODO
-        raise NotImplementedError("signed_jwks_uri not supported yet")
         try:
             signed_jwks_uri = metadata["signed_jwks_uri"]
             jwks_list = get_http_url(
                 [signed_jwks_uri], httpc_params=HTTPC_PARAMS
-            ).json()
+            )[0]
         except Exception as e:
-            logger.error(f"Failed to download jwks from {jwks_uri}: {e}")
+            logger.error(f"Failed to download jwks from {signed_jwks_uri}: {e}")
     return jwks_list
 
 
