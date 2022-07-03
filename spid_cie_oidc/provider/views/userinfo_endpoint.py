@@ -82,13 +82,13 @@ class UserInfoEndpoint(OpBase, View):
         ):
             if claim in token.session.user.attributes:
                 jwt[claim] = token.session.user.attributes[claim]
-        
+
         # sign the data
         jws = create_jws(jwt, issuer.jwks_core[0])
 
         # encrypt the data
         jwe = encrypt_dict(
-            jws, 
+            jws,
             get_jwks(
                 rp_tc.metadata['openid_relying_party'],
                 federation_jwks = rp_tc.jwks

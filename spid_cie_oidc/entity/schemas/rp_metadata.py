@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import List, Optional
-from pydantic import BaseModel, HttpUrl, validator, root_validator
-from .jwks import JwksCie, JwksSpid
+from pydantic import BaseModel, HttpUrl, root_validator
+from .jwks import JwksSpid
 
 
 class GrantTypeSupported(str, Enum):

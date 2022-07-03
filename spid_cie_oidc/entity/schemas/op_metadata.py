@@ -1,9 +1,9 @@
 from enum import Enum
 from typing import List, Optional
 
-from pydantic import BaseModel, HttpUrl, validator, root_validator
+from pydantic import BaseModel, HttpUrl, root_validator
 
-from .jwks import JwksCie, JwksSpid
+from .jwks import JwksCie
 
 
 class ScopeSupported(str, Enum):
@@ -106,7 +106,7 @@ class OPMetadata(BaseModel):
     signed_jwks_uri: Optional[HttpUrl]
     jwks_uri: Optional[HttpUrl]
     jwks: Optional[JwksCie]
-    
+
     @root_validator(pre=False)
     def validate(cls, values):
         jwks = values.get("jwks")
@@ -124,7 +124,6 @@ class OPMetadata(BaseModel):
             )
         return values
 
-    
 
 class OPMetadataCie(OPMetadata):
     scopes_supported: List[ScopeSupported]

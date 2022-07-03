@@ -3,8 +3,6 @@ from django.conf import settings
 from pydantic import ValidationError
 from spid_cie_oidc.entity.exceptions import InvalidTrustchain
 from spid_cie_oidc.entity.models import TrustChain
-from spid_cie_oidc.entity.settings import HTTPC_PARAMS
-from spid_cie_oidc.entity.statements import get_http_url
 from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
 from spid_cie_oidc.relying_party.exceptions import ValidationException
 from spid_cie_oidc.relying_party.settings import (

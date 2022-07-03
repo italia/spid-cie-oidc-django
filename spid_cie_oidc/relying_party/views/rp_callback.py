@@ -10,7 +10,6 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views import View
 from spid_cie_oidc.entity.jwtse import (
-    unpad_jwt_head,
     unpad_jwt_payload,
     verify_jws
 )
@@ -132,7 +131,6 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
                     ),
                 }
                 return render(request, self.error_template, context, status=400)
-            
 
         authz_token = OidcAuthenticationToken.objects.create(
             authz_request=authz, code=code

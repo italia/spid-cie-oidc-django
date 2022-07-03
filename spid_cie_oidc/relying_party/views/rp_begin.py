@@ -110,9 +110,9 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
                 "error_description": _("Invalid provider Metadata."),
             }
             return render(request, self.error_template, context, status=404)
-        
+
         jwks_dict = get_jwks(provider_metadata, federation_jwks=tc.jwks)
-        
+
         # stores the resolves jwks in the provider metadata linked to this authz request
         provider_metadata['jwks'] = {'keys': jwks_dict}
         if not jwks_dict:
@@ -177,7 +177,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
         # add the signed request object
         authz_data_obj = deepcopy(authz_data)
         authz_data_obj["iss"] = client_conf["client_id"]
-        
+
         # sub claim MUST not be used to prevent that this jwt
         # could be reused as a private_key_jwt
         # authz_data_obj["sub"] = client_conf["client_id"]

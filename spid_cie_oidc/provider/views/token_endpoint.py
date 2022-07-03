@@ -39,7 +39,8 @@ schema_profile = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
     },
     post_response_schema = {
             "200": schema_profile["authorization_code_response"],
-            "200": schema_profile["refresh_token_response"],
+            # TODO
+            # "200": schema_profile["refresh_token_response"],
             "400": schema_profile["token_error_response"],
     },
     get_response_schema = {

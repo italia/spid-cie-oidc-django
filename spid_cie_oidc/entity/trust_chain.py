@@ -61,7 +61,7 @@ class TrustChainBuilder:
 
         self.tree_of_trust = OrderedDict()
         self.trust_path = []  # list of valid subjects up to trust anchor
-        
+
         self.max_authority_hints = max_authority_hints
         # dynamically valued
         self.max_path_len = 0

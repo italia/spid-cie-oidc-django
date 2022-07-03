@@ -2,7 +2,12 @@ from django.utils import timezone
 from django.utils.timezone import make_aware
 
 from spid_cie_oidc.entity.jwtse import unpad_jwt_head
+from spid_cie_oidc.entity.settings import HTTPC_PARAMS
+from spid_cie_oidc.entity.statements import get_http_url
 import datetime
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def iat_now() -> int:

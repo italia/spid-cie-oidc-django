@@ -369,7 +369,7 @@ def onboarding_schemas_metadata(request):
     fed_entity = FAMetadata.schema_json(indent=2)
     content = {
         "title": "Schemas metadata Spid/Cie",
-         "schemas": {
+        "schemas": {
             "Federation entity": fed_entity,
             "OP Spid": op_meta_spid,
             "OP Cie": op_meta_cie,

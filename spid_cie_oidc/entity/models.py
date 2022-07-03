@@ -250,7 +250,7 @@ class FederationEntityConfiguration(TimeStampedModel):
             valid_kids = set()
             for jwk in self.jwks_fed:
                 valid_kids.add(jwk.get("kid", None))
-            
+
             for entity,metadata in self.metadata.items():
                 for oidc_jwk in metadata['jwks']['keys']:
                     if oidc_jwk['kid'] not in valid_kids:

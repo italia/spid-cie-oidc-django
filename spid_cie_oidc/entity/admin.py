@@ -41,7 +41,7 @@ class FederationEntityConfigurationAdmin(admin.ModelAdmin):
         for obj in queryset:
             jwts = get_entity_configurations(obj.authority_hints, HTTPC_PARAMS)
             for jwt in jwts:
-                
+
                 try:
                     ec = EntityConfiguration(jwt, httpc_params=HTTPC_PARAMS)
                 except Exception as e:
@@ -68,7 +68,7 @@ class FederationEntityConfigurationAdmin(admin.ModelAdmin):
                 try:
                     logger.info(f"Getting entity statements from {_url}")
                     _jwts = get_entity_statements([_url], HTTPC_PARAMS)
-                    
+
                     payload = unpad_jwt_payload(_jwts[0])
                     for i in payload.get("trust_marks", []):
                         trust_marks[i['id']] = i['trust_mark']
