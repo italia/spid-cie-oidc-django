@@ -3,9 +3,9 @@ version: "3"
 services:
   trust-anchor.org:
     image: ghcr.io/italia/spid-cie-oidc-django:latest
-#    build:
-#      context: .
-#      dockerfile: ./Dockerfile
+    # build:
+      # context: .
+      # dockerfile: ./Dockerfile
     ports:
       - "8000:8000"
     volumes:
@@ -20,9 +20,9 @@ services:
 
   cie-provider.org:
     image: ghcr.io/italia/spid-cie-oidc-django:latest
-    #build:
-    #  context: .
-    #  dockerfile: ./Dockerfile
+    # build:
+      # context: .
+      # dockerfile: ./Dockerfile
     expose:
       - 8002
     ports:
@@ -41,9 +41,9 @@ services:
 
   relying-party.org:
     image: ghcr.io/italia/spid-cie-oidc-django:latest
-#    build:
-#      context: .
-#      dockerfile: ./Dockerfile
+    # build:
+      # context: .
+      # dockerfile: ./Dockerfile
     expose:
       - 8001
     ports:
