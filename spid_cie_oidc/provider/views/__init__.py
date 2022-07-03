@@ -11,6 +11,7 @@ from spid_cie_oidc.entity.models import FederationEntityConfiguration, TrustChai
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
 from spid_cie_oidc.entity.utils import datetime_from_timestamp, exp_from_now, iat_now
+from spid_cie_oidc.entity.utils import get_jwks
 from spid_cie_oidc.provider.exceptions import AuthzRequestReplay, ExpiredAuthCode, InvalidSession, RevokedSession, ValidationException
 from spid_cie_oidc.provider.models import OidcSession
 
@@ -86,7 +87,7 @@ class OpBase:
                 logger.warning(_msg)
                 raise Exception(_msg)
 
-        jwks = rp_trust_chain.metadata['openid_relying_party']["jwks"]["keys"]
+        jwks = get_jwks(rp_trust_chain.metadata['openid_relying_party'])
         jwk = self.find_jwk(header, jwks)
         if not jwk:
             _msg = (

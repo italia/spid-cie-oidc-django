@@ -211,6 +211,7 @@ class AuthzRequestView(OpBase, View):
     def post(self, request, *args, **kwargs):
         """
             When the User prompts his credentials
+            TODO: REFACTOR this method doesn't support PAR!
         """
         form = self.get_login_form()(request.POST)
         if not form.is_valid():

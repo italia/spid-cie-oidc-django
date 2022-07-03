@@ -2,6 +2,7 @@ import logging
 import requests
 from spid_cie_oidc.entity.exceptions import UnknownKid
 from spid_cie_oidc.entity.jwtse import unpad_jwt_head, decrypt_jwe, verify_jws
+from spid_cie_oidc.entity.utils import get_jwks
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +44,7 @@ class OidcUserInfo(object):
                 jws = decrypt_jwe(jwe, rp_jwk)
 
                 header = unpad_jwt_head(jws)
-                idp_jwks = provider_conf["jwks"]["keys"]
+                idp_jwks = get_jwks(provider_conf)
                 idp_jwk = self.get_jwk(header["kid"], idp_jwks)
 
                 decoded_jwt = verify_jws(jws, idp_jwk)

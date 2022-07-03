@@ -16,6 +16,7 @@ from spid_cie_oidc.entity.jwtse import (
 )
 from spid_cie_oidc.entity.models import FederationEntityConfiguration
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
+from spid_cie_oidc.entity.utils import get_jwks, get_jwk_from_jwt
 from spid_cie_oidc.relying_party.exceptions import ValidationException
 from spid_cie_oidc.relying_party.settings import RP_PROVIDER_PROFILES, RP_DEFAULT_PROVIDER_PROFILES
 
@@ -80,17 +81,6 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
             )
             logger.info(f"Created new user {user}")
             return user
-
-    def get_jwk_from_jwt(self, jwt: str, provider_jwks: dict) -> dict:
-        """
-            docs here
-        """
-        head = unpad_jwt_head(jwt)
-        kid = head["kid"]
-        for jwk in provider_jwks:
-            if jwk["kid"] == kid:
-                return jwk
-        return {}
 
     def get(self, request, *args, **kwargs):
         """
@@ -190,11 +180,11 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
                     },
                     status = 400
                 )
-        jwks = authz.provider_configuration["jwks"]["keys"]
+        jwks = get_jwks(authz.provider_configuration)
         access_token = token_response["access_token"]
         id_token = token_response["id_token"]
-        op_ac_jwk = self.get_jwk_from_jwt(access_token, jwks)
-        op_id_jwk = self.get_jwk_from_jwt(id_token, jwks)
+        op_ac_jwk = get_jwk_from_jwt(access_token, jwks)
+        op_id_jwk = get_jwk_from_jwt(id_token, jwks)
 
         if not op_ac_jwk or not op_id_jwk:
             logger.warning(

@@ -13,6 +13,7 @@ from spid_cie_oidc.entity.models import (
 )
 from spid_cie_oidc.entity.tests.settings import TA_SUB
 from spid_cie_oidc.entity.utils import datetime_from_timestamp, exp_from_now, iat_now
+from spid_cie_oidc.entity.utils import get_jwks
 from spid_cie_oidc.provider.models import IssuedToken, OidcSession
 from spid_cie_oidc.provider.tests.settings import op_conf, op_conf_priv_jwk
 from spid_cie_oidc.relying_party.utils import random_string
@@ -277,7 +278,7 @@ class AuthnRequestTest(TestCase):
     @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB)
     def test_auth_request_invalid_jwk(self):
         jws = create_jws(self.REQUEST_OBJECT_PAYLOAD, RP_METADATA_JWK1)
-        self.trust_chain.metadata['openid_relying_party']["jwks"]["keys"][0][
+        get_jwks(self.trust_chain.metadata['openid_relying_party'])[0][
             "kid"
         ] = "31ALfVXx9dcAMMHCVvh42qLTlanBL_r6BTnD5uMDzFT"
         self.trust_chain.save()
@@ -287,7 +288,7 @@ class AuthnRequestTest(TestCase):
         self.assertTrue(res.status_code == 302)
         self.assertIn("error=invalid_request", res.url)
         self.assertIn("state", res.url)
-        self.trust_chain.metadata['openid_relying_party']["jwks"]["keys"][0][
+        get_jwks(self.trust_chain.metadata['openid_relying_party'])[0][
             "kid"
         ] = RP_METADATA_JWK1['kid']
         self.trust_chain.save()

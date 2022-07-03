@@ -15,6 +15,7 @@ from spid_cie_oidc.entity.jwtse import (
 from spid_cie_oidc.entity.models import (
     TrustChain
 )
+from spid_cie_oidc.entity.utils import get_jwks
 from spid_cie_oidc.provider.models import IssuedToken
 
 from . import OpBase
@@ -86,5 +87,8 @@ class UserInfoEndpoint(OpBase, View):
         jws = create_jws(jwt, issuer.jwks_core[0])
 
         # encrypt the data
-        jwe = encrypt_dict(jws, rp_tc.metadata['openid_relying_party']["jwks"]["keys"][0])
+        jwe = encrypt_dict(
+            jws, 
+            get_jwks(rp_tc.metadata['openid_relying_party'])[0]
+        )
         return HttpResponse(jwe, content_type="application/jose")

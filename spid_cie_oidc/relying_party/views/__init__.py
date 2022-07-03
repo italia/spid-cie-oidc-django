@@ -20,17 +20,6 @@ class SpidCieOidcRp:
     Baseclass with common methods for RPs
     """
 
-    def get_jwks_from_jwks_uri(self, jwks_uri: str) -> dict:
-        """
-        get jwks
-        """
-        try:
-            jwks_dict = get_http_url([jwks_uri], httpc_params=HTTPC_PARAMS).json()
-        except Exception as e:
-            logger.error(f"Failed to download jwks from {jwks_uri}: {e}")
-            return {}
-        return jwks_dict
-
     def get_oidc_op(self, request) -> TrustChain:
         """
             get available trust to a specific OP
