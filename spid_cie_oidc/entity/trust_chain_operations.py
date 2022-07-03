@@ -175,11 +175,11 @@ def get_or_create_trust_chain(
         tc = TrustChain.objects.filter(
             sub=subject, trust_anchor__sub=trust_anchor
         )
-
         data = dict(
             exp=trust_chain.exp_datetime,
             processing_start = timezone.localtime(),
             chain=trust_chain.serialize(),
+            jwks = trust_chain.subject_configuration.jwks,
             metadata=trust_chain.final_metadata,
             parties_involved=[i.sub for i in trust_chain.trust_path],
             status="valid",

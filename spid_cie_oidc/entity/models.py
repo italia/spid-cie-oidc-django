@@ -325,6 +325,11 @@ class TrustChain(TimeStampedModel):
         ),
         default=list,
     )
+    jwks = models.JSONField(
+        blank=False,
+        null=False,
+        help_text=_("jwks of this federation entity")
+    )
     metadata = models.JSONField(
         blank=True,
         null=True,

@@ -11,6 +11,7 @@ from django.utils.translation import gettext as _
 from django.views import View
 from spid_cie_oidc.entity.exceptions import InvalidTrustchain
 from spid_cie_oidc.entity.jwtse import create_jws
+from spid_cie_oidc.entity.utils import get_jwks
 from spid_cie_oidc.entity.models import FederationEntityConfiguration
 from spid_cie_oidc.relying_party.settings import OIDCFED_ACR_PROFILES, RP_PROVIDER_PROFILES, RP_DEFAULT_PROVIDER_PROFILES
 
@@ -109,12 +110,11 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
                 "error_description": _("Invalid provider Metadata."),
             }
             return render(request, self.error_template, context, status=404)
-        if provider_metadata.get("jwks", None):
-            jwks_dict = provider_metadata["jwks"]
-        elif provider_metadata.get("jwks_uri", None):
-            jwks_dict = self.get_jwks_from_jwks_uri(provider_metadata["jwks_uri"])
-        else:
-            jwks_dict = {}
+        
+        jwks_dict = get_jwks(provider_metadata, federation_jwks=tc.jwks)
+        
+        # stores the resolves jwks in the provider metadata linked to this authz request
+        provider_metadata['jwks'] = {'keys': jwks_dict}
         if not jwks_dict:
             _msg = f"Failed to get jwks from {tc.sub}"
             logger.error(_msg)

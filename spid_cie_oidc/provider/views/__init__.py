@@ -87,7 +87,10 @@ class OpBase:
                 logger.warning(_msg)
                 raise Exception(_msg)
 
-        jwks = get_jwks(rp_trust_chain.metadata['openid_relying_party'])
+        jwks = get_jwks(
+            rp_trust_chain.metadata['openid_relying_party'],
+            federation_jwks = rp_trust_chain.jwks
+        )
         jwk = self.find_jwk(header, jwks)
         if not jwk:
             _msg = (

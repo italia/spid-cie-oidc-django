@@ -89,6 +89,9 @@ class UserInfoEndpoint(OpBase, View):
         # encrypt the data
         jwe = encrypt_dict(
             jws, 
-            get_jwks(rp_tc.metadata['openid_relying_party'])[0]
+            get_jwks(
+                rp_tc.metadata['openid_relying_party'],
+                federation_jwks = rp_tc.jwks
+            )[0]
         )
         return HttpResponse(jwe, content_type="application/jose")

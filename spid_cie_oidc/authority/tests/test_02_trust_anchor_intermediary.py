@@ -138,6 +138,7 @@ class TrustChainTest(TestCase):
             sub=trust_chain.subject,
             exp=trust_chain.exp_datetime,
             chain=trust_chain.serialize(),
+            jwks = trust_chain.subject_configuration.jwks,
             metadata=trust_chain.final_metadata,
             parties_involved=[i.sub for i in trust_chain.trust_path],
             status="valid",

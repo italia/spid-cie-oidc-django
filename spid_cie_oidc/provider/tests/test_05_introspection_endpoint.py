@@ -74,6 +74,7 @@ class IntrospectionEndpointTest(TestCase):
         self.trust_chain = TrustChain.objects.create(
             sub=self.RP_SUB,
             exp=datetime_from_timestamp(exp_from_now(33)),
+            jwks = [],
             metadata=RP_METADATA,
             status="valid",
             trust_anchor=self.ta_fes,

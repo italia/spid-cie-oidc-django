@@ -36,6 +36,7 @@ def create_tc():
     return TrustChain.objects.create(
         sub="sub",
         exp=datetime_from_timestamp(exp_from_now(33)),
+        jwks = [],
         metadata=[],
         status="valid",
         trust_anchor=TA_FES,

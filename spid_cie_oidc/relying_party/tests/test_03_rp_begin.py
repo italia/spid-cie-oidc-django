@@ -29,6 +29,7 @@ def create_tc():
     return TrustChain.objects.create(
         sub=op_conf["sub"],
         exp=EXP,
+        jwks = [],
         status="valid",
         trust_anchor=ta_fes,
         is_active=True,
@@ -50,6 +51,7 @@ def create_tc_metadata_no_correct():
         sub=op_conf["sub"],
         exp=EXP,
         status="valid",
+        jwks = [],
         metadata=metadata,
         trust_anchor=ta_fes,
         is_active=True,
@@ -72,6 +74,7 @@ class RPBeginTest(TestCase):
         self.trust_chain = TrustChain.objects.create(
             sub=op_conf["sub"],
             exp=EXP,
+            jwks = [],
             metadata=metadata,
             status="valid",
             trust_anchor=self.ta_fes,
