@@ -15,6 +15,7 @@ from spid_cie_oidc.entity.statements import (
     get_entity_configurations,
     TrustMark,
 )
+from spid_cie_oidc.entity.utils import get_jwks
 from spid_cie_oidc.entity.tests.settings import *
 
 from spid_cie_oidc.authority.models import *
