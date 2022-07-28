@@ -1,5 +1,6 @@
 import json
 import logging
+import uuid
 from copy import deepcopy
 
 from djagger.decorators import schema
@@ -18,7 +19,8 @@ from spid_cie_oidc.relying_party.settings import OIDCFED_ACR_PROFILES, RP_PROVID
 from ..models import OidcAuthentication
 from ..settings import (
     RP_PKCE_CONF,
-    RP_REQUEST_CLAIM_BY_PROFILE
+    RP_REQUEST_CLAIM_BY_PROFILE,
+    RP_REQUEST_EXP
 )
 from ..utils import (
     http_dict_to_redirect_uri_path,
@@ -134,7 +136,9 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             )
             redirect_uri = client_conf["redirect_uris"][0]
         _profile = request.GET.get("profile", "spid")
+        _timestamp_now = int(timezone.localtime().timestamp())
         authz_data = dict(
+            iss=client_conf["client_id"],
             scope= request.GET.get("scope", None) or "openid",
             redirect_uri=redirect_uri,
             response_type=client_conf["response_types"][0],
@@ -143,7 +147,9 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             client_id=client_conf["client_id"],
             endpoint=authz_endpoint,
             acr_values= OIDCFED_ACR_PROFILES,
-            iat=int(timezone.localtime().timestamp()),
+            iat=_timestamp_now,
+            exp=_timestamp_now+RP_REQUEST_EXP,
+            jti = str(uuid.uuid4()),
             aud=[tc.sub, authz_endpoint],
             claims=RP_REQUEST_CLAIM_BY_PROFILE[_profile],
         )
