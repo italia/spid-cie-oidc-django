@@ -23,10 +23,12 @@ from spid_cie_oidc.entity.utils import (
 )
 from spid_cie_oidc.provider.models import IssuedToken, OidcSession
 from spid_cie_oidc.provider.tests.settings import op_conf, op_conf_priv_jwk
+from spid_cie_oidc.relying_party.utils import get_pkce
+
 
 RP_SUB = rp_conf["sub"]
 RP_CLIENT_ID = rp_conf["metadata"]["openid_relying_party"]["client_id"]
-
+PKCE = get_pkce()
 
 class RefreshTokenTest(TestCase):
 
@@ -51,7 +53,7 @@ class RefreshTokenTest(TestCase):
         CLIENT_ASSERTION = {
             "iss": RP_SUB,
             "sub": RP_SUB,
-            "aud": [RP_CLIENT_ID],
+            "aud": [op_conf["sub"]],
             "exp": exp_from_now(),
             "iat": iat_now(),
             "jti": "jti",
@@ -62,7 +64,7 @@ class RefreshTokenTest(TestCase):
             "sub": RP_SUB,
             "exp": exp_from_now(),
             "iat": iat_now(),
-            "aud": [RP_CLIENT_ID],
+            "aud": [op_conf["sub"]],
             "client_id": RP_CLIENT_ID,
             "scope": "openid",
         }
@@ -70,7 +72,7 @@ class RefreshTokenTest(TestCase):
             user=User.objects.create(username = "username"),
             user_uid="",
             nonce="",
-            authz_request={"scope": "openid", "nonce": "123", "code_challenge": "73oehA2tBul5grZPhXUGQwNAjxh69zNES8bu2bVD0EM"}, 
+            authz_request={"scope": "openid", "nonce": "123", "code_challenge": PKCE["code_challenge"]}, 
             client_id="",
             auth_code="code",
         )
@@ -84,13 +86,14 @@ class RefreshTokenTest(TestCase):
     def test_token_endpoint(self):
         client = Client()
         url = reverse("oidc_provider_token_endpoint")
+        
         request = dict(
             client_id = RP_CLIENT_ID,
             client_assertion = self.ca_jws,
             client_assertion_type = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
             grant_type="authorization_code",
-            code = "code",
-            code_verifier = "code_verifier"
+            code="code",
+            code_verifier = PKCE["code_verifier"]
         )
         res = client.post(url, request)
         self.assertTrue(res.status_code == 200)

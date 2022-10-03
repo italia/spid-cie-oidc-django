@@ -170,6 +170,10 @@ class OpBase:
         head = unpad_jwt_head(client_assertion)
         payload = unpad_jwt_payload(client_assertion)
         _sub = payload.get('sub', None)
+        _aud = payload.get('aud', None)
+        _op_eid = self.get_issuer().sub
+        if isinstance(_aud, str):
+            _aud = [_aud]
         if _sub != client_id:
             logger.warning(
                 f"Client assertion failed: {_sub} != {client_id}"
@@ -177,6 +181,14 @@ class OpBase:
             # TODO Specialize exceptions
             raise Exception()
 
+        if not _op_eid or _op_eid not in _aud:
+            logger.warning(
+                f"Client assertion failed, fake audience: {_sub} != {_op_eid}"
+            )
+            breakpoint()
+            # TODO Specialize exceptions
+            raise Exception()
+        
         tc = TrustChain.objects.get(sub=client_id, is_active=True)
         jwk = self.find_jwk(head, tc.metadata['openid_relying_party']['jwks']['keys'])
         verify_jws(client_assertion, jwk)

@@ -51,7 +51,7 @@ class RefreshTokenTest(TestCase):
         CLIENT_ASSERTION = {
             "iss": RP_SUB,
             "sub": RP_SUB,
-            "aud": [RP_CLIENT_ID],
+            "aud": [op_conf["sub"]],
             "exp": exp_from_now(),
             "iat": iat_now(),
             "jti": "jti",
@@ -60,7 +60,7 @@ class RefreshTokenTest(TestCase):
         refresh_token = {
             "iss": self.op_local_conf["sub"],
             "sub": RP_SUB,
-            "aud": [RP_CLIENT_ID],
+            "aud": [op_conf["sub"]],
             "client_id": RP_CLIENT_ID,
             "scope": "openid",
         }

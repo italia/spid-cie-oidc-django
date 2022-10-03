@@ -34,7 +34,7 @@ class IntrospectionEndpointTest(TestCase):
         CLIENT_ASSERTION = {
             "iss": self.RP_SUB,
             "sub": self.RP_SUB,
-            "aud": [self.RP_CLIENT_ID],
+            "aud": [op_conf["sub"]],
             "exp": exp_from_now(),
             "iat": iat_now(),
             "jti": "jti",
@@ -43,7 +43,7 @@ class IntrospectionEndpointTest(TestCase):
         token = {
             "iss": self.RP_SUB,
             "sub": op_conf["sub"],
-            "aud": [self.RP_SUB],
+            "aud": [op_conf["sub"]],
             "client_id": self.RP_SUB,
             "scope": "openid",
         }

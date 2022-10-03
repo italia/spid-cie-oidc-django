@@ -10,7 +10,11 @@ from spid_cie_oidc.authority.tests.settings import (
     rp_conf
 )
 from spid_cie_oidc.entity.jwtse import create_jws
-from spid_cie_oidc.entity.models import FetchedEntityStatement, TrustChain
+from spid_cie_oidc.entity.models import (
+    FederationEntityConfiguration,
+    FetchedEntityStatement, 
+    TrustChain
+)
 from spid_cie_oidc.entity.tests.settings import TA_SUB
 from spid_cie_oidc.entity.utils import (
     datetime_from_timestamp, 
@@ -33,10 +37,12 @@ class RevocationEndponitTest(TestCase):
             iat=datetime_from_timestamp(iat_now()),
         )
         self.op_local_conf = deepcopy(op_conf)
+        FederationEntityConfiguration.objects.create(**self.op_local_conf)
+
         CLIENT_ASSERTION = {
             "iss": RP_SUB,
             "sub": RP_SUB,
-            "aud": [RP_CLIENT_ID],
+            "aud": [op_conf["sub"]],
             "exp": exp_from_now(),
             "iat": iat_now(),
             "jti": "jti",
@@ -45,7 +51,7 @@ class RevocationEndponitTest(TestCase):
         access_token = {
             "iss": self.op_local_conf["sub"],
             "sub": RP_SUB,
-            "aud": [RP_CLIENT_ID],
+            "aud": [op_conf["sub"]],
             "client_id": RP_CLIENT_ID,
             "scope": "openid",
         }
