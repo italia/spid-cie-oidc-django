@@ -171,9 +171,12 @@ class OpBase:
         payload = unpad_jwt_payload(client_assertion)
         _sub = payload.get('sub', None)
         _aud = payload.get('aud', None)
-        _op_eid = self.get_issuer().sub
+        _op = self.get_issuer()
+        _op_eid = _op.sub
+        _op_eid_authz_endpoint = [_op.metadata['openid_provider']['authorization_endpoint']]
         if isinstance(_aud, str):
             _aud = [_aud]
+        _allowed_auds = _aud + _op_eid_authz_endpoint
         if _sub != client_id:
             logger.warning(
                 f"Client assertion failed: {_sub} != {client_id}"
@@ -181,11 +184,10 @@ class OpBase:
             # TODO Specialize exceptions
             raise Exception()
 
-        if not _op_eid or _op_eid not in _aud:
+        if not _op_eid or _op_eid not in _allowed_auds:
             logger.warning(
                 f"Client assertion failed, fake audience: {_sub} != {_op_eid}"
             )
-            breakpoint()
             # TODO Specialize exceptions
             raise Exception()
         
