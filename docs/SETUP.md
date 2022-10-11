@@ -41,7 +41,7 @@ pip install -e .
 ````
 # Install Django Bootstrap italia template
 ````
-pip install design-django-theme
+pip install "design-django-theme==v1.6.4"
 ````
 
 In `examples/` folder you have three demostrations projects:
