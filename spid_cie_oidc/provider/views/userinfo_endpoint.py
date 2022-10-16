@@ -92,6 +92,7 @@ class UserInfoEndpoint(OpBase, View):
             get_jwks(
                 rp_tc.metadata['openid_relying_party'],
                 federation_jwks = rp_tc.jwks
-            )[0]
+            )[0],
+            cty="JWT"
         )
         return HttpResponse(jwe, content_type="application/jose")

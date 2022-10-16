@@ -36,7 +36,7 @@ def unpad_jwt_payload(jwt: str) -> dict:
     return unpad_jwt_element(jwt, position=1)
 
 
-def create_jwe(plain_dict: Union[dict, None], jwk_dict: dict) -> str:
+def create_jwe(plain_dict: Union[dict, None], jwk_dict: dict, **kwargs) -> str:
     logger.debug(f"Encrypting dict as JWE: " f"{plain_dict}")
     _key = key_from_jwk_dict(jwk_dict)
     _rsa = JWE_RSA(
@@ -44,6 +44,7 @@ def create_jwe(plain_dict: Union[dict, None], jwk_dict: dict) -> str:
         alg=DEFAULT_JWE_ALG,
         enc=DEFAULT_JWE_ENC,
         kid=_key.kid,
+        **kwargs
     )
     jwe = _rsa.encrypt(_key.public_key())
     logger.debug(f"Encrypted dict as JWE: {jwe}")
