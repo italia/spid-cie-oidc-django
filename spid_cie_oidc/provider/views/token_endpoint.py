@@ -189,7 +189,7 @@ class TokenEndpoint(OpBase, View):
 
         if not self.authz:
             return HttpResponseBadRequest()
-        
+
         # check client_assertion and client ownership
         try:
             self.check_client_assertion(
@@ -209,7 +209,7 @@ class TokenEndpoint(OpBase, View):
 
                 }, status = 403
             )
-        
+
         if request.POST.get("grant_type") == 'authorization_code':
             return self.grant_auth_code(request)
         elif request.POST.get("grant_type") == 'refresh_token':

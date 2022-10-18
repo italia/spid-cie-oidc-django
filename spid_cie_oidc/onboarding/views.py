@@ -6,7 +6,7 @@ from django.utils.translation import gettext as _
 
 from spid_cie_oidc.authority.schemas.fetch_endpoint_request import FetchRequest
 from spid_cie_oidc.authority.schemas.list_endpoint import ListRequest, ListResponse
-from spid_cie_oidc.authority.schemas.resolve_endpoint import ResolveRequest, ResolveResponse
+from spid_cie_oidc.entity.schemas.resolve_endpoint import ResolveRequest, ResolveResponse
 from spid_cie_oidc.authority.schemas.trust_mark_status_endpoint import TrustMarkRequest, TrustMarkResponse
 from spid_cie_oidc.entity.schemas.fa_metadata import FAMetadata
 
@@ -28,7 +28,7 @@ from spid_cie_oidc.entity.jwks import (
 )
 
 from spid_cie_oidc.entity.jwtse import unpad_jwt_head, unpad_jwt_payload, verify_jws, decrypt_jwe
-from spid_cie_oidc.authority.views import trust_mark_status, resolve_entity_statement
+from spid_cie_oidc.authority.views import trust_mark_status
 from spid_cie_oidc.authority.validators import validate_entity_configuration
 from spid_cie_oidc.provider.schemas.authn_requests import AuthenticationRequestSpid
 from spid_cie_oidc.provider.schemas.authn_response import AuthenticationResponse
@@ -51,6 +51,7 @@ from spid_cie_oidc.entity.policy import apply_policy
 
 from spid_cie_oidc.relying_party.settings import RP_PROVIDER_PROFILES
 from spid_cie_oidc.provider.settings import OIDCFED_PROVIDER_PROFILES
+from spid_cie_oidc.entity.views import resolve_entity_statement
 
 
 def onboarding_landing(request):  # pragma: no cover
@@ -276,7 +277,7 @@ def onboarding_decode_jwt(request):
             head = unpad_jwt_head(jwt)
         except Exception as e:
             messages.error(
-                request, 
+                request,
                 f"JWS verification failed due to missing JWT header: {e}"
             )
             return render(request, "onboarding_decode_jwt.html", context)
@@ -284,7 +285,7 @@ def onboarding_decode_jwt(request):
         if head.get('enc', None):
             if not form_dict.get('jwk'):
                 messages.error(
-                    request, 
+                    request,
                     f"JWE needs a private jwk to be decrypted"
                 )
                 return render(
@@ -295,7 +296,7 @@ def onboarding_decode_jwt(request):
             jwt = decrypt_jwe(jwt, jwk)
 
         try:
-            
+
             payload = unpad_jwt_payload(jwt)
             context["head"] = json.dumps(head, indent=4)
             context["payload"] = json.dumps(payload, indent=4)

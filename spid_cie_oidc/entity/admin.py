@@ -12,7 +12,8 @@ from .statements import EntityConfiguration, get_entity_configurations, get_enti
 from .models import (
     FederationEntityConfiguration,
     FetchedEntityStatement,
-    TrustChain
+    TrustChain,
+    StaffToken
 )
 from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
 
@@ -182,3 +183,12 @@ class FetchedEntityStatementAdmin(admin.ModelAdmin):
     list_filter = ("created", "modified", "exp", "iat")
     search_fields = ("sub", "iss")
     readonly_fields = ("sub", "statement", "created", "modified", "iat", "exp", "iss")
+
+
+@admin.register(StaffToken)
+class StaffTokenAdmin(admin.ModelAdmin):
+    list_display = ("user", "expire_at", "is_valid")
+    list_filter = ("created", "modified", "expire_at")
+    search_fields = ("token", )
+    readonly_fields = ("is_valid",)
+    raw_id_fields = ('user',)

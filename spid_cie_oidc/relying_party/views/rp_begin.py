@@ -148,7 +148,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             endpoint=authz_endpoint,
             acr_values= OIDCFED_ACR_PROFILES,
             iat=_timestamp_now,
-            exp=_timestamp_now+RP_REQUEST_EXP,
+            exp =_timestamp_now + RP_REQUEST_EXP,
             jti = str(uuid.uuid4()),
             aud=[tc.sub, authz_endpoint],
             claims=RP_REQUEST_CLAIM_BY_PROFILE[_profile],

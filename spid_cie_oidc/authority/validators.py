@@ -50,7 +50,7 @@ def validate_entity_configuration(value):
         )
 
     superior_sub = import_string(
-        "spid_cie_oidc.authority.models.get_first_self_trust_anchor"
+        "spid_cie_oidc.entity.models.get_first_self_trust_anchor"
     )().sub
     if superior_sub not in authority_hints:
         raise NotDescendant(

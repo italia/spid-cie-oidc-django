@@ -1,9 +1,12 @@
 from django.utils import timezone
 from django.utils.timezone import make_aware
 
+from secrets import token_hex
 from spid_cie_oidc.entity.jwtse import unpad_jwt_head
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.statements import get_http_url
+
+
 import datetime
 import logging
 
@@ -59,3 +62,7 @@ def get_jwk_from_jwt(jwt: str, provider_jwks: dict) -> dict:
         if jwk["kid"] == kid:
             return jwk
     return {}
+
+
+def random_token(n=254):
+    return token_hex(n)
