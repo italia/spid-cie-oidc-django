@@ -188,10 +188,11 @@ class OpBase:
 
         if _op_eid:
             _allowed_auds.append(_op_eid)
-
+        
         if not _op_eid or self.request.build_absolute_uri() not in _allowed_auds:
             logger.warning(
-                f"Client assertion failed, fake audience: {_op.sub} != {_op_eid}"
+                "Client assertion failed, fake audience: "
+                f"{self.request.build_absolute_uri()} not in {_allowed_auds}"
             )
             # TODO Specialize exceptions
             raise Exception()

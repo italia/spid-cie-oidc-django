@@ -38,11 +38,11 @@ class RevocationEndponitTest(TestCase):
         )
         self.op_local_conf = deepcopy(op_conf)
         FederationEntityConfiguration.objects.create(**self.op_local_conf)
-
+        self.jwt_auds = [op_conf["sub"], "http://testserver/oidc/op/", "http://testserver/oidc/op/revocation/"]
         CLIENT_ASSERTION = {
             "iss": RP_SUB,
             "sub": RP_SUB,
-            "aud": [op_conf["sub"]],
+            "aud": self.jwt_auds,
             "exp": exp_from_now(),
             "iat": iat_now(),
             "jti": "jti",
@@ -51,7 +51,7 @@ class RevocationEndponitTest(TestCase):
         access_token = {
             "iss": self.op_local_conf["sub"],
             "sub": RP_SUB,
-            "aud": [op_conf["sub"]],
+            "aud": self.jwt_auds,
             "client_id": RP_CLIENT_ID,
             "scope": "openid",
         }

@@ -31,10 +31,11 @@ class IntrospectionEndpointTest(TestCase):
     def setUp(self):
         self.RP_SUB = rp_conf["sub"]
         self.RP_CLIENT_ID = rp_conf["metadata"]["openid_relying_party"]["client_id"]
+        self.jwt_auds = [op_conf["sub"], "http://testserver/oidc/op/", "http://testserver/oidc/op/introspection/"]
         CLIENT_ASSERTION = {
             "iss": self.RP_SUB,
             "sub": self.RP_SUB,
-            "aud": [op_conf["sub"]],
+            "aud": self.jwt_auds,
             "exp": exp_from_now(),
             "iat": iat_now(),
             "jti": "jti",
@@ -43,7 +44,7 @@ class IntrospectionEndpointTest(TestCase):
         token = {
             "iss": self.RP_SUB,
             "sub": op_conf["sub"],
-            "aud": [op_conf["sub"]],
+            "aud": self.jwt_auds,
             "client_id": self.RP_SUB,
             "scope": "openid",
         }
@@ -91,6 +92,7 @@ class IntrospectionEndpointTest(TestCase):
             "token" : self.jwt_token
 
         }
+        
         res = client.post(url, request)
         self.assertTrue(res.status_code == 200)
         self.assertTrue("openid" in res.content.decode())
