@@ -17,7 +17,7 @@ from spid_cie_oidc.entity.jwtse import create_jws
 from spid_cie_oidc.entity.validators import validate_public_jwks
 from spid_cie_oidc.entity.utils import iat_now, exp_from_now
 from spid_cie_oidc.entity.settings import FEDERATION_DEFAULT_EXP
-from spid_cie_oidc.entity.views import get_first_self_trust_anchor
+from spid_cie_oidc.entity.models import get_first_self_trust_anchor
 
 from . settings import FEDERATION_DEFAULT_POLICY
 from .validators import validate_entity_configuration
