@@ -285,7 +285,7 @@
           ],
           "federation_fetch_endpoint": "http://127.0.0.1:8000/fetch/",
           "federation_resolve_endpoint": "http://127.0.0.1:8000/resolve/",
-          "federation_status_endpoint": "http://127.0.0.1:8000/trust_mark_status/",
+          "federation_trust_mark_status_endpoint": "http://127.0.0.1:8000/trust_mark_status/",
           "homepage_uri": "http://127.0.0.1:8000",
           "name": "example TA",
           "federation_list_endpoint": "http://127.0.0.1:8000/list/"
