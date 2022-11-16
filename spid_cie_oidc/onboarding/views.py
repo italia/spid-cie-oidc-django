@@ -168,8 +168,8 @@ def onboarding_resolve_statement(request):
 
 
 def onboarding_validating_trustmark(request):
-    if "id" in request.GET or "trust_mark" in request.GET:
-        form = OnboardingValidatingTrustMarkForm(request.GET)
+    if "id" in request.POST or "trust_mark" in request.POST:
+        form = OnboardingValidatingTrustMarkForm(request.POST)
     else:
         form = OnboardingValidatingTrustMarkForm()
 

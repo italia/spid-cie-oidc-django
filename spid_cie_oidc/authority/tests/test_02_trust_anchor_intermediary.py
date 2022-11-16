@@ -254,7 +254,7 @@ class TrustChainTest(TestCase):
         url = reverse("oidcfed_trust_mark_status")
 
         c = Client()
-        res = c.get(
+        res = c.post(
             url,
             data={
                 "id": self.rp_assigned_profile.profile.profile_id,
@@ -264,7 +264,7 @@ class TrustChainTest(TestCase):
         self.assertTrue(res.status_code == 200)
         self.assertTrue(res.json() == {"active": True})
 
-        res = c.get(
+        res = c.post(
             url,
             data={
                 "trust_mark": self.rp_assigned_profile.trust_mark["trust_mark"],

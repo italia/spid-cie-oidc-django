@@ -206,17 +206,17 @@ class ToolsTests(TestCase):
     
     def test_validating_trust_mark(self):
         url = reverse("oidc_onboarding_validating_trustmark")
-        res = self.client.get(url)
+        res = self.client.post(url)
         self.assertEqual(res.status_code, 200)
 
-        res = self.client.get(url, {
+        res = self.client.post(url, data={
             "id": "https://www.ciao.gov.it/certification/rp",
             "sub": "http://ciao.it/oidc/rp/",
         })
         self.assertEqual(res.status_code, 200)
         self.assertIn("alert-error", res.content.decode())
 
-        res = self.client.get(url, {
+        res = self.client.post(url, data={
             "id": "https://www.spid.gov.it/certification/rp",
             "sub": "http://rp-test.it/oidc/rp/",
         })
@@ -226,7 +226,7 @@ class ToolsTests(TestCase):
 
         trust_mark = self.rp_assigned_profile.trust_mark_as_jws
         
-        res = self.client.get(url, {
+        res = self.client.post(url, data={
             "trust_mark": trust_mark,
         })
         self.assertEqual(res.status_code, 200)

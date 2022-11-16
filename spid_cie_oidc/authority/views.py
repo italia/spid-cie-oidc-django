@@ -187,14 +187,14 @@ def advanced_entity_listing(request):
 )
 def trust_mark_status(request):
     failed_data = {"active": False}
-    if request.GET.get("sub", "") and request.GET.get("id", ""):
-        sub = request.GET["sub"]
-        _id = request.GET["id"]
-
-    elif request.GET.get("trust_mark", ""):
+    if request.POST.get("sub", "") and request.POST.get("id", ""):
+        sub = request.POST["sub"]
+        _id = request.POST["id"]
+    
+    elif request.POST.get("trust_mark", ""):
         try:
-            unpad_jwt_head(request.GET["trust_mark"])
-            payload = unpad_jwt_payload(request.GET["trust_mark"])
+            unpad_jwt_head(request.POST["trust_mark"])
+            payload = unpad_jwt_payload(request.POST["trust_mark"])
             sub = payload.get("sub", "")
             _id = payload.get("id", "")
         except Exception:
