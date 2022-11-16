@@ -72,7 +72,7 @@ def resolve_entity_statement(request, format: str = "jose"):
     if not all((request.GET.get("sub", None), request.GET.get("anchor", None))):
         raise Http404("sub and anchor parameters are REQUIRED.")
 
-    iss = get_first_self_trust_anchor()
+    iss = FederationEntityConfiguration.objects.filter(is_active=True).first()
 
     _q = dict(
         sub=request.GET["sub"],

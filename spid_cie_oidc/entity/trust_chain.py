@@ -264,14 +264,23 @@ class TrustChainBuilder:
                     self.verified_trust_marks.extend(sc.verified_trust_marks)
 
     def serialize(self):
-        res = []
+        res = []        
+        # we have only the leaf's and TA's EC, all the intermediate EC will be dropped
+        ta_ec:str = ""
         for stat in self.trust_path:
-            res.append(stat.jwt)
+            if not isinstance(self.trust_anchor, str):
+                if (self.subject == stat.sub == stat.iss):
+                    res.append(stat.jwt)
+                elif (self.trust_anchor.sub == stat.sub == stat.iss):
+                    ta_ec = stat.jwt
+            
             if stat.verified_descendant_statements:
                 res.append(
                     # [dict(i) for i in stat.verified_descendant_statements.values()]
                     [i for i in stat.verified_descendant_statements_as_jwt.values()]
                 )
+        if ta_ec:
+            res.append(ta_ec)
         return res
 
     def start(self):
