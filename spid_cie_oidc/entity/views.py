@@ -15,8 +15,7 @@ from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chai
 from .models import (
     FederationEntityConfiguration,
     TrustChain,
-    StaffToken,
-    get_first_self_trust_anchor
+    StaffToken
 )
 from .settings import HTTPC_PARAMS
 from .statements import OIDCFED_FEDERATION_WELLKNOWN_URL

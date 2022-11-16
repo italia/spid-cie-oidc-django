@@ -66,8 +66,7 @@ class IntrospectionEndpoint(OpBase, View):
         except Exception as e: # pragma: no cover
             logger.error(e)
             return HttpResponseForbidden()
-        
-        
+
         required_token = request.POST['token']
         # query con client_id, access token
         token = IssuedToken.objects.filter(

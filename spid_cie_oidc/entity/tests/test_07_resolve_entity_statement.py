@@ -1,4 +1,3 @@
-from copy import deepcopy
 import json
 
 from unittest.mock import patch
@@ -11,7 +10,7 @@ from django.test import (
     override_settings
 )
 from django.urls import reverse
-from spid_cie_oidc.entity.tests.rp_metadata_settings import rp_conf, rp_onboarding_data
+from spid_cie_oidc.entity.tests.rp_metadata_settings import rp_conf
 from spid_cie_oidc.entity.views import resolve_entity_statement
 from spid_cie_oidc.entity.models import (
     FederationEntityConfiguration,
