@@ -33,9 +33,7 @@ It should be available only for __trust anchors__ and __intermediates__.
 Lists all the descendant entities.
 
  - `http://127.0.0.1:8000/list/`
- - `http://127.0.0.1:8000/list/?is_leaf=false`
- - `http://127.0.0.1:8000/list/?is_leaf=true`
- - `http://127.0.0.1:8000/list/?type=openid_provider`
+ - `http://127.0.0.1:8000/list/?entity_type=openid_provider`
 
 
 #### Advanced entity listing endpoint

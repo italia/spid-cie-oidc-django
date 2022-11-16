@@ -8,8 +8,7 @@ class ListRequest(BaseModel):
 
     def example():  # pragma: no cover
         return ListRequest(
-            is_leaf= True,
-            type= "openid_provider"
+            entity_type= "openid_provider"
         )
 
 
