@@ -51,7 +51,7 @@ OIDCFED_MAX_PATH_LEN = 1
 # }
 
 # for aiohttp
-HTTPC_TIMEOUT = 4
+HTTPC_TIMEOUT = getattr(settings, "HTTPC_TIMEOUT", 12)
 HTTPC_PARAMS = getattr(
     settings,
     "HTTPC_PARAMS",

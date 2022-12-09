@@ -54,7 +54,6 @@ class OAuth2AuthorizationCodeGrant(object):
         )
 
         logger.debug(f"Access Token Request for {state}: {grant_data} ")
-
         token_request = requests.post(
             token_endpoint_url,
             data=grant_data,
