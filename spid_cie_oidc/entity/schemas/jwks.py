@@ -20,7 +20,7 @@ class Jwk(BaseModel):
             "PS512",
         ]
     ]
-    use: Literal["sig", "enc"]
+    use: Optional[Literal["sig", "enc"]]
     n: Optional[str]  # Base64urlUInt-encoded
     e: Optional[str]  # Base64urlUInt-encoded
 
