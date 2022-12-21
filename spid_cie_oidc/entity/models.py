@@ -247,8 +247,15 @@ class FederationEntityConfiguration(TimeStampedModel):
             **kwargs,
         )
 
+    def set_jwks_as_array(self):
+        for i in ('jwks_fed','jwks_core'):
+            value = getattr(self, i)
+            if not isinstance(value, list):
+                setattr(self, i, [value])
+        
     def save(self, *args, **kwargs):
         self.entity_type = self.type[0]
+        self.set_jwks_as_array()
         super().save(*args, **kwargs)
 
     def __str__(self):
