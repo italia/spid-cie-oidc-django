@@ -139,6 +139,7 @@
     "metadata": {
       "openid_relying_party": {
         "application_type": "web",
+        "organization_name": "Example RP",
         "client_id": "http://127.0.0.1:8001/",
         "client_registration_types": [
           "automatic"
