@@ -35,7 +35,6 @@ def entity_configuration(request):
         sub=_sub,
         is_active=True,
     ).first()
-
     if not conf: # pragma: no cover
         raise Http404()
 

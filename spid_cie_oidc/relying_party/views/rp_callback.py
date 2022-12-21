@@ -235,7 +235,7 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
             authz.state,
             authz_token.access_token,
             authz.provider_configuration,
-            verify=HTTPC_PARAMS,
+            verify=HTTPC_PARAMS.get("connection", {}).get("ssl", True)
         )
         if not userinfo:
             logger.warning(

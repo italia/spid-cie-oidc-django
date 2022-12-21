@@ -1,5 +1,7 @@
 import logging
 import requests
+
+from django.conf import settings
 from spid_cie_oidc.entity.exceptions import UnknownKid
 from spid_cie_oidc.entity.jwtse import unpad_jwt_head, decrypt_jwe, verify_jws
 from spid_cie_oidc.entity.utils import get_jwks
@@ -27,7 +29,12 @@ class OidcUserInfo(object):
         # userinfo
         headers = {"Authorization": f"Bearer {access_token}"}
         authz_userinfo = requests.get(
-            provider_conf["userinfo_endpoint"], headers=headers, verify=verify
+            provider_conf["userinfo_endpoint"], 
+            headers=headers, 
+            verify=verify, 
+            timeout=getattr(
+                settings, "HTTPC_TIMEOUT", 8
+            )
         )
 
         if authz_userinfo.status_code != 200: # pragma: no cover
