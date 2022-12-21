@@ -26,7 +26,8 @@ from spid_cie_oidc.entity.statements import EntityConfiguration
 from spid_cie_oidc.entity.utils import exp_from_now, iat_now, random_token
 from spid_cie_oidc.entity.validators import (
     validate_entity_metadata,
-    validate_metadata_algs
+    validate_metadata_algs,
+    validate_private_jwks
 )
 
 logger = logging.getLogger(__name__)
@@ -80,12 +81,14 @@ class FederationEntityConfiguration(TimeStampedModel):
         null=False,
         help_text=_("a list of private keys for Federation ops"),
         default=_create_jwks,
+        validators = [validate_private_jwks],
     )
     jwks_core = models.JSONField(
         blank=False,
         null=False,
         help_text=_("a list of private keys for Core ops"),
         default=_create_jwks,
+        validators = [validate_private_jwks],
     )
     trust_marks = models.JSONField(
         blank=True,
