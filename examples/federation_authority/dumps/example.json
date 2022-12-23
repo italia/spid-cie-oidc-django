@@ -384,11 +384,7 @@
         ],
         "userinfo_encryption_alg_values_supported": [
           "RSA-OAEP",
-          "RSA-OAEP-256",
-          "ECDH-ES",
-          "ECDH-ES+A128KW",
-          "ECDH-ES+A192KW",
-          "ECDH-ES+A256KW"
+          "RSA-OAEP-256"
         ],
         "userinfo_encryption_enc_values_supported": [
           "A128CBC-HS256",
@@ -408,11 +404,7 @@
         ],
         "request_object_encryption_alg_values_supported": [
           "RSA-OAEP",
-          "RSA-OAEP-256",
-          "ECDH-ES",
-          "ECDH-ES+A128KW",
-          "ECDH-ES+A192KW",
-          "ECDH-ES+A256KW"
+          "RSA-OAEP-256"
         ],
         "request_object_encryption_enc_values_supported": [
           "A128CBC-HS256",
@@ -755,11 +747,7 @@
           ],
           "userinfo_encryption_alg_values_supported": [
             "RSA-OAEP",
-            "RSA-OAEP-256",
-            "ECDH-ES",
-            "ECDH-ES+A128KW",
-            "ECDH-ES+A192KW",
-            "ECDH-ES+A256KW"
+            "RSA-OAEP-256"
           ],
           "userinfo_encryption_enc_values_supported": [
             "A128CBC-HS256",
@@ -779,11 +767,7 @@
           ],
           "request_object_encryption_alg_values_supported": [
             "RSA-OAEP",
-            "RSA-OAEP-256",
-            "ECDH-ES",
-            "ECDH-ES+A128KW",
-            "ECDH-ES+A192KW",
-            "ECDH-ES+A256KW"
+            "RSA-OAEP-256"
           ],
           "request_object_encryption_enc_values_supported": [
             "A128CBC-HS256",
@@ -870,11 +854,7 @@
           "userinfo_encryption_alg_values_supported": {
             "subset_of": [
               "RSA-OAEP",
-              "RSA-OAEP-256",
-              "ECDH-ES",
-              "ECDH-ES+A128KW",
-              "ECDH-ES+A192KW",
-              "ECDH-ES+A256KW"
+              "RSA-OAEP-256"
             ]
           },
           "userinfo_encryption_enc_values_supported": {
@@ -890,11 +870,7 @@
           "request_object_encryption_alg_values_supported": {
             "subset_of": [
               "RSA-OAEP",
-              "RSA-OAEP-256",
-              "ECDH-ES",
-              "ECDH-ES+A128KW",
-              "ECDH-ES+A192KW",
-              "ECDH-ES+A256KW"
+              "RSA-OAEP-256"
             ]
           },
           "request_object_encryption_enc_values_supported": {
@@ -1188,11 +1164,7 @@
           ],
           "userinfo_encryption_alg_values_supported": [
             "RSA-OAEP",
-            "RSA-OAEP-256",
-            "ECDH-ES",
-            "ECDH-ES+A128KW",
-            "ECDH-ES+A192KW",
-            "ECDH-ES+A256KW"
+            "RSA-OAEP-256"
           ],
           "userinfo_encryption_enc_values_supported": [
             "A128CBC-HS256",
@@ -1212,11 +1184,7 @@
           ],
           "request_object_encryption_alg_values_supported": [
             "RSA-OAEP",
-            "RSA-OAEP-256",
-            "ECDH-ES",
-            "ECDH-ES+A128KW",
-            "ECDH-ES+A192KW",
-            "ECDH-ES+A256KW"
+            "RSA-OAEP-256"
           ],
           "request_object_encryption_enc_values_supported": [
             "A128CBC-HS256",
@@ -1303,11 +1271,7 @@
           "userinfo_encryption_alg_values_supported": {
             "subset_of": [
               "RSA-OAEP",
-              "RSA-OAEP-256",
-              "ECDH-ES",
-              "ECDH-ES+A128KW",
-              "ECDH-ES+A192KW",
-              "ECDH-ES+A256KW"
+              "RSA-OAEP-256"
             ]
           },
           "userinfo_encryption_enc_values_supported": {
@@ -1323,11 +1287,7 @@
           "request_object_encryption_alg_values_supported": {
             "subset_of": [
               "RSA-OAEP",
-              "RSA-OAEP-256",
-              "ECDH-ES",
-              "ECDH-ES+A128KW",
-              "ECDH-ES+A192KW",
-              "ECDH-ES+A256KW"
+              "RSA-OAEP-256"
             ]
           },
           "request_object_encryption_enc_values_supported": {
@@ -1567,11 +1527,7 @@
         ],
         "userinfo_encryption_alg_values_supported": [
           "RSA-OAEP",
-          "RSA-OAEP-256",
-          "ECDH-ES",
-          "ECDH-ES+A128KW",
-          "ECDH-ES+A192KW",
-          "ECDH-ES+A256KW"
+          "RSA-OAEP-256"
         ],
         "userinfo_encryption_enc_values_supported": [
           "A128CBC-HS256",
@@ -1591,11 +1547,7 @@
         ],
         "request_object_encryption_alg_values_supported": [
           "RSA-OAEP",
-          "RSA-OAEP-256",
-          "ECDH-ES",
-          "ECDH-ES+A128KW",
-          "ECDH-ES+A192KW",
-          "ECDH-ES+A256KW"
+          "RSA-OAEP-256"
         ],
         "request_object_encryption_enc_values_supported": [
           "A128CBC-HS256",
@@ -1829,11 +1781,7 @@
         ],
         "userinfo_encryption_alg_values_supported": [
           "RSA-OAEP",
-          "RSA-OAEP-256",
-          "ECDH-ES",
-          "ECDH-ES+A128KW",
-          "ECDH-ES+A192KW",
-          "ECDH-ES+A256KW"
+          "RSA-OAEP-256"
         ],
         "userinfo_encryption_enc_values_supported": [
           "A128CBC-HS256",
@@ -1853,11 +1801,7 @@
         ],
         "request_object_encryption_alg_values_supported": [
           "RSA-OAEP",
-          "RSA-OAEP-256",
-          "ECDH-ES",
-          "ECDH-ES+A128KW",
-          "ECDH-ES+A192KW",
-          "ECDH-ES+A256KW"
+          "RSA-OAEP-256"
         ],
         "request_object_encryption_enc_values_supported": [
           "A128CBC-HS256",

@@ -116,12 +116,6 @@ class OPMetadata(BaseModel):
             raise ValueError(
                 "one of signed_jwks_uri or jwks_uri or jwks must be set"
             )
-        if jwks_uri and jwks:
-            raise ValueError("can't use jwks and jwks_uri together")
-        elif jwks_uri and signed_jwks_uri:
-            raise ValueError(
-                "can't use signed_jwks_uri and jwks_uri together"
-            )
         return values
 
 
