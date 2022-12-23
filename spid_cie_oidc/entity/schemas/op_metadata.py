@@ -134,7 +134,5 @@ class OPMetadataCie(OPMetadata):
 
 
 class OPMetadataSpid(OPMetadata):
-    # TODO: Could be specified in multiple languages
-    op_name: str
-    # TODO: Could be specified in multiple languages
-    op_uri: str
+    op_name: Optional[str]
+    op_uri: Optional[str]
