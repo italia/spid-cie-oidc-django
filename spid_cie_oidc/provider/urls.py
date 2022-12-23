@@ -3,6 +3,9 @@ from django.urls import path
 
 from .views.authz_request_view import AuthzRequestView
 from .views.userinfo_endpoint import UserInfoEndpoint
+from .views.connect import (
+    openid_configuration
+)
 from .views.consent_page_view import (
     ConsentPageView,
     oidc_provider_not_consent,
@@ -61,4 +64,11 @@ urlpatterns = [
         RevokeSessionView.as_view(),
         name="oidc_provider_revoke_session",
     ),
+    path(
+        f"{_PREF}/.well-known/openid-configuration",
+        openid_configuration,
+        name="oidc_provider_openid_configuration",
+    ),
+
+
 ]

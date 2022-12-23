@@ -29,9 +29,9 @@ class OidcUserInfo(object):
         # userinfo
         headers = {"Authorization": f"Bearer {access_token}"}
         authz_userinfo = requests.get(
-            provider_conf["userinfo_endpoint"], 
-            headers=headers, 
-            verify=verify, 
+            provider_conf["userinfo_endpoint"],
+            headers=headers,
+            verify=verify,
             timeout=getattr(
                 settings, "HTTPC_TIMEOUT", 8
             )

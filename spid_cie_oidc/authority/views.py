@@ -190,7 +190,7 @@ def trust_mark_status(request):
     if request.POST.get("sub", "") and request.POST.get("id", ""):
         sub = request.POST["sub"]
         _id = request.POST["id"]
-    
+
     elif request.POST.get("trust_mark", ""):
         try:
             unpad_jwt_head(request.POST["trust_mark"])
