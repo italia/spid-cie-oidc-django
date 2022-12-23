@@ -24,10 +24,13 @@ class RPMetadata(BaseModel):
 
     @root_validator(pre=False)
     def validate(cls, values):
-        jwks = values.get("jwks")
-        jwks_uri = values.get("jwks_uri")
-        signed_jwks_uri = values.get("signed_jwks_uri")
-        if not jwks_uri and not jwks and not signed_jwks_uri:
+        jwks_there = False
+        for i in ("jwks_uri", "jwks", "signed_jwks_uri"):
+            if values.get(i):
+                jwks_there = True
+                break
+        
+        if not jwks_there:
             raise ValueError(
                 "one of signed_jwks_uri or jwks_uri or jwks must be set"
             )
