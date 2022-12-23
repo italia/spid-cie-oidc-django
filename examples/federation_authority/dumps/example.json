@@ -288,8 +288,6 @@
         "id_token_encryption_enc_values_supported": [
           "A128CBC-HS256"
         ],
-        "op_name": "Agenzia per l’Italia Digitale",
-        "op_uri": "https://www.agid.gov.it",
         "token_endpoint": "http://127.0.0.1:8000/oidc/op/token/",
         "userinfo_endpoint": "http://127.0.0.1:8000/oidc/op/userinfo/",
         "introspection_endpoint": "http://127.0.0.1:8000/oidc/op/introspection/",
@@ -653,8 +651,6 @@
           "id_token_encryption_enc_values_supported": [
             "A128CBC-HS256"
           ],
-          "op_name": "Agenzia per l’Italia Digitale",
-          "op_uri": "https://www.agid.gov.it",
           "token_endpoint": "http://127.0.0.1:8000/oidc/op/token/",
           "userinfo_endpoint": "http://127.0.0.1:8000/oidc/op/userinfo/",
           "introspection_endpoint": "http://127.0.0.1:8000/oidc/op/introspection/",
@@ -1072,8 +1068,6 @@
           "id_token_encryption_enc_values_supported": [
             "A128CBC-HS256"
           ],
-          "op_name": "Agenzia per l’Italia Digitale",
-          "op_uri": "https://www.agid.gov.it",
           "token_endpoint": "http://127.0.0.1:8002/oidc/op/token/",
           "userinfo_endpoint": "http://127.0.0.1:8002/oidc/op/userinfo/",
           "introspection_endpoint": "http://127.0.0.1:8002/oidc/op/introspection/",
@@ -1433,8 +1427,6 @@
         "id_token_encryption_enc_values_supported": [
           "A128CBC-HS256"
         ],
-        "op_name": "Agenzia per l’Italia Digitale",
-        "op_uri": "https://www.agid.gov.it",
         "token_endpoint": "http://127.0.0.1:8000/oidc/op/token/",
         "userinfo_endpoint": "http://127.0.0.1:8000/oidc/op/userinfo/",
         "introspection_endpoint": "http://127.0.0.1:8000/oidc/op/introspection/",
@@ -1689,8 +1681,6 @@
         "id_token_encryption_enc_values_supported": [
           "A128CBC-HS256"
         ],
-        "op_name": "Agenzia per l’Italia Digitale",
-        "op_uri": "https://www.agid.gov.it",
         "token_endpoint": "http://127.0.0.1:8002/oidc/op/token/",
         "userinfo_endpoint": "http://127.0.0.1:8002/oidc/op/userinfo/",
         "introspection_endpoint": "http://127.0.0.1:8002/oidc/op/introspection/",
