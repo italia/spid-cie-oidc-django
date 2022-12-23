@@ -1,26 +1,6 @@
 [
 {
   "model": "spid_cie_oidc_accounts.user",
-  "pk": 1,
-  "fields": {
-    "password": "pbkdf2_sha256$320000$DMnJbK8U6nud1dLxbP181B$7L+UE2YgT5b1VwortW19WB1NY9gmlW0hwXhzzgo63eY=",
-    "last_login": "2022-02-26T23:22:07.240Z",
-    "is_superuser": true,
-    "username": "wert",
-    "is_staff": true,
-    "date_joined": "2022-02-13T09:08:44.265Z",
-    "first_name": null,
-    "last_name": null,
-    "is_active": true,
-    "email": "",
-    "origin": null,
-    "attributes": {},
-    "groups": [],
-    "user_permissions": []
-  }
-},
-{
-  "model": "spid_cie_oidc_accounts.user",
   "pk": 2,
   "fields": {
     "password": "pbkdf2_sha256$320000$CmkauYnR0tV0uXPlxcDXKr$OmpasMWm+T4oUHAklupXMTiLGWyUEfbF5WPInKCBf0Q=",
@@ -35,60 +15,6 @@
     "email": "",
     "origin": null,
     "attributes": {},
-    "groups": [],
-    "user_permissions": []
-  }
-},
-{
-  "model": "spid_cie_oidc_accounts.user",
-  "pk": 3,
-  "fields": {
-    "password": "",
-    "last_login": "2022-04-23T15:48:14.056Z",
-    "is_superuser": false,
-    "username": "http://127.0.0.1:8000/oidc/op/__7cbc6452f3655e9c2c0e3c51dbf11758668cbb88852360bb1b135ded34e0f834",
-    "is_staff": false,
-    "date_joined": "2022-03-31T13:44:31.967Z",
-    "first_name": "7cbc6452f3655e9c2c0e3c51dbf11758668cbb88852360bb1b135ded34e0f834",
-    "last_name": "7cbc6452f3655e9c2c0e3c51dbf11758668cbb88852360bb1b135ded34e0f834",
-    "is_active": true,
-    "email": "antonio@email.it",
-    "origin": null,
-    "attributes": {
-      "sub": "7cbc6452f3655e9c2c0e3c51dbf11758668cbb88852360bb1b135ded34e0f834",
-      "username": "http://127.0.0.1:8000/oidc/op/__7cbc6452f3655e9c2c0e3c51dbf11758668cbb88852360bb1b135ded34e0f834",
-      "first_name": "antonio",
-      "last_name": "rossi",
-      "email": "antonio@email.it",
-      "fiscal_number": "AATTTJDFKSKDF89"
-    },
-    "groups": [],
-    "user_permissions": []
-  }
-},
-{
-  "model": "spid_cie_oidc_accounts.user",
-  "pk": 4,
-  "fields": {
-    "password": "",
-    "last_login": "2022-04-23T15:48:22.025Z",
-    "is_superuser": false,
-    "username": "http://127.0.0.1:8002/oidc/op/__7cbc6452f3655e9c2c0e3c51dbf11758668cbb88852360bb1b135ded34e0f834",
-    "is_staff": false,
-    "date_joined": "2022-03-31T13:44:57.141Z",
-    "first_name": "7cbc6452f3655e9c2c0e3c51dbf11758668cbb88852360bb1b135ded34e0f834",
-    "last_name": "7cbc6452f3655e9c2c0e3c51dbf11758668cbb88852360bb1b135ded34e0f834",
-    "is_active": true,
-    "email": "that@ema.il",
-    "origin": null,
-    "attributes": {
-      "sub": "7cbc6452f3655e9c2c0e3c51dbf11758668cbb88852360bb1b135ded34e0f834",
-      "username": "http://127.0.0.1:8002/oidc/op/__7cbc6452f3655e9c2c0e3c51dbf11758668cbb88852360bb1b135ded34e0f834",
-      "first_name": "antonio",
-      "last_name": "rossi",
-      "email": "that@ema.il",
-      "fiscal_number": "8sada89s7da89sd7a98sd78"
-    },
     "groups": [],
     "user_permissions": []
   }
@@ -144,6 +70,8 @@
         "client_registration_types": [
           "automatic"
         ],
+        "jwks_uri": "http://127.0.0.1:8001/oidc/rp/openid_relying_party/jwks.json",
+        "signed_jwks_uri": "http://127.0.0.1:8001/oidc/rp/openid_relying_party/jwks.jose",
         "jwks": {
           "keys": [
             {

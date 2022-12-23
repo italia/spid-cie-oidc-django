@@ -156,6 +156,8 @@
           "ES256"
         ],
         "issuer": "http://127.0.0.1:8002/oidc/op/",
+        "jwks_uri": "http://127.0.0.1:8002/oidc/op/openid_provider/jwks.json",
+        "signed_jwks_uri": "http://127.0.0.1:8002/oidc/op/openid_provider/jwks.jose",
         "jwks": {
           "keys": [
             {

@@ -125,3 +125,48 @@ def resolve_entity_statement(request, format: str = "jose"):
             create_jws(res, iss.jwks_fed[0]),
             content_type="application/jose",
         )
+
+
+def openid_jwks(request, metadata_type:str, resource_type:str):
+    """
+        resource_tytpe = set(jwks_uri, jwks.jose)
+    """
+    _sub = request.build_absolute_uri().rsplit(resource_type)[0]
+    _lookup = _sub.replace(f"{metadata_type}/", "")
+    conf = FederationEntityConfiguration.objects.filter(
+        # TODO: check for reverse proxy and forwarders ...
+        sub=_lookup,
+        is_active=True,
+    ).first()
+    if not conf: # pragma: no cover
+        raise Http404()
+    content = conf.entity_configuration_as_dict['metadata'].get(
+            metadata_type, {}
+        ).get("jwks", {})
+
+    if not content:
+        raise Http404()
+
+    if resource_type == 'jwks.json':
+        return JsonResponse(content, safe=False)
+    elif resource_type == 'jwks.jose':
+        return HttpResponse(
+            create_jws(content, conf.jwks_fed[0]),
+            content_type="application/jose"
+        )
+    else:
+        raise Http404()
+
+
+def openid_connect_jwks_uri(request, metadata_type, resource_type="jwks.json"):
+    """
+    OpenID Connect default jwks_uri
+    """
+    return openid_jwks(request, metadata_type, resource_type)
+
+
+def openid_connect_signed_jwks_uri(request, metadata_type, resource_type="jwks.jose"):
+    """
+    OpenID Federation signed_jwks_uri
+    """
+    return openid_jwks(request, metadata_type, resource_type)

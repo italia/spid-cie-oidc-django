@@ -3,9 +3,11 @@ from django.urls import path
 
 from .views.authz_request_view import AuthzRequestView
 from .views.userinfo_endpoint import UserInfoEndpoint
-from .views.connect import (
-    openid_configuration
+from spid_cie_oidc.entity.views import (
+    openid_connect_jwks_uri,
+    openid_connect_signed_jwks_uri
 )
+from .views.connect import openid_configuration
 from .views.consent_page_view import (
     ConsentPageView,
     oidc_provider_not_consent,
@@ -69,6 +71,14 @@ urlpatterns = [
         openid_configuration,
         name="oidc_provider_openid_configuration",
     ),
-
-
+    path(
+        f"{_PREF}/<str:metadata_type>/jwks.json",
+        openid_connect_jwks_uri,
+        name="oidc_connect_jwks_uri",
+    ),
+    path(
+        f"{_PREF}/<str:metadata_type>/jwks.jose",
+        openid_connect_signed_jwks_uri,
+        name="oidc_connect_signed_jwks_uri",
+    ),
 ]

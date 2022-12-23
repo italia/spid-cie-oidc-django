@@ -16,7 +16,10 @@ Including another URLconf
 from django.conf import settings
 from django.urls import path
 
-from .views import entity_configuration, resolve_entity_statement
+from .views import (
+    entity_configuration, 
+    resolve_entity_statement
+)
 
 _PREF = getattr(settings, "OIDC_PREFIX", "")
 
@@ -26,5 +29,5 @@ urlpatterns = [
         entity_configuration,
         name="entity_configuration",
     ),
-    path(f"{_PREF}resolve/", resolve_entity_statement, name="oidcfed_resolve"),
+    path(f"{_PREF}resolve/", resolve_entity_statement, name="oidcfed_resolve")
 ]
