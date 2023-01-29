@@ -58,7 +58,7 @@ class OpBase:
         rp_trust_chain = TrustChain.objects.filter(
             metadata__openid_relying_party__isnull=False,
             sub=self.payload["iss"],
-            trust_anchor__sub=settings.OIDCFED_DEFAULT_TRUST_ANCHOR
+            trust_anchor__sub__in=settings.OIDCFED_TRUST_ANCHORS
         ).first()
         if rp_trust_chain and not rp_trust_chain.is_active:
             _msg = (
@@ -70,15 +70,21 @@ class OpBase:
             raise Exception(_msg)
 
         elif not rp_trust_chain or rp_trust_chain.is_expired:
-            rp_trust_chain = get_or_create_trust_chain(
-                subject=self.payload["iss"],
-                trust_anchor=settings.OIDCFED_DEFAULT_TRUST_ANCHOR,
-                httpc_params=HTTPC_PARAMS,
-                required_trust_marks=getattr(
-                    settings, "OIDCFED_REQUIRED_TRUST_MARKS", []
-                ),
-            )
-            if not rp_trust_chain.is_valid:
+            rp_trust_chain = None
+            # TODO: get async here
+            for ta in settings.OIDCFED_TRUST_ANCHORS:
+                rp_trust_chain = get_or_create_trust_chain(
+                    subject=self.payload["iss"],
+                    trust_anchor=ta,
+                    httpc_params=HTTPC_PARAMS,
+                    required_trust_marks=getattr(
+                        settings, "OIDCFED_REQUIRED_TRUST_MARKS", []
+                    ),
+                )
+                if rp_trust_chain and rp_trust_chain.is_valid:
+                    break
+                
+            if not rp_trust_chain or not rp_trust_chain.is_valid:
                 _msg = (
                     f"Failed trust chain validation for {self.payload['iss']}. "
                     "error=unauthorized_client, "

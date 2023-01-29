@@ -78,7 +78,7 @@ class AuthnRequestTest(TestCase):
             is_active=True,
         )
 
-    @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB)
+    @override_settings(OIDCFED_TRUST_ANCHORS=[TA_SUB])
     def test_auth_request_unknown_error(self):
         jws = create_jws(self.REQUEST_OBJECT_PAYLOAD, RP_METADATA_JWK1)
         client = Client()
@@ -88,7 +88,7 @@ class AuthnRequestTest(TestCase):
         self.assertTrue(res.status_code == 302)
         self.assertTrue("error=invalid_request" in res.url)
 
-    @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB)
+    @override_settings(OIDCFED_TRUST_ANCHORS=[TA_SUB])
     @override_settings(OIDCFED_DEFAULT_PROVIDER_PROFILE="cie")
     def test_auth_request_id_token_claim(self):
         jws = create_jws(self.REQUEST_OBJECT_PAYLOAD, RP_METADATA_JWK1)
@@ -115,14 +115,14 @@ class AuthnRequestTest(TestCase):
         self.assertEqual(id_token.get("email"), "test@test.it")
 
 
-    @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB)
+    @override_settings(OIDCFED_TRUST_ANCHORS=[TA_SUB])
     def test_auth_no_request(self):
         client = Client()
         url = reverse("oidc_provider_authnrequest")
         res = client.get(url, {})
         self.assertTrue(res.status_code == 400)
 
-    @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB)
+    @override_settings(OIDCFED_TRUST_ANCHORS=[TA_SUB])
     def test_auth_request_ok(self):
         jws = create_jws(self.REQUEST_OBJECT_PAYLOAD, RP_METADATA_JWK1)
         client = Client()
@@ -144,7 +144,7 @@ class AuthnRequestTest(TestCase):
         self.assertTrue(res.status_code == 302)
         self.assertTrue("code" in res.url)
 
-    @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB)
+    @override_settings(OIDCFED_TRUST_ANCHORS=[TA_SUB])
     def test_auth_request_user_rejected_consent(self):
         jws = create_jws(self.REQUEST_OBJECT_PAYLOAD, RP_METADATA_JWK1)
         client = Client()
@@ -167,7 +167,7 @@ class AuthnRequestTest(TestCase):
         # TODO: this is not normative
         self.assertTrue("error=rejected_by_user" in res.url)
 
-    @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB)
+    @override_settings(OIDCFED_TRUST_ANCHORS=[TA_SUB])
     def test_auth_request_no_session_in_post_consent(self):
         jws = create_jws(self.REQUEST_OBJECT_PAYLOAD, RP_METADATA_JWK1)
         client = Client()
@@ -189,7 +189,7 @@ class AuthnRequestTest(TestCase):
         res = client.post(consent_page_url, {"agree": True})
         self.assertTrue(res.status_code == 403)
 
-    @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB)
+    @override_settings(OIDCFED_TRUST_ANCHORS=[TA_SUB])
     def test_auth_request_no_session_in_get_consent(self):
         jws = create_jws(self.REQUEST_OBJECT_PAYLOAD, RP_METADATA_JWK1)
         client = Client()
@@ -213,7 +213,7 @@ class AuthnRequestTest(TestCase):
         res = client.get(consent_page_url)
         self.assertTrue(res.status_code == 403)
 
-    @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB)
+    @override_settings(OIDCFED_TRUST_ANCHORS=[TA_SUB])
     def test_auth_request_auth_code_already_used(self):
         jws = create_jws(self.REQUEST_OBJECT_PAYLOAD, RP_METADATA_JWK1)
         client = Client()
@@ -233,7 +233,7 @@ class AuthnRequestTest(TestCase):
         res = client.get(consent_page_url)
         self.assertTrue(res.status_code == 403)
 
-    @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB)
+    @override_settings(OIDCFED_TRUST_ANCHORS=[TA_SUB])
     def test_auth_request_wrong_login(self):
         jws = create_jws(self.REQUEST_OBJECT_PAYLOAD, RP_METADATA_JWK1)
         client = Client()
@@ -247,7 +247,7 @@ class AuthnRequestTest(TestCase):
         )
         self.assertIn("error", res.content.decode())
 
-    @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB)
+    @override_settings(OIDCFED_TRUST_ANCHORS=[TA_SUB])
     def test_auth_request_preexistent_authz(self):
         jws = create_jws(self.REQUEST_OBJECT_PAYLOAD, RP_METADATA_JWK1)
         client = Client()
@@ -264,7 +264,7 @@ class AuthnRequestTest(TestCase):
         self.assertIn("error=invalid_request", res.url)
         self.assertIn("state", res.url)
 
-    @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB)
+    @override_settings(OIDCFED_TRUST_ANCHORS=[TA_SUB])
     def test_auth_request_trust_chain_no_active(self):
         self.trust_chain.is_active = False
         self.trust_chain.save()
@@ -276,7 +276,7 @@ class AuthnRequestTest(TestCase):
         self.assertIn("error=invalid_request", res.url)
         self.assertIn("state", res.url)
 
-    @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB)
+    @override_settings(OIDCFED_TRUST_ANCHORS=[TA_SUB])
     def test_auth_request_invalid_jwk(self):
         jws = create_jws(self.REQUEST_OBJECT_PAYLOAD, RP_METADATA_JWK1)
         get_jwks(self.trust_chain.metadata['openid_relying_party'])[0][
@@ -294,7 +294,7 @@ class AuthnRequestTest(TestCase):
         ] = RP_METADATA_JWK1['kid']
         self.trust_chain.save()
 
-    @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB)
+    @override_settings(OIDCFED_TRUST_ANCHORS=[TA_SUB])
     def test_auth_request_no_correct_payload(self):
         NO_CORRECT_OBJECT_PAYLOAD = deepcopy(self.REQUEST_OBJECT_PAYLOAD)
         NO_CORRECT_OBJECT_PAYLOAD["response_type"] = "test"
@@ -306,7 +306,7 @@ class AuthnRequestTest(TestCase):
         self.assertIn("error", res.url)
         self.assertIn("state", res.url)
 
-    @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB)
+    @override_settings(OIDCFED_TRUST_ANCHORS=[TA_SUB])
     def test_auth_request_invalid_session(self):
         client = Client()
         url = reverse("oidc_provider_consent")
@@ -315,7 +315,7 @@ class AuthnRequestTest(TestCase):
         res = client.post(url)
         self.assertTrue(res.status_code == 403)
 
-    @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB)
+    @override_settings(OIDCFED_TRUST_ANCHORS=[TA_SUB])
     def test_auth_request_no_correct_refresh_request(self):
         local_payload = deepcopy(self.REQUEST_OBJECT_PAYLOAD)
         local_payload["scope"] = "openid offline_access"
@@ -326,7 +326,7 @@ class AuthnRequestTest(TestCase):
         res = client.get(url, {"request": jws})
         self.assertTrue(res.status_code == 403)
     
-    @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB)
+    @override_settings(OIDCFED_TRUST_ANCHORS=[TA_SUB])
     def test_auth_request_user_staff(self):
         self.user.is_staff = True
         self.user.save()
@@ -339,7 +339,7 @@ class AuthnRequestTest(TestCase):
         self.assertTrue(res.status_code == 302)
         self.assertTrue("/oidc/op/rp-test/landing/" == res.url)
 
-    @override_settings(OIDCFED_DEFAULT_TRUST_ANCHOR=TA_SUB)
+    @override_settings(OIDCFED_TRUST_ANCHORS=[TA_SUB])
     def test_auth_request_no_correct_authz_request(self):
         self.user.is_staff = True
         self.user.save()
