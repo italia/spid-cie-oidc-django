@@ -102,9 +102,8 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
 
         client_conf = entity_conf.metadata["openid_relying_party"]
         if not (
-            # TODO
-            # provider_metadata.get("jwks_uri", None)
-            # or
+            provider_metadata.get("jwks_uri", None)
+            or
             provider_metadata.get("jwks", None)
         ):
             context = {
