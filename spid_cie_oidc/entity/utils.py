@@ -8,6 +8,7 @@ from spid_cie_oidc.entity.statements import get_http_url
 
 
 import datetime
+import json
 import logging
 
 logger = logging.getLogger(__name__)
@@ -38,7 +39,8 @@ def get_jwks(metadata: dict, federation_jwks:list = []) -> dict:
             jwks_uri = metadata["jwks_uri"]
             jwks_list = get_http_url(
                 [jwks_uri], httpc_params=HTTPC_PARAMS
-            ).json()
+            )
+            jwks_list = json.loads(jwks_list[0])
         except Exception as e:
             logger.error(f"Failed to download jwks from {jwks_uri}: {e}")
     elif metadata.get('signed_jwks_uri'):
