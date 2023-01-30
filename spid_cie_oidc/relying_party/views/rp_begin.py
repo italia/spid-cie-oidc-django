@@ -64,7 +64,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
                     "error": "request rejected",
                     "error_description": "Trust Chain is unavailable.",
                 }
-                return render(request, self.error_template, context)
+                return render(request, self.error_template, context, status = 404)
 
         except InvalidTrustchain as exc:
             context = {
@@ -78,7 +78,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
                 "error": "request rejected",
                 "error_description": _(str(exc.args)),
             }
-            return render(request, self.error_template, context)
+            return render(request, self.error_template, context, status=403)
 
         provider_metadata = tc.metadata.get('openid_provider', None)
         if not provider_metadata:
