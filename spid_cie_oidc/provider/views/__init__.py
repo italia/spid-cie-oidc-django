@@ -12,7 +12,14 @@ from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
 from spid_cie_oidc.entity.utils import datetime_from_timestamp, exp_from_now, iat_now
 from spid_cie_oidc.entity.utils import get_jwks
-from spid_cie_oidc.provider.exceptions import AuthzRequestReplay, ExpiredAuthCode, InvalidSession, RevokedSession, ValidationException
+from spid_cie_oidc.entity.exceptions import TrustchainMissingMetadata
+from spid_cie_oidc.provider.exceptions import (
+    AuthzRequestReplay, 
+    ExpiredAuthCode, 
+    InvalidSession, 
+    RevokedSession, 
+    ValidationException
+)
 from spid_cie_oidc.provider.models import OidcSession
 
 from spid_cie_oidc.provider.settings import (
@@ -73,16 +80,21 @@ class OpBase:
             rp_trust_chain = None
             # TODO: get async here
             for ta in settings.OIDCFED_TRUST_ANCHORS:
-                rp_trust_chain = get_or_create_trust_chain(
-                    subject=self.payload["iss"],
-                    trust_anchor=ta,
-                    httpc_params=HTTPC_PARAMS,
-                    required_trust_marks=getattr(
-                        settings, "OIDCFED_REQUIRED_TRUST_MARKS", []
-                    ),
-                )
-                if rp_trust_chain and rp_trust_chain.is_valid:
-                    break
+                try:
+                    rp_trust_chain = get_or_create_trust_chain(
+                        subject=self.payload["iss"],
+                        trust_anchor=ta,
+                        httpc_params=HTTPC_PARAMS,
+                        required_trust_marks=getattr(
+                            settings, "OIDCFED_REQUIRED_TRUST_MARKS", []
+                        ),
+                    )
+                    if rp_trust_chain and rp_trust_chain.metadata:
+                        break
+                except TrustchainMissingMetadata as e:
+                    logger.debug(f"TrustchainMissingMetadata: {e}")
+                    # unless we find the good TA
+                    continue
                 
             if not rp_trust_chain or not rp_trust_chain.is_valid:
                 _msg = (
