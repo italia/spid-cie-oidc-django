@@ -64,7 +64,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
                     "error": "request rejected",
                     "error_description": "Trust Chain is unavailable.",
                 }
-                return render(request, self.error_template, context)
+                return render(request, self.error_template, context, status = 404)
 
         except InvalidTrustchain as exc:
             context = {
@@ -78,7 +78,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
                 "error": "request rejected",
                 "error_description": _(str(exc.args)),
             }
-            return render(request, self.error_template, context)
+            return render(request, self.error_template, context, status=403)
 
         provider_metadata = tc.metadata.get('openid_provider', None)
         if not provider_metadata:
@@ -102,9 +102,8 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
 
         client_conf = entity_conf.metadata["openid_relying_party"]
         if not (
-            # TODO
-            # provider_metadata.get("jwks_uri", None)
-            # or
+            provider_metadata.get("jwks_uri", None)
+            or
             provider_metadata.get("jwks", None)
         ):
             context = {
@@ -200,6 +199,10 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
                 "request": authz_data["request"]
             }
         )
-        url = "?".join((authz_endpoint, uri_path))
+        if "?" in authz_endpoint:
+            qstring = "&"
+        else:
+            qstring = "?"
+        url = qstring.join((authz_endpoint, uri_path))
         logger.info(f"Starting Authz request to {url}")
         return HttpResponseRedirect(url)

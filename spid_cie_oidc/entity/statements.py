@@ -436,7 +436,12 @@ class EntityConfiguration:
                 logger.info(f"Getting entity statements from {_url}")
                 jwts = get_entity_statements([_url], self.httpc_params)
                 jwt = jwts[0]
-                self.validate_by_superior_statement(jwt, ec)
+                if jwt:
+                    self.validate_by_superior_statement(jwt, ec)
+                else:
+                    logger.error(
+                        f"Empty response for {_url}"
+                    )
 
         return self.verified_by_superiors
 

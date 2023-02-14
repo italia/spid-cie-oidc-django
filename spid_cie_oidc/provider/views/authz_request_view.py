@@ -171,7 +171,7 @@ class AuthzRequestView(OpBase, View):
             return HttpResponseForbidden()
 
         acr_value = AcrValues(self.payload["acr_values"][0])
-        prompt = self.payload["prompt"]
+        prompt = self.payload.get("prompt", "login")
         if request.user:
             if (
                     request.user.is_authenticated and
