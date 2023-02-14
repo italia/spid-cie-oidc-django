@@ -149,8 +149,9 @@ class AuthenticationRequest(BaseModel):
     iat: int
     exp: Optional[int]
     jti: Optional[str]
-    aud: List[HttpUrl]
+    aud: str | List[HttpUrl]
     acr_values: List[AcrValues]
+    prompt: Literal["consent", "consent login"]
 
     @validator("claims")
     def validate_claims(cls, claims):
@@ -174,7 +175,6 @@ class AuthenticationRequest(BaseModel):
 
 class AuthenticationRequestSpid(AuthenticationRequest):
     scope: List[ScopeSpid]
-    prompt: Literal["consent", "consent login"]
 
     def get_claims() -> dict:
         return CLAIMS_SPID
@@ -204,7 +204,6 @@ class AuthenticationRequestSpid(AuthenticationRequest):
 
 class AuthenticationRequestCie(AuthenticationRequest):
     scope: List[ScopeCie]
-    prompt: Literal["consent", "consent login"]
 
     def get_claims() -> dict:
         return CLAIMS_CIE

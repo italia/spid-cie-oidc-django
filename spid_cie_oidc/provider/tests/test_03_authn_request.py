@@ -74,10 +74,11 @@ class AuthRequestTest(TestCase):
     def test_validate_spid_no_correct_nonce(self):
         with self.assertRaises(ValidationError):
             AuthenticationRequestSpid(**AUTHN_REQUEST_SPID_NO_CORRECT_NONCE)
-
-    def test_validate_spid_no_prompt(self):
-        with self.assertRaises(ValidationError):
-            AuthenticationRequestSpid(**AUTHN_REQUEST_SPID_NO_PROMPT)
+    
+    # removed, relaxed with the GAIN-PoC integration
+    #  def test_validate_spid_no_prompt(self):
+        #  with self.assertRaises(ValidationError):
+            #  AuthenticationRequestSpid(**AUTHN_REQUEST_SPID_NO_PROMPT)
 
     def test_validate_spid_no_correct_prompt(self):
         with self.assertRaises(ValidationError):
