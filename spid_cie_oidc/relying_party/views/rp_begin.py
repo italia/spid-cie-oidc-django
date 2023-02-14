@@ -199,6 +199,10 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
                 "request": authz_data["request"]
             }
         )
-        url = "?".join((authz_endpoint, uri_path))
+        if "?" in authz_endpoint:
+            qstring = ""
+        else:
+            qstring = "?"
+        url = qstring.join((authz_endpoint, uri_path))
         logger.info(f"Starting Authz request to {url}")
         return HttpResponseRedirect(url)

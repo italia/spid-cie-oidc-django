@@ -39,7 +39,11 @@ class OpBase:
     """
 
     def redirect_response_data(self, redirect_uri:str, **kwargs) -> HttpResponseRedirect:
-        url = f'{redirect_uri}?{urllib.parse.urlencode(kwargs)}'
+        if "?" in redirect_uri:
+            qstring = ""
+        else:
+            qstring = "?"
+        url = f'{redirect_uri}{qstring}{urllib.parse.urlencode(kwargs)}'
         return HttpResponseRedirect(url)
 
     def find_jwk(self, header: dict, jwks: list) -> dict:
