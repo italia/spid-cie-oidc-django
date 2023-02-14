@@ -69,7 +69,7 @@ class UserInfoEndpoint(OpBase, View):
         ).first()
         if not rp_tc:
             return HttpResponseForbidden()
-
+        
         issuer = self.get_issuer()
         access_token_data = unpad_jwt_payload(token.access_token)
 
