@@ -200,7 +200,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             }
         )
         if "?" in authz_endpoint:
-            qstring = ""
+            qstring = "&"
         else:
             qstring = "?"
         url = qstring.join((authz_endpoint, uri_path))

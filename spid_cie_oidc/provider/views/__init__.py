@@ -40,7 +40,7 @@ class OpBase:
 
     def redirect_response_data(self, redirect_uri:str, **kwargs) -> HttpResponseRedirect:
         if "?" in redirect_uri:
-            qstring = ""
+            qstring = "&"
         else:
             qstring = "?"
         url = f'{redirect_uri}{qstring}{urllib.parse.urlencode(kwargs)}'
