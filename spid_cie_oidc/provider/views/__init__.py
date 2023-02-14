@@ -365,6 +365,12 @@ class OpBase:
             for claim in claims:
                 if claim in user_claims:
                     filtered_user_claims[claim] = user_claims[claim]
+            # IDA support/overload of the claims, the verified has priorities and overwrite the unverified
+            if "verified_claims" in claims:
+                claims = claims["verified_claims"].get('claims', {})
+            for claim in claims:
+                if claim in user_claims:
+                    filtered_user_claims[claim] = user_claims[claim]
 
         # mapping with human names
         i18n_user_claims = [
