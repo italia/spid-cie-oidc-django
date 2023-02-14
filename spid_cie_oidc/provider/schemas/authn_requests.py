@@ -151,7 +151,7 @@ class AuthenticationRequest(BaseModel):
     jti: Optional[str]
     aud: str | List[HttpUrl]
     acr_values: List[AcrValues]
-    prompt: Literal["consent", "consent login"]
+    prompt: Optional[Literal["consent", "consent login"]]
 
     @validator("claims")
     def validate_claims(cls, claims):
