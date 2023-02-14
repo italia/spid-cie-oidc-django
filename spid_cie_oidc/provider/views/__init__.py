@@ -44,7 +44,8 @@ class OpBase:
 
     def find_jwk(self, header: dict, jwks: list) -> dict:
         for jwk in jwks:
-            if header["kid"] == jwk["kid"]:
+            valid_jwk = jwk.get("kid", None)
+            if valid_jwk and header["kid"] == valid_jwk:
                 return jwk
 
     def validate_authz_request_object(self, req) -> TrustChain:
