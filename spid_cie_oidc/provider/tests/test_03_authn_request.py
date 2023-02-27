@@ -108,9 +108,9 @@ class AuthRequestTest(TestCase):
         with self.assertRaises(ValidationError):
             AuthenticationRequestSpid(**AUTHN_REQUEST_SPID_NO_CORRECT_SCOPE)
 
-    def test_validate_spid_no_acr_values(self):
-        with self.assertRaises(ValidationError):
-            AuthenticationRequestSpid(**AUTHN_REQUEST_SPID_NO_ACR_VALUES)
+#    def test_validate_spid_no_acr_values(self):
+#        with self.assertRaises(ValidationError):
+#            AuthenticationRequestSpid(**AUTHN_REQUEST_SPID_NO_ACR_VALUES)
 
     def test_validate_spid_no_correct_acr_values(self):
         with self.assertRaises(ValidationError):

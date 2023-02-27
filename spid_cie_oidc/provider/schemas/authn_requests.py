@@ -150,7 +150,7 @@ class AuthenticationRequest(BaseModel):
     exp: Optional[int]
     jti: Optional[str]
     aud: str | List[HttpUrl]
-    acr_values: List[AcrValues]
+    acr_values: Optional[List[AcrValues]]
     prompt: Optional[Literal["consent", "consent login"]]
 
     @validator("claims")

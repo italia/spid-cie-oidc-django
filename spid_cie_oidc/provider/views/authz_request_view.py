@@ -169,8 +169,11 @@ class AuthzRequestView(OpBase, View):
         except InvalidRefreshRequestException as e:
             logger.warning(f"Invalid session: {e}")
             return HttpResponseForbidden()
-
-        acr_value = AcrValues(self.payload["acr_values"][0])
+        if self.payload.get("acr_values", None):
+            acr_value = AcrValues(self.payload["acr_values"][0])
+        else:
+            # set this as default
+            acr_value = AcrValues.l2
         prompt = self.payload.get("prompt", "login")
         if request.user:
             if (
