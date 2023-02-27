@@ -163,13 +163,13 @@ class FederationDescendant(TimeStampedModel):
         ]
 
     def entity_statement_as_dict(self, iss: str = None, aud: list = None) -> dict:
-
-        policies = {
-            k: FEDERATION_DEFAULT_POLICY[k] for k in self.entity_profiles
-        }
-
-        # apply custom policies if defined
-        policies.update(self.metadata_policy)
+        
+        if self.metadata_policy:
+            policies = self.metadata_policy
+        else:
+            policies = {
+                k: FEDERATION_DEFAULT_POLICY[k] for k in self.entity_profiles
+            }
 
         data = {
             "exp": exp_from_now(minutes=FEDERATION_DEFAULT_EXP),
