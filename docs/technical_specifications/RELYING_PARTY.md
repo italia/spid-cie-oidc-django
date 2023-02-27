@@ -164,7 +164,7 @@ to that provider, before create an authorization request to it.
 
 ### entity configuration (.well-known/openid-federation)
 
-As inherited from [__spid_cie_oidc.entity__](docs/tecnhical_specifications/ENTITY.md).
+As inherited from [__spid_cie_oidc.entity__](ENTITY.md).
 
 ### authorization
 

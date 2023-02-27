@@ -1,26 +1,6 @@
 [
 {
   "model": "spid_cie_oidc_accounts.user",
-  "pk": 1,
-  "fields": {
-    "password": "pbkdf2_sha256$320000$DMnJbK8U6nud1dLxbP181B$7L+UE2YgT5b1VwortW19WB1NY9gmlW0hwXhzzgo63eY=",
-    "last_login": "2022-02-26T23:22:07.240Z",
-    "is_superuser": true,
-    "username": "wert",
-    "is_staff": true,
-    "date_joined": "2022-02-13T09:08:44.265Z",
-    "first_name": null,
-    "last_name": null,
-    "is_active": true,
-    "email": "",
-    "origin": null,
-    "attributes": {},
-    "groups": [],
-    "user_permissions": []
-  }
-},
-{
-  "model": "spid_cie_oidc_accounts.user",
   "pk": 2,
   "fields": {
     "password": "pbkdf2_sha256$320000$CmkauYnR0tV0uXPlxcDXKr$OmpasMWm+T4oUHAklupXMTiLGWyUEfbF5WPInKCBf0Q=",
@@ -35,60 +15,6 @@
     "email": "",
     "origin": null,
     "attributes": {},
-    "groups": [],
-    "user_permissions": []
-  }
-},
-{
-  "model": "spid_cie_oidc_accounts.user",
-  "pk": 3,
-  "fields": {
-    "password": "",
-    "last_login": "2022-04-23T15:48:14.056Z",
-    "is_superuser": false,
-    "username": "http://127.0.0.1:8000/oidc/op/__7cbc6452f3655e9c2c0e3c51dbf11758668cbb88852360bb1b135ded34e0f834",
-    "is_staff": false,
-    "date_joined": "2022-03-31T13:44:31.967Z",
-    "first_name": "7cbc6452f3655e9c2c0e3c51dbf11758668cbb88852360bb1b135ded34e0f834",
-    "last_name": "7cbc6452f3655e9c2c0e3c51dbf11758668cbb88852360bb1b135ded34e0f834",
-    "is_active": true,
-    "email": "antonio@email.it",
-    "origin": null,
-    "attributes": {
-      "sub": "7cbc6452f3655e9c2c0e3c51dbf11758668cbb88852360bb1b135ded34e0f834",
-      "username": "http://127.0.0.1:8000/oidc/op/__7cbc6452f3655e9c2c0e3c51dbf11758668cbb88852360bb1b135ded34e0f834",
-      "first_name": "antonio",
-      "last_name": "rossi",
-      "email": "antonio@email.it",
-      "fiscal_number": "AATTTJDFKSKDF89"
-    },
-    "groups": [],
-    "user_permissions": []
-  }
-},
-{
-  "model": "spid_cie_oidc_accounts.user",
-  "pk": 4,
-  "fields": {
-    "password": "",
-    "last_login": "2022-04-23T15:48:22.025Z",
-    "is_superuser": false,
-    "username": "http://127.0.0.1:8002/oidc/op/__7cbc6452f3655e9c2c0e3c51dbf11758668cbb88852360bb1b135ded34e0f834",
-    "is_staff": false,
-    "date_joined": "2022-03-31T13:44:57.141Z",
-    "first_name": "7cbc6452f3655e9c2c0e3c51dbf11758668cbb88852360bb1b135ded34e0f834",
-    "last_name": "7cbc6452f3655e9c2c0e3c51dbf11758668cbb88852360bb1b135ded34e0f834",
-    "is_active": true,
-    "email": "that@ema.il",
-    "origin": null,
-    "attributes": {
-      "sub": "7cbc6452f3655e9c2c0e3c51dbf11758668cbb88852360bb1b135ded34e0f834",
-      "username": "http://127.0.0.1:8002/oidc/op/__7cbc6452f3655e9c2c0e3c51dbf11758668cbb88852360bb1b135ded34e0f834",
-      "first_name": "antonio",
-      "last_name": "rossi",
-      "email": "that@ema.il",
-      "fiscal_number": "8sada89s7da89sd7a98sd78"
-    },
     "groups": [],
     "user_permissions": []
   }
@@ -139,10 +65,13 @@
     "metadata": {
       "openid_relying_party": {
         "application_type": "web",
+        "organization_name": "Example RP",
         "client_id": "http://127.0.0.1:8001/",
         "client_registration_types": [
           "automatic"
         ],
+        "jwks_uri": "http://127.0.0.1:8001/oidc/rp/openid_relying_party/jwks.json",
+        "signed_jwks_uri": "http://127.0.0.1:8001/oidc/rp/openid_relying_party/jwks.jose",
         "jwks": {
           "keys": [
             {
@@ -207,7 +136,7 @@
           ],
           "federation_fetch_endpoint": "http://127.0.0.1:8000/fetch/",
           "federation_resolve_endpoint": "http://127.0.0.1:8000/resolve/",
-          "federation_status_endpoint": "http://127.0.0.1:8000/trust_mark_status/",
+          "federation_trust_mark_status_endpoint": "http://127.0.0.1:8000/trust_mark_status/",
           "homepage_uri": "http://127.0.0.1:8000",
           "name": "example TA",
           "federation_list_endpoint": "http://127.0.0.1:8000/list/"
@@ -268,8 +197,6 @@
           "id_token_encryption_enc_values_supported": [
             "A128CBC-HS256"
           ],
-          "op_name": "Agenzia per l’Italia Digitale",
-          "op_uri": "https://www.agid.gov.it",
           "token_endpoint": "http://127.0.0.1:8000/oidc/op/token/",
           "userinfo_endpoint": "http://127.0.0.1:8000/oidc/op/userinfo/",
           "introspection_endpoint": "http://127.0.0.1:8000/oidc/op/introspection/",
@@ -362,11 +289,7 @@
           ],
           "userinfo_encryption_alg_values_supported": [
             "RSA-OAEP",
-            "RSA-OAEP-256",
-            "ECDH-ES",
-            "ECDH-ES+A128KW",
-            "ECDH-ES+A192KW",
-            "ECDH-ES+A256KW"
+            "RSA-OAEP-256"
           ],
           "userinfo_encryption_enc_values_supported": [
             "A128CBC-HS256",
@@ -386,11 +309,7 @@
           ],
           "request_object_encryption_alg_values_supported": [
             "RSA-OAEP",
-            "RSA-OAEP-256",
-            "ECDH-ES",
-            "ECDH-ES+A128KW",
-            "ECDH-ES+A192KW",
-            "ECDH-ES+A256KW"
+            "RSA-OAEP-256"
           ],
           "request_object_encryption_enc_values_supported": [
             "A128CBC-HS256",
@@ -477,11 +396,7 @@
           "userinfo_encryption_alg_values_supported": {
             "subset_of": [
               "RSA-OAEP",
-              "RSA-OAEP-256",
-              "ECDH-ES",
-              "ECDH-ES+A128KW",
-              "ECDH-ES+A192KW",
-              "ECDH-ES+A256KW"
+              "RSA-OAEP-256"
             ]
           },
           "userinfo_encryption_enc_values_supported": {
@@ -497,11 +412,7 @@
           "request_object_encryption_alg_values_supported": {
             "subset_of": [
               "RSA-OAEP",
-              "RSA-OAEP-256",
-              "ECDH-ES",
-              "ECDH-ES+A128KW",
-              "ECDH-ES+A192KW",
-              "ECDH-ES+A256KW"
+              "RSA-OAEP-256"
             ]
           },
           "request_object_encryption_enc_values_supported": {
@@ -571,8 +482,6 @@
           "id_token_encryption_enc_values_supported": [
             "A128CBC-HS256"
           ],
-          "op_name": "Agenzia per l’Italia Digitale",
-          "op_uri": "https://www.agid.gov.it",
           "token_endpoint": "http://127.0.0.1:8002/oidc/op/token/",
           "userinfo_endpoint": "http://127.0.0.1:8002/oidc/op/userinfo/",
           "introspection_endpoint": "http://127.0.0.1:8002/oidc/op/introspection/",
@@ -663,11 +572,7 @@
           ],
           "userinfo_encryption_alg_values_supported": [
             "RSA-OAEP",
-            "RSA-OAEP-256",
-            "ECDH-ES",
-            "ECDH-ES+A128KW",
-            "ECDH-ES+A192KW",
-            "ECDH-ES+A256KW"
+            "RSA-OAEP-256"
           ],
           "userinfo_encryption_enc_values_supported": [
             "A128CBC-HS256",
@@ -687,11 +592,7 @@
           ],
           "request_object_encryption_alg_values_supported": [
             "RSA-OAEP",
-            "RSA-OAEP-256",
-            "ECDH-ES",
-            "ECDH-ES+A128KW",
-            "ECDH-ES+A192KW",
-            "ECDH-ES+A256KW"
+            "RSA-OAEP-256"
           ],
           "request_object_encryption_enc_values_supported": [
             "A128CBC-HS256",
@@ -778,11 +679,7 @@
           "userinfo_encryption_alg_values_supported": {
             "subset_of": [
               "RSA-OAEP",
-              "RSA-OAEP-256",
-              "ECDH-ES",
-              "ECDH-ES+A128KW",
-              "ECDH-ES+A192KW",
-              "ECDH-ES+A256KW"
+              "RSA-OAEP-256"
             ]
           },
           "userinfo_encryption_enc_values_supported": {
@@ -798,11 +695,7 @@
           "request_object_encryption_alg_values_supported": {
             "subset_of": [
               "RSA-OAEP",
-              "RSA-OAEP-256",
-              "ECDH-ES",
-              "ECDH-ES+A128KW",
-              "ECDH-ES+A192KW",
-              "ECDH-ES+A256KW"
+              "RSA-OAEP-256"
             ]
           },
           "request_object_encryption_enc_values_supported": {
@@ -854,6 +747,17 @@
         "eyJhbGciOiJSUzI1NiIsImtpZCI6IkJYdmZybG5oQU11SFIwN2FqVW1BY0JSUWNTem13MGNfUkFnSm5wUy05V1EiLCJ0eXAiOiJlbnRpdHktc3RhdGVtZW50K2p3dCJ9.eyJleHAiOjE2NTA5MDE2ODUsImlhdCI6MTY1MDcyODg4NSwiaXNzIjoiaHR0cDovLzEyNy4wLjAuMTo4MDAwLyIsInN1YiI6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vaWRjL29wLyIsImp3a3MiOnsia2V5cyI6W3sia3R5IjoiUlNBIiwiZSI6IkFRQUIiLCJuIjoiMUFZR0YwQ19qNUNQZVlNUkhfbWtobll0bnZNX0NtZGxXU0ZISzlZRWFzM2dKMTkyMkRuaEZ4M0VJdzFVLWtad3c3YmdOejZDMWxfMWN5amtnQlN1V3hPYk9iSzR6VkxaQkdVWmZYTUJORm0yaGRyNVZvTEtMZW10WkhwQk9tZHN4UjFSM1RKMzBEMHZZLUxKYlV0cnd1UkM4b09DWUk1d2hjRWM4QjR1dEVleDNXNmRDakJJanNHZmRKSXFaSGhmTE4zeHdQTU9qa0c1QV95OFduVFZmR3E5T1VldWFVbjMtUFZzM085TE1wT0JsYVQ3R3JlWGdVcVdBVy16eFVDc2lISFVWbDl1SUFHaTVPSHVrSXVCczJDbEFsTVhfUzZtYk43XzdLSUd4Mm1USXJjZ1ZCUEpnWW9wOXFuU3FjWHViX0VRVEtzRnROR2lnc1VGbkRxRk5RIiwia2lkIjoiY0k4cEJ2V2RIZ2N2bGRtSTdIWGJQTWZGaFNLa2ZBQ0lib2ZzRDZxMkp0RSJ9XX0sIm1ldGFkYXRhX3BvbGljeSI6eyJvcGVuaWRfcHJvdmlkZXIiOnsic3ViamVjdF90eXBlc19zdXBwb3J0ZWQiOnsidmFsdWUiOlsicGFpcndpc2UiXX0sImlkX3Rva2VuX3NpZ25pbmdfYWxnX3ZhbHVlc19zdXBwb3J0ZWQiOnsic3Vic2V0X29mIjpbIlJTMjU2IiwiUlMzODQiLCJSUzUxMiIsIkVTMjU2IiwiRVMzODQiLCJFUzUxMiJdfSwidXNlcmluZm9fc2lnbmluZ19hbGdfdmFsdWVzX3N1cHBvcnRlZCI6eyJzdWJzZXRfb2YiOlsiUlMyNTYiLCJSUzM4NCIsIlJTNTEyIiwiRVMyNTYiLCJFUzM4NCIsIkVTNTEyIl19LCJ0b2tlbl9lbmRwb2ludF9hdXRoX21ldGhvZHNfc3VwcG9ydGVkIjp7InZhbHVlIjpbInByaXZhdGVfa2V5X2p3dCJdfSwidXNlcmluZm9fZW5jcnlwdGlvbl9hbGdfdmFsdWVzX3N1cHBvcnRlZCI6eyJzdWJzZXRfb2YiOlsiUlNBLU9BRVAiLCJSU0EtT0FFUC0yNTYiLCJFQ0RILUVTIiwiRUNESC1FUytBMTI4S1ciLCJFQ0RILUVTK0ExOTJLVyIsIkVDREgtRVMrQTI1NktXIl19LCJ1c2VyaW5mb19lbmNyeXB0aW9uX2VuY192YWx1ZXNfc3VwcG9ydGVkIjp7InN1YnNldF9vZiI6WyJBMTI4Q0JDLUhTMjU2IiwiQTE5MkNCQy1IUzM4NCIsIkEyNTZDQkMtSFM1MTIiLCJBMTI4R0NNIiwiQTE5MkdDTSIsIkEyNTZHQ00iXX0sInJlcXVlc3Rfb2JqZWN0X2VuY3J5cHRpb25fYWxnX3ZhbHVlc19zdXBwb3J0ZWQiOnsic3Vic2V0X29mIjpbIlJTQS1PQUVQIiwiUlNBLU9BRVAtMjU2IiwiRUNESC1FUyIsIkVDREgtRVMrQTEyOEtXIiwiRUNESC1FUytBMTkyS1ciLCJFQ0RILUVTK0EyNTZLVyJdfSwicmVxdWVzdF9vYmplY3RfZW5jcnlwdGlvbl9lbmNfdmFsdWVzX3N1cHBvcnRlZCI6eyJzdWJzZXRfb2YiOlsiQTEyOENCQy1IUzI1NiIsIkExOTJDQkMtSFMzODQiLCJBMjU2Q0JDLUhTNTEyIiwiQTEyOEdDTSIsIkExOTJHQ00iLCJBMjU2R0NNIl19LCJyZXF1ZXN0X29iamVjdF9zaWduaW5nX2FsZ192YWx1ZXNfc3VwcG9ydGVkIjp7InN1YnNldF9vZiI6WyJSUzI1NiIsIlJTMzg0IiwiUlM1MTIiLCJFUzI1NiIsIkVTMzg0IiwiRVM1MTIiXX19fSwidHJ1c3RfbWFya3MiOlt7ImlkIjoiaHR0cHM6Ly93d3cuc3BpZC5nb3YuaXQvb3BlbmlkLWZlZGVyYXRpb24vYWdyZWVtZW50L29wLXB1YmxpYy8iLCJ0cnVzdF9tYXJrIjoiZXlKaGJHY2lPaUpTVXpJMU5pSXNJbXRwWkNJNklrSllkbVp5Ykc1b1FVMTFTRkl3TjJGcVZXMUJZMEpTVVdOVGVtMTNNR05mVWtGblNtNXdVeTA1VjFFaUxDSjBlWEFpT2lKMGNuVnpkQzF0WVhKcksycDNkQ0o5LmV5SnBjM01pT2lKb2RIUndPaTh2TVRJM0xqQXVNQzR4T2pnd01EQXZJaXdpYzNWaUlqb2lhSFIwY0Rvdkx6RXlOeTR3TGpBdU1UbzRNREF3TDI5cFpHTXZiM0F2SWl3aWFXRjBJam94TmpVd056STRPRGcxTENKcFpDSTZJbWgwZEhCek9pOHZkM2QzTG5Od2FXUXVaMjkyTG1sMEwyTmxjblJwWm1sallYUnBiMjR2YjNBaUxDSnRZWEpySWpvaWFIUjBjSE02THk5M2QzY3VZV2RwWkM1bmIzWXVhWFF2ZEdobGJXVnpMMk4xYzNSdmJTOWhaMmxrTDJ4dloyOHVjM1puSWl3aWNtVm1Jam9pYUhSMGNITTZMeTlrYjJOekxtbDBZV3hwWVM1cGRDOXBkR0ZzYVdFdmMzQnBaQzl6Y0dsa0xYSmxaMjlzWlMxMFpXTnVhV05vWlMxdmFXUmpMMmwwTDNOMFlXSnBiR1V2YVc1a1pYZ3VhSFJ0YkNKOS5FNG1OeUJ6X3JsSWtzOFVUNU5EMUF0REN0YkJuY09VZG0wNUU2UnVYaWxNVGpudXF6M1NJa0FQcUtOUDNaTldkSHAxN1pxYXB6bmRQanFja0RBQjJoNldzOFdVSS1yaWk3YUcwNk82ZmgyY2NyQmRNYzBMbzlONVpOeEI5TUJjeDVxOHZQWHl6bloxbEp6OFhmZ1JBUDFRRllRNnhJZTJ3ZzhnNWxRUXREU3lDR25QYmdieEQ1RnlCcmk4b1dxVjNUNjFXS0duZzlydm5LZVdhVjdJM1Nab2thSEdTdjhKOGpZUUJSaVkxXzZwSmw0cU9CXzNtRHNKWVZXZ2Y5QlpuXzRFTlZMQWxyVGNyUF9fNXdsMTBWMnhMM21uai1TcEFvT3NEc2tNTVpobXlqX0JYRUZTX1RBaGI0UUZDYlNIMHFZdmhHclp1X2M3OWhQREIzV0ZMcVEifV19.Y7wBEFfTvwTpc9uVGUpJd3GsHLLupGJbe5qRTycjciI46Ev54840P4-9S5Q7yqpyMUKoVK_n27qU6GHzCdTcZRGY6_w3nXIy_m7g7pIHSGfTCQC1JZQ4sQcc7oNZL-8LEAidyUVbgvT02W334sWCpvWrwUqy8CozroJ4j46aWGgmLaw68kaXgUMLJ_LwIkLbAEPZcgiMohslyB4rB1W2CrJUa9guyOXq8U_Z3FxQ8hUyvDdgTrY3ED4A3lCEzVXm0vpiYrpO8xr_-p1okVilQvayylbp0z9XG8m2uRJqQ2CZCkwcDvyGWtLSR_VnRbGAvUkLBD88cGMh_Wkm0V0dJA"
       ]
     ],
+    "jwks": [
+      {
+        "kty": "RSA",
+        "e": "AQAB",
+        "n": "1AYGF0C_j5CPeYMRH_mkhnYtnvM_CmdlWSFHK9YEas3gJ1922DnhFx3EIw1U-kZww7bgNz6C1l_1cyjkgBSuWxObObK4zVLZBGUZfXMBNFm2hdr5VoLKLemtZHpBOmdsxR1R3TJ30D0vY-LJbUtrwuRC8oOCYI5whcEc8B4utEex3W6dCjBIjsGfdJIqZHhfLN3xwPMOjkG5A_y8WnTVfGq9OUeuaUn3-PVs3O9LMpOBlaT7GreXgUqWAW-zxUCsiHHUVl9uIAGi5OHukIuBs2ClAlMX_S6mbN7_7KIGx2mTIrcgVBPJgYop9qnSqcXub_EQTKsFtNGigsUFnDqFNQ",
+        "d": "b44j0kQ9Bhp3guWVMw-0oxK2-jTd7Gluh7Dcs5HNjSx5Tf4Kl8YMSo9czVyMY4qAdllYK3j2ejjO-iJ_52v6OO1d9MO2PEHk8U0IVlsWPScew9rs6bmzCukyU_WHMGWOcz_z_MA7DhPDRXjjpl_SeR6EovjStl77kUSEJ0qaJDvGelNimnMRBBsDgtDUMbOIzng82GclTsRkv8b041G0Q32XJ8YcJxGOlvWdr-q36fXJua0joshH0e2LilTtftjHCbgPdg1a6MGChCrgeTFTi6ihifMwcxINF-hSFcxA2WLaECCvMsjB40bd51wPfF0AiK5JvHLyJsAV6OzD9pf32Q",
+        "p": "_92f7QZr4IKRgeTpr49RG5V53A4PE0QW-4IBETZaaI6ymvvqTL1ik28qNVStR5xT6n3r7-_y3IHQQOPO0r8lbGvqYonVIuCUZaz66_QuZg4Gnm61Uyec8ecXQV3rsvMMwpHU_3RRB5RXGeDwWq9CAFpYERQGxf6naEeuurP1usM",
+        "q": "1CKCSTiSABX1OtfkiKcJV0PvhACTuoHSGW62TpqtdOxHsopb2kph2XM82Kt10jJDESosQcPTXc7ttTrYsfTSKva3kvRXrwcWzC4yMoacxaqyHKbatBValkMSMaVeRabtzECulHyxbK6bsLKRUAD0thQuUs_WSITWSPPty2ygkKc",
+        "kid": "cI8pBvWdHgcvldmI7HXbPMfFhSKkfACIbofsD6q2JtE"
+      }
+    ],
     "metadata": {
       "openid_provider": {
         "authorization_endpoint": "http://127.0.0.1:8000/oidc/op/authorization",
@@ -864,8 +768,6 @@
         "id_token_encryption_enc_values_supported": [
           "A128CBC-HS256"
         ],
-        "op_name": "Agenzia per l’Italia Digitale",
-        "op_uri": "https://www.agid.gov.it",
         "token_endpoint": "http://127.0.0.1:8000/oidc/op/token/",
         "userinfo_endpoint": "http://127.0.0.1:8000/oidc/op/userinfo/",
         "introspection_endpoint": "http://127.0.0.1:8000/oidc/op/introspection/",
@@ -958,11 +860,7 @@
         ],
         "userinfo_encryption_alg_values_supported": [
           "RSA-OAEP",
-          "RSA-OAEP-256",
-          "ECDH-ES",
-          "ECDH-ES+A128KW",
-          "ECDH-ES+A192KW",
-          "ECDH-ES+A256KW"
+          "RSA-OAEP-256"
         ],
         "userinfo_encryption_enc_values_supported": [
           "A128CBC-HS256",
@@ -982,11 +880,7 @@
         ],
         "request_object_encryption_alg_values_supported": [
           "RSA-OAEP",
-          "RSA-OAEP-256",
-          "ECDH-ES",
-          "ECDH-ES+A128KW",
-          "ECDH-ES+A192KW",
-          "ECDH-ES+A256KW"
+          "RSA-OAEP-256"
         ],
         "request_object_encryption_enc_values_supported": [
           "A128CBC-HS256",
@@ -1034,6 +928,16 @@
         "eyJhbGciOiJSUzI1NiIsImtpZCI6IkJYdmZybG5oQU11SFIwN2FqVW1BY0JSUWNTem13MGNfUkFnSm5wUy05V1EiLCJ0eXAiOiJlbnRpdHktc3RhdGVtZW50K2p3dCJ9.eyJleHAiOjE2NTA5MDE2ODUsImlhdCI6MTY1MDcyODg4NSwiaXNzIjoiaHR0cDovLzEyNy4wLjAuMTo4MDAwLyIsInN1YiI6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMi9vaWRjL29wLyIsImp3a3MiOnsia2V5cyI6W3sia3R5IjoiUlNBIiwibiI6InRnM2FFOWZkNmx0WHpOcmltXzRDR0tZV2ZDM25xY190djRYamF3NDczQ2NyZmlxRHplVEtIZlJmYnZicWIxRHdtSTRmdkNPaTUxRVZjbUtMblRoelh5bkFVcHlVdnN3dkw4X3V6Z0RXTzFSU21CRzFMMFJFLUNrS2loNGtlWGgxa3U5aE5zMV9WLTgyZEs1b0xPUi1WSkxuaFpDcVRoUjRISDZUcUxqaldyclhmc0hWUnZhdUppbFg2RnhHYjVKRm9jMjdWeHhkSDJjNlAyU0hDOXd1Qjh0bmZHN09TclNEMWcyaDdsVFhiSWZtNzhhMG9wNjdkX2p1cHprb0tvQ1RtemtSMnp2d1RWVkRkOTl2a0RMWTJXWG1iOGhJd0c2ZFFaWFlsa2hxQVlLelR1VFowdGpWaDBPcnFmRHhZdExIM3dRenphSk9SZXdaWXFMeUIwOVA4dyIsImUiOiJBUUFCIiwia2lkIjoiWmhTb2FPZWRWT3NCdzZtMnZjbHdTV2lxcW5HZU9TdFQtZ1VjbG90XzY3dyJ9XX0sIm1ldGFkYXRhX3BvbGljeSI6eyJvcGVuaWRfcHJvdmlkZXIiOnsic3ViamVjdF90eXBlc19zdXBwb3J0ZWQiOnsidmFsdWUiOlsicGFpcndpc2UiXX0sImlkX3Rva2VuX3NpZ25pbmdfYWxnX3ZhbHVlc19zdXBwb3J0ZWQiOnsic3Vic2V0X29mIjpbIlJTMjU2IiwiUlMzODQiLCJSUzUxMiIsIkVTMjU2IiwiRVMzODQiLCJFUzUxMiJdfSwidXNlcmluZm9fc2lnbmluZ19hbGdfdmFsdWVzX3N1cHBvcnRlZCI6eyJzdWJzZXRfb2YiOlsiUlMyNTYiLCJSUzM4NCIsIlJTNTEyIiwiRVMyNTYiLCJFUzM4NCIsIkVTNTEyIl19LCJ0b2tlbl9lbmRwb2ludF9hdXRoX21ldGhvZHNfc3VwcG9ydGVkIjp7InZhbHVlIjpbInByaXZhdGVfa2V5X2p3dCJdfSwidXNlcmluZm9fZW5jcnlwdGlvbl9hbGdfdmFsdWVzX3N1cHBvcnRlZCI6eyJzdWJzZXRfb2YiOlsiUlNBLU9BRVAiLCJSU0EtT0FFUC0yNTYiLCJFQ0RILUVTIiwiRUNESC1FUytBMTI4S1ciLCJFQ0RILUVTK0ExOTJLVyIsIkVDREgtRVMrQTI1NktXIl19LCJ1c2VyaW5mb19lbmNyeXB0aW9uX2VuY192YWx1ZXNfc3VwcG9ydGVkIjp7InN1YnNldF9vZiI6WyJBMTI4Q0JDLUhTMjU2IiwiQTE5MkNCQy1IUzM4NCIsIkEyNTZDQkMtSFM1MTIiLCJBMTI4R0NNIiwiQTE5MkdDTSIsIkEyNTZHQ00iXX0sInJlcXVlc3Rfb2JqZWN0X2VuY3J5cHRpb25fYWxnX3ZhbHVlc19zdXBwb3J0ZWQiOnsic3Vic2V0X29mIjpbIlJTQS1PQUVQIiwiUlNBLU9BRVAtMjU2IiwiRUNESC1FUyIsIkVDREgtRVMrQTEyOEtXIiwiRUNESC1FUytBMTkyS1ciLCJFQ0RILUVTK0EyNTZLVyJdfSwicmVxdWVzdF9vYmplY3RfZW5jcnlwdGlvbl9lbmNfdmFsdWVzX3N1cHBvcnRlZCI6eyJzdWJzZXRfb2YiOlsiQTEyOENCQy1IUzI1NiIsIkExOTJDQkMtSFMzODQiLCJBMjU2Q0JDLUhTNTEyIiwiQTEyOEdDTSIsIkExOTJHQ00iLCJBMjU2R0NNIl19LCJyZXF1ZXN0X29iamVjdF9zaWduaW5nX2FsZ192YWx1ZXNfc3VwcG9ydGVkIjp7InN1YnNldF9vZiI6WyJSUzI1NiIsIlJTMzg0IiwiUlM1MTIiLCJFUzI1NiIsIkVTMzg0IiwiRVM1MTIiXX19fSwidHJ1c3RfbWFya3MiOlt7ImlkIjoiaHR0cHM6Ly93d3cuc3BpZC5nb3YuaXQvb3BlbmlkLWZlZGVyYXRpb24vYWdyZWVtZW50L29wLXB1YmxpYy8iLCJ0cnVzdF9tYXJrIjoiZXlKaGJHY2lPaUpTVXpJMU5pSXNJbXRwWkNJNklrSllkbVp5Ykc1b1FVMTFTRkl3TjJGcVZXMUJZMEpTVVdOVGVtMTNNR05mVWtGblNtNXdVeTA1VjFFaUxDSjBlWEFpT2lKMGNuVnpkQzF0WVhKcksycDNkQ0o5LmV5SnBjM01pT2lKb2RIUndPaTh2TVRJM0xqQXVNQzR4T2pnd01EQXZJaXdpYzNWaUlqb2lhSFIwY0Rvdkx6RXlOeTR3TGpBdU1UbzRNREF5TDI5cFpHTXZiM0F2SWl3aWFXRjBJam94TmpVd056STRPRGcxTENKcFpDSTZJbWgwZEhCek9pOHZkM2QzTG5Od2FXUXVaMjkyTG1sMEwyTmxjblJwWm1sallYUnBiMjR2YjNBaUxDSnRZWEpySWpvaWFIUjBjSE02THk5M2QzY3VZV2RwWkM1bmIzWXVhWFF2ZEdobGJXVnpMMk4xYzNSdmJTOWhaMmxrTDJ4dloyOHVjM1puSWl3aWNtVm1Jam9pYUhSMGNITTZMeTlrYjJOekxtbDBZV3hwWVM1cGRDOXBkR0ZzYVdFdmMzQnBaQzl6Y0dsa0xYSmxaMjlzWlMxMFpXTnVhV05vWlMxdmFXUmpMMmwwTDNOMFlXSnBiR1V2YVc1a1pYZ3VhSFJ0YkNKOS5IbUVzUzVSRzFGRXhiY2YxT1VjWGlrS3dVaG1PSktXREMwd3ZibnZpd1IzSTU2eGUtQ1AzZjEwV2MyZW1EaXc0ODFXVmlzWjNoNmVxS2o4U2lBX0VFT05kaHV1TkVGMzJiM0pUeS1HLXE5akV5OTZqOFQtNGN6bjFpbzhuOVhZZmlXUUhjdDFETGpBQTlDd0M0YXF0X0RCQTFxbW5BSEZOazVRLWtGNkRKYUpyRDBXaGtqMERUWG40VDM2X2piQ1Z6RndadVNuQmtkT0RUdDBlWkRBMk1QNTdKeERGY2tVQkRqLVR6d2ZEQzBrUjZnME15Sy0xdFY0TUJoMEdfLW13UnVjeVQ2eU9jSWJGT3FKTk43M2M5Ymd6WEpXdV92a216dXNPeEVBdFU0ZGpzTXJ4TU16UzBtSWpBbjNDM0E4ZkhZZFVybjNUNS1ucTZENDQzdWU0N3cifV19.Q-ullzcsW1DutWnjcfT7zHsE9CdEoBCcXr32qetNWORDYXTO4ZIz4EvfB-_jNAogiTr9BAsAZNcXBA1Ab8vyj3yGhozOQxHWq7TIly20OLjJERE1UFL_5cK37KtCZWGjloqNbGrytwAxZCCh_YSe3kXAXqM8O2UjTl7zeis2As-iWE96C2jXodPYxcU6IheGMzLgEGsjKR9lcdz8DTLNGcdvqsDmQRbpA5HdrMwBR3huxGcWUrYCDbWj_ewtSB8sFp8UbY-s6edhFno4xpGLyg_eYqDKxV4vkywhfaQjx4Le8WyVwd3Y6W1KOd-EBy3DF6BypuD_b9f8RH41c3jbGw"
       ]
     ],
+    "jwks": {
+        "keys": [
+          {
+            "kty": "RSA",
+            "e": "AQAB",
+            "n": "tg3aE9fd6ltXzNrim_4CGKYWfC3nqc_tv4Xjaw473CcrfiqDzeTKHfRfbvbqb1DwmI4fvCOi51EVcmKLnThzXynAUpyUvswvL8_uzgDWO1RSmBG1L0RE-CkKih4keXh1ku9hNs1_V-82dK5oLOR-VJLnhZCqThR4HH6TqLjjWrrXfsHVRvauJilX6FxGb5JFoc27VxxdH2c6P2SHC9wuB8tnfG7OSrSD1g2h7lTXbIfm78a0op67d_jupzkoKoCTmzkR2zvwTVVDd99vkDLY2WXmb8hIwG6dQZXYlkhqAYKzTuTZ0tjVh0OrqfDxYtLH3wQzzaJORewZYqLyB09P8w",
+            "kid": "ZhSoaOedVOsBw6m2vclwSWiqqnGeOStT-gUclot_67w"
+          }
+        ]
+    },
     "metadata": {
       "openid_provider": {
         "authorization_endpoint": "http://127.0.0.1:8002/oidc/op/authorization",
@@ -1044,8 +948,6 @@
         "id_token_encryption_enc_values_supported": [
           "A128CBC-HS256"
         ],
-        "op_name": "Agenzia per l’Italia Digitale",
-        "op_uri": "https://www.agid.gov.it",
         "token_endpoint": "http://127.0.0.1:8002/oidc/op/token/",
         "userinfo_endpoint": "http://127.0.0.1:8002/oidc/op/userinfo/",
         "introspection_endpoint": "http://127.0.0.1:8002/oidc/op/introspection/",
@@ -1136,11 +1038,7 @@
         ],
         "userinfo_encryption_alg_values_supported": [
           "RSA-OAEP",
-          "RSA-OAEP-256",
-          "ECDH-ES",
-          "ECDH-ES+A128KW",
-          "ECDH-ES+A192KW",
-          "ECDH-ES+A256KW"
+          "RSA-OAEP-256"
         ],
         "userinfo_encryption_enc_values_supported": [
           "A128CBC-HS256",

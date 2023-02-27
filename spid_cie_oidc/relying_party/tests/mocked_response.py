@@ -4,8 +4,9 @@ import logging
 
 from spid_cie_oidc.provider.tests.settings import op_conf, op_conf_priv_jwk
 from spid_cie_oidc.authority.tests.settings import rp_conf, INTERMEDIARY_JWK1
-from spid_cie_oidc.entity.jwtse import create_jws, encrypt_dict
+from spid_cie_oidc.entity.jwtse import create_jws, create_jwe
 from spid_cie_oidc.entity.utils import iat_now, exp_from_now
+from spid_cie_oidc.entity.utils import get_jwks
 logger = logging.getLogger(__name__)
 
 
@@ -147,7 +148,10 @@ class MockedUserInfoResponse:
             "https://attributes.spid.gov.it/fiscalNumber": "sdfsfs908df09s8df90s8fd0"
         }
         jws = create_jws(jwt, op_conf_priv_jwk)
-        jwe = encrypt_dict(jws, rp_conf["metadata"]["openid_relying_party"]["jwks"]["keys"][0])
+        jwe = create_jwe(
+            jws, 
+            get_jwks(rp_conf["metadata"]["openid_relying_party"])[0]
+        )
         return jwe.encode()
 
 class MockedLogout:

@@ -42,15 +42,17 @@ class RefreshTokenTest(TestCase):
         self.trust_chain = TrustChain.objects.create(
             sub=RP_SUB,
             exp=datetime_from_timestamp(exp_from_now(33)),
+            jwks = [],
             metadata=RP_METADATA,
             status="valid",
             trust_anchor=self.ta_fes,
             is_active=True,
         )
+        self.jwt_auds = [op_conf["sub"], "http://testserver/oidc/op/", "http://testserver/oidc/op/token/"]
         CLIENT_ASSERTION = {
             "iss": RP_SUB,
             "sub": RP_SUB,
-            "aud": [RP_CLIENT_ID],
+            "aud": self.jwt_auds,
             "exp": exp_from_now(),
             "iat": iat_now(),
             "jti": "jti",
@@ -59,7 +61,7 @@ class RefreshTokenTest(TestCase):
         refresh_token = {
             "iss": self.op_local_conf["sub"],
             "sub": RP_SUB,
-            "aud": [RP_CLIENT_ID],
+            "aud": self.jwt_auds,
             "client_id": RP_CLIENT_ID,
             "scope": "openid",
         }

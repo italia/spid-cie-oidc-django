@@ -25,6 +25,7 @@ class RpLandingTest(TestCase):
         self.trust_chain = TrustChain.objects.create(
             sub=op_conf["sub"],
             exp=EXP,
+            jwks = [],
             metadata=op_conf["metadata"],
             status="valid",
             trust_anchor=self.ta_fes,

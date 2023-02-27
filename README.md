@@ -4,7 +4,7 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/dd67eb5a241955b75585/maintainability)](https://codeclimate.com/github/italia/spid-cie-oidc-django/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/dd67eb5a241955b75585/test_coverage)](https://codeclimate.com/github/italia/spid-cie-oidc-django/test_coverage)
 ![Python version](https://img.shields.io/badge/license-Apache%202-blue.svg)
-![py-versions](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9-blue.svg)
+![py-versions](https://img.shields.io/badge/python-3.10-blue.svg)
 [![GitHub issues](https://img.shields.io/github/issues/italia/spid-cie-oidc-django.svg)](https://github.com/italia/spid-cie-oidc-django/issues)
 [![Get invited](https://slack.developers.italia.it/badge.svg)](https://slack.developers.italia.it/)
 [![Join the #spid openid](https://img.shields.io/badge/Slack%20channel-%23spid%20openid-blue.svg)](https://developersitalia.slack.com/archives/C7E85ED1N/)
@@ -79,7 +79,6 @@ docker pull ghcr.io/italia/spid-cie-oidc-django:latest
 
 Install Docker using the packages distributed from the official website and the following tools.
 ````
-sudo apt install jq
 sudo pip install docker-compose
 ````
 
@@ -129,7 +128,7 @@ Examples Users and Passwords:
 
 ## OpenAPI Schema 3
 
-Each applications has an exportable OAS3 available at `/rest/schema.json` with a browsable reDoc UI at `/rest/api/docs` 
+Each application has an exportable OAS3 available at `/rest/schema.json` with a browsable reDoc UI at `/rest/api/docs`.
 
 ![RP Auth demo](docs/images/redoc.png)
 _The reDoc OAS3 browsable page._

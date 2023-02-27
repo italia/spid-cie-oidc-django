@@ -32,6 +32,7 @@ OP_METADATA = {
         "https://www.spid.gov.it/SpidL2",
         "https://www.spid.gov.it/SpidL3"
     ],
+    "organization_name": "Tal dei tali"
 }
 
 OP_METADATA_CIE = deepcopy(OP_METADATA)

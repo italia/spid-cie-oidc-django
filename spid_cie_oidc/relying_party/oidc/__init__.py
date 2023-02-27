@@ -1,7 +1,10 @@
 import logging
 import requests
+
+from django.conf import settings
 from spid_cie_oidc.entity.exceptions import UnknownKid
 from spid_cie_oidc.entity.jwtse import unpad_jwt_head, decrypt_jwe, verify_jws
+from spid_cie_oidc.entity.utils import get_jwks
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +29,12 @@ class OidcUserInfo(object):
         # userinfo
         headers = {"Authorization": f"Bearer {access_token}"}
         authz_userinfo = requests.get(
-            provider_conf["userinfo_endpoint"], headers=headers, verify=verify
+            provider_conf["userinfo_endpoint"],
+            headers=headers,
+            verify=verify,
+            timeout=getattr(
+                settings, "HTTPC_TIMEOUT", 8
+            )
         )
 
         if authz_userinfo.status_code != 200: # pragma: no cover
@@ -43,7 +51,7 @@ class OidcUserInfo(object):
                 jws = decrypt_jwe(jwe, rp_jwk)
 
                 header = unpad_jwt_head(jws)
-                idp_jwks = provider_conf["jwks"]["keys"]
+                idp_jwks = get_jwks(provider_conf)
                 idp_jwk = self.get_jwk(header["kid"], idp_jwks)
 
                 decoded_jwt = verify_jws(jws, idp_jwk)

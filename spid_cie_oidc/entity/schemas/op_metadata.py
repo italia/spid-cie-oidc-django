@@ -1,9 +1,9 @@
 from enum import Enum
 from typing import List, Optional
 
-from pydantic import BaseModel, HttpUrl, validator
+from pydantic import BaseModel, HttpUrl, root_validator
 
-from .jwks import JwksCie, JwksSpid
+from .jwks import JwksCie
 
 
 class ScopeSupported(str, Enum):
@@ -45,10 +45,6 @@ class SigningAlgValuesSupported(str, Enum):
 class EncryptionAlgValuesSupported(str, Enum):
     rsa_oaep = "RSA-OAEP"
     ras_oaep_256 = "RSA-OAEP-256"
-    ecdh_es = "ECDH-ES"
-    ecdh_es_a128kw = "ECDH-ES+A128KW"
-    ecdh_es_a192kw = "ECDH-ES+A192KW"
-    ecdh_es_a256kw = "ECDH-ES+A256KW"
 
 
 class EncryptionEncValuesSupported(str, Enum):
@@ -58,6 +54,7 @@ class EncryptionEncValuesSupported(str, Enum):
     a128gcm = "A128GCM"
     a192gcm = "A192GCM"
     a256gcm = "A256GCM"
+    rsa_oaep_256 = "RSA-OAEP-256"
 
 
 class ClaimsSupported(str, Enum):
@@ -85,6 +82,7 @@ class ClaimsSupported(str, Enum):
 
 
 class OPMetadata(BaseModel):
+    organization_name: str
     issuer: HttpUrl
     authorization_endpoint: HttpUrl
     token_endpoint: HttpUrl
@@ -105,11 +103,26 @@ class OPMetadata(BaseModel):
     subject_types_supported = ["pairwise"]
     request_parameter_supported = True
     acr_values_supported: List[AcrValuesSupported]
+    signed_jwks_uri: Optional[HttpUrl]
+    jwks_uri: Optional[HttpUrl]
+    jwks: Optional[JwksCie]
+
+    @root_validator(pre=False)
+    def validate(cls, values):
+        jwks_there = False
+        for i in ("jwks_uri", "jwks", "signed_jwks_uri"):
+            if values.get(i):
+                jwks_there = True
+                break
+        
+        if not jwks_there:
+            raise ValueError(
+                "one of signed_jwks_uri or jwks_uri or jwks must be set"
+            )
+        return values
 
 
 class OPMetadataCie(OPMetadata):
-    jwks: Optional[JwksCie]
-    jwks_uri: Optional[HttpUrl]
     scopes_supported: List[ScopeSupported]
     response_types_supported = ["code"]
     response_modes_supported: List[ResponseModesSupported]
@@ -119,23 +132,7 @@ class OPMetadataCie(OPMetadata):
     tls_client_certificate_bound_access_tokens = True
     authorization_response_iss_parameter_supported = True
 
-    @validator("jwks_uri")
-    def validate_jwks_uri(cls, jwks_uri, values):
-        jwks = values.get("jwks")
-        if jwks_uri and jwks:
-            raise ValueError("jwks MUST NOT indicate")
-
 
 class OPMetadataSpid(OPMetadata):
-    jwks: Optional[JwksSpid]
-    jwks_uri: Optional[HttpUrl]
-    # TODO: Could be specified in multiple languages
-    op_name: str
-    # TODO: Could be specified in multiple languages
-    op_uri: str
-
-    @validator("jwks_uri")
-    def validate_jwks_uri(cls, jwks_uri, values):
-        jwks = values.get("jwks")
-        if jwks_uri and jwks:
-            raise ValueError("jwks MUST NOT indicate")
+    op_name: Optional[str]
+    op_uri: Optional[str]

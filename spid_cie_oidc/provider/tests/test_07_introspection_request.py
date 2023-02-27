@@ -1,6 +1,6 @@
 from django.test import TestCase
 from pydantic import ValidationError
-from spid_cie_oidc.onboarding.tests.introspection_request_settings import (
+from spid_cie_oidc.provider.tests.introspection_request_settings import (
     INTROSPECTION_REQUEST,
     INTROSPECTION_REQUEST_NO_CLIENT_ASSERTION,
     INTROSPECTION_REQUEST_NO_CLIENT_ASSERTION_TYPE,
@@ -11,7 +11,7 @@ from spid_cie_oidc.onboarding.tests.introspection_request_settings import (
     INTROSPECTION_REQUEST_NO_CORRECT_TOKEN,
     INTROSPECTION_REQUEST_NO_TOKEN,
 )
-from spid_cie_oidc.onboarding.schemas.introspection_request import IntrospectionRequest
+from spid_cie_oidc.provider.schemas.introspection_request import IntrospectionRequest
 
 
 class IntrospectionRequestTest(TestCase):

@@ -1,8 +1,10 @@
 import json
 import logging
+from typing import Union
 import uuid
 
 from cryptojwt.jwk.jwk import key_from_jwk_dict
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext as _
@@ -21,10 +23,11 @@ from spid_cie_oidc.entity.settings import (
     FEDERATION_DEFAULT_EXP
 )
 from spid_cie_oidc.entity.statements import EntityConfiguration
-from spid_cie_oidc.entity.utils import exp_from_now, iat_now
+from spid_cie_oidc.entity.utils import exp_from_now, iat_now, random_token
 from spid_cie_oidc.entity.validators import (
     validate_entity_metadata,
-    validate_metadata_algs
+    validate_metadata_algs,
+    validate_private_jwks
 )
 
 logger = logging.getLogger(__name__)
@@ -78,12 +81,14 @@ class FederationEntityConfiguration(TimeStampedModel):
         null=False,
         help_text=_("a list of private keys for Federation ops"),
         default=_create_jwks,
+        validators = [validate_private_jwks],
     )
     jwks_core = models.JSONField(
         blank=False,
         null=False,
         help_text=_("a list of private keys for Core ops"),
         default=_create_jwks,
+        validators = [validate_private_jwks],
     )
     trust_marks = models.JSONField(
         blank=True,
@@ -242,22 +247,16 @@ class FederationEntityConfiguration(TimeStampedModel):
             **kwargs,
         )
 
+    def set_jwks_as_array(self):
+        for i in ('jwks_fed','jwks_core'):
+            value = getattr(self, i)
+            if not isinstance(value, list):
+                setattr(self, i, [value])
+
     def save(self, *args, **kwargs):
         self.entity_type = self.type[0]
+        self.set_jwks_as_array()
         super().save(*args, **kwargs)
-
-        if self.entity_type in ENTITY_TYPE_LEAFS:
-            valid_kids = set()
-            for jwk in self.jwks_fed:
-                valid_kids.add(jwk.get("kid", None))
-            
-            for entity,metadata in self.metadata.items():
-                for oidc_jwk in metadata['jwks']['keys']:
-                    if oidc_jwk['kid'] not in valid_kids:
-                        logger.warning(
-                            f"Found a public jwk in {entity} that haven't a valid "
-                            f"jwk {oidc_jwk['kid']} in {self.jwks_fed}."
-                        )
 
     def __str__(self):
         return "{} [{}]".format(
@@ -325,6 +324,11 @@ class TrustChain(TimeStampedModel):
         ),
         default=list,
     )
+    jwks = models.JSONField(
+        blank=False,
+        null=False,
+        help_text=_("jwks of this federation entity")
+    )
     metadata = models.JSONField(
         blank=True,
         null=True,
@@ -391,3 +395,57 @@ class TrustChain(TimeStampedModel):
         return "{} [{}] [{}]".format(
             self.sub, self.trust_anchor, self.is_valid
         )
+
+
+class StaffToken(TimeStampedModel):
+    """
+        Token provisioned to staffs operators for protected resources
+    """
+
+    user = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.CASCADE,
+        help_text=_("The user responsible of thi token"),
+    )
+    token = models.CharField(
+        max_length=255,
+        blank=False,
+        null=False,
+        default = random_token,
+        help_text=_("it will be generated automatically."),
+    )
+    expire_at = models.DateTimeField(blank=True, null=True)
+    is_active = models.BooleanField(
+        default=True,
+        blank=False,
+        null=False
+    )
+
+    class Meta:
+        verbose_name = "Staff Token"
+        verbose_name_plural = "Staff Tokens"
+
+    @property
+    def is_valid(self):
+        if self.is_active and not self.expire_at:
+            return True
+        elif self.is_active and self.expire_at > timezone.localtime():
+            return True
+        else:
+            return False
+
+    def __str__(self):
+        return f"{self.user} {self.is_active}"
+
+
+def get_first_self_trust_anchor(
+    sub: str = None,
+) -> Union[FederationEntityConfiguration, None]:
+    """
+    get the first available Trust Anchor that represent self
+    as a qualified issuer
+    """
+    lk = dict(metadata__federation_entity__isnull=False, is_active=True)
+    if sub:
+        lk["sub"] = sub
+    return FederationEntityConfiguration.objects.filter(**lk).first()

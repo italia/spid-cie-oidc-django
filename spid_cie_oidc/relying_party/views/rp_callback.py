@@ -10,12 +10,12 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views import View
 from spid_cie_oidc.entity.jwtse import (
-    unpad_jwt_head,
     unpad_jwt_payload,
     verify_jws
 )
 from spid_cie_oidc.entity.models import FederationEntityConfiguration
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
+from spid_cie_oidc.entity.utils import get_jwks, get_jwk_from_jwt
 from spid_cie_oidc.relying_party.exceptions import ValidationException
 from spid_cie_oidc.relying_party.settings import RP_PROVIDER_PROFILES, RP_DEFAULT_PROVIDER_PROFILES
 
@@ -81,17 +81,6 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
             logger.info(f"Created new user {user}")
             return user
 
-    def get_jwk_from_jwt(self, jwt: str, provider_jwks: dict) -> dict:
-        """
-            docs here
-        """
-        head = unpad_jwt_head(jwt)
-        kid = head["kid"]
-        for jwk in provider_jwks:
-            if jwk["kid"] == kid:
-                return jwk
-        return {}
-
     def get(self, request, *args, **kwargs):
         """
             The Authorization callback, the redirect uri where the auth code lands
@@ -132,6 +121,16 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
             authz = authz.last()
 
         code = request.GET.get("code")
+        # mixups attacks prevention
+        if request.GET.get('iss', None):
+            if request.GET['iss'] != authz.provider_id:
+                context = {
+                    "error": "invalid request",
+                    "error_description": _(
+                        "authn response validation failed: mixups attack prevention."
+                    ),
+                }
+                return render(request, self.error_template, context, status=400)
 
         authz_token = OidcAuthenticationToken.objects.create(
             authz_request=authz, code=code
@@ -142,7 +141,7 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
         if not self.rp_conf:
             context = {
                 "error": "invalid request",
-                "error_description": _("Relay party not found"),
+                "error_description": _("Relying party not found"),
             }
             return render(request, self.error_template, context, status=400)
 
@@ -179,11 +178,11 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
                     },
                     status = 400
                 )
-        jwks = authz.provider_configuration["jwks"]["keys"]
+        jwks = get_jwks(authz.provider_configuration)
         access_token = token_response["access_token"]
         id_token = token_response["id_token"]
-        op_ac_jwk = self.get_jwk_from_jwt(access_token, jwks)
-        op_id_jwk = self.get_jwk_from_jwt(id_token, jwks)
+        op_ac_jwk = get_jwk_from_jwt(access_token, jwks)
+        op_id_jwk = get_jwk_from_jwt(id_token, jwks)
 
         if not op_ac_jwk or not op_id_jwk:
             logger.warning(
@@ -236,7 +235,7 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
             authz.state,
             authz_token.access_token,
             authz.provider_configuration,
-            verify=HTTPC_PARAMS,
+            verify=HTTPC_PARAMS.get("connection", {}).get("ssl", True)
         )
         if not userinfo:
             logger.warning(

@@ -1,5 +1,6 @@
 import json
 import logging
+import uuid
 from copy import deepcopy
 
 from djagger.decorators import schema
@@ -11,13 +12,15 @@ from django.utils.translation import gettext as _
 from django.views import View
 from spid_cie_oidc.entity.exceptions import InvalidTrustchain
 from spid_cie_oidc.entity.jwtse import create_jws
+from spid_cie_oidc.entity.utils import get_jwks
 from spid_cie_oidc.entity.models import FederationEntityConfiguration
 from spid_cie_oidc.relying_party.settings import OIDCFED_ACR_PROFILES, RP_PROVIDER_PROFILES, RP_DEFAULT_PROVIDER_PROFILES
 
 from ..models import OidcAuthentication
 from ..settings import (
     RP_PKCE_CONF,
-    RP_REQUEST_CLAIM_BY_PROFILE
+    RP_REQUEST_CLAIM_BY_PROFILE,
+    RP_REQUEST_EXP
 )
 from ..utils import (
     http_dict_to_redirect_uri_path,
@@ -61,7 +64,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
                     "error": "request rejected",
                     "error_description": "Trust Chain is unavailable.",
                 }
-                return render(request, self.error_template, context)
+                return render(request, self.error_template, context, status = 404)
 
         except InvalidTrustchain as exc:
             context = {
@@ -75,7 +78,7 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
                 "error": "request rejected",
                 "error_description": _(str(exc.args)),
             }
-            return render(request, self.error_template, context)
+            return render(request, self.error_template, context, status=403)
 
         provider_metadata = tc.metadata.get('openid_provider', None)
         if not provider_metadata:
@@ -99,9 +102,8 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
 
         client_conf = entity_conf.metadata["openid_relying_party"]
         if not (
-            # TODO
-            # provider_metadata.get("jwks_uri", None)
-            # or
+            provider_metadata.get("jwks_uri", None)
+            or
             provider_metadata.get("jwks", None)
         ):
             context = {
@@ -109,12 +111,11 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
                 "error_description": _("Invalid provider Metadata."),
             }
             return render(request, self.error_template, context, status=404)
-        if provider_metadata.get("jwks", None):
-            jwks_dict = provider_metadata["jwks"]
-        elif provider_metadata.get("jwks_uri", None):
-            jwks_dict = self.get_jwks_from_jwks_uri(provider_metadata["jwks_uri"])
-        else:
-            jwks_dict = {}
+
+        jwks_dict = get_jwks(provider_metadata, federation_jwks=tc.jwks)
+
+        # stores the resolves jwks in the provider metadata linked to this authz request
+        provider_metadata['jwks'] = {'keys': jwks_dict}
         if not jwks_dict:
             _msg = f"Failed to get jwks from {tc.sub}"
             logger.error(_msg)
@@ -134,7 +135,9 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             )
             redirect_uri = client_conf["redirect_uris"][0]
         _profile = request.GET.get("profile", "spid")
+        _timestamp_now = int(timezone.localtime().timestamp())
         authz_data = dict(
+            iss=client_conf["client_id"],
             scope= request.GET.get("scope", None) or "openid",
             redirect_uri=redirect_uri,
             response_type=client_conf["response_types"][0],
@@ -143,7 +146,9 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
             client_id=client_conf["client_id"],
             endpoint=authz_endpoint,
             acr_values= OIDCFED_ACR_PROFILES,
-            iat=int(timezone.localtime().timestamp()),
+            iat=_timestamp_now,
+            exp =_timestamp_now + RP_REQUEST_EXP,
+            jti = str(uuid.uuid4()),
             aud=[tc.sub, authz_endpoint],
             claims=RP_REQUEST_CLAIM_BY_PROFILE[_profile],
         )
@@ -177,7 +182,10 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
         # add the signed request object
         authz_data_obj = deepcopy(authz_data)
         authz_data_obj["iss"] = client_conf["client_id"]
-        authz_data_obj["sub"] = client_conf["client_id"]
+
+        # sub claim MUST not be used to prevent that this jwt
+        # could be reused as a private_key_jwt
+        # authz_data_obj["sub"] = client_conf["client_id"]
 
         request_obj = create_jws(authz_data_obj, entity_conf.jwks_core[0])
         authz_data["request"] = request_obj
@@ -191,6 +199,10 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
                 "request": authz_data["request"]
             }
         )
-        url = "?".join((authz_endpoint, uri_path))
+        if "?" in authz_endpoint:
+            qstring = "&"
+        else:
+            qstring = "?"
+        url = qstring.join((authz_endpoint, uri_path))
         logger.info(f"Starting Authz request to {url}")
         return HttpResponseRedirect(url)

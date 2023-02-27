@@ -2,7 +2,7 @@ import logging
 
 from django.test import TestCase
 from pydantic import ValidationError
-from spid_cie_oidc.onboarding.tests.token_response_settings import (
+from spid_cie_oidc.provider.tests.token_response_settings import (
     TOKEN_ERROR_RESPONSE,
     TOKEN_ERROR_RESPONSE_NO_CORRECT_ERROR,
     TOKEN_ERROR_RESPONSE_NO_CORRECT_ERROR_DESCRIPTION,
@@ -17,7 +17,7 @@ from spid_cie_oidc.onboarding.tests.token_response_settings import (
     TOKEN_RESPONSE_NO_CORRECT_TOKEN_TYPE,
     TOKEN_RESPONSE_NO_TOKEN_TYPE,
 )
-from spid_cie_oidc.onboarding.schemas.token_response import (
+from spid_cie_oidc.provider.schemas.token_response import (
     TokenErrorResponse,
     TokenRefreshResponse,
     TokenResponse,

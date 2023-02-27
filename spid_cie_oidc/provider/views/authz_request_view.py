@@ -18,7 +18,7 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views import View
 from spid_cie_oidc.entity.exceptions import InvalidEntityConfiguration
-from spid_cie_oidc.onboarding.schemas.authn_requests import AcrValues
+from spid_cie_oidc.provider.schemas.authn_requests import AcrValues
 from spid_cie_oidc.provider.forms import AuthLoginForm, AuthzHiddenForm
 from spid_cie_oidc.provider.models import OidcSession
 from spid_cie_oidc.provider.exceptions import AuthzRequestReplay, InvalidRefreshRequestException, ValidationException
@@ -171,7 +171,7 @@ class AuthzRequestView(OpBase, View):
             return HttpResponseForbidden()
 
         acr_value = AcrValues(self.payload["acr_values"][0])
-        prompt = self.payload["prompt"]
+        prompt = self.payload.get("prompt", "login")
         if request.user:
             if (
                     request.user.is_authenticated and
@@ -211,6 +211,7 @@ class AuthzRequestView(OpBase, View):
     def post(self, request, *args, **kwargs):
         """
             When the User prompts his credentials
+            TODO: REFACTOR this method doesn't support PAR!
         """
         form = self.get_login_form()(request.POST)
         if not form.is_valid():

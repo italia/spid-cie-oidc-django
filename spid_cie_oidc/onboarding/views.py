@@ -4,6 +4,12 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.utils.translation import gettext as _
 
+from spid_cie_oidc.authority.schemas.fetch_endpoint_request import FetchRequest
+from spid_cie_oidc.authority.schemas.list_endpoint import ListRequest, ListResponse
+from spid_cie_oidc.entity.schemas.resolve_endpoint import ResolveRequest, ResolveResponse
+from spid_cie_oidc.authority.schemas.trust_mark_status_endpoint import TrustMarkRequest, TrustMarkResponse
+from spid_cie_oidc.entity.schemas.fa_metadata import FAMetadata
+
 
 from .forms import (
     OnboardingRegistrationForm,
@@ -21,30 +27,31 @@ from spid_cie_oidc.entity.jwks import (
     public_jwk_from_pem
 )
 
-from spid_cie_oidc.entity.jwtse import unpad_jwt_head, unpad_jwt_payload, verify_jws
-from spid_cie_oidc.authority.views import trust_mark_status, resolve_entity_statement
+from spid_cie_oidc.entity.jwtse import unpad_jwt_head, unpad_jwt_payload, verify_jws, decrypt_jwe
+from spid_cie_oidc.authority.views import trust_mark_status
 from spid_cie_oidc.authority.validators import validate_entity_configuration
-from spid_cie_oidc.onboarding.schemas.authn_requests import AuthenticationRequestSpid
-from spid_cie_oidc.onboarding.schemas.authn_response import AuthenticationResponse
-from spid_cie_oidc.onboarding.schemas.authn_response import AuthenticationErrorResponse
-from spid_cie_oidc.onboarding.schemas.introspection_request import IntrospectionRequest
-from spid_cie_oidc.onboarding.schemas.introspection_response import IntrospectionResponse
-from spid_cie_oidc.onboarding.schemas.introspection_response import IntrospectionErrorResponseSpid
+from spid_cie_oidc.provider.schemas.authn_requests import AuthenticationRequestSpid
+from spid_cie_oidc.provider.schemas.authn_response import AuthenticationResponse
+from spid_cie_oidc.provider.schemas.authn_response import AuthenticationErrorResponse
+from spid_cie_oidc.provider.schemas.introspection_request import IntrospectionRequest
+from spid_cie_oidc.provider.schemas.introspection_response import IntrospectionResponse
+from spid_cie_oidc.provider.schemas.introspection_response import IntrospectionErrorResponseSpid
 from spid_cie_oidc.entity.schemas.op_metadata import OPMetadataSpid, OPMetadataCie
 from spid_cie_oidc.entity.schemas.rp_metadata import RPMetadataSpid,RPMetadataCie
-from spid_cie_oidc.onboarding.schemas.revocation_request import RevocationRequest
-from spid_cie_oidc.onboarding.schemas.token_requests import TokenAuthnCodeRequest
-from spid_cie_oidc.onboarding.schemas.token_response import TokenResponse
-from spid_cie_oidc.onboarding.schemas.token_response import TokenErrorResponse
+from spid_cie_oidc.provider.schemas.revocation_request import RevocationRequest
+from spid_cie_oidc.provider.schemas.token_requests import TokenAuthnCodeRequest
+from spid_cie_oidc.provider.schemas.token_response import TokenResponse
+from spid_cie_oidc.provider.schemas.token_response import TokenErrorResponse
 
-from spid_cie_oidc.onboarding.schemas.token_requests import TokenRefreshRequest
-from spid_cie_oidc.onboarding.schemas.token_response import TokenRefreshResponse
+from spid_cie_oidc.provider.schemas.token_requests import TokenRefreshRequest
+from spid_cie_oidc.provider.schemas.token_response import TokenRefreshResponse
 
-from spid_cie_oidc.onboarding.schemas.jwt import JwtStructure
+from spid_cie_oidc.provider.schemas.jwt import JwtStructure
 from spid_cie_oidc.entity.policy import apply_policy
 
 from spid_cie_oidc.relying_party.settings import RP_PROVIDER_PROFILES
 from spid_cie_oidc.provider.settings import OIDCFED_PROVIDER_PROFILES
+from spid_cie_oidc.entity.views import resolve_entity_statement
 
 
 def onboarding_landing(request):  # pragma: no cover
@@ -161,8 +168,8 @@ def onboarding_resolve_statement(request):
 
 
 def onboarding_validating_trustmark(request):
-    if "id" in request.GET or "trust_mark" in request.GET:
-        form = OnboardingValidatingTrustMarkForm(request.GET)
+    if "id" in request.POST or "trust_mark" in request.POST:
+        form = OnboardingValidatingTrustMarkForm(request.POST)
     else:
         form = OnboardingValidatingTrustMarkForm()
 
@@ -268,6 +275,28 @@ def onboarding_decode_jwt(request):
         jwt = form_dict['jwt']
         try:
             head = unpad_jwt_head(jwt)
+        except Exception as e:
+            messages.error(
+                request,
+                f"JWS verification failed due to missing JWT header: {e}"
+            )
+            return render(request, "onboarding_decode_jwt.html", context)
+
+        if head.get('enc', None):
+            if not form_dict.get('jwk'):
+                messages.error(
+                    request,
+                    f"JWE needs a private jwk to be decrypted"
+                )
+                return render(
+                    request, "onboarding_decode_jwt.html", context, status = 400
+                )
+            # JWE here
+            jwk = form_dict['jwk']
+            jwt = decrypt_jwe(jwt, jwk)
+
+        try:
+
             payload = unpad_jwt_payload(jwt)
             context["head"] = json.dumps(head, indent=4)
             context["payload"] = json.dumps(payload, indent=4)
@@ -276,7 +305,8 @@ def onboarding_decode_jwt(request):
                 verify_jws(jwt, jwk)
                 messages.success(request, _('Your jws is verified'))
         except Exception as e:
-            messages.error(request, f"Jws verification failed: {e}")
+            messages.error(request, f"JWS verification failed: {e}")
+
     return render(request, "onboarding_decode_jwt.html", context)
 
 
@@ -332,20 +362,45 @@ def onboarding_schemas_introspection(request):
     return render(request, "onboarding_schemas.html", content)
 
 
+def onboarding_schemas_federation_entity_endpoints(request):
+    federation_entity_fetch_request = FetchRequest.schema_json(indent=2)
+    federation_entity_list_request = ListRequest.schema_json(indent=2)
+    federation_entity_list_response = ListResponse.schema_json(indent=2)
+    federation_entity_resolve_request = ResolveRequest.schema_json(indent=2)
+    federation_entity_resolve_response = ResolveResponse.schema_json(indent=2)
+    federation_entity_status_request = TrustMarkRequest.schema_json(indent=2)
+    federation_entity_status_response = TrustMarkResponse.schema_json(indent=2)
+    content = {
+        "title": "Schemas Federation entity endpoint",
+        "schemas": {
+            "Federation entity fetch": federation_entity_fetch_request,
+            "Federation entity list request": federation_entity_list_request,
+            "Federation entity list response": federation_entity_list_response,
+            "Federation entity resolve request": federation_entity_resolve_request,
+            "Federation entity resolve response": federation_entity_resolve_response,
+            "Federation entity status request": federation_entity_status_request,
+            "Federation entity status response": federation_entity_status_response
+        }
+    }
+    return render(request, "onboarding_schemas.html", content)
+
+
 def onboarding_schemas_metadata(request):
     op_meta_spid = OPMetadataSpid.schema_json(indent=2)
     op_meta_cie = OPMetadataCie.schema_json(indent=2)
     rp_meta_spid = RPMetadataSpid.schema_json(indent=2)
     rp_meta_cie = RPMetadataCie.schema_json(indent=2)
+    fed_entity = FAMetadata.schema_json(indent=2)
     content = {
         "title": "Schemas metadata Spid/Cie",
         "schemas": {
-            "metadata OP Spid": op_meta_spid,
-            "metadata OP Cie": op_meta_cie,
-            "metadata RP Spid": rp_meta_spid,
-            "metadata RP Cie": rp_meta_cie
-        }
-    }
+            "Federation entity": fed_entity,
+            "OP Spid": op_meta_spid,
+            "OP Cie": op_meta_cie,
+            "RP Spid": rp_meta_spid,
+            "RP Cie": rp_meta_cie
+         }
+     }
     return render(request, "onboarding_schemas.html", content)
 
 

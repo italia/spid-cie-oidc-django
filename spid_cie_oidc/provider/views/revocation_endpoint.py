@@ -35,7 +35,7 @@ schema_profile = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
     tags = ['Provider']
 )
 @method_decorator(csrf_exempt, name="dispatch")
-class RevocationEndpoint(OpBase,View):
+class RevocationEndpoint(OpBase, View):
 
     def post(self, request, *args, **kwargs):
         try:

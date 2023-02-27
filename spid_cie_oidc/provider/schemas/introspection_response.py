@@ -1,17 +1,17 @@
-from typing import List, Literal, Optional
+from typing import Literal
 
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel
 
 
 class IntrospectionResponse(BaseModel):
     active: bool
-    scope: Optional[List[str]]
-    sub: Optional[str]
-    exp: Optional[int]
-    client_id: HttpUrl
-    iss: Optional[HttpUrl]
+    # scope: Optional[List[str]]
+    # sub: Optional[str]
+    # exp: Optional[int]
+    # client_id: HttpUrl
+    # iss: Optional[HttpUrl]
     # TODO: migliorare: array di url con almeno uno
-    aud: Optional[List[HttpUrl]]
+    # aud: Optional[List[HttpUrl]]
 
 
 class IntrospectionErrorResponse(BaseModel):

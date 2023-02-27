@@ -39,7 +39,8 @@ schema_profile = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
     },
     post_response_schema = {
             "200": schema_profile["authorization_code_response"],
-            "200": schema_profile["refresh_token_response"],
+            # TODO
+            # "200": schema_profile["refresh_token_response"],
             "400": schema_profile["token_error_response"],
     },
     get_response_schema = {
@@ -93,7 +94,6 @@ class TokenEndpoint(OpBase, View):
         )
         if issued_token.refresh_token:
             iss_token_data['refresh_token'] = issued_token.refresh_token
-
         return JsonResponse(iss_token_data)
 
     def is_token_renewable(self, session) -> bool:
@@ -209,6 +209,7 @@ class TokenEndpoint(OpBase, View):
 
                 }, status = 403
             )
+
         if request.POST.get("grant_type") == 'authorization_code':
             return self.grant_auth_code(request)
         elif request.POST.get("grant_type") == 'refresh_token':

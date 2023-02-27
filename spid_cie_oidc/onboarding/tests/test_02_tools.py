@@ -4,7 +4,7 @@ from django.urls import reverse
 from copy import deepcopy
 from spid_cie_oidc.entity.jwtse import create_jws
 
-from spid_cie_oidc.onboarding.tests.tools_settings import jwk_priv, jwt
+from spid_cie_oidc.onboarding.tests.tools_settings import jwk_priv, jwt, jwe
 from spid_cie_oidc.entity.tests.settings import ta_conf_data
 from spid_cie_oidc.authority.models import (
     FederationEntityConfiguration,
@@ -25,7 +25,7 @@ from spid_cie_oidc.entity.jwks import (
 
 from spid_cie_oidc.entity.tests.op_metadata_settings import OP_METADATA_SPID
 from spid_cie_oidc.entity.tests.rp_metadata_settings import RP_METADATA_CIE
-from spid_cie_oidc.onboarding.tests.authn_request_settings import AUTHN_REQUEST_SPID
+from spid_cie_oidc.provider.tests.authn_request_settings import AUTHN_REQUEST_SPID
 from spid_cie_oidc.authority.tests.settings import RP_METADATA_JWK1, RP_METADATA_JWK1_pub
 
 class ToolsTests(TestCase):
@@ -107,6 +107,18 @@ class ToolsTests(TestCase):
         res = self.client.post(url, {"jwt":jwt, "jwk": jwk})
         self.assertEqual(res.status_code, 200)
         self.assertIn("alert-success", res.content.decode())
+
+    def test_decode_and_verify_jwe(self):
+        
+        # first failed because no jwks is submitted
+        url = reverse("oidc_onboarding_tools_decode_jwt")
+        res = self.client.get(url)
+        self.assertEqual(res.status_code, 200)
+        res = self.client.post(url, {"jwt":jwe})
+        self.assertEqual(res.status_code, 400)
+        
+        res = self.client.post(url, {"jwt": jwe, "jwk": json.dumps(jwk_priv)})
+        self.assertEqual(res.status_code, 200)
 
     def test_resolve_statement(self):
         url = reverse("oidc_onboarding_resolve_statement")
@@ -194,17 +206,17 @@ class ToolsTests(TestCase):
     
     def test_validating_trust_mark(self):
         url = reverse("oidc_onboarding_validating_trustmark")
-        res = self.client.get(url)
+        res = self.client.post(url)
         self.assertEqual(res.status_code, 200)
 
-        res = self.client.get(url, {
+        res = self.client.post(url, data={
             "id": "https://www.ciao.gov.it/certification/rp",
             "sub": "http://ciao.it/oidc/rp/",
         })
         self.assertEqual(res.status_code, 200)
         self.assertIn("alert-error", res.content.decode())
 
-        res = self.client.get(url, {
+        res = self.client.post(url, data={
             "id": "https://www.spid.gov.it/certification/rp",
             "sub": "http://rp-test.it/oidc/rp/",
         })
@@ -214,7 +226,7 @@ class ToolsTests(TestCase):
 
         trust_mark = self.rp_assigned_profile.trust_mark_as_jws
         
-        res = self.client.get(url, {
+        res = self.client.post(url, data={
             "trust_mark": trust_mark,
         })
         self.assertEqual(res.status_code, 200)

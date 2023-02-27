@@ -1,0 +1,87 @@
+# the upstream component nginx needs to connect to
+upstream gain-poc {
+    server 127.0.0.1:3000;
+}
+
+# configuration of the server
+server {
+    # the port your site will be served on
+    # the domain name it will serve for
+
+    server_name trust-anchor.oidc-federation.online;
+    # substitute your machine's IP address or FQDN
+
+    access_log /var/log/gain-poc/access.log;
+    error_log  /var/log/gain-poc/error.log error;
+
+    return 301 https://$host$request_uri;
+
+}
+
+server {
+    server_name trust-anchor.oidc-federation.online;
+    listen 443 ssl; # managed by Certbot
+
+    ssl_certificate /etc/letsencrypt/live/trust-anchor.oidc-federation.online/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/trust-anchor.oidc-federation.online/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+    access_log /var/log/gain-poc/access.log;
+    error_log  /var/log/gain-poc/error.log error;
+
+    # gestione timeout in tutte le salse
+    # more time for 502 gateway timeout
+    #keepalive_timeout 60;
+    #types_hash_max_size 2048;
+    #client_header_timeout 60;
+    #client_body_timeout 60;
+    #send_timeout 80;
+    #fastcgi_buffers 8 16k;
+    #fastcgi_buffer_size 32k;
+    #fastcgi_connect_timeout 60;
+    #fastcgi_send_timeout 60;
+    #fastcgi_read_timeout 60;
+    # end
+
+    # Django static
+    location /static  {
+        alias /opt/spid-cie-oidc-django/examples-docker/federation_authority/static;  # your Django project's static files - amend as required
+        autoindex off;
+    }
+
+    # Finally, send all non-media requests to the Django server.
+    location / {
+        uwsgi_pass  gain-poc;
+        uwsgi_param HTTP_X_FORWARDED_PROTOCOL https;
+        uwsgi_param UWSGI_SCHEME https;
+
+        # deny iFrame
+        add_header X-Frame-Options "DENY";
+
+        proxy_set_header X-Forwarded-Host $host:$server_port;
+        proxy_set_header X-Forwarded-Server $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        include proxy_params;
+
+        uwsgi_connect_timeout 75s;
+        #uwsgi_read_timeout 300s;
+        uwsgi_read_timeout 33;
+        client_max_body_size 10m;
+        include     /opt/spid-cie-oidc-django/examples-docker/uwsgi_params; # the uwsgi_params file you installed
+    }
+
+}
+
+server {
+    if ($host = trust-anchor.oidc-federation.online) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    listen      80;
+
+    server_name trust-anchor.oidc-federation.online;
+    return 404; # managed by Certbot
+}

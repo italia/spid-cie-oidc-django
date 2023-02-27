@@ -15,6 +15,7 @@ from spid_cie_oidc.entity.statements import (
     get_entity_configurations,
     TrustMark,
 )
+from spid_cie_oidc.entity.utils import get_jwks
 from spid_cie_oidc.entity.tests.settings import *
 
 from spid_cie_oidc.authority.models import *
@@ -24,6 +25,7 @@ from spid_cie_oidc.authority.tests.settings import *
 
 from unittest.mock import patch
 
+import copy
 import datetime
 
 
@@ -51,14 +53,6 @@ class TrustChainTest(TestCase):
     def test_list_endpoint(self):
         url = reverse("oidcfed_list")
         c = Client()
-        res = c.get(url, data={"is_leaf": True})
-        self.assertTrue(res.json()[0] == self.rp.sub)
-        self.assertEqual(res.status_code, 200)
-
-        res = c.get(url, data={"is_leaf": False})
-        self.assertFalse(res.json())
-        self.assertEqual(res.status_code, 200)
-
         res = c.get(url, data={})
         self.assertTrue(res.json())
         self.assertEqual(res.status_code, 200)
@@ -146,6 +140,7 @@ class TrustChainTest(TestCase):
             sub=trust_chain.subject,
             exp=trust_chain.exp_datetime,
             chain=trust_chain.serialize(),
+            jwks = trust_chain.subject_configuration.jwks,
             metadata=trust_chain.final_metadata,
             parties_involved=[i.sub for i in trust_chain.trust_path],
             status="valid",
@@ -259,7 +254,7 @@ class TrustChainTest(TestCase):
         url = reverse("oidcfed_trust_mark_status")
 
         c = Client()
-        res = c.get(
+        res = c.post(
             url,
             data={
                 "id": self.rp_assigned_profile.profile.profile_id,
@@ -269,7 +264,7 @@ class TrustChainTest(TestCase):
         self.assertTrue(res.status_code == 200)
         self.assertTrue(res.json() == {"active": True})
 
-        res = c.get(
+        res = c.post(
             url,
             data={
                 "trust_mark": self.rp_assigned_profile.trust_mark["trust_mark"],
@@ -295,3 +290,41 @@ class TrustChainTest(TestCase):
         )
         self.assertTrue(res.status_code == 200)
         self.assertTrue(res.json() == {"active": False})
+
+class TrustChainWithSignedJwksUriTest(TestCase):
+    def setUp(self):
+        self.ta_conf = FederationEntityConfiguration.objects.create(**ta_conf_data)
+        
+        _rp_conf = copy.deepcopy(rp_conf)
+        _rp_conf['metadata']['openid_relying_party'].pop('jwks')
+        _rp_conf['metadata']['openid_relying_party']['signed_jwks_uri'] = f"{_rp_conf['sub']}signed_jwks.jose"
+        self.rp_conf = FederationEntityConfiguration.objects.create(**_rp_conf)
+
+        self.rp_profile = FederationEntityProfile.objects.create(**RP_PROFILE)
+        self.rp = FederationDescendant.objects.create(**rp_onboarding_data)
+ 
+        self.rp_assigned_profile = FederationEntityAssignedProfile.objects.create(
+            descendant=self.rp, profile=self.rp_profile, issuer=self.ta_conf
+        )
+
+    @override_settings(HTTP_CLIENT_SYNC=True)
+    @patch("requests.get", return_value=EntityResponseNoIntermediateSignedJwksUri())
+    def test_signed_jwks_uri(self, mocked):
+
+        self.ta_conf.constraints = {"max_path_length": 0}
+        self.ta_conf.save()
+
+        jwt = get_entity_configurations(self.ta_conf.sub)
+        trust_anchor_ec = EntityConfiguration(jwt[0])
+
+        trust_chain = trust_chain_builder(
+            subject=rp_onboarding_data["sub"],
+            trust_anchor=trust_anchor_ec
+        )
+        _jwks = get_jwks(
+            trust_chain.final_metadata['openid_relying_party'],
+            trust_chain.subject_configuration.jwks
+        )
+        self.assertTrue(
+            verify_jws(_jwks, self.rp_conf.jwks_fed[0])
+        )

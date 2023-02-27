@@ -24,6 +24,7 @@ from .views import (
     onboarding_convert_jwk,
     onboarding_convert_pem,
     onboarding_resolve_statement,
+    onboarding_schemas_federation_entity_endpoints,
     onboarding_validating_trustmark,
     onboarding_decode_jwt,
     onboarding_apply_policy,
@@ -90,6 +91,11 @@ urlpatterns = [
         f"{_PREF}onboarding/tools/apply-policy",
         onboarding_apply_policy,
         name="oidc_onboarding_tools_apply_policy",
+    ),
+    path(
+        f"{_PREF}onboarding/schemas/federation_entity",
+        onboarding_schemas_federation_entity_endpoints,
+        name="oidc_onboarding_schemas_federation_entity",
     ),
     path(
         f"{_PREF}onboarding/schemas/authorization",

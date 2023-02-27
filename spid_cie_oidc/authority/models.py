@@ -4,9 +4,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 # from django.db.models.signals import post_save
-from django.utils import timezone
 from django.utils.translation import gettext as _
-from spid_cie_oidc.authority.utils import random_token
 
 from spid_cie_oidc.entity.abstract_models import TimeStampedModel
 from spid_cie_oidc.entity.models import (
@@ -19,7 +17,7 @@ from spid_cie_oidc.entity.jwtse import create_jws
 from spid_cie_oidc.entity.validators import validate_public_jwks
 from spid_cie_oidc.entity.utils import iat_now, exp_from_now
 from spid_cie_oidc.entity.settings import FEDERATION_DEFAULT_EXP
-from typing import Union
+from spid_cie_oidc.entity.models import get_first_self_trust_anchor
 
 from . settings import FEDERATION_DEFAULT_POLICY
 from .validators import validate_entity_configuration
@@ -29,19 +27,6 @@ import logging
 import uuid
 
 logger = logging.getLogger(__name__)
-
-
-def get_first_self_trust_anchor(
-    sub: str = None,
-) -> Union[FederationEntityConfiguration, None]:
-    """
-    get the first available Trust Anchor that represent self
-    as a qualified issuer
-    """
-    lk = dict(metadata__federation_entity__isnull=False, is_active=True)
-    if sub:
-        lk["sub"] = sub
-    return FederationEntityConfiguration.objects.filter(**lk).first()
 
 
 class FederationEntityProfile(TimeStampedModel):
@@ -308,47 +293,6 @@ class FederationDescendantContact(TimeStampedModel):
 
     def __str__(self):
         return f"{self.contact} {self.entity.sub}"
-
-
-class StaffToken(TimeStampedModel):
-    """
-        Token provisioned to staffs operators for protected resources
-    """
-
-    user = models.ForeignKey(
-        get_user_model(),
-        on_delete=models.CASCADE,
-        help_text=_("The user responsible of thi token"),
-    )
-    token = models.CharField(
-        max_length=255,
-        blank=False,
-        null=False,
-        default = random_token,
-        help_text=_("it will be generated automatically."),
-    )
-    expire_at = models.DateTimeField(blank=True, null=True)
-    is_active = models.BooleanField(
-        default=True,
-        blank=False,
-        null=False
-    )
-
-    class Meta:
-        verbose_name = "Staff Token"
-        verbose_name_plural = "Staff Tokens"
-
-    @property
-    def is_valid(self):
-        if self.is_active and not self.expire_at:
-            return True
-        elif self.is_active and self.expire_at > timezone.localtime():
-            return True
-        else:
-            return False
-
-    def __str__(self):
-        return f"{self.user} {self.is_active}"
 
 
 # signal on each save

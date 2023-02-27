@@ -56,7 +56,7 @@ class ValidatrTest(TestCase):
     def test_validate_entity_no_valid_op_metadata(self):
         op_md = {}
         op_md["openid_provider"] = deepcopy(OP_METADATA)
-        op_md["openid_provider"].pop("op_name")
+        op_md["openid_provider"].pop("issuer")
         with self.assertRaises(ValidationError):
             validate_entity_metadata(op_md)
 

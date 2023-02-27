@@ -1,13 +1,13 @@
 from django.test import TestCase
 from pydantic import ValidationError
-from spid_cie_oidc.onboarding.tests.revocation_response_settings import (
+from spid_cie_oidc.provider.tests.revocation_response_settings import (
     REVOCATION_RESPONSE_CIE,
     REVOCATION_RESPONSE_CIE_NO_CORRECT_ERROR,
     REVOCATION_RESPONSE_CIE_NO_CORRECT_ERROR_DESCRIPTION,
     REVOCATION_RESPONSE_CIE_NO_ERROR,
     REVOCATION_RESPONSE_CIE_NO_ERROR_DESCRIPTION,
 )
-from spid_cie_oidc.onboarding.schemas.revocation_response import (
+from spid_cie_oidc.provider.schemas.revocation_response import (
     RevocationErrorResponse,
 )
 

@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import List, Optional
-from pydantic import BaseModel, HttpUrl, validator
-from .jwks import JwksCie, JwksSpid
+from pydantic import BaseModel, HttpUrl, root_validator
+from .jwks import JwksSpid
 
 
 class GrantTypeSupported(str, Enum):
@@ -10,6 +10,7 @@ class GrantTypeSupported(str, Enum):
 
 
 class RPMetadata(BaseModel):
+    organization_name: str
     redirect_uris: List[HttpUrl]
     response_types = ["code"]
     grant_types: List[GrantTypeSupported]
@@ -17,30 +18,29 @@ class RPMetadata(BaseModel):
     # TODO: Could be specified in multiple languages
     client_name: str
 
-
-class RPMetadataSpid(RPMetadata):
+    signed_jwks_uri: Optional[HttpUrl]
     jwks_uri: Optional[HttpUrl]
     jwks: Optional[JwksSpid]
 
-    @validator("jwks", pre=True, always=True)
-    def validate_jwks_uri(cls, jwks, values):
-        jwks_uri = values.get("jwks_uri")
-        if not jwks_uri and not jwks:
-            raise ValueError("one of jwks_uri or jwks must be set")
-        if jwks_uri and jwks:
-            raise ValueError("jwks MUST NOT indicate")
+    @root_validator(pre=False)
+    def validate(cls, values):
+        jwks_there = False
+        for i in ("jwks_uri", "jwks", "signed_jwks_uri"):
+            if values.get(i):
+                jwks_there = True
+                break
+        
+        if not jwks_there:
+            raise ValueError(
+                "one of signed_jwks_uri or jwks_uri or jwks must be set"
+            )
+        return values
 
 
-class RPMetadataCie(RPMetadata):
-    jwks_uri: Optional[HttpUrl]
-    jwks: Optional[JwksCie]
+class RPMetadataSpid(RPMetadata):
+    pass
+
+
+class RPMetadataCie(RPMetadataSpid):
     application_type = "web"
     tls_client_certificate_bound_access_tokens: Optional[bool]
-
-    @validator("jwks", pre=True, always=True)
-    def validate_jwks_uri(cls, jwks, values):
-        jwks_uri = values.get("jwks_uri")
-        if not jwks_uri and not jwks:
-            raise ValueError("one of jwks_uri or jwks must be set")
-        if jwks_uri and jwks:
-            raise ValueError("jwks MUST NOT indicate")

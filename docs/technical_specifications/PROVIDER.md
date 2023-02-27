@@ -192,6 +192,14 @@ The UserInfo Endpoint returns an encrypthed jwt of the user claims.
 ![OIDC Provider login history](../images/provider_login_history.png)
 _The user can consult the history of his accesses and also can revoke the access tokens for selected RPs._
 
+
+## Connect resources
+
+- openid_provider/jwks.json, returns the jwks
+- openid_provider/jwks.jose, returns the signed jwks
+- .well-known/openid-configuration, returns op metadata
+
+
 ## SPID/CIE QAD and compliances tests
 
 WiP

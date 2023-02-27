@@ -6,11 +6,12 @@ from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 from spid_cie_oidc.accounts.models import User
 from spid_cie_oidc.entity.models import FederationEntityConfiguration
+from spid_cie_oidc.entity.utils import get_jwks
 
 from spid_cie_oidc.relying_party.models import OidcAuthentication
 from spid_cie_oidc.authority.tests.settings import rp_conf
 from spid_cie_oidc.provider.tests.settings import op_conf
-from spid_cie_oidc.onboarding.tests.authn_request_settings import AUTHN_REQUEST_SPID
+from spid_cie_oidc.provider.tests.authn_request_settings import AUTHN_REQUEST_SPID
 
 from spid_cie_oidc.relying_party.tests.mocked_response import (
     MockedTokenEndPointNoCorrectIdTokenResponse,
@@ -46,8 +47,8 @@ class RpCallBack(TestCase):
         OidcAuthentication.objects.create(**authz_entry)
         self.rp_config["sub"] = self.rp_config["metadata"]["openid_relying_party"]["client_id"]
         FederationEntityConfiguration.objects.create(**self.rp_config)
-        rp_conf_saved = FederationEntityConfiguration.objects.all().first()  
-        rp_conf_saved.metadata["openid_relying_party"]["jwks"]["keys"][0]["kid"] = rp_conf_saved.jwks_core[0]["kid"]
+        rp_conf_saved = FederationEntityConfiguration.objects.all().first()
+        get_jwks(rp_conf_saved.metadata['openid_relying_party'])[0]["kid"] = rp_conf_saved.jwks_core[0]["kid"]
         rp_conf_saved.save()
         self.op_conf = FederationEntityConfiguration.objects.create(**op_conf)
 
@@ -62,6 +63,15 @@ class RpCallBack(TestCase):
         self.assertTrue(
             user.attributes['fiscal_number'] == "sdfsfs908df09s8df90s8fd0"
         )
+
+    @override_settings(HTTP_CLIENT_SYNC=True)
+    @patch("requests.post", return_value=MockedTokenEndPointResponse())
+    @patch("requests.get", return_value=MockedUserInfoResponse())
+    def test_rp_callback_mixups_attacks(self, mocked, mocked_2):
+        client = Client()
+        url = reverse("spid_cie_rp_callback")
+        res = client.get(url, {"state": STATE, "code": CODE, "iss": "WRONG"})
+        self.assertTrue(res.status_code == 400)
 
     @override_settings(HTTP_CLIENT_SYNC=True)
     @patch("spid_cie_oidc.relying_party.views.rp_callback.process_user_attributes", return_value=None)
@@ -113,8 +123,7 @@ class RpCallBack(TestCase):
         client = Client()
         url = reverse("spid_cie_rp_callback")
         res = client.get(url, {"state": STATE, "code": CODE})
-        self.assertTrue("Relay party not found" in res.content.decode())
-
+        self.assertTrue("Relying party not found" in res.content.decode())
 
     @override_settings(HTTP_CLIENT_SYNC=True)
     @patch("requests.post", return_value=MockedTokenEndPointResponse())

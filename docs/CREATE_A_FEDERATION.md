@@ -178,7 +178,7 @@ Then assign the profile, 'SPID Private SP'.
 
 In relying_party service build trust chain for all the configure OpenID Connect Provider. These are configured in the parameter `OIDCFED_IDENTITY_PROVIDERS` in settingslocal.py.
 ````
-examples/relaying_party/manage.py fetch_openid_providers --start -f
+examples/relying_party/manage.py fetch_openid_providers --start -f
 ````
 
 Connect to the login page specified in settingslocal.py by 'LOGIN_URL' parameter (eg. 'http://127.0.0.1:[port]/oidc/rp/landing' where 'LOGIN_URL=/oidc/rp/landing') and start authentication.

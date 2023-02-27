@@ -28,11 +28,9 @@ def jwks_from_jwks_uri(jwks_uri: str, httpc_params: dict = {}) -> list:
     return [json.loads(asyncio.run(http_get([jwks_uri], httpc_params)))] # pragma: no cover
 
 
-def get_jwks(jwt_payload: dict, httpc_params: dict = {}):
+def get_federation_jwks(jwt_payload: dict, httpc_params: dict = {}):
     return (
         jwt_payload.get("jwks", {}).get("keys", [])
-        # TODO: we must only support signed_jwks_uri
-        # or jwks_from_jwks_uri(jwks_uri, httpc_params)
     )
 
 
@@ -150,7 +148,7 @@ class EntityConfiguration:
         self.payload = unpad_jwt_payload(jwt)
         self.sub = self.payload["sub"]
         self.iss = self.payload["iss"]
-        self.jwks = get_jwks(self.payload, httpc_params)
+        self.jwks = get_federation_jwks(self.payload, httpc_params)
         if not self.jwks[0]:
             _msg = f"Missing jwks in the statement for {self.sub}"
             logger.error(_msg)
@@ -380,7 +378,7 @@ class EntityConfiguration:
             payload = unpad_jwt_payload(jwt)
             ec.validate_by_itself()
             ec.validate_descendant_statement(jwt)
-            _jwks = get_jwks(payload, self.httpc_params)
+            _jwks = get_federation_jwks(payload, self.httpc_params)
             _kids = [i.get("kid") for i in _jwks]
             verify_jws(self.jwt, _jwks[_kids.index(self.header["kid"])])
             is_valid = True
@@ -438,7 +436,12 @@ class EntityConfiguration:
                 logger.info(f"Getting entity statements from {_url}")
                 jwts = get_entity_statements([_url], self.httpc_params)
                 jwt = jwts[0]
-                self.validate_by_superior_statement(jwt, ec)
+                if jwt:
+                    self.validate_by_superior_statement(jwt, ec)
+                else:
+                    logger.error(
+                        f"Empty response for {_url}"
+                    )
 
         return self.verified_by_superiors
 

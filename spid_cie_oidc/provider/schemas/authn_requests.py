@@ -140,13 +140,18 @@ class AuthenticationRequest(BaseModel):
     state: constr(min_length=32)
     # TODO: to be improved
     ui_locales: Optional[List[str]]
-    sub: HttpUrl
+
+    # sub claim MUST not be used to prevent that this jwt
+    # could be reused as a private_key_jwt
+    # sub: HttpUrl
+
     iss: HttpUrl
     iat: int
     exp: Optional[int]
     jti: Optional[str]
-    aud: List[HttpUrl]
+    aud: str | List[HttpUrl]
     acr_values: List[AcrValues]
+    prompt: Optional[Literal["consent", "consent login"]]
 
     @validator("claims")
     def validate_claims(cls, claims):
@@ -170,7 +175,6 @@ class AuthenticationRequest(BaseModel):
 
 class AuthenticationRequestSpid(AuthenticationRequest):
     scope: List[ScopeSpid]
-    prompt: Literal["consent", "consent login", "verify"]
 
     def get_claims() -> dict:
         return CLAIMS_SPID
@@ -183,7 +187,7 @@ class AuthenticationRequestSpid(AuthenticationRequest):
             code_challenge= "codeChallenge",
             code_challenge_method= "S256",
             nonce= "12345678123456781234567812345678inpiu",
-            prompt= "verify",
+            prompt= "consent",
             redirect_uri= "https://rp.cie.it/callback1/",
             acr_values= ["https://www.spid.gov.it/SpidL2", "https://www.spid.gov.it/SpidL1"],
             claims= {},
@@ -200,7 +204,6 @@ class AuthenticationRequestSpid(AuthenticationRequest):
 
 class AuthenticationRequestCie(AuthenticationRequest):
     scope: List[ScopeCie]
-    prompt: Literal["consent", "consent login"]
 
     def get_claims() -> dict:
         return CLAIMS_CIE

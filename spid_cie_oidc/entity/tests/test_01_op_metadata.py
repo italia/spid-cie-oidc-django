@@ -20,15 +20,13 @@ class OpMetadataTest(TestCase):
         OPMetadataCie(**OP_METADATA_CIE)
 
     def test_op_metatada_cie_jwks_and_jwks_uri(self):
-        with self.assertRaises(ValidationError):
-            OPMetadataCie(**OP_METADATA_CIE_JWKS_AND_JWKS_URI)
+        self.assertTrue(OPMetadataCie(**OP_METADATA_CIE_JWKS_AND_JWKS_URI))
 
     def test_op_metatada_spid(self):
         OPMetadataSpid(**OP_METADATA_SPID)
 
     def test_op_metatada_spid_jwks_and_jwks_uri(self):
-        with self.assertRaises(ValidationError):
-            OPMetadataSpid(**OP_METADATA_SPID_JWKS_AND_JWKS_URI)
+        self.assertTrue(OPMetadataSpid(**OP_METADATA_SPID_JWKS_AND_JWKS_URI))
 
     def test_op_metatada_spid_jwks_no_jwks_uri(self):
         OPMetadataSpid(**OP_METADATA_SPID_JWKS_NO_JWKS_URI)
@@ -36,3 +34,4 @@ class OpMetadataTest(TestCase):
     def test_op_metatada_spid_jws_ec_no_correct(self):
         with self.assertRaises(ValidationError):
             OPMetadataSpid(**OP_METADATA_SPID_JWKS_EC_NO_CORRECT)
+        

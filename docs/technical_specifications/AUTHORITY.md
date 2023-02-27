@@ -33,9 +33,7 @@ It should be available only for __trust anchors__ and __intermediates__.
 Lists all the descendant entities.
 
  - `http://127.0.0.1:8000/list/`
- - `http://127.0.0.1:8000/list/?is_leaf=false`
- - `http://127.0.0.1:8000/list/?is_leaf=true`
- - `http://127.0.0.1:8000/list/?type=openid_provider`
+ - `http://127.0.0.1:8000/list/?entity_type=openid_provider`
 
 
 #### Advanced entity listing endpoint
@@ -88,7 +86,8 @@ An entity MAY use the resolve endpoint to fetch resolved metadata and trust mark
 
 #### trust mark status
 
-This is to allow an entity to check whether a trust mark is still active or not. The query MUST be sent to the trust mark issuer.
+This is to allow an entity to check whether a trust mark is still active or not. The query MUST be sent to the trust mark issuer and using HTTP POST.
+For sake of readability here an example in GET format (that shouldn't, it must be in POST).
 
 - `http://127.0.0.1:8000/trust_mark_status/?id=https://www.spid.gov.it/openid-federation/agreement/op-public/&sub=http://127.0.0.1:8000/oidc/op`
 - `http://127.0.0.1:8000/trust_mark_status/?trust_mark= ...`

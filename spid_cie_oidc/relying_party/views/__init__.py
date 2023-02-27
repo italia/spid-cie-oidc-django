@@ -3,8 +3,6 @@ from django.conf import settings
 from pydantic import ValidationError
 from spid_cie_oidc.entity.exceptions import InvalidTrustchain
 from spid_cie_oidc.entity.models import TrustChain
-from spid_cie_oidc.entity.settings import HTTPC_PARAMS
-from spid_cie_oidc.entity.statements import get_http_url
 from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
 from spid_cie_oidc.relying_party.exceptions import ValidationException
 from spid_cie_oidc.relying_party.settings import (
@@ -20,17 +18,6 @@ class SpidCieOidcRp:
     Baseclass with common methods for RPs
     """
 
-    def get_jwks_from_jwks_uri(self, jwks_uri: str) -> dict:
-        """
-        get jwks
-        """
-        try:
-            jwks_dict = get_http_url([jwks_uri], httpc_params=HTTPC_PARAMS).json()
-        except Exception as e:
-            logger.error(f"Failed to download jwks from {jwks_uri}: {e}")
-            return {}
-        return jwks_dict
-
     def get_oidc_op(self, request) -> TrustChain:
         """
             get available trust to a specific OP
@@ -42,17 +29,21 @@ class SpidCieOidcRp:
             raise InvalidTrustchain(
                 "Missing provider url. Please try '?provider=https://provider-subject/'"
             )
-        trust_anchor = request.GET.get(
-            "trust_anchor",
-            settings.OIDCFED_IDENTITY_PROVIDERS.get(
-                request.GET["provider"],
-                settings.OIDCFED_DEFAULT_TRUST_ANCHOR
-            )
-        )
-
-        if trust_anchor not in settings.OIDCFED_TRUST_ANCHORS:
+        
+        trust_anchor = request.GET.get("trust_anchor", None)
+        if trust_anchor != None and trust_anchor not in settings.OIDCFED_TRUST_ANCHORS:
             logger.warning("Unallowed Trust Anchor")
             raise InvalidTrustchain("Unallowed Trust Anchor")
+        
+        if not trust_anchor:
+            for profile,value in settings.OIDCFED_IDENTITY_PROVIDERS.items():
+                if request.GET["provider"] in value:
+                    trust_anchor = value[request.GET["provider"]]
+        
+        if not trust_anchor:
+            trust_anchor = settings.OIDCFED_DEFAULT_TRUST_ANCHOR
+
+
 
         tc = TrustChain.objects.filter(
             sub=request.GET["provider"],

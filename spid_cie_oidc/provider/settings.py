@@ -5,19 +5,19 @@ from spid_cie_oidc.entity.schemas.op_metadata import (
     OPMetadataCie,
     OPMetadataSpid
 )
-from spid_cie_oidc.onboarding.schemas.authn_requests import (
+from spid_cie_oidc.provider.schemas.authn_requests import (
     AcrValues,
     AuthenticationRequestCie,
     AuthenticationRequestDoc,
     AuthenticationRequestSpid
 )
-from spid_cie_oidc.onboarding.schemas.authn_response import AuthenticationErrorResponse, AuthenticationErrorResponseCie, AuthenticationResponse, AuthenticationResponseCie
-from spid_cie_oidc.onboarding.schemas.introspection_request import IntrospectionRequest
-from spid_cie_oidc.onboarding.schemas.introspection_response import IntrospectionErrorResponseCie, IntrospectionErrorResponseSpid, IntrospectionResponse
-from spid_cie_oidc.onboarding.schemas.revocation_request import RevocationRequest
-from spid_cie_oidc.onboarding.schemas.revocation_response import RevocationErrorResponse
-from spid_cie_oidc.onboarding.schemas.token_requests import TokenAuthnCodeRequest, TokenRefreshRequest
-from spid_cie_oidc.onboarding.schemas.token_response import TokenErrorResponse, TokenRefreshResponse, TokenResponse
+from spid_cie_oidc.provider.schemas.authn_response import AuthenticationErrorResponse, AuthenticationErrorResponseCie, AuthenticationResponse, AuthenticationResponseCie
+from spid_cie_oidc.provider.schemas.introspection_request import IntrospectionRequest
+from spid_cie_oidc.provider.schemas.introspection_response import IntrospectionErrorResponseCie, IntrospectionErrorResponseSpid, IntrospectionResponse
+from spid_cie_oidc.provider.schemas.revocation_request import RevocationRequest
+from spid_cie_oidc.provider.schemas.revocation_response import RevocationErrorResponse
+from spid_cie_oidc.provider.schemas.token_requests import TokenAuthnCodeRequest, TokenRefreshRequest
+from spid_cie_oidc.provider.schemas.token_response import TokenErrorResponse, TokenRefreshResponse, TokenResponse
 
 
 OIDCFED_PROVIDER_PROFILES_MEDIA = getattr(

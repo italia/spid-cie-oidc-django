@@ -4,8 +4,7 @@ from .models import (
     FederationDescendant,
     FederationDescendantContact,
     FederationEntityProfile,
-    FederationEntityAssignedProfile,
-    StaffToken
+    FederationEntityAssignedProfile
 )
 
 
@@ -37,15 +36,6 @@ class FederationEntityProfileAdmin(admin.ModelAdmin):
     list_filter = ("created", "modified")
     search_fields = ("name", "profile_id",)
     readonly_fields = ("trust_mark_template_as_json",)
-
-
-@admin.register(StaffToken)
-class StaffTokenAdmin(admin.ModelAdmin):
-    list_display = ("user", "expire_at", "is_valid")
-    list_filter = ("created", "modified", "expire_at")
-    search_fields = ("token", )
-    readonly_fields = ("is_valid",)
-    raw_id_fields = ('user',)
 
 
 @admin.register(FederationEntityAssignedProfile)

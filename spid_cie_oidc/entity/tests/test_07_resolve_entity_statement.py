@@ -10,13 +10,13 @@ from django.test import (
     override_settings
 )
 from django.urls import reverse
-from spid_cie_oidc.authority.models import StaffToken
-from spid_cie_oidc.authority.tests.settings import rp_conf
-from spid_cie_oidc.authority.views import resolve_entity_statement
+from spid_cie_oidc.entity.tests.rp_metadata_settings import rp_conf
+from spid_cie_oidc.entity.views import resolve_entity_statement
 from spid_cie_oidc.entity.models import (
     FederationEntityConfiguration,
     FetchedEntityStatement, 
-    TrustChain
+    TrustChain,
+    StaffToken
 )
 from spid_cie_oidc.entity.tests.settings import ta_conf_data
 from spid_cie_oidc.entity.utils import (
@@ -27,15 +27,18 @@ from spid_cie_oidc.entity.utils import (
 
 
 def create_tc():
+    
+
     TA_FES = FetchedEntityStatement.objects.create(
-        sub="sub",
-        iss="sub",
+        sub="http://testserver/",
+        iss="http://testserver/",
         exp=datetime_from_timestamp(exp_from_now(33)),
         iat=datetime_from_timestamp(iat_now()),
     )
     return TrustChain.objects.create(
-        sub="sub",
+        sub="http://rp-test.it/oidc/rp/",
         exp=datetime_from_timestamp(exp_from_now(33)),
+        jwks = [],
         metadata=[],
         status="valid",
         trust_anchor=TA_FES,
@@ -69,6 +72,8 @@ class ResolveEntityStatementTest(TestCase):
             iat=datetime_from_timestamp(iat_now()),
         )
 
+
+
     @override_settings(HTTP_CLIENT_SYNC=True)
     def test_resolve_entity_statement(self):
         client = Client()
@@ -77,7 +82,7 @@ class ResolveEntityStatementTest(TestCase):
         data = {"sub" : rp_conf["sub"], "anchor" : ta_conf_data["sub"]}
         request = self.factory.get(url, data, **{'HTTP_AUTHORIZATION': "secret-token"})
         self.patcher = patch(
-            "spid_cie_oidc.authority.views.get_or_create_trust_chain", 
+            "spid_cie_oidc.entity.trust_chain_operations.get_or_create_trust_chain", 
             return_value = create_tc()
         )
         self.patcher.start()
@@ -86,3 +91,6 @@ class ResolveEntityStatementTest(TestCase):
         _json = json.loads(res.content.decode())
         self.assertTrue(_json.get("iss") == ta_conf_data["sub"])
         self.assertTrue(_json.get("sub") == rp_conf["sub"])
+
+        self.assertTrue("trust_chain" in _json)
+        self.assertTrue("metadata" in _json)
