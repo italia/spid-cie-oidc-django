@@ -97,12 +97,11 @@ OIDCFED_DEFAULT_METADATA_POLICY = {
     # defines how many intermediaries are allowed to this trust anchor
     "max_path_length": 1
   },
-
+  }
   # TODO: TBD
   "openid_provider": {},
   "federation_entity": {},
   "oauth_resource": {}
-  
 }
 
 ALLOWED_HOSTS = ['*']
