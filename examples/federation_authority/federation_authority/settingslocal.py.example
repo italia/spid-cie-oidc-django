@@ -85,7 +85,7 @@ OIDCFED_DEFAULT_METADATA_POLICY = {
           "authorization_code",
           "refresh_token"
          ]
-      }
+      },
     # TODO: to be customized for each actor
     "constraints": {
       # "naming_constraints": {
