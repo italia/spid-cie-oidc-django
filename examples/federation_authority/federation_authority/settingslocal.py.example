@@ -56,7 +56,7 @@ LOGOUT_REDIRECT_URL = "/oidc/rp/landing"
 LOGIN_URL = "/oidc/rp/landing"
 
 
-OIDCFED_DEFAULT_METADATA_POLICY = {
+FEDERATION_DEFAULT_POLICY = {
     "openid_relying_party": {
       # TODO: to be customized for each entities, not somethinf to default!
       # "client_id": {"value":  "https://rp.example.it/spid"},
