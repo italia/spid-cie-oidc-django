@@ -56,7 +56,7 @@ LOGOUT_REDIRECT_URL = "/oidc/rp/landing"
 LOGIN_URL = "/oidc/rp/landing"
 
 
-OIDCFED_DEFAULT_METADATA_POLICY = {
+FEDERATION_DEFAULT_POLICY = {
     "openid_relying_party": {
       # TODO: to be customized for each entities, not somethinf to default!
       # "client_id": {"value":  "https://rp.example.it/spid"},
@@ -86,13 +86,8 @@ OIDCFED_DEFAULT_METADATA_POLICY = {
           "refresh_token"
          ]
       },
-      "scope": {
-        "superset_of": ["openid"],
-        "subset_of": ["openid", "offline_access"]
-    },
-
     # TODO: to be customized for each actor
-    # "constraints": {
+    "constraints": {
       # "naming_constraints": {
         # "permitted": [
           # "https://rp.example.it"
@@ -102,12 +97,11 @@ OIDCFED_DEFAULT_METADATA_POLICY = {
     # defines how many intermediaries are allowed to this trust anchor
     "max_path_length": 1
   },
-
+  },
   # TODO: TBD
   "openid_provider": {},
   "federation_entity": {},
   "oauth_resource": {}
-  
 }
 
 ALLOWED_HOSTS = ['*']

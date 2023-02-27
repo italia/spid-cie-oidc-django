@@ -26,9 +26,6 @@ class PolicyTest(TestCase):
 
     def test_apply_policy(self):
         fa_policy = {}
-        fa_policy["scope"] = FEDERATION_DEFAULT_POLICY["openid_relying_party"][
-            "scope"
-        ]
         fa_policy["contacts"] = {"add": "ciao@email.it"}
         combined_policy = apply_policy(deepcopy(RP_METADATA), fa_policy)
         combined_contacts = combined_policy["contacts"]
@@ -82,9 +79,6 @@ class PolicyTest(TestCase):
 
     def test_diff_two_policy(self):
         fa_policy_old = {}
-        fa_policy_old["scope"] = FEDERATION_DEFAULT_POLICY["openid_relying_party"][
-            "scope"
-        ]
         fa_policy_new = deepcopy(fa_policy_old)
         fa_policy_new["contacts"] = {"add": "test@email.it"}
         result = diff2policy(fa_policy_new, fa_policy_old)

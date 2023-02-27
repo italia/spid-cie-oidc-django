@@ -55,9 +55,9 @@ class OidcSession(TimeStampedModel):
         iss_tokens.update(revoked=True)
         self.save()
 
-    def pairwised_sub(self):
+    def pairwised_sub(self, provider_id:str):
         return hashlib.sha256(
-            f"{self.user_uid}{self.client_id}{OIDCFED_PROVIDER_SALT}".encode()
+            f"{self.user_uid}{self.client_id}{provider_id}{OIDCFED_PROVIDER_SALT}".encode()
         ).hexdigest()
 
     def public_sub(self):
