@@ -61,9 +61,16 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
 
     def user_reunification(self, user_attrs: dict):
         user_model = get_user_model()
-        lookup = {
-            f"attributes__{RP_USER_LOOKUP_FIELD}": user_attrs[RP_USER_LOOKUP_FIELD]
-        }
+
+        if user_attrs.get(RP_USER_LOOKUP_FIELD, None):
+            lookup = {
+                f"attributes__{RP_USER_LOOKUP_FIELD}": user_attrs.get(RP_USER_LOOKUP_FIELD)
+            }
+        else:
+            logger.warning("User attribute not found for reunification, try sub")
+            lookup = {
+                "username": user_attrs["username"]
+            }
         user = user_model.objects.filter(**lookup).first()
         if user:
             user.attributes.update(user_attrs)
@@ -181,6 +188,7 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
         jwks = get_jwks(authz.provider_configuration)
         access_token = token_response["access_token"]
         id_token = token_response["id_token"]
+
         op_ac_jwk = get_jwk_from_jwt(access_token, jwks)
         op_id_jwk = get_jwk_from_jwt(id_token, jwks)
 

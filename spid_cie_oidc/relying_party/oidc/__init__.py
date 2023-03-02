@@ -43,6 +43,13 @@ class OidcUserInfo(object):
             )
             return False
         else:
+
+            try:
+                # if application/json ... let it be
+                return authz_userinfo.json()
+            except Exception as e:
+                logger.debug("userinfo response is not in plain json")
+
             try:
                 jwe = authz_userinfo.content.decode()
                 header = unpad_jwt_head(jwe)
