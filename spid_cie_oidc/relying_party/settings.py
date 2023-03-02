@@ -56,16 +56,16 @@ RP_ATTR_MAP = getattr(
                 "kwargs": {"sep": "__"},
             },
         ),
-        "first_name": ("given_name", "https://attributes.spid.gov.it/name"),
+        "first_name": ("given_name", "given_name"),
         "last_name": (
             "family_name",
-            "https://attributes.spid.gov.it/familyName",
+            "last_name",
         ),
         "email": (
             "email",
-            "https://attributes.spid.gov.it/email",
+            "email",
         ),
-        "fiscal_number": ("https://attributes.spid.gov.it/fiscalNumber", "fiscal_number"),
+        "fiscal_number": ("https://attributes.spid.gov.it/fiscal_number", "fiscal_number"),
     },
 )
 
@@ -75,14 +75,14 @@ SPID_REQUESTED_CLAIMS = getattr(
     "RP_REQUIRED_CLAIMS",
     {
         "id_token": {
-            "https://attributes.spid.gov.it/familyName": {"essential": True},
-            "https://attributes.spid.gov.it/email": {"essential": True},
+            "given_name": {"essential": True},
+            "email": {"essential": True},
         },
         "userinfo": {
-            "https://attributes.spid.gov.it/name": None,
-            "https://attributes.spid.gov.it/familyName": None,
-            "https://attributes.spid.gov.it/email": None,
-            "https://attributes.spid.gov.it/fiscalNumber": None,
+            "given_name": None,
+            "family_name": None,
+            "email": None,
+            "https://attributes.spid.gov.it/fiscal_number": None,
         },
     },
 )
@@ -91,12 +91,12 @@ CIE_REQUESTED_CLAIMS = getattr(
     settings,
     "RP_REQUIRED_CLAIMS",
     {
-        "id_token": {"family_name": {"essential": True}, "email": {"essential": True}},
+        "id_token": {"family_name": {"essential": True}, "given_name": {"essential": True}},
         "userinfo": {
             "given_name": None,
             "family_name": None,
             "email": None,
-            "fiscal_number": None
+            "https://attributes.spid.gov.it/fiscal_number": None
         },
     },
 )

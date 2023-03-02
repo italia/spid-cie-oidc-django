@@ -60,7 +60,7 @@ def get_jwk_from_jwt(jwt: str, provider_jwks: dict) -> dict:
     """
     head = unpad_jwt_head(jwt)
     kid = head["kid"]
-    if provider_jwks.get('keys'):
+    if isinstance(provider_jwks, dict) and provider_jwks.get('keys'):
          provider_jwks = provider_jwks['keys']
     for jwk in provider_jwks:
         if jwk["kid"] == kid:

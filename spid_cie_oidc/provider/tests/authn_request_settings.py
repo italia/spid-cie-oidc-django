@@ -8,9 +8,9 @@ EXP = exp_from_now()
 
 CLAIMS_SPID = {
     "userinfo": {
-        "https://attributes.spid.gov.it/name": {"values": ["str", "str"]},
-        "https://attributes.spid.gov.it/familyName": None,
-        "https://attributes.spid.gov.it/dateOfBirth": {"value": "str"},
+        "given_name": {"values": ["str", "str"]},
+        "family_name": None,
+        "date_of_birth": {"value": "str"},
     },
 }
 
@@ -53,7 +53,7 @@ AUTHN_REQUEST_SPID_NO_CLIENT_ID.pop("client_id")
 
 AUTHN_REQUEST_SPID_NO_CORRECT_CLAIMS = deepcopy(AUTHN_REQUEST_SPID)
 AUTHN_REQUEST_SPID_NO_CORRECT_CLAIMS["claims"]["userinfo"][
-    "https://attributes.spid.gov.it/name"
+    "given_name"
 ]["values"] = ["str"]
 
 AUTHN_REQUEST_SPID_NO_CODE_CHALLENGE = deepcopy(AUTHN_REQUEST_SPID)

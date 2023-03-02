@@ -42,27 +42,21 @@ class ClaimsType(str, Enum):
     values = ClaimsTypeStringValues
 
 
-nameStr = "https://attributes.spid.gov.it/name"
-
-
 class UserInfoSpid(BaseModel):
     name: Optional[dict] = Field(
-        alias="https://attributes.spid.gov.it/name", default=None
+        alias="given_name", default=None
     )
     family_name: Optional[dict] = Field(
-        alias="https://attributes.spid.gov.it/familyName", default=None
+        alias="family_name", default=None
     )
     place_of_birth: Optional[dict] = Field(
-        alias="https://attributes.spid.gov.it/placeOfBirth", default=None
-    )
-    county_of_birth: Optional[dict] = Field(
-        alias="https://attributes.spid.gov.it/countyOfBirth", default=None
+        alias="place_of_birth", default=None
     )
     date_of_birth: Optional[dict] = Field(
-        alias="https://attributes.spid.gov.it/dateOfBirth", default=None
+        alias="date_of_birth", default=None
     )
     gender: Optional[dict] = Field(
-        alias="https://attributes.spid.gov.it/gender", default=None
+        alias="gender", default=None
     )
     company_name: Optional[dict] = Field(
         alias="https://attributes.spid.gov.it/companyName", default=None
@@ -71,7 +65,7 @@ class UserInfoSpid(BaseModel):
         alias="https://attributes.spid.gov.it/registeredOffice", default=None
     )
     fiscal_number: Optional[dict] = Field(
-        alias="https://attributes.spid.gov.it/fiscalNumber", default=None
+        alias="https://attributes.spid.gov.it/fiscal_number", default=None
     )
     iva_code: Optional[dict] = Field(
         alias="https://attributes.spid.gov.it/ivaCode", default=None
@@ -83,10 +77,10 @@ class UserInfoSpid(BaseModel):
         alias="https://attributes.spid.gov.it/mobilePhone", default=None
     )
     email: Optional[dict] = Field(
-        alias="https://attributes.spid.gov.it/email", default=None
+        alias="email", default=None
     )
     address: Optional[dict] = Field(
-        alias="https://attributes.spid.gov.it/address", default=None
+        alias="address", default=None
     )
     expiration_date: Optional[dict] = Field(
         alias="https://attributes.spid.gov.it/expirationDate", default=None

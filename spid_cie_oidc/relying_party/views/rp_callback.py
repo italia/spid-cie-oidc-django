@@ -64,10 +64,10 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
 
         if user_attrs.get(RP_USER_LOOKUP_FIELD, None):
             lookup = {
-                f"attributes__{RP_USER_LOOKUP_FIELD}": user_attrs.get[RP_USER_LOOKUP_FIELD]
+                f"attributes__{RP_USER_LOOKUP_FIELD}": user_attrs.get(RP_USER_LOOKUP_FIELD)
             }
         else:
-            logger.warning("User attribute not found for reuninfication, try sub")
+            logger.warning("User attribute not found for reunification, try sub")
             lookup = {
                 "username": user_attrs["username"]
             }
