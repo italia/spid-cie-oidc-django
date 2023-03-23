@@ -34,7 +34,7 @@ class OidcUserInfo(object):
             verify=verify,
             timeout=getattr(
                 settings, "HTTPC_TIMEOUT", 8
-            )
+            ) # nosec - B113
         )
 
         if authz_userinfo.status_code != 200: # pragma: no cover
