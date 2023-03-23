@@ -1,6 +1,7 @@
 import logging
 from django.core.paginator import Paginator
 import urllib.parse
+from urllib.parse import urlparse
 
 from djagger.decorators import schema
 from django.contrib.auth import logout
@@ -95,7 +96,7 @@ class ConsentPageView(OpBase, View):
 
 
 def oidc_provider_not_consent(request):
-    redirect_uri = request.GET.get("redirect_uri")
+    redirect_uri = urlparse(request.GET.get("redirect_uri"))
     state = request.GET.get("state", "")
     logout(request)
     kwargs = dict(
@@ -105,7 +106,7 @@ def oidc_provider_not_consent(request):
         ),
         state = state
     )
-    url = f'{redirect_uri}?{urllib.parse.urlencode(kwargs)}'
+    url = f'{redirect_uri.path if redirect_uri.path else "/"}?{urllib.parse.urlencode(kwargs)}'
     return HttpResponseRedirect(url)
 
 

@@ -3,8 +3,10 @@ import binascii
 import json
 import logging
 
+import cryptojwt
 from cryptojwt.exception import UnsupportedAlgorithm, VerificationError
 from cryptojwt.jwe.jwe import factory
+from cryptojwt.jwe.jwe_ec import JWE_EC
 from cryptojwt.jwe.jwe_rsa import JWE_RSA
 from cryptojwt.jwk.jwk import key_from_jwk_dict
 from cryptojwt.jws.jws import JWS
@@ -39,14 +41,21 @@ def unpad_jwt_payload(jwt: str) -> dict:
 def create_jwe(plain_dict: Union[dict, None], jwk_dict: dict, **kwargs) -> str:
     logger.debug(f"Encrypting dict as JWE: " f"{plain_dict}")
     _key = key_from_jwk_dict(jwk_dict)
-    _rsa = JWE_RSA(
+    
+    if isinstance(_key, cryptojwt.jwk.rsa.RSAKey):
+        JWE_CLASS = JWE_RSA
+    elif isinstance(_key, cryptojwt.jwk.ec.ECKey):
+        JWE_CLASS = JWE_EC
+
+    _keyobj = JWE_CLASS(
         json.dumps(plain_dict).encode(),
         alg=DEFAULT_JWE_ALG,
         enc=DEFAULT_JWE_ENC,
         kid=_key.kid,
         **kwargs
     )
-    jwe = _rsa.encrypt(_key.public_key())
+    
+    jwe = _keyobj.encrypt(_key.public_key())
     logger.debug(f"Encrypted dict as JWE: {jwe}")
     return jwe
 

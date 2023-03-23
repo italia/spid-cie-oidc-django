@@ -87,7 +87,13 @@ def oidc_rpinitiated_logout(request):
             client_assertion_type = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
         )
         try:
-            requests.post(revocation_endpoint_url, data = revocation_request)
+            requests.post(
+                revocation_endpoint_url, 
+                data = revocation_request,
+                timeout=getattr(
+                    settings, "HTTPC_TIMEOUT", 8
+                )
+            ) # nosec - B113
         except Exception as e: # pragma: no cover
             logger.warning(f"Token revocation failed: {e}")
         auth_tokens.update(revoked = timezone.localtime())
