@@ -46,7 +46,6 @@ def create_jwe(plain_dict: Union[dict, None], jwk_dict: dict, **kwargs) -> str:
         JWE_CLASS = JWE_RSA
     elif isinstance(_key, cryptojwt.jwk.ec.ECKey):
         JWE_CLASS = JWE_EC
-
     _keyobj = JWE_CLASS(
         json.dumps(plain_dict).encode(),
         alg=DEFAULT_JWE_ALG,
