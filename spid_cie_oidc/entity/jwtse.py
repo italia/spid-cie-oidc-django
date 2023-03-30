@@ -51,8 +51,11 @@ def create_jwe(plain_dict: Union[dict, str, int, None], jwk_dict: dict, **kwargs
     elif not plain_dict:
         logger.warning(f"create_jwe with null payload!")
         _payload = ""
-    else:
+    elif isinstance(plain_dict,(str, int)):
         _payload =  plain_dict
+    else:
+        logger.error(f"create_jwe with unsupported payload type!")
+        _payload = ""
     
     _keyobj = JWE_CLASS(
         _payload,
@@ -87,9 +90,13 @@ def decrypt_jwe(jwe: str, jwk_dict: dict) -> dict:
     # _dkey = RSAKey(priv_key=PRIV_KEY)
     _dkey = key_from_jwk_dict(jwk_dict)
     msg = _decryptor.decrypt(jwe, [_dkey])
-
-    msg_dict = json.loads(msg)
-    logger.debug(f"Decrypted JWT as: {json.dumps(msg_dict, indent=2)}")
+    
+    try:
+        msg_dict = json.loads(msg)
+        logger.debug(f"Decrypted JWT as: {json.dumps(msg_dict, indent=2)}")
+    except json.decoder.JSONDecodeError:
+        msg_dict = msg
+        logger.debug(f"Decrypted JWT as: {msg_dict}")
     return msg_dict
 
 
