@@ -19,7 +19,6 @@ from .settings import (
     SIGNING_ALG_VALUES_SUPPORTED,
 )
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -38,7 +37,7 @@ def unpad_jwt_payload(jwt: str) -> dict:
     return unpad_jwt_element(jwt, position=1)
 
 
-def create_jwe(plain_dict: Union[dict, None], jwk_dict: dict, **kwargs) -> str:
+def create_jwe(plain_dict: Union[dict, str, int, None], jwk_dict: dict, **kwargs) -> str:
     logger.debug(f"Encrypting dict as JWE: " f"{plain_dict}")
     _key = key_from_jwk_dict(jwk_dict)
     
@@ -46,9 +45,17 @@ def create_jwe(plain_dict: Union[dict, None], jwk_dict: dict, **kwargs) -> str:
         JWE_CLASS = JWE_RSA
     elif isinstance(_key, cryptojwt.jwk.ec.ECKey):
         JWE_CLASS = JWE_EC
-
+    
+    if isinstance(plain_dict, dict):
+        _payload = json.dumps(plain_dict).encode()
+    elif not plain_dict:
+        logger.warning(f"create_jwe with null payload!")
+        _payload = ""
+    else:
+        _payload =  plain_dict
+    
     _keyobj = JWE_CLASS(
-        json.dumps(plain_dict).encode(),
+        _payload,
         alg=DEFAULT_JWE_ALG,
         enc=DEFAULT_JWE_ENC,
         kid=_key.kid,
