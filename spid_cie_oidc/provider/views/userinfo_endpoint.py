@@ -87,12 +87,19 @@ class UserInfoEndpoint(OpBase, View):
         jws = create_jws(jwt, issuer.jwks_core[0])
 
         # encrypt the data
+        client_jwks = get_jwks(
+            rp_tc.metadata['openid_relying_party'],
+            federation_jwks = rp_tc.jwks
+        )
+        client_jwk = client_jwks[0]
+        for k in client_jwks:
+            if k.get('kid') and len(k["kid"]) >= 1:
+                client_jwk = k
+                break
+        
         jwe = create_jwe(
             jws,
-            get_jwks(
-                rp_tc.metadata['openid_relying_party'],
-                federation_jwks = rp_tc.jwks
-            )[0],
+            client_jwk,
             cty="JWT"
         )
         return HttpResponse(jwe, content_type="application/jose")
