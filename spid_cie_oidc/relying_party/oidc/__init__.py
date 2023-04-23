@@ -43,7 +43,6 @@ class OidcUserInfo(object):
             )
             return False
         else:
-
             try:
                 # if application/json ... let it be
                 return authz_userinfo.json()
@@ -52,10 +51,14 @@ class OidcUserInfo(object):
 
             try:
                 jwe = authz_userinfo.content.decode()
+
                 header = unpad_jwt_head(jwe)
                 # header["kid"] kid di rp
                 rp_jwk = self.get_jwk(header["kid"], self.rp_conf.jwks_core)
                 jws = decrypt_jwe(jwe, rp_jwk)
+
+                if isinstance(jws, bytes):
+                    jws = jws.decode()
 
                 header = unpad_jwt_head(jws)
                 idp_jwks = get_jwks(provider_conf)
