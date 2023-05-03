@@ -100,12 +100,12 @@ def decrypt_jwe(jwe: str, jwk_dict: dict) -> dict:
     return msg_dict
 
 
-def create_jws(payload: dict, jwk_dict: dict, alg: str = "RS256", **kwargs) -> str:
+def create_jws(payload: dict, jwk_dict: dict, alg: str = "RS256", protected:dict = {}, **kwargs) -> str:
 
     _key = key_from_jwk_dict(jwk_dict)
     _signer = JWS(payload, alg=alg, **kwargs)
 
-    signature = _signer.sign_compact([_key])
+    signature = _signer.sign_compact([_key], protected=protected, **kwargs)
     return signature
 
 
