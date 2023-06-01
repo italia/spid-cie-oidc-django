@@ -97,7 +97,12 @@
         "response_types": [
           "code"
         ],
-        "subject_type": "pairwise"
+        "subject_type": "pairwise",
+        "id_token_signed_response_alg": "RS256",
+        "userinfo_signed_response_alg": "RS256", 
+        "userinfo_encrypted_response_alg": "RSA-OAEP", 
+        "userinfo_encrypted_response_enc": "A128CBC-HS256", 
+        "token_endpoint_auth_method": "private_key_jwt"
       }
     },
     "constraints": {},
