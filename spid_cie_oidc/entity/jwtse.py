@@ -10,6 +10,7 @@ from cryptojwt.jwe.jwe_ec import JWE_EC
 from cryptojwt.jwe.jwe_rsa import JWE_RSA
 from cryptojwt.jwk.jwk import key_from_jwk_dict
 from cryptojwt.jws.jws import JWS
+from cryptojwt.jws.utils import left_hash
 from typing import Union
 
 from .settings import (
@@ -125,3 +126,13 @@ def verify_jws(jws: str, pub_jwk: dict, **kwargs) -> str:
     verifier = JWS(alg=_head["alg"], **kwargs)
     msg = verifier.verify_compact(jws, [_key])
     return msg
+
+
+def verify_at_hash(id_token, access_token) -> bool:
+    id_token_at_hash = id_token['at_hash']
+    at_hash = left_hash(access_token, "HS256")
+    if at_hash != id_token_at_hash:
+        raise Exception(
+            f"at_hash error: {at_hash} != {id_token_at_hash}"
+        )
+    return True

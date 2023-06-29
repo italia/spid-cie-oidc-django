@@ -7,6 +7,7 @@ from spid_cie_oidc.authority.tests.settings import rp_conf, INTERMEDIARY_JWK1
 from spid_cie_oidc.entity.jwtse import create_jws, create_jwe
 from spid_cie_oidc.entity.utils import iat_now, exp_from_now
 from spid_cie_oidc.entity.utils import get_jwks
+from cryptojwt.jws.utils import left_hash
 logger = logging.getLogger(__name__)
 
 
@@ -19,7 +20,7 @@ class MockedTokenEndPointResponse:
         id_token = {
             'sub': '2ed008b45e66ce53e48273dca5a4463bc8ebd036ebaa824f4582627683c2451b', 
             'nonce': 'ljbvL3rpscgS4ZGda7cgibXHr7vrNREW', 
-            'at_hash': 'u2RjeYbZSJZO55XwY2LJew', 
+            'at_hash': '',
             'c_hash': 'tij0h-zL_bSrsVXy-d3qHw', 
             'aud': [rp_conf["metadata"]["openid_relying_party"]["client_id"],], 
             'iss': op_conf["sub"], 
@@ -38,6 +39,7 @@ class MockedTokenEndPointResponse:
             'iat': iat_now()
         }
         jwt_at = create_jws(access_token, op_conf_priv_jwk, typ="at+jwt")
+        id_token['at_hash'] = left_hash(jwt_at, "HS256")
         jwt_id = create_jws(id_token, op_conf_priv_jwk)
 
         self.access_token = jwt_at
@@ -61,7 +63,7 @@ class MockedTokenEndPointNoCorrectResponse:
         id_token = {
             'sub': '2ed008b45e66ce53e48273dca5a4463bc8ebd036ebaa824f4582627683c2451b', 
             'nonce': 'ljbvL3rpscgS4ZGda7cgibXHr7vrNREW', 
-            'at_hash': 'u2RjeYbZSJZO55XwY2LJew', 
+            'at_hash': '',
             'c_hash': 'tij0h-zL_bSrsVXy-d3qHw', 
             'aud': [rp_conf["metadata"]["openid_relying_party"]["client_id"],], 
             'iss': op_conf["sub"], 
@@ -80,6 +82,7 @@ class MockedTokenEndPointNoCorrectResponse:
             'iat': iat_now()
         }
         jwt_at = create_jws(access_token, op_conf_priv_jwk, typ="at+jwt")
+        id_token['at_hash'] = left_hash(jwt_at, "HS256")
         jwt_id = create_jws(id_token, op_conf_priv_jwk)
 
         self.access_token = jwt_at
@@ -104,7 +107,7 @@ class MockedTokenEndPointNoCorrectIdTokenResponse:
         id_token = {
             'sub': '2ed008b45e66ce53e48273dca5a4463bc8ebd036ebaa824f4582627683c2451b', 
             'nonce': 'ljbvL3rpscgS4ZGda7cgibXHr7vrNREW', 
-            'at_hash': 'u2RjeYbZSJZO55XwY2LJew', 
+            'at_hash': '',
             'c_hash': 'tij0h-zL_bSrsVXy-d3qHw', 
             'aud': [rp_conf["metadata"]["openid_relying_party"]["client_id"],], 
             'iss': op_conf["sub"], 
@@ -123,6 +126,7 @@ class MockedTokenEndPointNoCorrectIdTokenResponse:
             'iat': iat_now()
         }
         jwt_at = create_jws(access_token, op_conf_priv_jwk, typ="at+jwt")
+        id_token['at_hash'] = left_hash(jwt_at, "HS256")
         jwt_id = create_jws(id_token, INTERMEDIARY_JWK1)
 
         self.access_token = jwt_at
