@@ -11,7 +11,8 @@ from django.utils.translation import gettext as _
 from django.views import View
 from spid_cie_oidc.entity.jwtse import (
     unpad_jwt_payload,
-    verify_jws
+    verify_jws,
+    verify_at_hash
 )
 from spid_cie_oidc.entity.models import FederationEntityConfiguration
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
@@ -233,6 +234,18 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
         decoded_access_token = unpad_jwt_payload(access_token)
         logger.debug(decoded_access_token)
 
+        try:
+            verify_at_hash(decoded_id_token, access_token)
+        except Exception as e:
+            logger.warning(
+                f"at_hash validation error: {e} "
+            )
+            context = {
+                "error": "at_hash verification failed",
+                "error_description": _("at_hash validation error."),
+            }
+            return render(request, self.error_template, context, status=403)
+        
         authz_token.access_token = access_token
         authz_token.id_token = id_token
         authz_token.scope = token_response.get("scope")
