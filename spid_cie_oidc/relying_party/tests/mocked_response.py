@@ -54,6 +54,7 @@ class MockedTokenEndPointResponse:
             }
         return json.dumps(res).encode()
 
+
 class MockedTokenEndPointNoCorrectResponse:
     def __init__(self):
         self.status_code = 200
@@ -95,7 +96,6 @@ class MockedTokenEndPointNoCorrectResponse:
                 "scope": "openid",
             }
         return json.dumps(res).encode()
-
 
 
 class MockedTokenEndPointNoCorrectIdTokenResponse:

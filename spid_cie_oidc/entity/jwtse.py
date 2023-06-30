@@ -11,6 +11,7 @@ from cryptojwt.jwe.jwe_ec import JWE_EC
 from cryptojwt.jwe.jwe_rsa import JWE_RSA
 from cryptojwt.jwk.jwk import key_from_jwk_dict
 from cryptojwt.jws.jws import JWS
+from cryptojwt.jws.utils import left_hash
 from typing import Union
 
 from .settings import (
@@ -101,11 +102,12 @@ def decrypt_jwe(jwe: str, jwk_dict: dict) -> dict:
     return msg_dict
 
 
-def create_jws(payload: dict, jwk_dict: dict, alg: str = "RS256", **kwargs) -> str:
+
+def create_jws(payload: dict, jwk_dict: dict, alg: str = "RS256", protected:dict = {}, **kwargs) -> str:
     _key = key_from_jwk_dict(jwk_dict)
     _signer = JWS(payload, alg=alg, **kwargs)
 
-    signature = _signer.sign_compact([_key])
+    signature = _signer.sign_compact([_key], protected=protected, **kwargs)
     return signature
 
 
@@ -128,10 +130,10 @@ def verify_jws(jws: str, pub_jwk: dict, **kwargs) -> str:
 
 
 def verify_at_hash(id_token, access_token) -> bool:
-    idtoken_at_hash = id_token['at_hash']
+    id_token_at_hash = id_token['at_hash']
     at_hash = left_hash(access_token, "HS256")
-    if at_hash != idtoken_at_hash:
+    if at_hash != id_token_at_hash:
         raise Exception(
-            f"at_hash error: {at_hash} != {idtoken_at_hash}"
+            f"at_hash error: {at_hash} != {id_token_at_hash}"
         )
     return True
