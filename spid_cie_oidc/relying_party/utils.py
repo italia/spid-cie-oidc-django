@@ -32,9 +32,10 @@ def random_string(n=32):
 
 
 def get_pkce(code_challenge_method: str = "S256", code_challenge_length: int = 64):
+    code_verifier_length = random.randint(43, 128)
     hashers = {"S256": hashlib.sha256}
 
-    code_verifier = base64.urlsafe_b64encode(os.urandom(40)).decode("utf-8")
+    code_verifier = base64.urlsafe_b64encode(os.urandom(code_verifier_length)).decode("utf-8")
     code_verifier = re.sub("[^a-zA-Z0-9]+", "", code_verifier)
 
     code_challenge = hashers.get(code_challenge_method)(
