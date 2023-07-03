@@ -9,7 +9,7 @@ from .views.rp_callback import SpidCieOidcRpCallbackView
 from .views.rp_callback_echo_attributes import SpidCieOidcRpCallbackEchoAttributes
 from .views.rp_initiated_logout import oidc_rpinitiated_logout
 from .views.rp_landing import oidc_rp_landing
-
+from .views.rp_extend_session import oidc_rp_extend_session
 _PREF = "oidc/rp"
 
 urlpatterns = []
@@ -38,6 +38,7 @@ urlpatterns += (
 urlpatterns += (
     path(f"{_PREF}/landing", oidc_rp_landing, name="spid_cie_rp_landing"),
     path(f"{_PREF}/logout", oidc_rpinitiated_logout, name="spid_cie_rpinitiated_logout"),
+    path(f"{_PREF}/extendsession", oidc_rp_extend_session, name="spid_cie_rp_extend_session"),
     path(
         f"{_PREF}/<str:metadata_type>/jwks.json",
         openid_connect_jwks_uri,
