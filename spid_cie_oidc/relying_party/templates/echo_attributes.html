@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block centered_container %}
-<script>
+<script  type="text/javascript">
 function startTimer(duration, display) {
     var timer = duration, minutes, seconds;
     setInterval(function () {
@@ -44,7 +44,11 @@ jQuery(function ($) {
     <a href="{% url 'spid_cie_rpinitiated_logout' %}" class="btn btn-secondary" role="button">Log out</a>
 
 </div>
-{% if rt_expiration != 0 %}
+{% if rt_expiration == 0 %}
+<div class="col-12 p-4">
+<h4>Attenzione:</h4>
+    <p>per abilitare le sessioni lunghe revocabili si deve valorizzare <em>OIDCFED_ACR_PROFILES</em> in settingslocal.py del Relying Party <em>OIDCFED_ACR_PROFILES=["https://www.spid.gov.it/SpidL2","https://www.spid.gov.it/SpidL1"]</em></p>
+{% else %}
 <div class="col-6 p-4">
         <h4 class="text-left">ACCESS TOKEN</h4>
     <p> L'access token <em>{{ rt_jti }}</em> <br />
