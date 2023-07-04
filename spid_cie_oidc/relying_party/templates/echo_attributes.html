@@ -55,8 +55,10 @@ jQuery(function ($) {
 
     <p> Il Refresh Token <em>{{ rt_jti }}</em> <br />
         scade tra <span id="rt_time">{{ rt_expiration }}</span> </p>
+    <div class="alert alert-warning" role="alert">
+        <p>NB: il numero di Refresh Token rilasciabili per una singola sessione &egrave; settato nella configurazione degli OP <em>OIDCFED_PROVIDER_MAX_REFRESH</em>. Superato questo numero il sistema restituisce errore HTTP/400</p>
+    </div>
 </div>
-
 {% endif %}
 
 {% endblock %}
