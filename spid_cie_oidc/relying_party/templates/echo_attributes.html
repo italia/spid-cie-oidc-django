@@ -13,7 +13,7 @@ function startTimer(duration, display) {
         minutes = minutes < 10 ? "0" + minutes : minutes;
         seconds = seconds < 10 ? "0" + seconds : seconds;
 
-        display.text(minutes + " minuti e " + seconds + " secondi");
+        display.text(minutes + ":" + seconds);
 
         if (--timer < 0) {
             timer = duration;
@@ -46,21 +46,22 @@ jQuery(function ($) {
 </div>
 {% if rt_expiration == 0 %}
 <div class="col-12 p-4">
-<h4>Attenzione:</h4>
-    <p>per abilitare le sessioni lunghe revocabili si deve valorizzare <em>OIDCFED_ACR_PROFILES</em> in settingslocal.py del Relying Party <em>OIDCFED_ACR_PROFILES=["https://www.spid.gov.it/SpidL2","https://www.spid.gov.it/SpidL1"]</em></p>
+<h4>{% trans "Warning" %}:</h4>
+    <p>{% trans 'To enable revocable long sessions you must set <em>OIDCFED_ACR_PROFILES</em> in settingslocal.py of the Relying Party' %} <em>OIDCFED_ACR_PROFILES=["https://www.spid.gov.it/SpidL2","https://www.spid.gov.it/SpidL1"]</em></p>
+</div>
 {% else %}
 <div class="col-6 p-4">
         <h4 class="text-left">ACCESS TOKEN</h4>
-    <p> L'access token <em>{{ rt_jti }}</em> <br />
-        scade tra <span id="at_time">{{ at_expiration }}</span> </p>
+    <p> {% trans "The" %} access token" <em>{{ rt_jti }}</em> <br />
+        {% trans "expires in" %} <span id="at_time">{{ at_expiration }}</span> </p>
 </div>
 <div class="col-6 p-4">
-        <h4 class="text-left">REFRESH TOKEN <a href="{% url 'spid_cie_rp_extend_session' %}" class="btn btn-primary btn-xs btn-me" role="button">Prolunga Sessione</a></h4>
+        <h4 class="text-left">REFRESH TOKEN <a href="{% url 'spid_cie_rp_extend_session' %}" class="btn btn-primary btn-xs btn-me" role="button">{% trans "Extend Session" %}</a></h4>
 
-    <p> Il Refresh Token <em>{{ rt_jti }}</em> <br />
-        scade tra <span id="rt_time">{{ rt_expiration }}</span> </p>
+    <p> {% trans "The" %} Refresh Token <em>{{ rt_jti }}</em> <br />
+        {% trans "expires in" %} <span id="rt_time">{{ rt_expiration }}</span> </p>
     <div class="alert alert-warning" role="alert">
-        <p>NB: il numero di Refresh Token rilasciabili per una singola sessione &egrave; settato nella configurazione degli OP <em>OIDCFED_PROVIDER_MAX_REFRESH</em>. Superato questo numero il sistema restituisce errore HTTP/400</p>
+        <p>NB: {% trans "the number of Refresh Tokens that can be issued for a single session is set in the OPs configuration" %} <em>OIDCFED_PROVIDER_MAX_REFRESH</em>. {% trans "Past this number, the system returns error HTTP/400" %}</p>
     </div>
 </div>
 {% endif %}

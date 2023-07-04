@@ -65,10 +65,10 @@
                             </li>
                          <li>
                             <a href="{% url 'spid_cie_rp_begin' %}?provider={{sub}}&profile=spid&scope=openid offline_access" id="provider-spid-refresh_token">
-                                <span class="spid-sr-only">{{ attrs.organization_name }} SESSIONE A LUNGO TERMINE</span>
+                                <span class="spid-sr-only">{{ attrs.organization_name }} {% trans "LONG TERM SESSION" %}</span>
                                 {% if attrs.logo_uri %}
                                 <img src="{{ attrs.logo_uri }}" alt="{{ attrs.organization_name }}">
-                                 <p>SESSIONE A LUNGO TERMINE</p>
+                                 <p>{% trans "LONG TERM SESSION" %}</p>
                                 {% else %}
                                 <img src="{% static 'svg/no_image_available.svg' %}" alt="{{ sub }}">
                                 <p>{{ sub }}</p>
@@ -80,7 +80,7 @@
                 </div>
 
             </span>
-            
+
             <span
                 class="badge square-corners mb-3 mr-2 ml-0 pr-10 p-2 mw-100"
                 style="font-size: 100%">
@@ -112,10 +112,10 @@
                                 </li>
                                 <li>
                                     <a href="{% url 'spid_cie_rp_begin' %}?provider={{sub}}&profile=cie&scope=openid offline_access" id="provider-cie-refresh_token">
-                                        <span class="spid-sr-only">{{ attrs.organization_name }} SESSIONE A LUNGO TERMINE</span>
+                                        <span class="spid-sr-only">{{ attrs.organization_name }} {% trans "LONG TERM SESSION" %}</span>
                                         {% if attrs.logo_uri %}
                                         <img src="{{ attrs.logo_uri }}" alt="{{ attrs.organization_name }}">
-                                        <p>SESSIONE A LUNGO TERMINE</p>
+                                        <p>{% trans "LONG TERM SESSION" %}</p>
                                         {% else %}
                                         <img src="{% static 'svg/no_image_available.svg' %}" alt="{{ sub }}">
 
