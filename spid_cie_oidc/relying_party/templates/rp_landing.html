@@ -63,6 +63,18 @@
                                     {% endif %}
                                 </a>
                             </li>
+                         <li>
+                            <a href="{% url 'spid_cie_rp_begin' %}?provider={{sub}}&profile=spid&scope=openid offline_access" id="provider-spid-refresh_token">
+                                <span class="spid-sr-only">{{ attrs.organization_name }} SESSIONE A LUNGO TERMINE</span>
+                                {% if attrs.logo_uri %}
+                                <img src="{{ attrs.logo_uri }}" alt="{{ attrs.organization_name }}">
+                                 <p>SESSIONE A LUNGO TERMINE</p>
+                                {% else %}
+                                <img src="{% static 'svg/no_image_available.svg' %}" alt="{{ sub }}">
+                                <p>{{ sub }}</p>
+                                {% endif %}
+                            </a>
+                         </li>
                         {% endfor %}
                     </ul>
                 </div>
@@ -87,7 +99,6 @@
 
                     <ul id="cie-idp-list-medium-root-get" class="cie-idp-button-menu" aria-labelledby="cie-idp">
                         {% for sub, attrs in cie_providers.items %}
-                            <li>
                                 <li>
                                     <a href="{% url 'spid_cie_rp_begin' %}?provider={{sub}}&profile=cie" id="provider-cie">
                                         <span class="spid-sr-only">{{ attrs.organization_name }}</span>
@@ -96,6 +107,18 @@
                                         {% else %}
                                         <img src="{% static 'svg/no_image_available.svg' %}" alt="{{ sub }}">
                                         <p>{{ sub }}</p>
+                                        {% endif %}
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'spid_cie_rp_begin' %}?provider={{sub}}&profile=cie&scope=openid offline_access" id="provider-cie-refresh_token">
+                                        <span class="spid-sr-only">{{ attrs.organization_name }} SESSIONE A LUNGO TERMINE</span>
+                                        {% if attrs.logo_uri %}
+                                        <img src="{{ attrs.logo_uri }}" alt="{{ attrs.organization_name }}">
+                                        <p>SESSIONE A LUNGO TERMINE</p>
+                                        {% else %}
+                                        <img src="{% static 'svg/no_image_available.svg' %}" alt="{{ sub }}">
+
                                         {% endif %}
                                     </a>
                                 </li>
