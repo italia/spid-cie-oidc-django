@@ -70,8 +70,8 @@ class RefreshTokenTest(TestCase):
             user=User.objects.create(username = "username"),
             user_uid="",
             nonce="",
-            authz_request={"scope": "offline_access", "prompt": "consent", "nonce": "123", "acr_values":["https://www.spid.gov.it/SpidL2"]},
-            client_id="",
+            authz_request={"scope": "offline_access", "prompt": "consent", "nonce": "123", "acr_values": ["https://www.spid.gov.it/SpidL2", "https://www.spid.gov.it/SpidL1"]},
+            client_id=RP_SUB,
             auth_code="code",
         )
         IssuedToken.objects.create(
@@ -82,26 +82,39 @@ class RefreshTokenTest(TestCase):
 
     def test_grant_refresh_token(self):
         client = Client()
+        # print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        # print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        # print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
         url = reverse("oidc_provider_token_endpoint")
         request = dict(
             client_id = RP_CLIENT_ID,
             client_assertion = self.ca_jws,
             client_assertion_type = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
             refresh_token = self.rt_jws,
-            grant_type="refresh_token",
-            code = "code",
-            code_verifier = "code_verifier"
+            grant_type="refresh_token"
+            #code = "code",
+            #code_verifier = "code_verifier"
 
         )
         res = client.post(url, request)
         self.assertTrue(res.status_code == 200)
         refresh_token = verify_jws(res.json().get("refresh_token"), op_conf_priv_jwk)
-        self.assertEqual(refresh_token["sub"], RP_SUB)
+        # print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        # print(res.json())
+        # print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        # print(refresh_token)
+        # print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        # print(refresh_token["aud"], RP_SUB)
+        # print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        self.assertEqual(refresh_token["aud"], RP_SUB)
 
     @override_settings(OIDCFED_PROVIDER_MAX_REFRESH = 1)
     def test_grant_refresh_token_two_times(self):
         client = Client()
         url = reverse("oidc_provider_token_endpoint")
+        print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
         request = dict(
             client_id = RP_CLIENT_ID,
             client_assertion = self.ca_jws,

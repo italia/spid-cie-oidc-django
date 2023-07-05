@@ -37,7 +37,7 @@ logger = logging.getLogger(__name__)
 @login_required
 def oidc_rp_extend_session(request):
     """
-        Call the token revocation endpoint of the op
+        Call the token endpoint of the op
     """
     auth_tokens = OidcAuthenticationToken.objects.filter(
         user=request.user

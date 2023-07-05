@@ -56,6 +56,9 @@ class UserAccessHistoryTest(TestCase):
         session.save()
         url = reverse("oidc_provider_access_history")
         res = client.get(url)
+        print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        print(res)
+        print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
         self.assertTrue(res.status_code == 200)
         self.assertTrue("auth_code=auth_code" in res.content.decode())
 
