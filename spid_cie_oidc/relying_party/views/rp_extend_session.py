@@ -37,7 +37,7 @@ logger = logging.getLogger(__name__)
 @login_required
 def oidc_rp_extend_session(request):
     """
-        Call the token revocation endpoint of the op
+        Call the token endpoint of the op
     """
     auth_tokens = OidcAuthenticationToken.objects.filter(
         user=request.user
@@ -53,11 +53,8 @@ def oidc_rp_extend_session(request):
         return HttpResponseRedirect(default_logout_url)
 
     auth_token = auth_tokens.last()
-    refresh_token = auth_token.refresh_token
-    #logger.info(refresh_token)
 
     authz = auth_token.authz_request
-    provider_conf = authz.provider_configuration
 
     rp_conf = FederationEntityConfiguration.objects.filter(
         sub=authz.client_id,
