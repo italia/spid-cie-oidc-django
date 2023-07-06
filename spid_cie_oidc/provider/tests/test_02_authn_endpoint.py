@@ -337,7 +337,7 @@ class AuthnRequestTest(TestCase):
             url, {"username": "test", "password": "test", "authz_request_object": jws}
         )
         self.assertTrue(res.status_code == 302)
-        self.assertTrue("/oidc/op/consent/" == res.url) #rp-test/landing/
+        self.assertTrue("/oidc/op/rp-test/landing/" == res.url)
 
     @override_settings(OIDCFED_TRUST_ANCHORS=[TA_SUB])
     def test_auth_request_no_correct_authz_request(self):
