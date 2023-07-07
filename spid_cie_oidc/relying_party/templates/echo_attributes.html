@@ -42,6 +42,7 @@ jQuery(function ($) {
     </dl>
 
     <a href="{% url 'spid_cie_rpinitiated_logout' %}" class="btn btn-secondary" role="button">Log out</a>
+    <a href="{% url 'spid_cie_rp_echo_introspection' %}" class="btn btn-secondary" role="button">Verify Token (Introspection)</a>
 
 </div>
 {% if rt_expiration == 0 %}
