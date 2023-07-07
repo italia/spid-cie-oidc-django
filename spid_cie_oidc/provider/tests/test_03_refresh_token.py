@@ -90,14 +90,11 @@ class RefreshTokenTest(TestCase):
             client_assertion_type="urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
             refresh_token=self.rt_jws,
             grant_type="refresh_token"
-            # code = "code",
-            # code_verifier = "code_verifier"
-
         )
         res = client.post(url, request)
         self.assertTrue(res.status_code == 200)
         refresh_token = verify_jws(res.json().get("refresh_token"), op_conf_priv_jwk)
-        self.assertEqual(refresh_token["aud"], RP_SUB)
+        self.assertEqual(refresh_token["aud"], RP_CLIENT_ID)
 
     @override_settings(OIDCFED_PROVIDER_MAX_REFRESH=1)
     def test_grant_refresh_token_two_times(self):
@@ -108,9 +105,7 @@ class RefreshTokenTest(TestCase):
             client_assertion=self.ca_jws,
             client_assertion_type="urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
             refresh_token=self.rt_jws,
-            grant_type="refresh_token",
-            code="code",
-            code_verifier="code_verifier"
+            grant_type="refresh_token"
         )
         res = client.post(url, request)
         self.assertTrue(res.status_code == 200)
@@ -119,9 +114,7 @@ class RefreshTokenTest(TestCase):
             client_assertion=self.ca_jws,
             client_assertion_type="urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
             refresh_token=res.json()["refresh_token"],
-            grant_type="refresh_token",
-            code="code",
-            code_verifier="code_verifier"
+            grant_type="refresh_token"
         )
         res = client.post(url, request)
         self.assertTrue(res.status_code == 400)
