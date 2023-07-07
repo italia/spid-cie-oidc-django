@@ -15,6 +15,8 @@ from spid_cie_oidc.entity.jwtse import (
     unpad_jwt_payload,
 )
 
+from django.shortcuts import render
+
 logger = logging.getLogger(__name__)
 
 
@@ -27,8 +29,9 @@ logger = logging.getLogger(__name__)
     },
     tags=['Relying Party']
 )
-class SpidCieOidcRefreshToken(SpidCieOidcRp, View):
+class SpidCieOidcRpIntrospection(SpidCieOidcRp, View):
     error_template = "rp_error.html"
+    template = "rp_introspection.html"
 
     def get(self, request, *args, **kwargs):
         """
@@ -49,30 +52,11 @@ class SpidCieOidcRefreshToken(SpidCieOidcRp, View):
         auth_token = auth_tokens.last()
 
         try:
-            token_response = self.get_token_request(auth_token, request, "refresh")
-            if token_response.status_code == 400:
-                return HttpResponseRedirect(reverse("spid_cie_rp_landing"))
+            token_response = self.get_token_request(auth_token, request, "introspection")
+            introspection_token_response = json.loads(token_response.content.decode())
+            #request.session["introspection"] = introspection_token_response
+            data = {"introspection": introspection_token_response}
+            return render(request, self.template, data)
 
-            refresh_token_response = json.loads(token_response.content.decode())
-
-            auth_token.refresh_token = refresh_token_response["refresh_token"]
-            auth_token.access_token = refresh_token_response["access_token"]
-            auth_token.save()
-
-            decoded_access_token = unpad_jwt_payload(refresh_token_response["access_token"])
-            decoded_refresh_token = unpad_jwt_payload(refresh_token_response["refresh_token"])
-
-            request.session["rt_expiration"] = decoded_refresh_token['exp'] - iat_now()
-            request.session["rt_jti"] = decoded_refresh_token['jti']
-            request.session["oidc_rp_user_attrs"] = request.user.attributes
-
-            request.session["at_expiration"] = decoded_access_token['exp'] - iat_now()
-            request.session["at_jti"] = decoded_access_token['jti']
-
-            return HttpResponseRedirect(
-                getattr(
-                    settings, "LOGIN_REDIRECT_URL", None
-                ) or reverse("spid_cie_rp_echo_attributes")
-            )
         except Exception as e:  # pragma: no cover
             logger.warning(f"Refresh Token request failed: {e}")

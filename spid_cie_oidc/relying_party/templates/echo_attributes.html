@@ -42,6 +42,7 @@ jQuery(function ($) {
     </dl>
 
     <a href="{% url 'spid_cie_rpinitiated_logout' %}" class="btn btn-secondary" role="button">Log out</a>
+    <a href="{% url 'spid_cie_rp_echo_introspection' %}" class="btn btn-secondary" role="button">Verify Token (Introspection)</a>
 
 </div>
 {% if rt_expiration == 0 %}
@@ -61,7 +62,7 @@ jQuery(function ($) {
     <p> {% trans "The" %} Refresh Token <em>{{ rt_jti }}</em> <br />
         {% trans "expires in" %} <span id="rt_time">{{ rt_expiration }}</span> </p>
     <div class="alert alert-warning" role="alert">
-        <p>NB: {% trans "the number of Refresh Tokens that can be issued for a single session is set in the OPs configuration" %} <em>OIDCFED_PROVIDER_MAX_REFRESH</em>. {% trans "Past this number, the system returns error HTTP/400" %}</p>
+        <p>NB: {% trans "the number of Refresh Tokens that can be issued for a single session is set in the OPs configuration" %} <em>OIDCFED_PROVIDER_MAX_REFRESH</em>. {% trans "Past this number, the system returns error HTTP/400 and redirects to the landing page" %} </p>
     </div>
 </div>
 {% endif %}

@@ -1,0 +1,21 @@
+{% extends 'rp_base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block centered_container %}
+<div class="col-12 p-4">
+    {% csrf_token %}
+<h4>{% trans 'Introspection values' %}</h4>
+
+    <dl class="mt-4 mb-4">
+        {% for attribute, value in introspection.items %}
+        <dt>{{ attribute }}:</dt>
+        <dd>{{ value }}</dd>
+        {% endfor %}
+    </dl>
+
+    <a href="{% url 'spid_cie_rpinitiated_logout' %}" class="btn btn-secondary" role="button">Log out</a>
+    <a href="javascript:history.back()" class="btn btn-secondary" role="button">Go Back</a>
+</div>
+
+{% endblock %}
