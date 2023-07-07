@@ -12,7 +12,7 @@ PKG_NAME = 'spid_cie_oidc'
 INSTALL_REQUIRES = [
     "Django>=4.0",
     "cryptojwt>=1.8.2",
-    "pydantic==1.8.2",
+    "pydantic>=1.8.2,<=1.9.0",
     "pytz>=2021.3",
     "aiohttp",
     "requests",
