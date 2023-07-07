@@ -156,11 +156,7 @@ class TokenEndpoint(OpBase, View):
             refresh_token = iss_token_data['refresh_token'],
             token_type = "Bearer", # nosec B106
             expires_in = expires_in,
-            # TODO: remove unsupported scope
-            #scope = self.authz.authz_request["scope"],
         )
-        # if issued_token.refresh_token:
-        #    data['refresh_token'] = issued_token.refresh_token
 
         return JsonResponse(data)
 
@@ -183,14 +179,6 @@ class TokenEndpoint(OpBase, View):
 
         self.commons = self.get_jwt_common_data()
         self.issuer = self.get_issuer()
-        if request.POST.get("grant_type") == 'authorization_code':
-            self.authz = OidcSession.objects.filter(
-                auth_code=request.POST["code"],
-                revoked=False
-            ).first()
-
-            if not self.authz:
-                return HttpResponseBadRequest()
 
         # check client_assertion and client ownership
         try:
@@ -201,7 +189,7 @@ class TokenEndpoint(OpBase, View):
         except Exception as e: # pragma: no cover
             logger.warning(
                 "Client authentication failed for "
-                f"{request.POST.get('client_id', 'unknow')}: {e}"
+                f"{request.POST.get('client_id', 'unknown')}: {e}"
             )
             return JsonResponse(
                 # TODO: error message here
@@ -213,6 +201,14 @@ class TokenEndpoint(OpBase, View):
             )
 
         if request.POST.get("grant_type") == 'authorization_code':
+            self.authz = OidcSession.objects.filter(
+                auth_code=request.POST["code"],
+                revoked=False
+            ).first()
+
+            if not self.authz:
+                return HttpResponseBadRequest()
+
             return self.grant_auth_code(request)
         elif request.POST.get("grant_type") == 'refresh_token':
             return self.grant_refresh_token(request)
