@@ -21,7 +21,7 @@ op_conf = {
     "metadata": {
         "openid_provider": {
             "authorization_endpoint": "http://op-test/oidc/op/authorization/",
-            "token_endpoint": "http://op-test/oidc/op/token/",
+            "token_endpoint": "http://op-test/oidc/op/token",
             "userinfo_endpoint": "http://op-test/oidc/op/userinfo/",
             "introspection_endpoint": "http://op-test/oidc/op/introspection/",
             "revocation_endpoint": "http://op-test/oidc/op/revocation/",

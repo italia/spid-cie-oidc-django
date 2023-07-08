@@ -50,7 +50,7 @@ class RefreshTokenTest(TestCase):
             trust_anchor=self.ta_fes,
             is_active=True,
         )
-        self.jwt_auds = [op_conf["sub"], "http://testserver/oidc/op/", "http://testserver/oidc/op/token/"]
+        self.jwt_auds = [op_conf["sub"], "http://testserver/oidc/op/", "http://testserver/oidc/op/token"]
         CLIENT_ASSERTION = {
             "iss": RP_SUB,
             "sub": RP_SUB,

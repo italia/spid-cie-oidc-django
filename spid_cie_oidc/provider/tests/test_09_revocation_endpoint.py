@@ -38,7 +38,7 @@ class RevocationEndponitTest(TestCase):
         )
         self.op_local_conf = deepcopy(op_conf)
         FederationEntityConfiguration.objects.create(**self.op_local_conf)
-        self.jwt_auds = [op_conf["sub"], "http://testserver/oidc/op/", "http://testserver/oidc/op/revocation/"]
+        self.jwt_auds = [op_conf["sub"], "http://testserver/oidc/op/", "http://testserver/oidc/op/revocation"]
         CLIENT_ASSERTION = {
             "iss": RP_SUB,
             "sub": RP_SUB,
