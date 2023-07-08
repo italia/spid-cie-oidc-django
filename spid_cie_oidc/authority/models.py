@@ -179,10 +179,10 @@ class FederationDescendant(TimeStampedModel):
             "jwks": {"keys": self.jwks},
             "metadata_policy": policies,
         }
-        
+
         if ta.fetch_endpoint:
             data["source_endpoint"] = ta.fetch_endpoint
-        
+
         if aud:
             data["aud"] = [aud] if isinstance(aud, str) else aud
 
