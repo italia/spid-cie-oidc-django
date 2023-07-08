@@ -4,7 +4,6 @@ import json
 import logging
 
 import cryptojwt
-from cryptojwt.jws.utils import left_hash
 from cryptojwt.exception import UnsupportedAlgorithm, VerificationError
 from cryptojwt.jwe.jwe import factory
 from cryptojwt.jwe.jwe_ec import JWE_EC
