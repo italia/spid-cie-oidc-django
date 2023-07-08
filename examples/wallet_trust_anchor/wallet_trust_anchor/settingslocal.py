@@ -22,7 +22,7 @@ DEBUG = True
 
 # the path corresponding the admin backend, default if not defined: admin/
 # CHANGE THIS VALUE
-ADMIN_PATH = 'admin'
+ADMIN_PATH = 'admin/'
 APPEND_SLASH = False
 
 # required for onboarding checks and also for all the leafs

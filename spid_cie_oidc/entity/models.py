@@ -84,7 +84,7 @@ class FederationEntityConfiguration(TimeStampedModel):
         validators = [validate_private_jwks],
     )
     jwks_core = models.JSONField(
-        blank=False,
+        blank=True,
         null=False,
         help_text=_("a list of private keys for Core ops"),
         default=_create_jwks,
