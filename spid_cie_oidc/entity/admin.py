@@ -168,7 +168,6 @@ class TrustChainAdmin(admin.ModelAdmin):
         "created",
         "modified",
         "parties_involved",
-        "metadata",
         "status",
         "log",
         "chain",
