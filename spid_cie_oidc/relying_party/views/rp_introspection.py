@@ -54,7 +54,6 @@ class SpidCieOidcRpIntrospection(SpidCieOidcRp, View):
         try:
             token_response = self.get_token_request(auth_token, request, "introspection")
             introspection_token_response = json.loads(token_response.content.decode())
-            #request.session["introspection"] = introspection_token_response
             data = {"introspection": introspection_token_response}
             return render(request, self.template, data)
 

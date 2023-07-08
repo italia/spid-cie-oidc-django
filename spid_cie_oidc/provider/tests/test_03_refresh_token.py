@@ -95,6 +95,7 @@ class RefreshTokenTest(TestCase):
         self.assertTrue(res.status_code == 200)
         refresh_token = verify_jws(res.json().get("refresh_token"), op_conf_priv_jwk)
         self.assertEqual(refresh_token["aud"], RP_CLIENT_ID)
+        self.assertEqual(refresh_token["iss"], self.op_local_conf["sub"])
 
     @override_settings(OIDCFED_PROVIDER_MAX_REFRESH=1)
     def test_grant_refresh_token_two_times(self):
