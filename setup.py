@@ -10,8 +10,8 @@ SRC_FOLDER = '.'
 PKG_NAME = 'spid_cie_oidc'
 
 INSTALL_REQUIRES = [
-    "Django>=4.0,<5.0",
-    "cryptojwt>=1.8.2,<2.0",
+    "Django>=4.0",
+    "cryptojwt>=1.8.2",
     "pydantic>=1.8.2,<2.0",
     "pytz>=2021.3",
     "aiohttp>=3.8,<3.9",
