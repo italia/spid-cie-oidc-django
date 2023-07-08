@@ -30,6 +30,7 @@ class FederationHistoricalKey(admin.ModelAdmin):
     list_filter = ("created", "modified", "inactive_from")
     search_fields = ("entity",)
 
+
 @admin.register(FederationEntityConfiguration)
 class FederationEntityConfigurationAdmin(admin.ModelAdmin):
     # formfield_overrides = {

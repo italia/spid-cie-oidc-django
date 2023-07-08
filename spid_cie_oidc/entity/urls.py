@@ -32,8 +32,8 @@ urlpatterns = [
     ),
     path(f"{_PREF}resolve", resolve_entity_statement, name="oidcfed_resolve"),
     path(
-        f"{_PREF}.well-known/openid-federation-historical-jwks", 
-        historical_keys, 
+        f"{_PREF}.well-known/openid-federation-historical-jwks",
+        historical_keys,
         name="oidcfed_historical_keys"
     )
 ]

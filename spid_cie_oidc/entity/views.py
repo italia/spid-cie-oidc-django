@@ -19,14 +19,15 @@ from .models import (
     StaffToken
 )
 from .settings import HTTPC_PARAMS
-from .statements import OIDCFED_FEDERATION_WELLKNOWN_URL 
+from .statements import OIDCFED_FEDERATION_WELLKNOWN_URL
 from .utils import iat_now
 
 logger = logging.getLogger(__name__)
 
+
 def get_subs_from_wellknown(request, wkuri :str):
     sub = request.build_absolute_uri().split(wkuri)[0]
-    
+
     sub_values = []
     if sub[-1] == "/":
         sub_values.extend((sub, sub[:-1]))
@@ -40,9 +41,9 @@ def entity_configuration(request):
     OIDC Federation Entity Configuration at
     .well-known/openid-federation
     """
-    
-    sub_values = get_subs_from_wellknown(OIDCFED_FEDERATION_WELLKNOWN_URL)
-    
+
+    _sub_values = get_subs_from_wellknown(request, OIDCFED_FEDERATION_WELLKNOWN_URL)
+
     conf = FederationEntityConfiguration.objects.filter(
         # TODO: check for reverse proxy and forwarders ...
         sub__in=_sub_values,
@@ -190,21 +191,21 @@ def historical_keys(request):
     OIDC Federation Entity Configuration at
     .well-known/openid-federation
     """
-    
+
     sub_values = get_subs_from_wellknown(request, '.well-known/openid-federation-historical-jwks')
     keys = FederationHistoricalKey.objects.filter(entity__sub__in=sub_values)
-    
+
     entity = keys.first().entity if keys.first() else None
-    
+
     reg = {
         "iss": entity.sub if entity else sub_values[0],
         "iat": iat_now(),
         "keys": []
     }
-    
+
     for i in keys:
         reg["keys"].append(i.as_dict)
-    
+
     if request.GET.get("format") == "json": # pragma: no cover
         return JsonResponse(reg, safe=False)
     else:
@@ -214,7 +215,7 @@ def historical_keys(request):
             typ="jwk-set+jwt",
             # **kwargs,
         )
-        
+
         return HttpResponse(
             res, content_type="application/jwk-set+jwt"
         )

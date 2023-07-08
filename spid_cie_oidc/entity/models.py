@@ -444,7 +444,7 @@ class FederationHistoricalKey(TimeStampedModel):
     """
     https://openid.net/specs/openid-connect-federation-1_0.html#name-federation-historical-keys-
     """
-    
+
     REVOCATION_REASONS_MAP = (
         ("0", 'unspecified'),
         ("1", 'keyCompromise'),
@@ -458,9 +458,9 @@ class FederationHistoricalKey(TimeStampedModel):
         ("9", 'privilegeWithdrawn'),
         ("10", 'aACompromise')
     )
-    
+
     # REVOCATION_REASONS_CODES = {k:k for k in REVOCATION_REASONS_MAP.keys()}
-    
+
     entity = models.ForeignKey(FederationEntityConfiguration, on_delete=models.CASCADE)
     kid = models.CharField(
         blank=False, null=False, max_length=128
@@ -482,7 +482,7 @@ class FederationHistoricalKey(TimeStampedModel):
     def as_dict(self):
         if not self.jwk:
             return {}
-            
+
         kdict = public_jwk_from_private_jwk(self.jwk)
         if self.revocation_motivation:
             kdict["revoked"] = {
@@ -508,7 +508,7 @@ class FederationHistoricalKey(TimeStampedModel):
                     self.jwk = self.entity.jwks_fed.pop(_indx)
                     self.entity.save()
                     break
-                
+
         super().save(*args, **kwargs)
 
     def __str__(self):
