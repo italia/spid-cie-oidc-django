@@ -88,7 +88,7 @@ def oidc_rpinitiated_logout(request):
         )
         try:
             requests.post(
-                revocation_endpoint_url, 
+                revocation_endpoint_url,
                 data = revocation_request,
                 timeout=getattr(
                     settings, "HTTPC_TIMEOUT", 8

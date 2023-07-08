@@ -26,7 +26,7 @@ def openid_configuration(request):
     ).first()
     if not conf: # pragma: no cover
         raise Http404()
-    
+
     content = conf.entity_configuration_as_dict['metadata'].get('openid_provider', None)
     if content:
         return JsonResponse(content, safe=False)

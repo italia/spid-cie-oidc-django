@@ -46,7 +46,7 @@ class OidcUserInfo(object):
             try:
                 # if application/json ... let it be
                 return authz_userinfo.json()
-            except Exception as e:
+            except Exception:
                 logger.debug("userinfo response is not in plain json")
 
             try:

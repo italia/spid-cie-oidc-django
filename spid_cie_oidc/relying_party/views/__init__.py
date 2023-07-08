@@ -29,21 +29,19 @@ class SpidCieOidcRp:
             raise InvalidTrustchain(
                 "Missing provider url. Please try '?provider=https://provider-subject/'"
             )
-        
+
         trust_anchor = request.GET.get("trust_anchor", None)
         if trust_anchor != None and trust_anchor not in settings.OIDCFED_TRUST_ANCHORS:
             logger.warning("Unallowed Trust Anchor")
             raise InvalidTrustchain("Unallowed Trust Anchor")
-        
+
         if not trust_anchor:
             for profile,value in settings.OIDCFED_IDENTITY_PROVIDERS.items():
                 if request.GET["provider"] in value:
                     trust_anchor = value[request.GET["provider"]]
-        
+
         if not trust_anchor:
             trust_anchor = settings.OIDCFED_DEFAULT_TRUST_ANCHOR
-
-
 
         tc = TrustChain.objects.filter(
             sub=request.GET["provider"],

@@ -14,10 +14,10 @@ from spid_cie_oidc.entity.utils import datetime_from_timestamp, exp_from_now, ia
 from spid_cie_oidc.entity.utils import get_jwks
 from spid_cie_oidc.entity.exceptions import TrustchainMissingMetadata
 from spid_cie_oidc.provider.exceptions import (
-    AuthzRequestReplay, 
-    ExpiredAuthCode, 
-    InvalidSession, 
-    RevokedSession, 
+    AuthzRequestReplay,
+    ExpiredAuthCode,
+    InvalidSession,
+    RevokedSession,
     ValidationException
 )
 from spid_cie_oidc.provider.models import OidcSession
@@ -100,7 +100,7 @@ class OpBase:
                     logger.debug(f"TrustchainMissingMetadata: {e}")
                     # unless we find the good TA
                     continue
-                
+
             if not rp_trust_chain or not rp_trust_chain.is_valid:
                 _msg = (
                     f"Failed trust chain validation for {self.payload['iss']}. "

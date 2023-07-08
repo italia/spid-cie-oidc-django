@@ -1,7 +1,6 @@
 from copy import deepcopy
 
 from django.test import TestCase
-from spid_cie_oidc.authority.settings import FEDERATION_DEFAULT_POLICY
 from spid_cie_oidc.entity.policy import (
     apply_policy, 
     diff2policy,

@@ -17,7 +17,7 @@ from django.conf import settings
 from django.urls import path
 
 from .views import (
-    entity_configuration, 
+    entity_configuration,
     resolve_entity_statement
 )
 

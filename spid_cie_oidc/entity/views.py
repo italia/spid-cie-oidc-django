@@ -142,7 +142,7 @@ def openid_jwks(request, metadata_type:str, resource_type:str):
         raise Http404()
     content = conf.entity_configuration_as_dict['metadata'].get(
             metadata_type, {}
-        ).get("jwks", {})
+    ).get("jwks", {})
 
     if not content:
         raise Http404()

@@ -239,7 +239,7 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
         authz_token.token_type = token_response["token_type"]
         authz_token.expires_in = token_response["expires_in"]
         authz_token.save()
-        
+
         userinfo = self.get_userinfo(
             authz.state,
             authz_token.access_token,

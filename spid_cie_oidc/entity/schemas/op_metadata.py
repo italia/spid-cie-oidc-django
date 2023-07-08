@@ -114,7 +114,7 @@ class OPMetadata(BaseModel):
             if values.get(i):
                 jwks_there = True
                 break
-        
+
         if not jwks_there:
             raise ValueError(
                 "one of signed_jwks_uri or jwks_uri or jwks must be set"

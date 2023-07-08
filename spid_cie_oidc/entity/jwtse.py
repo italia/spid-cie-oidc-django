@@ -40,23 +40,23 @@ def unpad_jwt_payload(jwt: str) -> dict:
 def create_jwe(plain_dict: Union[dict, str, int, None], jwk_dict: dict, **kwargs) -> str:
     logger.debug(f"Encrypting dict as JWE: " f"{plain_dict}")
     _key = key_from_jwk_dict(jwk_dict)
-    
+
     if isinstance(_key, cryptojwt.jwk.rsa.RSAKey):
         JWE_CLASS = JWE_RSA
     elif isinstance(_key, cryptojwt.jwk.ec.ECKey):
         JWE_CLASS = JWE_EC
-    
+
     if isinstance(plain_dict, dict):
         _payload = json.dumps(plain_dict).encode()
     elif not plain_dict:
         logger.warning(f"create_jwe with null payload!")
         _payload = ""
     elif isinstance(plain_dict,(str, int)):
-        _payload =  plain_dict
+        _payload = plain_dict
     else:
         logger.error(f"create_jwe with unsupported payload type!")
         _payload = ""
-    
+
     _keyobj = JWE_CLASS(
         _payload,
         alg=DEFAULT_JWE_ALG,
@@ -64,7 +64,7 @@ def create_jwe(plain_dict: Union[dict, str, int, None], jwk_dict: dict, **kwargs
         kid=_key.kid,
         **kwargs
     )
-    
+
     jwe = _keyobj.encrypt(_key.public_key())
     logger.debug(f"Encrypted dict as JWE: {jwe}")
     return jwe
@@ -90,7 +90,7 @@ def decrypt_jwe(jwe: str, jwk_dict: dict) -> dict:
     # _dkey = RSAKey(priv_key=PRIV_KEY)
     _dkey = key_from_jwk_dict(jwk_dict)
     msg = _decryptor.decrypt(jwe, [_dkey])
-    
+
     try:
         msg_dict = json.loads(msg)
         logger.debug(f"Decrypted JWT as: {json.dumps(msg_dict, indent=2)}")
