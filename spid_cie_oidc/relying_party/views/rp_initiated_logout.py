@@ -1,19 +1,13 @@
 import logging
 
-import requests
 
 from djagger.decorators import schema
 from django.conf import settings
 from django.contrib.auth import logout
-from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils import timezone
-from spid_cie_oidc.entity.jwtse import create_jws
-from spid_cie_oidc.entity.models import FederationEntityConfiguration
 from ..models import OidcAuthenticationToken
-from ..oauth2 import *
-from ..oidc import *
 
 from . import SpidCieOidcRp
 from django.views import View
@@ -53,7 +47,7 @@ class SpidCieOidcRpLogout(SpidCieOidcRp, View):
         logout(request)
 
         try:
-            token_response = self.get_token_request(auth_token, request, "revocation")
+            self.get_token_request(auth_token, request, "revocation")
             auth_token.logged_out = timezone.localtime()
             auth_token.save()
         except Exception as e:  # pragma: no cover

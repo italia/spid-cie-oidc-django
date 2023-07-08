@@ -1,7 +1,6 @@
 import logging
 
 from djagger.decorators import schema
-from django.http import HttpResponseRedirect
 from django.urls import reverse
 
 from ..models import OidcAuthenticationToken
@@ -11,9 +10,6 @@ from ..oidc import *
 from . import SpidCieOidcRp
 from django.views import View
 
-from spid_cie_oidc.entity.jwtse import (
-    unpad_jwt_payload,
-)
 
 from django.shortcuts import render
 

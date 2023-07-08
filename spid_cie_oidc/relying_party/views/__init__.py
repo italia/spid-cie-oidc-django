@@ -1,9 +1,7 @@
 import logging
 from django.conf import settings
 from pydantic import ValidationError
-from requests import Response
 
-from ..models import OidcAuthenticationToken
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from spid_cie_oidc.entity.jwtse import create_jws

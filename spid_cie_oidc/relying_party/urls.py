@@ -8,7 +8,7 @@ from .views.rp_begin import SpidCieOidcRpBeginView
 from .views.rp_callback import SpidCieOidcRpCallbackView
 from .views.rp_extend_session import SpidCieOidcRefreshToken
 from .views.rp_callback_echo_attributes import SpidCieOidcRpCallbackEchoAttributes
-from .views.rp_initiated_logout import SpidCieOidcRpLogout #oidc_rpinitiated_logout
+from .views.rp_initiated_logout import SpidCieOidcRpLogout  # oidc_rpinitiated_logout
 from .views.rp_introspection import SpidCieOidcRpIntrospection
 from .views.rp_landing import oidc_rp_landing
 from django.contrib.auth.decorators import login_required
@@ -64,7 +64,7 @@ urlpatterns += (
 
 urlpatterns += (
     path(f"{_PREF}/landing", oidc_rp_landing, name="spid_cie_rp_landing"),
-    #path(f"{_PREF}/logout", oidc_rpinitiated_logout, name="spid_cie_rpinitiated_logout"),
+    # path(f"{_PREF}/logout", oidc_rpinitiated_logout, name="spid_cie_rpinitiated_logout"),
     path(
         f"{_PREF}/<str:metadata_type>/jwks.json",
         openid_connect_jwks_uri,
