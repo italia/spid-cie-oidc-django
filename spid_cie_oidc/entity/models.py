@@ -249,6 +249,13 @@ class FederationEntityConfiguration(TimeStampedModel):
             **kwargs,
         )
 
+    @property
+    def fetch_endpoint(self) -> Union[str, None]:
+        metadata = self.entity_configuration_as_dict.get('metadata', {})
+        if 'federation_entity' in metadata:
+            return metadata['federation_entity'].get("federation_fetch_endpoint", None)
+        
+
     def set_jwks_as_array(self):
         for i in ('jwks_fed','jwks_core'):
             value = getattr(self, i)

@@ -170,15 +170,19 @@ class FederationDescendant(TimeStampedModel):
 
         # apply custom policies if defined
         policies.update(self.metadata_policy)
-
+        ta = get_first_self_trust_anchor(iss)
         data = {
             "exp": exp_from_now(minutes=FEDERATION_DEFAULT_EXP),
             "iat": iat_now(),
-            "iss": get_first_self_trust_anchor(iss).sub,
+            "iss": ta.sub,
             "sub": self.sub,
             "jwks": {"keys": self.jwks},
             "metadata_policy": policies,
         }
+        
+        if ta.fetch_endpoint:
+            data["source_endpoint"] = ta.fetch_endpoint
+        
         if aud:
             data["aud"] = [aud] if isinstance(aud, str) else aud
 
