@@ -12,12 +12,12 @@ from spid_cie_oidc.authority.tests.settings import (
 from spid_cie_oidc.entity.jwtse import create_jws, verify_jws
 from spid_cie_oidc.entity.models import (
     FederationEntityConfiguration,
-    FetchedEntityStatement, 
+    FetchedEntityStatement,
     TrustChain
 )
 from spid_cie_oidc.entity.tests.settings import TA_SUB
 from spid_cie_oidc.entity.utils import (
-    datetime_from_timestamp, 
+    datetime_from_timestamp,
     exp_from_now,
     iat_now
 )
@@ -27,10 +27,10 @@ from spid_cie_oidc.provider.tests.settings import op_conf, op_conf_priv_jwk
 RP_SUB = rp_conf["sub"]
 RP_CLIENT_ID = rp_conf["metadata"]["openid_relying_party"]["client_id"]
 
+
 class RefreshTokenTest(TestCase):
 
-
-    def setUp(self): 
+    def setUp(self):
         self.op_local_conf = deepcopy(op_conf)
         FederationEntityConfiguration.objects.create(**self.op_local_conf)
         self.ta_fes = FetchedEntityStatement.objects.create(
@@ -42,7 +42,7 @@ class RefreshTokenTest(TestCase):
         self.trust_chain = TrustChain.objects.create(
             sub=RP_SUB,
             exp=datetime_from_timestamp(exp_from_now(33)),
-            jwks = [],
+            jwks=[],
             metadata=RP_METADATA,
             status="valid",
             trust_anchor=self.ta_fes,
@@ -67,61 +67,55 @@ class RefreshTokenTest(TestCase):
         }
         self.rt_jws = create_jws(refresh_token, op_conf_priv_jwk)
         session = OidcSession.objects.create(
-            user=User.objects.create(username = "username"),
+            user=User.objects.create(username="username"),
             user_uid="",
             nonce="",
-            authz_request={"scope": "offline_access", "prompt": "consent", "nonce": "123", "acr_values":["https://www.spid.gov.it/SpidL2"]},
-            client_id="",
+            authz_request={"scope": "offline_access", "prompt": "consent", "nonce": "123",
+                           "acr_values": ["https://www.spid.gov.it/SpidL2", "https://www.spid.gov.it/SpidL1"]},
+            client_id=RP_SUB,
             auth_code="code",
         )
         IssuedToken.objects.create(
-            refresh_token = self.rt_jws,
-            session = session,
-            expires = timezone.localtime()
+            refresh_token=self.rt_jws,
+            session=session,
+            expires=timezone.localtime()
         )
 
     def test_grant_refresh_token(self):
         client = Client()
         url = reverse("oidc_provider_token_endpoint")
         request = dict(
-            client_id = RP_CLIENT_ID,
-            client_assertion = self.ca_jws,
-            client_assertion_type = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-            refresh_token = self.rt_jws,
-            grant_type="refresh_token",
-            code = "code",
-            code_verifier = "code_verifier"
-
+            client_id=RP_CLIENT_ID,
+            client_assertion=self.ca_jws,
+            client_assertion_type="urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+            refresh_token=self.rt_jws,
+            grant_type="refresh_token"
         )
         res = client.post(url, request)
         self.assertTrue(res.status_code == 200)
         refresh_token = verify_jws(res.json().get("refresh_token"), op_conf_priv_jwk)
-        self.assertEqual(refresh_token["sub"], RP_SUB)
+        self.assertEqual(refresh_token["aud"], RP_CLIENT_ID)
+        self.assertEqual(refresh_token["iss"], self.op_local_conf["sub"])
 
-    @override_settings(OIDCFED_PROVIDER_MAX_REFRESH = 1)
+    @override_settings(OIDCFED_PROVIDER_MAX_REFRESH=1)
     def test_grant_refresh_token_two_times(self):
         client = Client()
         url = reverse("oidc_provider_token_endpoint")
         request = dict(
-            client_id = RP_CLIENT_ID,
-            client_assertion = self.ca_jws,
-            client_assertion_type = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-            refresh_token = self.rt_jws,
-            grant_type="refresh_token",
-            code = "code",
-            code_verifier = "code_verifier"
+            client_id=RP_CLIENT_ID,
+            client_assertion=self.ca_jws,
+            client_assertion_type="urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+            refresh_token=self.rt_jws,
+            grant_type="refresh_token"
         )
         res = client.post(url, request)
         self.assertTrue(res.status_code == 200)
         request = dict(
-            client_id = RP_CLIENT_ID,
-            client_assertion = self.ca_jws,
-            client_assertion_type = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-            refresh_token = res.json()["refresh_token"],
-            grant_type="refresh_token",
-            code = "code",
-            code_verifier = "code_verifier"
+            client_id=RP_CLIENT_ID,
+            client_assertion=self.ca_jws,
+            client_assertion_type="urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+            refresh_token=res.json()["refresh_token"],
+            grant_type="refresh_token"
         )
         res = client.post(url, request)
         self.assertTrue(res.status_code == 400)
-        

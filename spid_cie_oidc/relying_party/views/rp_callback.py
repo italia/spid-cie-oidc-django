@@ -11,7 +11,8 @@ from django.utils.translation import gettext as _
 from django.views import View
 from spid_cie_oidc.entity.jwtse import (
     unpad_jwt_payload,
-    verify_jws
+    verify_jws,
+    verify_at_hash
 )
 from spid_cie_oidc.entity.models import FederationEntityConfiguration
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
@@ -230,6 +231,18 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
         decoded_id_token = unpad_jwt_payload(id_token)
         logger.debug(decoded_id_token)
 
+        try:
+            verify_at_hash(decoded_id_token, access_token)
+        except Exception as e:
+            logger.warning(
+                f"at_hash validation error: {e} "
+            )
+            context = {
+                "error": "at_hash verification failed",
+                "error_description": _("at_hash validation error."),
+            }
+            return render(request, self.error_template, context, status=403)
+
         decoded_access_token = unpad_jwt_payload(access_token)
         logger.debug(decoded_access_token)
 
@@ -275,9 +288,23 @@ class SpidCieOidcRpCallbackView(View, SpidCieOidcRp, OidcUserInfo, OAuth2Authori
             context = {"error": _("No user found"), "error_description": _("")}
             return render(request, self.error_template, context, status=403)
 
+        request.session["rt_expiration"] = 0
+
+        if token_response.get('refresh_token', None):
+            refresh_token = token_response["refresh_token"]
+            authz_token.refresh_token = refresh_token
+            decoded_refresh_token = unpad_jwt_payload(refresh_token)
+            request.session["rt_expiration"] = decoded_refresh_token['exp'] - iat_now()
+            request.session["rt_jti"] = decoded_refresh_token['jti']
+            logger.info(decoded_refresh_token)
+
         # authenticate the user
         login(request, user)
         request.session["oidc_rp_user_attrs"] = user_attrs
+
+        request.session["at_expiration"] = decoded_access_token['exp'] - iat_now()
+        request.session["at_jti"] = decoded_access_token['jti']
+
         authz_token.user = user
         authz_token.save()
         return HttpResponseRedirect(
