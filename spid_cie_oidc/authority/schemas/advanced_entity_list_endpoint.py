@@ -28,8 +28,8 @@ class AdvancedEntityListResponse(BaseModel):
             iss= "https://registry.spid.gov.it/",
             iat= 1620050972,
             entities= [
-                # "{'https://rp.example.it/spid/': {'iat': 1588455866} }",
-                # "{'https://rp.another.it/spid/': {'iat': 1588455866} }"
+                # "{'https://rp.example.it/spid': {'iat': 1588455866} }",
+                # "{'https://rp.another.it/spid': {'iat': 1588455866} }"
             ],
             page= 1,
             total_pages= 2,

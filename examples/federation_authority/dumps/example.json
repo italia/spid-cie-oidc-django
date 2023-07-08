@@ -89,7 +89,7 @@
     "created": "2022-02-05T22:04:49.310Z",
     "modified": "2022-03-17T22:39:55.749Z",
     "uuid": "afd47731-7484-427f-a1db-4e470835fa86",
-    "sub": "http://127.0.0.1:8000/",
+    "sub": "http://127.0.0.1:8000",
     "default_exp": 33,
     "default_signature_alg": "RS256",
     "authority_hints": [],
@@ -135,12 +135,12 @@
         "contacts": [
           "ops@localhost"
         ],
-        "federation_fetch_endpoint": "http://127.0.0.1:8000/fetch/",
-        "federation_resolve_endpoint": "http://127.0.0.1:8000/resolve/",
-        "federation_trust_mark_status_endpoint": "http://127.0.0.1:8000/trust_mark_status/",
+        "federation_fetch_endpoint": "http://127.0.0.1:8000/fetch",
+        "federation_resolve_endpoint": "http://127.0.0.1:8000/resolve",
+        "federation_trust_mark_status_endpoint": "http://127.0.0.1:8000/trust_mark_status",
         "homepage_uri": "http://127.0.0.1:8000",
         "name": "example TA",
-        "federation_list_endpoint": "http://127.0.0.1:8000/list/"
+        "federation_list_endpoint": "http://127.0.0.1:8000/list"
       }
     },
     "constraints": {
@@ -156,11 +156,11 @@
     "created": "2022-02-14T23:44:47.487Z",
     "modified": "2022-03-11T22:40:23.007Z",
     "uuid": "780373bb-7b4e-4511-8fef-ca920d66addb",
-    "sub": "http://127.0.0.1:8000/oidc/rp/",
+    "sub": "http://127.0.0.1:8000/oidc/rp",
     "default_exp": 2880,
     "default_signature_alg": "RS256",
     "authority_hints": [
-      "http://127.0.0.1:8000/"
+      "http://127.0.0.1:8000"
     ],
     "jwks_fed": [
       {
@@ -186,7 +186,7 @@
     ],
     "trust_marks": [
       {
-        "id": "https://www.spid.gov.it/openid-federation/agreement/sp-public/",
+        "id": "https://www.spid.gov.it/openid-federation/agreement/sp-public",
         "trust_mark": "eyJhbGciOiJSUzI1NiIsImtpZCI6IkZpZll4MDNibm9zRDhtNmdZUUlmTkhOUDljTV9TYW05VGM1bkxsb0lJcmMifQ.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvIiwic3ViIjoiaHR0cDovLzEyNy4wLjAuMTo4MDAwL29pZGMvcnAvIiwiaWF0IjoxNjQ1NjEyNDAxLCJpZCI6Imh0dHBzOi8vd3d3LnNwaWQuZ292Lml0L2NlcnRpZmljYXRpb24vcnAiLCJtYXJrIjoiaHR0cHM6Ly93d3cuYWdpZC5nb3YuaXQvdGhlbWVzL2N1c3RvbS9hZ2lkL2xvZ28uc3ZnIiwicmVmIjoiaHR0cHM6Ly9kb2NzLml0YWxpYS5pdC9pdGFsaWEvc3BpZC9zcGlkLXJlZ29sZS10ZWNuaWNoZS1vaWRjL2l0L3N0YWJpbGUvaW5kZXguaHRtbCJ9.mSPNR0AOPBn3UNJAIbrWUMQ8vGTetQajpa3i59JDKDXYWqo2TUGh4AQBghCiG3qqV9cl-hleLtuwoeZ1InKHeslTLftVdcR3meeMLs3mLobHYr26Mi7pC7-jx1ZFVyk4GXl7mn9WVSQGEUOiuhL01tdlUfxf0TJSFSOMEZGpCA3hXroLOnEl3FjkAw7sPvjfImsbadbHVusb72HTTs1n5Xo7z3As3fDWHcxD-fvvq0beu9cx-L2sT4YaNC-ELd1M3m5r0NIjjEUAt4Gnot-l5Z3-C_bA41uvh2hX34U_fGZ6jpmuluJo1Lqi26N8LTB-Rbu0UMaZnkRg9E72_YRZig"
       }
     ],
@@ -196,7 +196,7 @@
       "openid_relying_party": {
         "organization_name": "that fancy RP",
         "application_type": "web",
-        "client_id": "http://127.0.0.1:8000/oidc/rp/",
+        "client_id": "http://127.0.0.1:8000/oidc/rp",
         "client_registration_types": [
           "automatic"
         ],
@@ -241,11 +241,11 @@
     "created": "2022-02-25T16:27:20.027Z",
     "modified": "2022-04-23T15:45:45.117Z",
     "uuid": "86834b2b-73be-480a-932d-000c1c7af69b",
-    "sub": "http://127.0.0.1:8000/oidc/op/",
+    "sub": "http://127.0.0.1:8000/oidc/op",
     "default_exp": 2880,
     "default_signature_alg": "RS256",
     "authority_hints": [
-      "http://127.0.0.1:8000/"
+      "http://127.0.0.1:8000"
     ],
     "jwks_fed": [
       {
@@ -275,16 +275,16 @@
     "metadata": {
       "openid_provider": {
         "authorization_endpoint": "http://127.0.0.1:8000/oidc/op/authorization",
-        "revocation_endpoint": "http://127.0.0.1:8000/oidc/op/revocation/",
+        "revocation_endpoint": "http://127.0.0.1:8000/oidc/op/revocation",
         "id_token_encryption_alg_values_supported": [
           "RSA-OAEP"
         ],
         "id_token_encryption_enc_values_supported": [
           "A128CBC-HS256"
         ],
-        "token_endpoint": "http://127.0.0.1:8000/oidc/op/token/",
-        "userinfo_endpoint": "http://127.0.0.1:8000/oidc/op/userinfo/",
-        "introspection_endpoint": "http://127.0.0.1:8000/oidc/op/introspection/",
+        "token_endpoint": "http://127.0.0.1:8000/oidc/op/token",
+        "userinfo_endpoint": "http://127.0.0.1:8000/oidc/op/userinfo",
+        "introspection_endpoint": "http://127.0.0.1:8000/oidc/op/introspection",
         "claims_parameter_supported": true,
         "contacts": [
           "ops@https://idp.it"
@@ -331,7 +331,7 @@
           "RS256",
           "ES256"
         ],
-        "issuer": "http://127.0.0.1:8000/oidc/op/",
+        "issuer": "http://127.0.0.1:8000/oidc/op",
         "jwks_uri": "http://127.0.0.1:8000/oidc/op/openid_provider/jwks.json",
         "signed_jwks_uri": "http://127.0.0.1:8000/oidc/op/openid_provider/jwks.jose",
         "jwks": {
@@ -351,7 +351,7 @@
         ],
         "logo_uri": "http://127.0.0.1:8000/static/svg/spid-logo-c-lb.svg",
         "organization_name": "SPID OIDC identity provider",
-        "op_policy_uri": "http://127.0.0.1:8000/oidc/op/en/website/legal-information/",
+        "op_policy_uri": "http://127.0.0.1:8000/oidc/op/en/website/legal-information",
         "request_parameter_supported": true,
         "request_uri_parameter_supported": true,
         "require_request_uri_registration": true,
@@ -425,15 +425,15 @@
   "fields": {
     "created": "2022-03-31T19:38:18.847Z",
     "modified": "2022-03-31T19:38:18.847Z",
-    "iss": "http://127.0.0.1:8000/",
-    "sub": "http://127.0.0.1:8000/",
+    "iss": "http://127.0.0.1:8000",
+    "sub": "http://127.0.0.1:8000",
     "exp": "2022-04-23T16:20:28Z",
     "iat": "2022-04-23T15:47:28Z",
     "statement": {
       "exp": 1650730828,
       "iat": 1650728848,
-      "iss": "http://127.0.0.1:8000/",
-      "sub": "http://127.0.0.1:8000/",
+      "iss": "http://127.0.0.1:8000",
+      "sub": "http://127.0.0.1:8000",
       "jwks": {
         "keys": [
           {
@@ -449,12 +449,12 @@
           "contacts": [
             "ops@localhost"
           ],
-          "federation_fetch_endpoint": "http://127.0.0.1:8000/fetch/",
-          "federation_resolve_endpoint": "http://127.0.0.1:8000/resolve/",
-          "federation_trust_mark_status_endpoint": "http://127.0.0.1:8000/trust_mark_status/",
+          "federation_fetch_endpoint": "http://127.0.0.1:8000/fetch",
+          "federation_resolve_endpoint": "http://127.0.0.1:8000/resolve",
+          "federation_trust_mark_status_endpoint": "http://127.0.0.1:8000/trust_mark_status",
           "homepage_uri": "http://127.0.0.1:8000",
           "organization_name": "example TA",
-          "federation_list_endpoint": "http://127.0.0.1:8000/list/"
+          "federation_list_endpoint": "http://127.0.0.1:8000/list"
         }
       },
       "trust_marks_issuers": {
@@ -483,15 +483,15 @@
   "fields": {
     "created": "2022-03-31T19:42:31.832Z",
     "modified": "2022-03-31T19:42:31.832Z",
-    "iss": "http://127.0.0.1:8001/",
-    "sub": "http://127.0.0.1:8001/",
+    "iss": "http://127.0.0.1:8001",
+    "sub": "http://127.0.0.1:8001",
     "exp": "2022-04-23T16:20:28Z",
     "iat": "2022-04-23T15:47:28Z",
     "statement": {
       "exp": 1650730828,
       "iat": 1650728848,
-      "iss": "http://127.0.0.1:8001/",
-      "sub": "http://127.0.0.1:8001/",
+      "iss": "http://127.0.0.1:8001",
+      "sub": "http://127.0.0.1:8001",
       "jwks": {
         "keys": [
           {
@@ -505,7 +505,7 @@
       "metadata": {
         "openid_relying_party": {
           "application_type": "web",
-          "client_id": "http://127.0.0.1:8001/",
+          "client_id": "http://127.0.0.1:8001",
           "client_registration_types": [
             "automatic"
           ],
@@ -539,12 +539,12 @@
       },
       "trust_marks": [
         {
-          "id": "https://www.spid.gov.it/openid-federation/agreement/sp-public/",
+          "id": "https://www.spid.gov.it/openid-federation/agreement/sp-public",
           "trust_mark": "eyJhbGciOiJSUzI1NiIsImtpZCI6IkZpZll4MDNibm9zRDhtNmdZUUlmTkhOUDljTV9TYW05VGM1bkxsb0lJcmMifQ.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvIiwic3ViIjoiaHR0cDovLzEyNy4wLjAuMTo4MDAwL29pZGMvcnAvIiwiaWF0IjoxNjQ1NjEyNDAxLCJpZCI6Imh0dHBzOi8vd3d3LnNwaWQuZ292Lml0L2NlcnRpZmljYXRpb24vcnAiLCJtYXJrIjoiaHR0cHM6Ly93d3cuYWdpZC5nb3YuaXQvdGhlbWVzL2N1c3RvbS9hZ2lkL2xvZ28uc3ZnIiwicmVmIjoiaHR0cHM6Ly9kb2NzLml0YWxpYS5pdC9pdGFsaWEvc3BpZC9zcGlkLXJlZ29sZS10ZWNuaWNoZS1vaWRjL2l0L3N0YWJpbGUvaW5kZXguaHRtbCJ9.mSPNR0AOPBn3UNJAIbrWUMQ8vGTetQajpa3i59JDKDXYWqo2TUGh4AQBghCiG3qqV9cl-hleLtuwoeZ1InKHeslTLftVdcR3meeMLs3mLobHYr26Mi7pC7-jx1ZFVyk4GXl7mn9WVSQGEUOiuhL01tdlUfxf0TJSFSOMEZGpCA3hXroLOnEl3FjkAw7sPvjfImsbadbHVusb72HTTs1n5Xo7z3As3fDWHcxD-fvvq0beu9cx-L2sT4YaNC-ELd1M3m5r0NIjjEUAt4Gnot-l5Z3-C_bA41uvh2hX34U_fGZ6jpmuluJo1Lqi26N8LTB-Rbu0UMaZnkRg9E72_YRZig"
         }
       ],
       "authority_hints": [
-        "http://127.0.0.1:8000/"
+        "http://127.0.0.1:8000"
       ]
     },
     "jwt": "eyJhbGciOiJSUzI1NiIsImtpZCI6IndMX0xtUDhVakxWTi1zQWVvWjdLR0VNSmZCa0Z0Yk5MZDI0ZUREOVJHQ3MiLCJ0eXAiOiJlbnRpdHktc3RhdGVtZW50K2p3dCJ9.eyJleHAiOjE2NTA3MzA4MjgsImlhdCI6MTY1MDcyODg0OCwiaXNzIjoiaHR0cDovLzEyNy4wLjAuMTo4MDAxLyIsInN1YiI6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMS8iLCJqd2tzIjp7ImtleXMiOlt7Imt0eSI6IlJTQSIsImUiOiJBUUFCIiwibiI6IjZTRGtzYTY0SWpCazdITlFDN3g1QzluTUFSR2FhbmZhVW0zd0MyV3Vsd0dfOGE1YUl5NENFd1hOMkxFTmtDeXlwT0RxV1pjVEF3Q3pXc2lpaFZOOWtEY0VzN1VOdS1YMVdva0syNTJEN19EUlktRlhJOEFCM1AwQ3hUbmdzMGstT2pjbWJ4cVZXMlU4RzU2ckpGcDRHX0NZQTR2ekJvQVBfNXNrRkJ0LTRhNWxZSmxCZkoyZ0psRTB2aDRfNDZveU51VVQ5a21LYXVSN25wVlNIakJVU3hZeURFTHpvYVBtdlI3U2tYNHNKZTBNSzM5SEVTNnM0bm85RzdCcmFMcDc1ZU93RVFtSGdFaEVTV3NjU09mX0NtQzVBTG56V0ozRmNGaHhnc3VNa2Rqb1U3YkgwOXk4cGRLczY0a1Iyem54cy15SVdyUEZXOGhKS255U2MyZms4dyIsImtpZCI6IndMX0xtUDhVakxWTi1zQWVvWjdLR0VNSmZCa0Z0Yk5MZDI0ZUREOVJHQ3MifV19LCJtZXRhZGF0YSI6eyJvcGVuaWRfcmVseWluZ19wYXJ0eSI6eyJhcHBsaWNhdGlvbl90eXBlIjoid2ViIiwiY2xpZW50X2lkIjoiaHR0cDovLzEyNy4wLjAuMTo4MDAxLyIsImNsaWVudF9yZWdpc3RyYXRpb25fdHlwZXMiOlsiYXV0b21hdGljIl0sImp3a3MiOnsia2V5cyI6W3sia3R5IjoiUlNBIiwidXNlIjoic2lnIiwibiI6InVYZkpBLXdUbFRDQTRGZHNvRTBxWmZtS0lnZWRtYXJydFdnUWJFbEtiV2c5UkRSN1o4SlZCYVJMRnF3eWZ5RzFKSkZtNjRHNTFjQkp3TElGd1dvRjdueHNIOVZZTG01b2NqQW5zUjRSaGxmVkUweV82MHdqZjhza0pnQlJwaVhRUGx3SDlqREdhcVZFX1BFQlRPYkRPNXczWG91ckQxRjM2MC12NWNMRExSSGRGSklpdGRFVnRxQVRxWTVEZ2xSRGFLaUJoaXM3YTVfMWJrODM5UERMYVFoanU0WEprNHR2RHk1LUxWa015NXNQMnpVNi0xdEpkQS1WbWFCWkxYeTluMDk2N0ZHSVdtTXpwYWZyQk1PdUhGY1VPSDU2by1jbERhaF9DSVRIMWRxMkQ2NEswTVloRXBBQ08ycDhBSDRLOFE2WXVKMWRua1ZERHdacDJDODRzUSIsImUiOiJBUUFCIiwia2lkIjoiWWh1SUpVNm8xNUVVQ3lxQTBMSEVxSmQteFZQSmdveVc1d1oxbzRwYWRXcyJ9XX0sImNsaWVudF9uYW1lIjoiTmFtZSBvZiBhbiBleGFtcGxlIG9yZ2FuaXphdGlvbiIsImNvbnRhY3RzIjpbIm9wc0BycC5leGFtcGxlLml0Il0sImdyYW50X3R5cGVzIjpbInJlZnJlc2hfdG9rZW4iLCJhdXRob3JpemF0aW9uX2NvZGUiXSwicmVkaXJlY3RfdXJpcyI6WyJodHRwOi8vMTI3LjAuMC4xOjgwMDEvb2lkYy9ycC9jYWxsYmFjayJdLCJyZXNwb25zZV90eXBlcyI6WyJjb2RlIl0sInN1YmplY3RfdHlwZSI6InBhaXJ3aXNlIn19LCJ0cnVzdF9tYXJrcyI6W3siaWQiOiJodHRwczovL3d3dy5zcGlkLmdvdi5pdC9vcGVuaWQtZmVkZXJhdGlvbi9hZ3JlZW1lbnQvc3AtcHVibGljLyIsInRydXN0X21hcmsiOiJleUpoYkdjaU9pSlNVekkxTmlJc0ltdHBaQ0k2SWtacFpsbDRNRE5pYm05elJEaHRObWRaVVVsbVRraE9VRGxqVFY5VFlXMDVWR00xYmt4c2IwbEpjbU1pZlEuZXlKcGMzTWlPaUpvZEhSd09pOHZNVEkzTGpBdU1DNHhPamd3TURBdklpd2ljM1ZpSWpvaWFIUjBjRG92THpFeU55NHdMakF1TVRvNE1EQXdMMjlwWkdNdmNuQXZJaXdpYVdGMElqb3hOalExTmpFeU5EQXhMQ0pwWkNJNkltaDBkSEJ6T2k4dmQzZDNMbk53YVdRdVoyOTJMbWwwTDJObGNuUnBabWxqWVhScGIyNHZjbkFpTENKdFlYSnJJam9pYUhSMGNITTZMeTkzZDNjdVlXZHBaQzVuYjNZdWFYUXZkR2hsYldWekwyTjFjM1J2YlM5aFoybGtMMnh2WjI4dWMzWm5JaXdpY21WbUlqb2lhSFIwY0hNNkx5OWtiMk56TG1sMFlXeHBZUzVwZEM5cGRHRnNhV0V2YzNCcFpDOXpjR2xrTFhKbFoyOXNaUzEwWldOdWFXTm9aUzF2YVdSakwybDBMM04wWVdKcGJHVXZhVzVrWlhndWFIUnRiQ0o5Lm1TUE5SMEFPUEJuM1VOSkFJYnJXVU1ROHZHVGV0UWFqcGEzaTU5SkRLRFhZV3FvMlRVR2g0QVFCZ2hDaUczcXFWOWNsLWhsZUx0dXdvZVoxSW5LSGVzbFRMZnRWZGNSM21lZU1MczNtTG9iSFlyMjZNaTdwQzctangxWkZWeWs0R1hsN21uOVdWU1FHRVVPaXVoTDAxdGRsVWZ4ZjBUSlNGU09NRVpHcENBM2hYcm9MT25FbDNGamtBdzdzUHZqZkltc2JhZGJIVnVzYjcySFRUczFuNVhvN3ozQXMzZkRXSGN4RC1mdnZxMGJldTljeC1MMnNUNFlhTkMtRUxkMU0zbTVyME5JampFVUF0NEdub3QtbDVaMy1DX2JBNDF1dmgyaFgzNFVfZkdaNmpwbXVsdUpvMUxxaTI2TjhMVEItUmJ1MFVNYVpua1JnOUU3Ml9ZUlppZyJ9XSwiYXV0aG9yaXR5X2hpbnRzIjpbImh0dHA6Ly8xMjcuMC4wLjE6ODAwMC8iXX0.sLKVasSqeg0YEFIkDhn03P4cgEPa_zFBFx65yjp3oh7DGP7dvf_baJ0rPBZ6BhrUulS19lhhRzoHScUkeKBwScrK-K-y4acW9b1To2lliDUc0V0NtLvlW15Tj9sfQI52SOfSlPrLVJV3K2tESUw7LzmsxPE_r5rBLs0Ek7rrpEr0DLju2Agf8r7pzk44tDy5ZJ6hE69rsqMG7LEBEjyBpN3jc1cefrqLOM_1aMQsad6trxVdhf1EXuSNOGefPVx3MV8ziiV9JHEnyeoS09HWHr9iJ-9y1XVBR_fa8IVSzcVZCzb4M33UGTAtpMynvcRoDaK-fr8if5r6BUiomtX4Dg"
@@ -556,15 +556,15 @@
   "fields": {
     "created": "2022-03-31T19:42:31.848Z",
     "modified": "2022-03-31T19:42:31.848Z",
-    "iss": "http://127.0.0.1:8000/",
-    "sub": "http://127.0.0.1:8001/",
+    "iss": "http://127.0.0.1:8000",
+    "sub": "http://127.0.0.1:8001",
     "exp": "2022-04-25T15:47:28Z",
     "iat": "2022-04-23T15:47:28Z",
     "statement": {
       "exp": 1650901648,
       "iat": 1650728848,
-      "iss": "http://127.0.0.1:8000/",
-      "sub": "http://127.0.0.1:8001/",
+      "iss": "http://127.0.0.1:8000",
+      "sub": "http://127.0.0.1:8001",
       "jwks": {
         "keys": [
           {
@@ -601,7 +601,7 @@
       },
       "trust_marks": [
         {
-          "id": "https://www.spid.gov.it/openid-federation/agreement/sp-public/",
+          "id": "https://www.spid.gov.it/openid-federation/agreement/sp-public",
           "trust_mark": "eyJhbGciOiJSUzI1NiIsImtpZCI6IkJYdmZybG5oQU11SFIwN2FqVW1BY0JSUWNTem13MGNfUkFnSm5wUy05V1EiLCJ0eXAiOiJ0cnVzdC1tYXJrK2p3dCJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvIiwic3ViIjoiaHR0cDovLzEyNy4wLjAuMTo4MDAxLyIsImlhdCI6MTY1MDcyODg0OCwiaWQiOiJodHRwczovL3d3dy5zcGlkLmdvdi5pdC9jZXJ0aWZpY2F0aW9uL3JwIiwibWFyayI6Imh0dHBzOi8vd3d3LmFnaWQuZ292Lml0L3RoZW1lcy9jdXN0b20vYWdpZC9sb2dvLnN2ZyIsInJlZiI6Imh0dHBzOi8vZG9jcy5pdGFsaWEuaXQvaXRhbGlhL3NwaWQvc3BpZC1yZWdvbGUtdGVjbmljaGUtb2lkYy9pdC9zdGFiaWxlL2luZGV4Lmh0bWwifQ.CcacL4KH4C8MmoLyRgo7SfPFP3JdVlbUcTRatGgJEn4uPCWbQG2OxegquVAYGoi0dyp_fPbJJ8iUTb3r96xbXkf4n4U5DOMgTDATJp3p8Kt4lHet0DbAAWunFiyZC44lXa6hfx8lvVye2qG77zHpHbWf8-ECbA2wqLX8rbWY8QSNMo8wjX0JIRFbctV9AFcu7SXWJfD8Po6q20WVcMLbd-Sjd7bRwb6iWen0cEpp9K3CWZ8-NZFoBclAk1jijZO7gHIkkusBiI6VUxERJXzd4NsPPEg4eqHdn2TCLQyk6lkAr_bG-VoLTC1qpGBFv8zgaPdPjBs-ZX0814IaJ-0U1Q"
         }
       ]
@@ -615,15 +615,15 @@
   "fields": {
     "created": "2022-03-31T20:20:30.363Z",
     "modified": "2022-03-31T20:20:30.363Z",
-    "iss": "http://127.0.0.1:8000/oidc/op/",
-    "sub": "http://127.0.0.1:8000/oidc/op/",
+    "iss": "http://127.0.0.1:8000/oidc/op",
+    "sub": "http://127.0.0.1:8000/oidc/op",
     "exp": "2022-04-25T15:47:27Z",
     "iat": "2022-04-23T15:47:27Z",
     "statement": {
       "exp": 1650901647,
       "iat": 1650728847,
-      "iss": "http://127.0.0.1:8000/oidc/op/",
-      "sub": "http://127.0.0.1:8000/oidc/op/",
+      "iss": "http://127.0.0.1:8000/oidc/op",
+      "sub": "http://127.0.0.1:8000/oidc/op",
       "jwks": {
         "keys": [
           {
@@ -637,16 +637,16 @@
       "metadata": {
         "openid_provider": {
           "authorization_endpoint": "http://127.0.0.1:8000/oidc/op/authorization",
-          "revocation_endpoint": "http://127.0.0.1:8000/oidc/op/revocation/",
+          "revocation_endpoint": "http://127.0.0.1:8000/oidc/op/revocation",
           "id_token_encryption_alg_values_supported": [
             "RSA-OAEP"
           ],
           "id_token_encryption_enc_values_supported": [
             "A128CBC-HS256"
           ],
-          "token_endpoint": "http://127.0.0.1:8000/oidc/op/token/",
-          "userinfo_endpoint": "http://127.0.0.1:8000/oidc/op/userinfo/",
-          "introspection_endpoint": "http://127.0.0.1:8000/oidc/op/introspection/",
+          "token_endpoint": "http://127.0.0.1:8000/oidc/op/token",
+          "userinfo_endpoint": "http://127.0.0.1:8000/oidc/op/userinfo",
+          "introspection_endpoint": "http://127.0.0.1:8000/oidc/op/introspection",
           "claims_parameter_supported": true,
           "contacts": [
             "ops@https://idp.it"
@@ -693,7 +693,7 @@
             "RS256",
             "ES256"
           ],
-          "issuer": "http://127.0.0.1:8000/oidc/op/",
+          "issuer": "http://127.0.0.1:8000/oidc/op",
           "jwks": {
             "keys": [
               {
@@ -711,7 +711,7 @@
           ],
           "logo_uri": "http://127.0.0.1:8000/static/svg/spid-logo-c-lb.svg",
           "organization_name": "SPID OIDC identity provider",
-          "op_policy_uri": "http://127.0.0.1:8000/oidc/op/en/website/legal-information/",
+          "op_policy_uri": "http://127.0.0.1:8000/oidc/op/en/website/legal-information",
           "request_parameter_supported": true,
           "request_uri_parameter_supported": true,
           "require_request_uri_registration": true,
@@ -776,7 +776,7 @@
         }
       },
       "authority_hints": [
-        "http://127.0.0.1:8000/"
+        "http://127.0.0.1:8000"
       ]
     },
     "jwt": "eyJhbGciOiJSUzI1NiIsImtpZCI6ImNJOHBCdldkSGdjdmxkbUk3SFhiUE1mRmhTS2tmQUNJYm9mc0Q2cTJKdEUiLCJ0eXAiOiJlbnRpdHktc3RhdGVtZW50K2p3dCJ9.eyJleHAiOjE2NTA5MDE2NDcsImlhdCI6MTY1MDcyODg0NywiaXNzIjoiaHR0cDovLzEyNy4wLjAuMTo4MDAwL29pZGMvb3AvIiwic3ViIjoiaHR0cDovLzEyNy4wLjAuMTo4MDAwL29pZGMvb3AvIiwiandrcyI6eyJrZXlzIjpbeyJrdHkiOiJSU0EiLCJlIjoiQVFBQiIsIm4iOiIxQVlHRjBDX2o1Q1BlWU1SSF9ta2huWXRudk1fQ21kbFdTRkhLOVlFYXMzZ0oxOTIyRG5oRngzRUl3MVUta1p3dzdiZ056NkMxbF8xY3lqa2dCU3VXeE9iT2JLNHpWTFpCR1VaZlhNQk5GbTJoZHI1Vm9MS0xlbXRaSHBCT21kc3hSMVIzVEozMEQwdlktTEpiVXRyd3VSQzhvT0NZSTV3aGNFYzhCNHV0RWV4M1c2ZENqQklqc0dmZEpJcVpIaGZMTjN4d1BNT2prRzVBX3k4V25UVmZHcTlPVWV1YVVuMy1QVnMzTzlMTXBPQmxhVDdHcmVYZ1VxV0FXLXp4VUNzaUhIVVZsOXVJQUdpNU9IdWtJdUJzMkNsQWxNWF9TNm1iTjdfN0tJR3gybVRJcmNnVkJQSmdZb3A5cW5TcWNYdWJfRVFUS3NGdE5HaWdzVUZuRHFGTlEiLCJraWQiOiJjSThwQnZXZEhnY3ZsZG1JN0hYYlBNZkZoU0trZkFDSWJvZnNENnEySnRFIn1dfSwibWV0YWRhdGEiOnsib3BlbmlkX3Byb3ZpZGVyIjp7ImF1dGhvcml6YXRpb25fZW5kcG9pbnQiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvb2lkYy9vcC9hdXRob3JpemF0aW9uIiwicmV2b2NhdGlvbl9lbmRwb2ludCI6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vaWRjL29wL3Jldm9jYXRpb24vIiwiaWRfdG9rZW5fZW5jcnlwdGlvbl9hbGdfdmFsdWVzX3N1cHBvcnRlZCI6WyJSU0EtT0FFUCJdLCJpZF90b2tlbl9lbmNyeXB0aW9uX2VuY192YWx1ZXNfc3VwcG9ydGVkIjpbIkExMjhDQkMtSFMyNTYiXSwib3BfbmFtZSI6IkFnZW56aWEgcGVyIGxcdTIwMTlJdGFsaWEgRGlnaXRhbGUiLCJvcF91cmkiOiJodHRwczovL3d3dy5hZ2lkLmdvdi5pdCIsInRva2VuX2VuZHBvaW50IjoiaHR0cDovLzEyNy4wLjAuMTo4MDAwL29pZGMvb3AvdG9rZW4vIiwidXNlcmluZm9fZW5kcG9pbnQiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvb2lkYy9vcC91c2VyaW5mby8iLCJpbnRyb3NwZWN0aW9uX2VuZHBvaW50IjoiaHR0cDovLzEyNy4wLjAuMTo4MDAwL29pZGMvb3AvaW50cm9zcGVjdGlvbi8iLCJjbGFpbXNfcGFyYW1ldGVyX3N1cHBvcnRlZCI6dHJ1ZSwiY29udGFjdHMiOlsib3BzQGh0dHBzOi8vaWRwLml0Il0sImNsaWVudF9yZWdpc3RyYXRpb25fdHlwZXNfc3VwcG9ydGVkIjpbImF1dG9tYXRpYyJdLCJjb2RlX2NoYWxsZW5nZV9tZXRob2RzX3N1cHBvcnRlZCI6WyJTMjU2Il0sInJlcXVlc3RfYXV0aGVudGljYXRpb25fbWV0aG9kc19zdXBwb3J0ZWQiOnsiYXIiOlsicmVxdWVzdF9vYmplY3QiXX0sImFjcl92YWx1ZXNfc3VwcG9ydGVkIjpbImh0dHBzOi8vd3d3LnNwaWQuZ292Lml0L1NwaWRMMSIsImh0dHBzOi8vd3d3LnNwaWQuZ292Lml0L1NwaWRMMiIsImh0dHBzOi8vd3d3LnNwaWQuZ292Lml0L1NwaWRMMyJdLCJjbGFpbXNfc3VwcG9ydGVkIjpbImh0dHBzOi8vYXR0cmlidXRlcy5zcGlkLmdvdi5pdC9zcGlkQ29kZSIsImh0dHBzOi8vYXR0cmlidXRlcy5zcGlkLmdvdi5pdC9uYW1lIiwiaHR0cHM6Ly9hdHRyaWJ1dGVzLnNwaWQuZ292Lml0L2ZhbWlseU5hbWUiLCJodHRwczovL2F0dHJpYnV0ZXMuc3BpZC5nb3YuaXQvcGxhY2VPZkJpcnRoIiwiaHR0cHM6Ly9hdHRyaWJ1dGVzLnNwaWQuZ292Lml0L2NvdW50eU9mQmlydGgiLCJodHRwczovL2F0dHJpYnV0ZXMuc3BpZC5nb3YuaXQvZGF0ZU9mQmlydGgiLCJodHRwczovL2F0dHJpYnV0ZXMuc3BpZC5nb3YuaXQvZ2VuZGVyIiwiaHR0cHM6Ly9hdHRyaWJ1dGVzLnNwaWQuZ292Lml0L2NvbXBhbnlOYW1lIiwiaHR0cHM6Ly9hdHRyaWJ1dGVzLnNwaWQuZ292Lml0L3JlZ2lzdGVyZWRPZmZpY2UiLCJodHRwczovL2F0dHJpYnV0ZXMuc3BpZC5nb3YuaXQvZmlzY2FsTnVtYmVyIiwiaHR0cHM6Ly9hdHRyaWJ1dGVzLnNwaWQuZ292Lml0L2l2YUNvZGUiLCJodHRwczovL2F0dHJpYnV0ZXMuc3BpZC5nb3YuaXQvaWRDYXJkIiwiaHR0cHM6Ly9hdHRyaWJ1dGVzLnNwaWQuZ292Lml0L21vYmlsZVBob25lIiwiaHR0cHM6Ly9hdHRyaWJ1dGVzLnNwaWQuZ292Lml0L2VtYWlsIiwiaHR0cHM6Ly9hdHRyaWJ1dGVzLnNwaWQuZ292Lml0L2FkZHJlc3MiLCJodHRwczovL2F0dHJpYnV0ZXMuc3BpZC5nb3YuaXQvZXhwaXJhdGlvbkRhdGUiLCJodHRwczovL2F0dHJpYnV0ZXMuc3BpZC5nb3YuaXQvZGlnaXRhbEFkZHJlc3MiXSwiZ3JhbnRfdHlwZXNfc3VwcG9ydGVkIjpbImF1dGhvcml6YXRpb25fY29kZSIsInJlZnJlc2hfdG9rZW4iXSwiaWRfdG9rZW5fc2lnbmluZ19hbGdfdmFsdWVzX3N1cHBvcnRlZCI6WyJSUzI1NiIsIkVTMjU2Il0sImlzc3VlciI6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vaWRjL29wLyIsImp3a3MiOnsia2V5cyI6W3sia3R5IjoiUlNBIiwidXNlIjoic2lnIiwibiI6IjAxXzRhSTJMdTVnZ3NFbG1Sa0VfU19hODNWX3N6WFUwdHhWNGRiMmhtSjhIUjFZMnM3UHNaWjUtZW1HcG5UeWRHclIzbi1RRXhlRUVJY0Z0X2EwNlJ5aWluazM0UlFjS29HWFVEQk1CVTBCdThHN05jWjk5WVg2eWVHOXdGaTR4cy1XdmlUUG10UHFpamt6NmptMV9sdFdEY3dia3Rma3JhSVJLS2dnWmFFbDlsZHRzRnIyd1NwaW4zQVh1R0lkZUowaFpxaEY5Mk9EQkxHakpsYUlMOUtsd29wRHk1NmFkUmVWbnJhYXdTZHJ4bXVQR2o3OElFQUROQW1lMm5RTnZ2OVVDdTBGa0FuNVN0MWJLZHMzR3B2MjZXMGtqcjFnWkxzbVFyajlsVGNEa19LYkF3ZkVZX19QN3NlNjJrdXNvU3VLTVRRcVVHMVRRcFVZN29GR1NkdyIsImUiOiJBUUFCIiwia2lkIjoiZEI2N2dMN2NrM1RGaUlBZjdONl83U0h2cWswTURZTUVRY29HR2xrVUFBdyJ9XX0sInNjb3Blc19zdXBwb3J0ZWQiOlsib3BlbmlkIiwib2ZmbGluZV9hY2Nlc3MiXSwibG9nb191cmkiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvc3RhdGljL3N2Zy9zcGlkLWxvZ28tYy1sYi5zdmciLCJvcmdhbml6YXRpb25fbmFtZSI6IlNQSUQgT0lEQyBpZGVudGl0eSBwcm92aWRlciIsIm9wX3BvbGljeV91cmkiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvb2lkYy9vcC9lbi93ZWJzaXRlL2xlZ2FsLWluZm9ybWF0aW9uLyIsInJlcXVlc3RfcGFyYW1ldGVyX3N1cHBvcnRlZCI6dHJ1ZSwicmVxdWVzdF91cmlfcGFyYW1ldGVyX3N1cHBvcnRlZCI6dHJ1ZSwicmVxdWlyZV9yZXF1ZXN0X3VyaV9yZWdpc3RyYXRpb24iOnRydWUsInJlc3BvbnNlX3R5cGVzX3N1cHBvcnRlZCI6WyJjb2RlIl0sInN1YmplY3RfdHlwZXNfc3VwcG9ydGVkIjpbInBhaXJ3aXNlIiwicHVibGljIl0sInRva2VuX2VuZHBvaW50X2F1dGhfbWV0aG9kc19zdXBwb3J0ZWQiOlsicHJpdmF0ZV9rZXlfand0Il0sInRva2VuX2VuZHBvaW50X2F1dGhfc2lnbmluZ19hbGdfdmFsdWVzX3N1cHBvcnRlZCI6WyJSUzI1NiIsIlJTMzg0IiwiUlM1MTIiLCJFUzI1NiIsIkVTMzg0IiwiRVM1MTIiXSwidXNlcmluZm9fZW5jcnlwdGlvbl9hbGdfdmFsdWVzX3N1cHBvcnRlZCI6WyJSU0EtT0FFUCIsIlJTQS1PQUVQLTI1NiIsIkVDREgtRVMiLCJFQ0RILUVTK0ExMjhLVyIsIkVDREgtRVMrQTE5MktXIiwiRUNESC1FUytBMjU2S1ciXSwidXNlcmluZm9fZW5jcnlwdGlvbl9lbmNfdmFsdWVzX3N1cHBvcnRlZCI6WyJBMTI4Q0JDLUhTMjU2IiwiQTE5MkNCQy1IUzM4NCIsIkEyNTZDQkMtSFM1MTIiLCJBMTI4R0NNIiwiQTE5MkdDTSIsIkEyNTZHQ00iXSwidXNlcmluZm9fc2lnbmluZ19hbGdfdmFsdWVzX3N1cHBvcnRlZCI6WyJSUzI1NiIsIlJTMzg0IiwiUlM1MTIiLCJFUzI1NiIsIkVTMzg0IiwiRVM1MTIiXSwicmVxdWVzdF9vYmplY3RfZW5jcnlwdGlvbl9hbGdfdmFsdWVzX3N1cHBvcnRlZCI6WyJSU0EtT0FFUCIsIlJTQS1PQUVQLTI1NiIsIkVDREgtRVMiLCJFQ0RILUVTK0ExMjhLVyIsIkVDREgtRVMrQTE5MktXIiwiRUNESC1FUytBMjU2S1ciXSwicmVxdWVzdF9vYmplY3RfZW5jcnlwdGlvbl9lbmNfdmFsdWVzX3N1cHBvcnRlZCI6WyJBMTI4Q0JDLUhTMjU2IiwiQTE5MkNCQy1IUzM4NCIsIkEyNTZDQkMtSFM1MTIiLCJBMTI4R0NNIiwiQTE5MkdDTSIsIkEyNTZHQ00iXSwicmVxdWVzdF9vYmplY3Rfc2lnbmluZ19hbGdfdmFsdWVzX3N1cHBvcnRlZCI6WyJSUzI1NiIsIlJTMzg0IiwiUlM1MTIiLCJFUzI1NiIsIkVTMzg0IiwiRVM1MTIiXX19LCJhdXRob3JpdHlfaGludHMiOlsiaHR0cDovLzEyNy4wLjAuMTo4MDAwLyJdfQ.n4Iut7R3JwLSCnH0PMoF3huC0Ie_XBqvKX666OJqw01XMWSD7fgwGmSxhd7DoJ4dhQi31iLGuvYAmd0jct6fY6Q2MXVOGT8_jYh8roAyDDP-MdfmOHp0OfAyx8guuiELM-oyfNdRlcWtP0JRxWLW57JmR572Xr-UcOV8mpbYFkUJ0pixYZGMtYd1qLUahutSurD0I-6mCnEc5OiFctFwXjVcJ5yVby0qc5WMEKlzneLJifzgpJu1KVW361_YHlc_lJW3RLr6NOj6WdHUy7EF4MrztdTK8268SOHW66J-tPCLGCGe8JwC_x0OgP39_6SPHrtEgojAd6hQnFtowXVwvg"
@@ -788,15 +788,15 @@
   "fields": {
     "created": "2022-03-31T20:20:30.378Z",
     "modified": "2022-03-31T20:20:30.378Z",
-    "iss": "http://127.0.0.1:8000/",
-    "sub": "http://127.0.0.1:8000/oidc/op/",
+    "iss": "http://127.0.0.1:8000",
+    "sub": "http://127.0.0.1:8000/oidc/op",
     "exp": "2022-04-25T15:47:27Z",
     "iat": "2022-04-23T15:47:27Z",
     "statement": {
       "exp": 1650901647,
       "iat": 1650728847,
-      "iss": "http://127.0.0.1:8000/",
-      "sub": "http://127.0.0.1:8000/oidc/op/",
+      "iss": "http://127.0.0.1:8000",
+      "sub": "http://127.0.0.1:8000/oidc/op",
       "jwks": {
         "keys": [
           {
@@ -885,7 +885,7 @@
       },
       "trust_marks": [
         {
-          "id": "https://www.spid.gov.it/openid-federation/agreement/op-public/",
+          "id": "https://www.spid.gov.it/openid-federation/agreement/op-public",
           "trust_mark": "eyJhbGciOiJSUzI1NiIsImtpZCI6IkJYdmZybG5oQU11SFIwN2FqVW1BY0JSUWNTem13MGNfUkFnSm5wUy05V1EiLCJ0eXAiOiJ0cnVzdC1tYXJrK2p3dCJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvIiwic3ViIjoiaHR0cDovLzEyNy4wLjAuMTo4MDAwL29pZGMvb3AvIiwiaWF0IjoxNjUwNzI4ODQ3LCJpZCI6Imh0dHBzOi8vd3d3LnNwaWQuZ292Lml0L2NlcnRpZmljYXRpb24vb3AiLCJtYXJrIjoiaHR0cHM6Ly93d3cuYWdpZC5nb3YuaXQvdGhlbWVzL2N1c3RvbS9hZ2lkL2xvZ28uc3ZnIiwicmVmIjoiaHR0cHM6Ly9kb2NzLml0YWxpYS5pdC9pdGFsaWEvc3BpZC9zcGlkLXJlZ29sZS10ZWNuaWNoZS1vaWRjL2l0L3N0YWJpbGUvaW5kZXguaHRtbCJ9.THy9YbuCL4i2TXC2AD-DbjA7PS4j9bETwuxYzB9nWafIFmWsDxndJLI6r2gfgU5VuBEi4PSvLjhwqKiCcSrtwRB4SgvZxn3i-xvR1qEyBS96BN80biz1mAtSp-y76QoSaCb_qoi5qWGRw-0s2UWOQig-0bgKIXH3Krt90y7e665lGSg1e7p33zsNIeCpct7rb5_kPE97mlNGU_axHycUsFax839ThVMDC40Y_-X8KVEp3XYl3aIkvlQV80CkyCSGcoKGIebWWYXKWwaDb_c_GKAZAbEM2-fWPbZRjJxI1iT6cwqZUI9zUh38GZmgJkM-9RXMkHeuJKqeA_EBoR_vlA"
         }
       ]
@@ -899,15 +899,15 @@
   "fields": {
     "created": "2022-04-07T18:19:47.520Z",
     "modified": "2022-04-07T18:19:47.520Z",
-    "iss": "http://127.0.0.1:8000/oidc/rp/",
-    "sub": "http://127.0.0.1:8000/oidc/rp/",
+    "iss": "http://127.0.0.1:8000/oidc/rp",
+    "sub": "http://127.0.0.1:8000/oidc/rp",
     "exp": "2022-04-25T15:47:27Z",
     "iat": "2022-04-23T15:47:27Z",
     "statement": {
       "exp": 1650901647,
       "iat": 1650728847,
-      "iss": "http://127.0.0.1:8000/oidc/rp/",
-      "sub": "http://127.0.0.1:8000/oidc/rp/",
+      "iss": "http://127.0.0.1:8000/oidc/rp",
+      "sub": "http://127.0.0.1:8000/oidc/rp",
       "jwks": {
         "keys": [
           {
@@ -921,7 +921,7 @@
       "metadata": {
         "openid_relying_party": {
           "application_type": "web",
-          "client_id": "http://127.0.0.1:8000/oidc/rp/",
+          "client_id": "http://127.0.0.1:8000/oidc/rp",
           "client_registration_types": [
             "automatic"
           ],
@@ -955,12 +955,12 @@
       },
       "trust_marks": [
         {
-          "id": "https://www.spid.gov.it/openid-federation/agreement/sp-public/",
+          "id": "https://www.spid.gov.it/openid-federation/agreement/sp-public",
           "trust_mark": "eyJhbGciOiJSUzI1NiIsImtpZCI6IkZpZll4MDNibm9zRDhtNmdZUUlmTkhOUDljTV9TYW05VGM1bkxsb0lJcmMifQ.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvIiwic3ViIjoiaHR0cDovLzEyNy4wLjAuMTo4MDAwL29pZGMvcnAvIiwiaWF0IjoxNjQ1NjEyNDAxLCJpZCI6Imh0dHBzOi8vd3d3LnNwaWQuZ292Lml0L2NlcnRpZmljYXRpb24vcnAiLCJtYXJrIjoiaHR0cHM6Ly93d3cuYWdpZC5nb3YuaXQvdGhlbWVzL2N1c3RvbS9hZ2lkL2xvZ28uc3ZnIiwicmVmIjoiaHR0cHM6Ly9kb2NzLml0YWxpYS5pdC9pdGFsaWEvc3BpZC9zcGlkLXJlZ29sZS10ZWNuaWNoZS1vaWRjL2l0L3N0YWJpbGUvaW5kZXguaHRtbCJ9.mSPNR0AOPBn3UNJAIbrWUMQ8vGTetQajpa3i59JDKDXYWqo2TUGh4AQBghCiG3qqV9cl-hleLtuwoeZ1InKHeslTLftVdcR3meeMLs3mLobHYr26Mi7pC7-jx1ZFVyk4GXl7mn9WVSQGEUOiuhL01tdlUfxf0TJSFSOMEZGpCA3hXroLOnEl3FjkAw7sPvjfImsbadbHVusb72HTTs1n5Xo7z3As3fDWHcxD-fvvq0beu9cx-L2sT4YaNC-ELd1M3m5r0NIjjEUAt4Gnot-l5Z3-C_bA41uvh2hX34U_fGZ6jpmuluJo1Lqi26N8LTB-Rbu0UMaZnkRg9E72_YRZig"
         }
       ],
       "authority_hints": [
-        "http://127.0.0.1:8000/"
+        "http://127.0.0.1:8000"
       ]
     },
     "jwt": "eyJhbGciOiJSUzI1NiIsImtpZCI6Ims1NEhRdERpYnlHY3M5WldWTWZ2aUhmLTJxTGNGVXRwd1kycmd4Qms4OE0iLCJ0eXAiOiJlbnRpdHktc3RhdGVtZW50K2p3dCJ9.eyJleHAiOjE2NTA5MDE2NDcsImlhdCI6MTY1MDcyODg0NywiaXNzIjoiaHR0cDovLzEyNy4wLjAuMTo4MDAwL29pZGMvcnAvIiwic3ViIjoiaHR0cDovLzEyNy4wLjAuMTo4MDAwL29pZGMvcnAvIiwiandrcyI6eyJrZXlzIjpbeyJrdHkiOiJSU0EiLCJlIjoiQVFBQiIsIm4iOiJwbl9JY2hDNjZTRlFNaGJUSEx0YkQ1OGpLaVlZdllvN1M0d2pQanpFQ011MjdjNkZKVkZOWHRsdWJ0YjdzQzYtV1RRMUh2NHJTUWRQaGFmSmJJeGEzMlI1MXNSUXBrVHIzSkZNWVA3eDIyRFJRRF9peHRRSlJhaUh3LW5wblo4cWdWSEpfdDRnUlRjNEhKa2VoQkxHdjQtckhWQUt6RmlRTlUxdTJBRncxZldNbk1ING9iX3B5aXNYVmdja3UzZHkxNGw3c1lTQU5scFh1ZllfcW5rUUZUdjB3TUgtQzZJemwtYWtFTlMyVUhwdlRMaGZDQlZLUHJGWEp4dWw0WERiVXdVYnZOWlV4VGVybkV4OGxWNWd4Q1NnS1NCRWdvSDlNZ3BEMVlXRlBiQW53aTdwN2U3TU5HejVsSDdlREZLa1BRaFhMV0FCVThVdkVJSVd5QTk1U1EiLCJraWQiOiJrNTRIUXREaWJ5R2NzOVpXVk1mdmlIZi0ycUxjRlV0cHdZMnJneEJrODhNIn1dfSwibWV0YWRhdGEiOnsib3BlbmlkX3JlbHlpbmdfcGFydHkiOnsiYXBwbGljYXRpb25fdHlwZSI6IndlYiIsImNsaWVudF9pZCI6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vaWRjL3JwLyIsImNsaWVudF9yZWdpc3RyYXRpb25fdHlwZXMiOlsiYXV0b21hdGljIl0sImp3a3MiOnsia2V5cyI6W3sia3R5IjoiUlNBIiwidXNlIjoic2lnIiwibiI6IjVzNHFpMVRhLXNFdUtiNXJKOFR6SG15R0thU3U4OXBJWElpNnc0RWt4NkdMNTZtSkRORV9NV0pIc0ZqV1hhamZNZE1RbVpyU1hBdkx0WHhtYmhVdWk5TXFfSW9ybWhtRXl5RUpTMFN5RTlVS1R4V3ppMHlkX25fQzdPakZCaE0tMFp5VWxnbDgxRV9zci0zNVAxQTZiNVdTWXdNdlJTUi1QOXl4X05JLVhCUTQ4R196ZG1rM0NidXV6WnNYWnFxZ2o1VTdPR1dILTRIdW9zbjluSDNGVmt3WDBPbFdrZ1dNLUo5REVXekdCamw5aGZiYnJNdE1fb2JsakhMMk5mVDZSSllFUjJJcGRJOFJDeVFTM3NNUHQ2WkhEc2ttdU5seU1ETkFUQ0NoWFFKTG5sdHdFanhjZ3Z6andfRzlKMjVEd2ZkZlZFaERGXzBrQ3A0NFVNbVMzUSIsImUiOiJBUUFCIiwia2lkIjoiMkhub0ZTM1luQzl0amlDYWl2aFdMVlVKM0F4d0dHel85OHVSRmFxTUVFcyJ9XX0sImNsaWVudF9uYW1lIjoiTmFtZSBvZiBhbiBleGFtcGxlIG9yZ2FuaXphdGlvbiIsImNvbnRhY3RzIjpbIm9wc0BycC5leGFtcGxlLml0Il0sImdyYW50X3R5cGVzIjpbInJlZnJlc2hfdG9rZW4iLCJhdXRob3JpemF0aW9uX2NvZGUiXSwicmVkaXJlY3RfdXJpcyI6WyJodHRwOi8vMTI3LjAuMC4xOjgwMDAvb2lkYy9ycC9jYWxsYmFjayJdLCJyZXNwb25zZV90eXBlcyI6WyJjb2RlIl0sInN1YmplY3RfdHlwZSI6InBhaXJ3aXNlIn19LCJ0cnVzdF9tYXJrcyI6W3siaWQiOiJodHRwczovL3d3dy5zcGlkLmdvdi5pdC9vcGVuaWQtZmVkZXJhdGlvbi9hZ3JlZW1lbnQvc3AtcHVibGljLyIsInRydXN0X21hcmsiOiJleUpoYkdjaU9pSlNVekkxTmlJc0ltdHBaQ0k2SWtacFpsbDRNRE5pYm05elJEaHRObWRaVVVsbVRraE9VRGxqVFY5VFlXMDVWR00xYmt4c2IwbEpjbU1pZlEuZXlKcGMzTWlPaUpvZEhSd09pOHZNVEkzTGpBdU1DNHhPamd3TURBdklpd2ljM1ZpSWpvaWFIUjBjRG92THpFeU55NHdMakF1TVRvNE1EQXdMMjlwWkdNdmNuQXZJaXdpYVdGMElqb3hOalExTmpFeU5EQXhMQ0pwWkNJNkltaDBkSEJ6T2k4dmQzZDNMbk53YVdRdVoyOTJMbWwwTDJObGNuUnBabWxqWVhScGIyNHZjbkFpTENKdFlYSnJJam9pYUhSMGNITTZMeTkzZDNjdVlXZHBaQzVuYjNZdWFYUXZkR2hsYldWekwyTjFjM1J2YlM5aFoybGtMMnh2WjI4dWMzWm5JaXdpY21WbUlqb2lhSFIwY0hNNkx5OWtiMk56TG1sMFlXeHBZUzVwZEM5cGRHRnNhV0V2YzNCcFpDOXpjR2xrTFhKbFoyOXNaUzEwWldOdWFXTm9aUzF2YVdSakwybDBMM04wWVdKcGJHVXZhVzVrWlhndWFIUnRiQ0o5Lm1TUE5SMEFPUEJuM1VOSkFJYnJXVU1ROHZHVGV0UWFqcGEzaTU5SkRLRFhZV3FvMlRVR2g0QVFCZ2hDaUczcXFWOWNsLWhsZUx0dXdvZVoxSW5LSGVzbFRMZnRWZGNSM21lZU1MczNtTG9iSFlyMjZNaTdwQzctangxWkZWeWs0R1hsN21uOVdWU1FHRVVPaXVoTDAxdGRsVWZ4ZjBUSlNGU09NRVpHcENBM2hYcm9MT25FbDNGamtBdzdzUHZqZkltc2JhZGJIVnVzYjcySFRUczFuNVhvN3ozQXMzZkRXSGN4RC1mdnZxMGJldTljeC1MMnNUNFlhTkMtRUxkMU0zbTVyME5JampFVUF0NEdub3QtbDVaMy1DX2JBNDF1dmgyaFgzNFVfZkdaNmpwbXVsdUpvMUxxaTI2TjhMVEItUmJ1MFVNYVpua1JnOUU3Ml9ZUlppZyJ9XSwiYXV0aG9yaXR5X2hpbnRzIjpbImh0dHA6Ly8xMjcuMC4wLjE6ODAwMC8iXX0.ZQj5t0G8aocCJe21Tzqu0cy0KtftbAgOacEyCYwdEnldrfnG4NSHxkSEJxLfSjD6wDynktR-LfimvTifvRnVdQaFvOR7spCtKgfR1pAxYTG_UWFVhpGlPUC2gJObOa64ypr6aSQaOwaJh8LfPAYtj4rNcMGpqqdc-ZmgvozghEsGcXsyYGz5FgFOgh8QVuXhQM6XOS0aXqN2ExgwMD0XY4BxBNOkhH7y25vH7CLpawBhv5bsTYtIm6oKj978_EVm0W41CPvpAaieoG3I2ZzhrDL3Em7SS0BquEQTLH5iD8gixbcLMVlTIr-gTKO-LrWaC5Q1hGAIqWPYvlulKyfqxQ"
@@ -972,15 +972,15 @@
   "fields": {
     "created": "2022-04-07T18:19:47.537Z",
     "modified": "2022-04-07T18:19:47.537Z",
-    "iss": "http://127.0.0.1:8000/",
-    "sub": "http://127.0.0.1:8000/oidc/rp/",
+    "iss": "http://127.0.0.1:8000",
+    "sub": "http://127.0.0.1:8000/oidc/rp",
     "exp": "2022-04-25T15:47:27Z",
     "iat": "2022-04-23T15:47:27Z",
     "statement": {
       "exp": 1650901647,
       "iat": 1650728847,
-      "iss": "http://127.0.0.1:8000/",
-      "sub": "http://127.0.0.1:8000/oidc/rp/",
+      "iss": "http://127.0.0.1:8000",
+      "sub": "http://127.0.0.1:8000/oidc/rp",
       "jwks": {
         "keys": [
           {
@@ -1013,7 +1013,7 @@
       },
       "trust_marks": [
         {
-          "id": "https://www.spid.gov.it/openid-federation/agreement/sp-public/",
+          "id": "https://www.spid.gov.it/openid-federation/agreement/sp-public",
           "trust_mark": "eyJhbGciOiJSUzI1NiIsImtpZCI6IkJYdmZybG5oQU11SFIwN2FqVW1BY0JSUWNTem13MGNfUkFnSm5wUy05V1EiLCJ0eXAiOiJ0cnVzdC1tYXJrK2p3dCJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvIiwic3ViIjoiaHR0cDovLzEyNy4wLjAuMTo4MDAwL29pZGMvcnAvIiwiaWF0IjoxNjUwNzI4ODQ3LCJpZCI6Imh0dHBzOi8vd3d3LnNwaWQuZ292Lml0L2NlcnRpZmljYXRpb24vcnAiLCJtYXJrIjoiaHR0cHM6Ly93d3cuYWdpZC5nb3YuaXQvdGhlbWVzL2N1c3RvbS9hZ2lkL2xvZ28uc3ZnIiwicmVmIjoiaHR0cHM6Ly9kb2NzLml0YWxpYS5pdC9pdGFsaWEvc3BpZC9zcGlkLXJlZ29sZS10ZWNuaWNoZS1vaWRjL2l0L3N0YWJpbGUvaW5kZXguaHRtbCJ9.LQTlLCChcnyySFVFrDBDVbi4POVO97qZ4C75gdAV5OqGjW66FbnySFLlI5SYpV3If7c6jvDUjqW47LaECUL3DIYWE4G0AvkYcwIHWIsCe1aM5hl2iLcBr5Vp1H5SJ0yeYSV-AvNIdMDhe2jWbMlxUCBHULDZdbnKwkV2DTHYr_1vwsjkSU1J78yTkzPqJ-VkIeku7dVKLYvxlXccEYAxtEx_sDFWBYZ0fXCwvR3KeywpvFh5SFFrATeSpM-zn4bNzQFiWM6v91P1PX1Xu83ZBx5vmJ4XEXjE6wDSFYV1b8UZODUh0B77BqEMzP0HG7OIOyKXprfMFuO33lErnVzwlQ"
         },
         {
@@ -1031,15 +1031,15 @@
   "fields": {
     "created": "2022-04-16T13:13:58.647Z",
     "modified": "2022-04-16T13:13:58.647Z",
-    "iss": "http://127.0.0.1:8002/oidc/op/",
-    "sub": "http://127.0.0.1:8002/oidc/op/",
+    "iss": "http://127.0.0.1:8002/oidc/op",
+    "sub": "http://127.0.0.1:8002/oidc/op",
     "exp": "2022-04-25T15:47:28Z",
     "iat": "2022-04-23T15:47:28Z",
     "statement": {
       "exp": 1650901648,
       "iat": 1650728848,
-      "iss": "http://127.0.0.1:8002/oidc/op/",
-      "sub": "http://127.0.0.1:8002/oidc/op/",
+      "iss": "http://127.0.0.1:8002/oidc/op",
+      "sub": "http://127.0.0.1:8002/oidc/op",
       "jwks": {
         "keys": [
           {
@@ -1053,16 +1053,16 @@
       "metadata": {
         "openid_provider": {
           "authorization_endpoint": "http://127.0.0.1:8002/oidc/op/authorization",
-          "revocation_endpoint": "http://127.0.0.1:8002/oidc/op/revocation/",
+          "revocation_endpoint": "http://127.0.0.1:8002/oidc/op/revocation",
           "id_token_encryption_alg_values_supported": [
             "RSA-OAEP"
           ],
           "id_token_encryption_enc_values_supported": [
             "A128CBC-HS256"
           ],
-          "token_endpoint": "http://127.0.0.1:8002/oidc/op/token/",
-          "userinfo_endpoint": "http://127.0.0.1:8002/oidc/op/userinfo/",
-          "introspection_endpoint": "http://127.0.0.1:8002/oidc/op/introspection/",
+          "token_endpoint": "http://127.0.0.1:8002/oidc/op/token",
+          "userinfo_endpoint": "http://127.0.0.1:8002/oidc/op/userinfo",
+          "introspection_endpoint": "http://127.0.0.1:8002/oidc/op/introspection",
           "claims_parameter_supported": true,
           "contacts": [
             "ops@https://idp.it"
@@ -1104,7 +1104,7 @@
             "RS256",
             "ES256"
           ],
-          "issuer": "http://127.0.0.1:8002/oidc/op/",
+          "issuer": "http://127.0.0.1:8002/oidc/op",
           "jwks": {
             "keys": [
               {
@@ -1122,7 +1122,7 @@
           ],
           "logo_uri": "http://127.0.0.1:8002/static/images/logo-cie.png",
           "organization_name": "SPID OIDC identity provider",
-          "op_policy_uri": "http://127.0.0.1:8002/oidc/op/en/website/legal-information/",
+          "op_policy_uri": "http://127.0.0.1:8002/oidc/op/en/website/legal-information",
           "request_parameter_supported": true,
           "request_uri_parameter_supported": true,
           "require_request_uri_registration": true,
@@ -1191,7 +1191,7 @@
         }
       },
       "authority_hints": [
-        "http://127.0.0.1:8000/"
+        "http://127.0.0.1:8000"
       ]
     },
     "jwt": "eyJhbGciOiJSUzI1NiIsImtpZCI6IlpoU29hT2VkVk9zQnc2bTJ2Y2x3U1dpcXFuR2VPU3RULWdVY2xvdF82N3ciLCJ0eXAiOiJlbnRpdHktc3RhdGVtZW50K2p3dCJ9.eyJleHAiOjE2NTA5MDE2NDgsImlhdCI6MTY1MDcyODg0OCwiaXNzIjoiaHR0cDovLzEyNy4wLjAuMTo4MDAyL29pZGMvb3AvIiwic3ViIjoiaHR0cDovLzEyNy4wLjAuMTo4MDAyL29pZGMvb3AvIiwiandrcyI6eyJrZXlzIjpbeyJrdHkiOiJSU0EiLCJlIjoiQVFBQiIsIm4iOiJ0ZzNhRTlmZDZsdFh6TnJpbV80Q0dLWVdmQzNucWNfdHY0WGphdzQ3M0NjcmZpcUR6ZVRLSGZSZmJ2YnFiMUR3bUk0ZnZDT2k1MUVWY21LTG5UaHpYeW5BVXB5VXZzd3ZMOF91emdEV08xUlNtQkcxTDBSRS1Da0tpaDRrZVhoMWt1OWhOczFfVi04MmRLNW9MT1ItVkpMbmhaQ3FUaFI0SEg2VHFMampXcnJYZnNIVlJ2YXVKaWxYNkZ4R2I1SkZvYzI3Vnh4ZEgyYzZQMlNIQzl3dUI4dG5mRzdPU3JTRDFnMmg3bFRYYklmbTc4YTBvcDY3ZF9qdXB6a29Lb0NUbXprUjJ6dndUVlZEZDk5dmtETFkyV1htYjhoSXdHNmRRWlhZbGtocUFZS3pUdVRaMHRqVmgwT3JxZkR4WXRMSDN3UXp6YUpPUmV3WllxTHlCMDlQOHciLCJraWQiOiJaaFNvYU9lZFZPc0J3Nm0ydmNsd1NXaXFxbkdlT1N0VC1nVWNsb3RfNjd3In1dfSwibWV0YWRhdGEiOnsib3BlbmlkX3Byb3ZpZGVyIjp7ImF1dGhvcml6YXRpb25fZW5kcG9pbnQiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDIvb2lkYy9vcC9hdXRob3JpemF0aW9uIiwicmV2b2NhdGlvbl9lbmRwb2ludCI6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMi9vaWRjL29wL3Jldm9jYXRpb24vIiwiaWRfdG9rZW5fZW5jcnlwdGlvbl9hbGdfdmFsdWVzX3N1cHBvcnRlZCI6WyJSU0EtT0FFUCJdLCJpZF90b2tlbl9lbmNyeXB0aW9uX2VuY192YWx1ZXNfc3VwcG9ydGVkIjpbIkExMjhDQkMtSFMyNTYiXSwib3BfbmFtZSI6IkFnZW56aWEgcGVyIGxcdTIwMTlJdGFsaWEgRGlnaXRhbGUiLCJvcF91cmkiOiJodHRwczovL3d3dy5hZ2lkLmdvdi5pdCIsInRva2VuX2VuZHBvaW50IjoiaHR0cDovLzEyNy4wLjAuMTo4MDAyL29pZGMvb3AvdG9rZW4vIiwidXNlcmluZm9fZW5kcG9pbnQiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDIvb2lkYy9vcC91c2VyaW5mby8iLCJpbnRyb3NwZWN0aW9uX2VuZHBvaW50IjoiaHR0cDovLzEyNy4wLjAuMTo4MDAyL29pZGMvb3AvaW50cm9zcGVjdGlvbi8iLCJjbGFpbXNfcGFyYW1ldGVyX3N1cHBvcnRlZCI6dHJ1ZSwiY29udGFjdHMiOlsib3BzQGh0dHBzOi8vaWRwLml0Il0sImNvZGVfY2hhbGxlbmdlX21ldGhvZHNfc3VwcG9ydGVkIjpbIlMyNTYiXSwiY2xpZW50X3JlZ2lzdHJhdGlvbl90eXBlc19zdXBwb3J0ZWQiOlsiYXV0b21hdGljIl0sInJlcXVlc3RfYXV0aGVudGljYXRpb25fbWV0aG9kc19zdXBwb3J0ZWQiOnsiYXIiOlsicmVxdWVzdF9vYmplY3QiXX0sImFjcl92YWx1ZXNfc3VwcG9ydGVkIjpbImh0dHBzOi8vd3d3LnNwaWQuZ292Lml0L1NwaWRMMSIsImh0dHBzOi8vd3d3LnNwaWQuZ292Lml0L1NwaWRMMiIsImh0dHBzOi8vd3d3LnNwaWQuZ292Lml0L1NwaWRMMyJdLCJjbGFpbXNfc3VwcG9ydGVkIjpbImdpdmVuX25hbWUiLCJmYW1pbHlfbmFtZSIsImJpcnRoZGF0ZSIsImdlbmRlciIsInBob25lX251bWJlciIsImh0dHBzOi8vYXR0cmlidXRlcy5laWQuZ292Lml0L2Zpc2NhbF9udW1iZXIiLCJwaG9uZV9udW1iZXJfdmVyaWZpZWQiLCJlbWFpbCIsImFkZHJlc3MiLCJkb2N1bWVudF9kZXRhaWxzIiwiaHR0cHM6Ly9hdHRyaWJ1dGVzLmVpZC5nb3YuaXQvcGh5c2ljYWxfcGhvbmVfbnVtYmVyIl0sImdyYW50X3R5cGVzX3N1cHBvcnRlZCI6WyJhdXRob3JpemF0aW9uX2NvZGUiLCJyZWZyZXNoX3Rva2VuIl0sImlkX3Rva2VuX3NpZ25pbmdfYWxnX3ZhbHVlc19zdXBwb3J0ZWQiOlsiUlMyNTYiLCJFUzI1NiJdLCJpc3N1ZXIiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDIvb2lkYy9vcC8iLCJqd2tzIjp7ImtleXMiOlt7Imt0eSI6IlJTQSIsInVzZSI6InNpZyIsImUiOiJBUUFCIiwibiI6InJKb1NZdjFzdHdsYk0xMXRSOVNZR0lKdXpxbEplMmJ2Mk4zNW9QUmJ3Vl9lcGpOV3ZHRzJacUVqNTNZRk1DOEFNWk5GaHVMYV9MTndyMWtMVkUtalhRZTh4amlMaGU3RGdNZjFPblN6cTl5QUVYVm8xOUJQQndrZ0plMmpwOUhJZ01fbmZiSXNVYlNTa0ZBTTJDS3ZHYjBCazJHdnZxWFoxMlAtZnBiVnlBOWhJUXI2ck5UcW5DR3gyLXY0b1ZpR0c0dV8zaVR3N0QxWnZMV21ybVpPYUtuREFxRzNNSlNkUS0yZ2dRLUFpYWhnNDhzaTlDOURfSmduQlY5dEoyZUNTNThaQzZrVkc1c2Z0RWxRVmRINmUyNm16NDY0VFpqNVFnQ3daQ1RzQVFmSXZCb1hTZENLeHBudnNGZnJhano0cTlCaVhBcnl4SU9sNWZMbUNGVk5odyIsImtpZCI6IlBkMk45LVRael9BV1MzR0ZDa29ZZFJhWFhsczhZUGh4X2RfRXo3SndqUUkifV19LCJzY29wZXNfc3VwcG9ydGVkIjpbIm9wZW5pZCIsIm9mZmxpbmVfYWNjZXNzIl0sImxvZ29fdXJpIjoiaHR0cDovLzEyNy4wLjAuMTo4MDAyL3N0YXRpYy9pbWFnZXMvbG9nby1jaWUucG5nIiwib3JnYW5pemF0aW9uX25hbWUiOiJTUElEIE9JREMgaWRlbnRpdHkgcHJvdmlkZXIiLCJvcF9wb2xpY3lfdXJpIjoiaHR0cDovLzEyNy4wLjAuMTo4MDAyL29pZGMvb3AvZW4vd2Vic2l0ZS9sZWdhbC1pbmZvcm1hdGlvbi8iLCJyZXF1ZXN0X3BhcmFtZXRlcl9zdXBwb3J0ZWQiOnRydWUsInJlcXVlc3RfdXJpX3BhcmFtZXRlcl9zdXBwb3J0ZWQiOnRydWUsInJlcXVpcmVfcmVxdWVzdF91cmlfcmVnaXN0cmF0aW9uIjp0cnVlLCJyZXNwb25zZV90eXBlc19zdXBwb3J0ZWQiOlsiY29kZSJdLCJyZXNwb25zZV9tb2Rlc19zdXBwb3J0ZWQiOlsicXVlcnkiLCJmb3JtX3Bvc3QiXSwic3ViamVjdF90eXBlc19zdXBwb3J0ZWQiOlsicGFpcndpc2UiLCJwdWJsaWMiXSwidG9rZW5fZW5kcG9pbnRfYXV0aF9tZXRob2RzX3N1cHBvcnRlZCI6WyJwcml2YXRlX2tleV9qd3QiXSwidG9rZW5fZW5kcG9pbnRfYXV0aF9zaWduaW5nX2FsZ192YWx1ZXNfc3VwcG9ydGVkIjpbIlJTMjU2IiwiUlMzODQiLCJSUzUxMiIsIkVTMjU2IiwiRVMzODQiLCJFUzUxMiJdLCJ1c2VyaW5mb19lbmNyeXB0aW9uX2FsZ192YWx1ZXNfc3VwcG9ydGVkIjpbIlJTQS1PQUVQIiwiUlNBLU9BRVAtMjU2IiwiRUNESC1FUyIsIkVDREgtRVMrQTEyOEtXIiwiRUNESC1FUytBMTkyS1ciLCJFQ0RILUVTK0EyNTZLVyJdLCJ1c2VyaW5mb19lbmNyeXB0aW9uX2VuY192YWx1ZXNfc3VwcG9ydGVkIjpbIkExMjhDQkMtSFMyNTYiLCJBMTkyQ0JDLUhTMzg0IiwiQTI1NkNCQy1IUzUxMiIsIkExMjhHQ00iLCJBMTkyR0NNIiwiQTI1NkdDTSJdLCJ1c2VyaW5mb19zaWduaW5nX2FsZ192YWx1ZXNfc3VwcG9ydGVkIjpbIlJTMjU2IiwiUlMzODQiLCJSUzUxMiIsIkVTMjU2IiwiRVMzODQiLCJFUzUxMiJdLCJyZXF1ZXN0X29iamVjdF9lbmNyeXB0aW9uX2FsZ192YWx1ZXNfc3VwcG9ydGVkIjpbIlJTQS1PQUVQIiwiUlNBLU9BRVAtMjU2IiwiRUNESC1FUyIsIkVDREgtRVMrQTEyOEtXIiwiRUNESC1FUytBMTkyS1ciLCJFQ0RILUVTK0EyNTZLVyJdLCJyZXF1ZXN0X29iamVjdF9lbmNyeXB0aW9uX2VuY192YWx1ZXNfc3VwcG9ydGVkIjpbIkExMjhDQkMtSFMyNTYiLCJBMTkyQ0JDLUhTMzg0IiwiQTI1NkNCQy1IUzUxMiIsIkExMjhHQ00iLCJBMTkyR0NNIiwiQTI1NkdDTSJdLCJyZXF1ZXN0X29iamVjdF9zaWduaW5nX2FsZ192YWx1ZXNfc3VwcG9ydGVkIjpbIlJTMjU2IiwiUlMzODQiLCJSUzUxMiIsIkVTMjU2IiwiRVMzODQiLCJFUzUxMiJdfX0sImF1dGhvcml0eV9oaW50cyI6WyJodHRwOi8vMTI3LjAuMC4xOjgwMDAvIl19.WnWh9OkfAzb6YCo-yrnV9-7K_I3fucMVxNuw7tr7V43nVvgGJd4BqBSqc8Q0nKgzLcnNtnhf3MRiJ-hVkUL6vhaxt6jsXWvJupRQDf7f6-AgeNPvsHNvlrjoUkVNvTDS3jPUwXtnW7k7xQLEpdoxFW2ggbeG0zLfyyBypEGW3IZa1fDxlnEWvHH7Kctu55OBT_PC514HlKHWBYrBLYMODDoV-PCfOochOroSj3nM1WlDg50OoPXdjRUvM4eRxOmjEOF4kdXK2AKXY8wGMhJere07XnFk7TjdfLMNUdGaDR0aiPYoBkshq7Vhpy8pXt-JdN7RKKjjK-WAFLdEwASDtQ"
@@ -1203,15 +1203,15 @@
   "fields": {
     "created": "2022-04-16T13:13:58.654Z",
     "modified": "2022-04-16T13:13:58.654Z",
-    "iss": "http://127.0.0.1:8000/",
-    "sub": "http://127.0.0.1:8002/oidc/op/",
+    "iss": "http://127.0.0.1:8000",
+    "sub": "http://127.0.0.1:8002/oidc/op",
     "exp": "2022-04-25T15:47:28Z",
     "iat": "2022-04-23T15:47:28Z",
     "statement": {
       "exp": 1650901648,
       "iat": 1650728848,
-      "iss": "http://127.0.0.1:8000/",
-      "sub": "http://127.0.0.1:8002/oidc/op/",
+      "iss": "http://127.0.0.1:8000",
+      "sub": "http://127.0.0.1:8002/oidc/op",
       "jwks": {
         "keys": [
           {
@@ -1300,7 +1300,7 @@
       },
       "trust_marks": [
         {
-          "id": "https://www.spid.gov.it/openid-federation/agreement/op-public/",
+          "id": "https://www.spid.gov.it/openid-federation/agreement/op-public",
           "trust_mark": "eyJhbGciOiJSUzI1NiIsImtpZCI6IkJYdmZybG5oQU11SFIwN2FqVW1BY0JSUWNTem13MGNfUkFnSm5wUy05V1EiLCJ0eXAiOiJ0cnVzdC1tYXJrK2p3dCJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvIiwic3ViIjoiaHR0cDovLzEyNy4wLjAuMTo4MDAyL29pZGMvb3AvIiwiaWF0IjoxNjUwNzI4ODQ4LCJpZCI6Imh0dHBzOi8vd3d3LnNwaWQuZ292Lml0L2NlcnRpZmljYXRpb24vb3AiLCJtYXJrIjoiaHR0cHM6Ly93d3cuYWdpZC5nb3YuaXQvdGhlbWVzL2N1c3RvbS9hZ2lkL2xvZ28uc3ZnIiwicmVmIjoiaHR0cHM6Ly9kb2NzLml0YWxpYS5pdC9pdGFsaWEvc3BpZC9zcGlkLXJlZ29sZS10ZWNuaWNoZS1vaWRjL2l0L3N0YWJpbGUvaW5kZXguaHRtbCJ9.bCueZbCyLLGRRECTU-Pi7-tkgIn74godu9mmzbUcEnDGlYRjZlrK9IWjGloFuQJNymQndWvyEDzHIIHIXpaJqQ4qwqr7hjmZaHC2mrEbUApD9ME72roxWoYL423IZzkZE4B0l0xAzcoIitKIvZb9elDhEgyJmYgaWFV3E47cE4z1DlOecHjp8utxdHawHzN74nOF79-DPe6wtOQnrJkUK4wPckrwZl-hZl5DIl2XP1A30OFpjPfr0XZ_1CSjyM0RO_z6q548WKrvG-JmpDiYw4rY7D9FDbHAlJQML-RL7MNMVeTnkK05E_XsdN6GEE9Lffq1JF95K2lLpOY4QA3Apg"
         }
       ]
@@ -1314,7 +1314,7 @@
   "fields": {
     "created": "2022-03-31T19:42:31.861Z",
     "modified": "2022-03-31T19:42:31.861Z",
-    "sub": "http://127.0.0.1:8001/",
+    "sub": "http://127.0.0.1:8001",
     "trust_anchor": 117,
     "exp": "2022-04-23T16:20:27Z",
     "iat": "2022-03-31T19:42:31.861Z",
@@ -1338,7 +1338,7 @@
     "metadata": {
       "openid_relying_party": {
         "application_type": "web",
-        "client_id": "http://127.0.0.1:8001/",
+        "client_id": "http://127.0.0.1:8001",
         "client_registration_types": [
           "automatic"
         ],
@@ -1372,8 +1372,8 @@
     },
     "trust_marks": [],
     "parties_involved": [
-      "http://127.0.0.1:8001/",
-      "http://127.0.0.1:8000/"
+      "http://127.0.0.1:8001",
+      "http://127.0.0.1:8000"
     ],
     "status": "valid",
     "log": "",
@@ -1387,7 +1387,7 @@
   "fields": {
     "created": "2022-03-31T20:20:30.392Z",
     "modified": "2022-03-31T20:20:30.392Z",
-    "sub": "http://127.0.0.1:8000/oidc/op/",
+    "sub": "http://127.0.0.1:8000/oidc/op",
     "trust_anchor": 117,
     "exp": "2022-04-23T16:20:27Z",
     "iat": "2022-03-31T20:20:30.392Z",
@@ -1412,16 +1412,16 @@
     "metadata": {
       "openid_provider": {
         "authorization_endpoint": "http://127.0.0.1:8000/oidc/op/authorization",
-        "revocation_endpoint": "http://127.0.0.1:8000/oidc/op/revocation/",
+        "revocation_endpoint": "http://127.0.0.1:8000/oidc/op/revocation",
         "id_token_encryption_alg_values_supported": [
           "RSA-OAEP"
         ],
         "id_token_encryption_enc_values_supported": [
           "A128CBC-HS256"
         ],
-        "token_endpoint": "http://127.0.0.1:8000/oidc/op/token/",
-        "userinfo_endpoint": "http://127.0.0.1:8000/oidc/op/userinfo/",
-        "introspection_endpoint": "http://127.0.0.1:8000/oidc/op/introspection/",
+        "token_endpoint": "http://127.0.0.1:8000/oidc/op/token",
+        "userinfo_endpoint": "http://127.0.0.1:8000/oidc/op/userinfo",
+        "introspection_endpoint": "http://127.0.0.1:8000/oidc/op/introspection",
         "claims_parameter_supported": true,
         "contacts": [
           "ops@https://idp.it"
@@ -1468,7 +1468,7 @@
           "RS256",
           "ES256"
         ],
-        "issuer": "http://127.0.0.1:8000/oidc/op/",
+        "issuer": "http://127.0.0.1:8000/oidc/op",
         "jwks": {
           "keys": [
             {
@@ -1486,7 +1486,7 @@
         ],
         "logo_uri": "http://127.0.0.1:8000/static/svg/spid-logo-c-lb.svg",
         "organization_name": "SPID OIDC identity provider",
-        "op_policy_uri": "http://127.0.0.1:8000/oidc/op/en/website/legal-information/",
+        "op_policy_uri": "http://127.0.0.1:8000/oidc/op/en/website/legal-information",
         "request_parameter_supported": true,
         "request_uri_parameter_supported": true,
         "require_request_uri_registration": true,
@@ -1552,8 +1552,8 @@
     },
     "trust_marks": [],
     "parties_involved": [
-      "http://127.0.0.1:8000/oidc/op/",
-      "http://127.0.0.1:8000/"
+      "http://127.0.0.1:8000/oidc/op",
+      "http://127.0.0.1:8000"
     ],
     "status": "valid",
     "log": "",
@@ -1567,7 +1567,7 @@
   "fields": {
     "created": "2022-04-07T18:19:47.553Z",
     "modified": "2022-04-07T18:19:47.553Z",
-    "sub": "http://127.0.0.1:8000/oidc/rp/",
+    "sub": "http://127.0.0.1:8000/oidc/rp",
     "trust_anchor": 117,
     "exp": "2022-04-23T16:20:27Z",
     "iat": "2022-04-07T18:19:47.553Z",
@@ -1592,7 +1592,7 @@
     "metadata": {
       "openid_relying_party": {
         "application_type": "web",
-        "client_id": "http://127.0.0.1:8000/oidc/rp/",
+        "client_id": "http://127.0.0.1:8000/oidc/rp",
         "client_registration_types": [
           "automatic"
         ],
@@ -1626,8 +1626,8 @@
     },
     "trust_marks": [],
     "parties_involved": [
-      "http://127.0.0.1:8000/oidc/rp/",
-      "http://127.0.0.1:8000/"
+      "http://127.0.0.1:8000/oidc/rp",
+      "http://127.0.0.1:8000"
     ],
     "status": "valid",
     "log": "",
@@ -1641,7 +1641,7 @@
   "fields": {
     "created": "2022-04-16T13:13:58.661Z",
     "modified": "2022-04-16T13:13:58.661Z",
-    "sub": "http://127.0.0.1:8002/oidc/op/",
+    "sub": "http://127.0.0.1:8002/oidc/op",
     "trust_anchor": 117,
     "exp": "2022-04-23T16:20:28Z",
     "iat": "2022-04-16T13:13:58.661Z",
@@ -1665,16 +1665,16 @@
     "metadata": {
       "openid_provider": {
         "authorization_endpoint": "http://127.0.0.1:8002/oidc/op/authorization",
-        "revocation_endpoint": "http://127.0.0.1:8002/oidc/op/revocation/",
+        "revocation_endpoint": "http://127.0.0.1:8002/oidc/op/revocation",
         "id_token_encryption_alg_values_supported": [
           "RSA-OAEP"
         ],
         "id_token_encryption_enc_values_supported": [
           "A128CBC-HS256"
         ],
-        "token_endpoint": "http://127.0.0.1:8002/oidc/op/token/",
-        "userinfo_endpoint": "http://127.0.0.1:8002/oidc/op/userinfo/",
-        "introspection_endpoint": "http://127.0.0.1:8002/oidc/op/introspection/",
+        "token_endpoint": "http://127.0.0.1:8002/oidc/op/token",
+        "userinfo_endpoint": "http://127.0.0.1:8002/oidc/op/userinfo",
+        "introspection_endpoint": "http://127.0.0.1:8002/oidc/op/introspection",
         "claims_parameter_supported": true,
         "contacts": [
           "ops@https://idp.it"
@@ -1716,7 +1716,7 @@
           "RS256",
           "ES256"
         ],
-        "issuer": "http://127.0.0.1:8002/oidc/op/",
+        "issuer": "http://127.0.0.1:8002/oidc/op",
         "jwks": {
           "keys": [
             {
@@ -1734,7 +1734,7 @@
         ],
         "logo_uri": "http://127.0.0.1:8002/static/images/logo-cie.png",
         "organization_name": "SPID OIDC identity provider",
-        "op_policy_uri": "http://127.0.0.1:8002/oidc/op/en/website/legal-information/",
+        "op_policy_uri": "http://127.0.0.1:8002/oidc/op/en/website/legal-information",
         "request_parameter_supported": true,
         "request_uri_parameter_supported": true,
         "require_request_uri_registration": true,
@@ -1804,8 +1804,8 @@
     },
     "trust_marks": [],
     "parties_involved": [
-      "http://127.0.0.1:8002/oidc/op/",
-      "http://127.0.0.1:8000/"
+      "http://127.0.0.1:8002/oidc/op",
+      "http://127.0.0.1:8000"
     ],
     "status": "valid",
     "log": "",
@@ -1821,7 +1821,7 @@
     "modified": "2022-02-10T17:47:04.952Z",
     "name": "SPID Public SP",
     "profile_category": "openid_relying_party",
-    "profile_id": "https://www.spid.gov.it/openid-federation/agreement/sp-public/",
+    "profile_id": "https://www.spid.gov.it/openid-federation/agreement/sp-public",
     "trust_mark_template": {
       "iss": "$.issuer_sub",
       "sub": "$.sub",
@@ -1859,7 +1859,7 @@
     "modified": "2022-02-25T16:38:00.936Z",
     "name": "Identity Provider",
     "profile_category": "openid_provider",
-    "profile_id": "https://www.spid.gov.it/openid-federation/agreement/op-public/",
+    "profile_id": "https://www.spid.gov.it/openid-federation/agreement/op-public",
     "trust_mark_template": {
       "iss": "$.issuer_sub",
       "sub": "$.sub",
@@ -1878,7 +1878,7 @@
     "modified": "2022-04-23T15:40:32.349Z",
     "uid": "autouid-b0caa9d7-da0e-442f-a613-8623acf9d0c1",
     "name": "Test Relying Party",
-    "sub": "http://127.0.0.1:8000/oidc/rp/",
+    "sub": "http://127.0.0.1:8000/oidc/rp",
     "type": "openid_relying_party",
     "jwks": [
       {
@@ -1918,8 +1918,8 @@
     "created": "2022-02-25T16:33:11.970Z",
     "modified": "2022-04-23T15:47:08.105Z",
     "uid": "autouid-ecee6ac5-0525-4c3e-839e-9da92e6ce5bd",
-    "name": "http://127.0.0.1:8000/oidc/op/",
-    "sub": "http://127.0.0.1:8000/oidc/op/",
+    "name": "http://127.0.0.1:8000/oidc/op",
+    "sub": "http://127.0.0.1:8000/oidc/op",
     "type": "openid_provider",
     "jwks": [
       {
@@ -1946,7 +1946,7 @@
     "modified": "2022-04-23T15:27:41.661Z",
     "uid": "autouid-0b4008cd-b476-452a-b292-6aa3b570b0b3",
     "name": "cie provider",
-    "sub": "http://127.0.0.1:8002/oidc/op/",
+    "sub": "http://127.0.0.1:8002/oidc/op",
     "type": "openid_provider",
     "jwks": [
       {
@@ -1973,7 +1973,7 @@
     "modified": "2022-04-23T15:30:23.816Z",
     "uid": "autouid-3a6f6af6-9041-4f68-8632-775740fe68f1",
     "name": "tel dei tali org",
-    "sub": "http://127.0.0.1:8001/",
+    "sub": "http://127.0.0.1:8001",
     "type": "openid_relying_party",
     "jwks": [
       {

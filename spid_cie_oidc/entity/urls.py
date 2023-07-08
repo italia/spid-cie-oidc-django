@@ -29,5 +29,5 @@ urlpatterns = [
         entity_configuration,
         name="entity_configuration",
     ),
-    path(f"{_PREF}resolve/", resolve_entity_statement, name="oidcfed_resolve")
+    path(f"{_PREF}resolve", resolve_entity_statement, name="oidcfed_resolve")
 ]

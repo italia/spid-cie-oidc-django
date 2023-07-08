@@ -29,10 +29,18 @@ def entity_configuration(request):
     OIDC Federation Entity Configuration at
     .well-known/openid-federation
     """
+    
     _sub = request.build_absolute_uri().split(OIDCFED_FEDERATION_WELLKNOWN_URL)[0]
+    
+    _sub_values = []
+    if _sub[-1] == "/":
+        _sub_values.extend((_sub, _sub[:-1]))
+    elif _sub[-1] != "/":
+        _sub_values.extend((_sub, _sub+"/"))
+    
     conf = FederationEntityConfiguration.objects.filter(
         # TODO: check for reverse proxy and forwarders ...
-        sub=_sub,
+        sub__in=_sub_values,
         is_active=True,
     ).first()
     if not conf: # pragma: no cover

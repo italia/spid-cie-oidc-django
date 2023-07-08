@@ -114,7 +114,7 @@ md = {
  ],
   "logo_uri":  "https://idp.it/statics/logo.svg",
   "organization_name": "SPID OIDC identity provider",
-  "op_policy_uri":  "https://idp.it/en/website/legal-information/",
+  "op_policy_uri":  "https://idp.it/en/website/legal-information",
   "request_parameter_supported": True,
   "request_uri_parameter_supported": True,
   "require_request_uri_registration": True,

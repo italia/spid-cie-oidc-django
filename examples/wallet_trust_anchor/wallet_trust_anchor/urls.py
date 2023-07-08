@@ -39,9 +39,18 @@ urlpatterns.extend(
                 # 'show_indexes': True
             }
         ),
+        # path(
+            # "/resolve",
+            # resolve_entity_statement,
+            # name="rp_entity_resolve",
+        # )
         
     )
 )
+
+urlpatterns.extend(entity_urlpatterns)
+urlpatterns.extend(ta_urlpatterns)
+urlpatterns.extend(onb_urlpatterns)
 
 if 'djagger' in settings.INSTALLED_APPS:
     urlpatterns.append(path('rest/', include('djagger.urls')))

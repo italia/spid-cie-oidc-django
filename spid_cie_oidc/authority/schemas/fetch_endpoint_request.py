@@ -11,8 +11,8 @@ class FetchRequest(BaseModel):
 
     def example():  # pragma: no cover
         return FetchRequest(
-            sub= "http://127.0.0.1:8000/oidc/rp/",
-            iss= "http://127.0.0.1:8000/",
+            sub= "http://127.0.0.1:8000/oidc/rp",
+            iss= "http://127.0.0.1:8000",
             aud=["https://idp.it/"]
         )
 

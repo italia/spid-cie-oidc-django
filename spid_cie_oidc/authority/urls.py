@@ -20,15 +20,15 @@ from .views import entity_list, fetch, trust_mark_status, advanced_entity_listin
 
 _PREF = getattr(settings, "OIDC_PREFIX", "")
 urlpatterns = [
-    path(f"{_PREF}fetch/", fetch, name="oidcfed_fetch"),
-    path(f"{_PREF}list/", entity_list, name="oidcfed_list"),
+    path(f"{_PREF}fetch", fetch, name="oidcfed_fetch"),
+    path(f"{_PREF}list", entity_list, name="oidcfed_list"),
     path(
-        f"{_PREF}trust_mark_status/",
+        f"{_PREF}trust_mark_status",
         trust_mark_status,
         name="oidcfed_trust_mark_status",
     ),
     path(
-        f"{_PREF}advanced_entity_listing/",
+        f"{_PREF}advanced_entity_listing",
         advanced_entity_listing,
         name="oidcfed_advanced_entity_listing",
     ),
