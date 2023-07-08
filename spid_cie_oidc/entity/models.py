@@ -30,6 +30,8 @@ from spid_cie_oidc.entity.validators import (
     validate_private_jwks
 )
 
+from .jwks import public_jwk_from_private_jwk
+
 logger = logging.getLogger(__name__)
 
 
@@ -436,6 +438,81 @@ class StaffToken(TimeStampedModel):
 
     def __str__(self):
         return f"{self.user} {self.is_active}"
+
+
+class FederationHistoricalKey(TimeStampedModel):
+    """
+    https://openid.net/specs/openid-connect-federation-1_0.html#name-federation-historical-keys-
+    """
+    
+    REVOCATION_REASONS_MAP = (
+        ("0", 'unspecified'),
+        ("1", 'keyCompromise'),
+        ("2", 'cACompromise'),
+        ("3", 'affiliationChanged'),
+        ("4", 'superseded'),
+        ("5", 'cessationOfOperation'),
+        ("6", 'certificateHold'),
+        # 7 is unused in rfc5280
+        ("8", 'removeFromCRL'),
+        ("9", 'privilegeWithdrawn'),
+        ("10", 'aACompromise')
+    )
+    
+    # REVOCATION_REASONS_CODES = {k:k for k in REVOCATION_REASONS_MAP.keys()}
+    
+    entity = models.ForeignKey(FederationEntityConfiguration, on_delete=models.CASCADE)
+    kid = models.CharField(
+        blank=False, null=False, max_length=128
+    )
+    inactive_from = models.DateTimeField(help_text=_(
+        "Expired or Revocation date if revocation motivation is configured"
+    ))
+    revocation_motivation = models.CharField(
+        blank=True, null=False, max_length=33, choices=REVOCATION_REASONS_MAP
+    )
+
+    jwk = models.JSONField(help_text=_("private jwk"), default=dict)
+
+    class Meta:
+        verbose_name = "Federation Historical Key"
+        verbose_name_plural = "Federation Historical Keys"
+
+    @property
+    def as_dict(self):
+        if not self.jwk:
+            return {}
+            
+        kdict = public_jwk_from_private_jwk(self.jwk)
+        if self.revocation_motivation:
+            kdict["revoked"] = {
+              "revoked_at": int(self.inactive_from.timestamp()),
+              "reason": dict(self.REVOCATION_REASONS_MAP)[self.revocation_motivation],
+              "reason_code": self.revocation_motivation
+            }
+        else:
+            kdict["exp"] = int(self.inactive_from.timestamp())
+        return kdict
+
+    @property
+    def as_json(self):
+        return json.dumps(self.as_dict)
+
+    def save(self, *args, **kwargs):
+        if self.kid:
+            for jwk in self.entity.jwks_fed:
+                if not jwk.get('kid', None):
+                    continue
+                elif self.kid == jwk['kid']:
+                    _indx = self.entity.jwks_fed.index(jwk)
+                    self.jwk = self.entity.jwks_fed.pop(_indx)
+                    self.entity.save()
+                    break
+                
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.entity} {self.kid}"
 
 
 def get_first_self_trust_anchor(

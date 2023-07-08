@@ -11,6 +11,7 @@ from .jwtse import unpad_jwt_payload
 from .statements import EntityConfiguration, get_entity_configurations, get_entity_statements
 from .models import (
     FederationEntityConfiguration,
+    FederationHistoricalKey,
     FetchedEntityStatement,
     TrustChain,
     StaffToken
@@ -21,6 +22,13 @@ from . settings import HTTPC_PARAMS
 
 logger = logging.getLogger(__name__)
 
+
+@admin.register(FederationHistoricalKey)
+class FederationHistoricalKey(admin.ModelAdmin):
+    readonly_fields = ('jwk', "as_json")
+    list_display = ("entity", "kid", "inactive_from")
+    list_filter = ("created", "modified", "inactive_from")
+    search_fields = ("entity",)
 
 @admin.register(FederationEntityConfiguration)
 class FederationEntityConfigurationAdmin(admin.ModelAdmin):
