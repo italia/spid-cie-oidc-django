@@ -10,4 +10,4 @@ When you save, the correspondig jwk configured in your entity's `jwks_fed` JSON 
 from your entity configuration and published in the historical registry
 
 ![fhkr](images/fhkr.png)
-An revoked key with the motivation of the revocation.
+*The revoked key with the motivation of the revocation*.
