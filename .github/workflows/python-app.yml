@@ -40,18 +40,25 @@ jobs:
     - name: Install spid-cie-oidc
       run: |
         pip install -e .
+
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
         flake8 ./spid_cie_oidc  --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 ./spid_cie_oidc --count --exit-zero --statistics --max-line-length 120
+
+    - name: Bandit Security Scan
+      run: |
+        bandit -r -x tests/ spid_cie_oidc/*
+
     - name: spid_cie_oidc unit tests
       run: |
         cp examples/federation_authority/federation_authority/settingslocal.py.example examples/federation_authority/federation_authority/settingslocal.py
         coverage erase
         coverage run examples/federation_authority/manage.py test spid_cie_oidc
         coverage report -m --skip-covered
+
     - name: spid_cie_oidc example data imports
       run: |
         cp examples/federation_authority/federation_authority/settingslocal.py.example examples/federation_authority/federation_authority/settingslocal.py
@@ -77,6 +84,3 @@ jobs:
         #fail_ci_if_error: true
         #path_to_write_report: ./codecov_report.txt
         # verbose: true
-    - name: Bandit Security Scan
-      run: |
-        bandit -r -x tests/ spid_cie_oidc/*
