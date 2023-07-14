@@ -24,36 +24,37 @@ class OnboardingRegistrationForm(forms.Form):
 
     organization_name = forms.CharField(
         initial="",
-        label=_("organization Name"),
+        label=_("Organization Name"),
         error_messages={"required": _("Enter your organization name")},
     )
 
     url_entity = forms.URLField(
         initial="",
-        label=_("url of the entity"),
-        error_messages={"required": _("Enter your url of the entity")},
+        label=_("Entity URL"),
+        error_messages={"required": _("Enter the entity unique identifier (HTTP URL)")},
         validators=[validate_entity_configuration, unique_entity_url],
     )
 
     authn_buttons_page_url = forms.URLField(
         initial="",
-        label=_("url of the page where the SPID/CIE button is available"),
+        label=_("URL of the login page, if available"),
         error_messages={
             "required": _(
                 "Enter the url of the page where the SPID/CIE button is available"
             )
         },
+        required=False,
     )
 
     auth_request_url = forms.CharField(
         initial="",
-        label=_("authentication request url"),
+        label=_("Authentication request URL, if available"),
         required = False
     )
 
     contact = forms.EmailField(
         initial="",
-        label=_("contact email"),
+        label=_("Contact email"),
         error_messages={"required": _("Enter your contact email")},
     )
 
@@ -65,8 +66,13 @@ class OnboardingRegistrationForm(forms.Form):
 
     public_jwks = forms.JSONField(
         initial=list,
-        label=_("public jwks of the entities"),
-        error_messages={"required": _("Enter the public jwks of the entities")},
+        label=_("Public Federation JWKs"),
+        error_messages={
+            "required": _(
+                "Enter the public JWKs published in your Entity Configuration, "
+                "as double check."
+            )
+        },
         validators=[validate_public_jwks],
     )
 

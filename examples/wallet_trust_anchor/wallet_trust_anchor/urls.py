@@ -39,12 +39,6 @@ urlpatterns.extend(
                 # 'show_indexes': True
             }
         ),
-        # path(
-            # "/resolve",
-            # resolve_entity_statement,
-            # name="rp_entity_resolve",
-        # )
-        
     )
 )
 

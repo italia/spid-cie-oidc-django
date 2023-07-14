@@ -73,7 +73,13 @@ OIDCFED_MAXIMUM_AUTHORITY_HINTS = getattr(
 
 FEDERATION_DEFAULT_EXP = getattr(settings, "FEDERATION_DEFAULT_EXP", 2880)
 
-ENTITY_TYPE_LEAFS = ["openid_relying_party", "openid_provider", "oauth_resource"]
+ENTITY_TYPE_LEAFS = [
+    "openid_relying_party", 
+    "openid_provider", 
+    "oauth_resource",
+    "wallet_provider",
+    "wallet_relying_party"
+]
 ENTITY_TYPES = ["federation_entity"] + ENTITY_TYPE_LEAFS
 ENTITY_STATUS = {
     "unreachable": False,

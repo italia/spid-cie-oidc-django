@@ -153,6 +153,7 @@ class FederationEntityConfiguration(TimeStampedModel):
         # TODO
         # validators=[validate_entity_metadata,]
     )
+
     is_active = models.BooleanField(
         default=False,
         help_text=_(

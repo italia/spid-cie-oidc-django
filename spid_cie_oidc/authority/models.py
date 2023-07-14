@@ -117,7 +117,16 @@ class FederationDescendant(TimeStampedModel):
         validators = [validate_public_jwks]
     )
     metadata_policy = models.JSONField(
-        blank=True, help_text=_("if present overloads the DEFAULT policy"), default=dict
+        blank=True, help_text=_(
+            "if present it overloads the DEFAULT policy. This will be applied "
+            "recursively to all the descendants."
+        ), default=dict
+    )
+    metadata = models.JSONField(
+        blank=True, help_text=_(
+            "if present it overloads the descendants metadata, "
+            "in the defined parts. This will be applied to the subordinate only."
+        ), default=dict
     )
     constraints = models.JSONField(
         blank=True, help_text=_("if present overloads the DEFAULT policy"), default=dict
@@ -137,6 +146,7 @@ class FederationDescendant(TimeStampedModel):
         choices=[(i, i) for i in ENTITY_STATUS.keys()],
     )
     status_log = models.JSONField(blank=True, help_text=_("status log"), default=dict)
+
     is_active = models.BooleanField(
         default=False, help_text=_("If this entity is active. ")
     )
