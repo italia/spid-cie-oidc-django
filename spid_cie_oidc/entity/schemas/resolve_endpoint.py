@@ -21,8 +21,8 @@ class ResolveRequest(BaseModel):
 
     def example():  # pragma: no cover
         return ResolveRequest(
-            sub= "http://127.0.0.1:8000/oidc/rp/",
-            anchor= "http://127.0.0.1:8000/",
+            sub= "http://127.0.0.1:8000/oidc/rp",
+            anchor= "http://127.0.0.1:8000",
             format= "json",
         )
 

@@ -43,37 +43,37 @@ _PREF = getattr(settings, "OIDC_PREFIX", "")
 
 urlpatterns = [
     path(
-        f"{_PREF}onboarding/landing/",
+        f"{_PREF}onboarding/landing",
         onboarding_landing,
         name="oidc_onboarding_landing",
     ),
     path(
-        f"{_PREF}onboarding/registration/",
+        f"{_PREF}onboarding/registration",
         onboarding_registration,
         name="oidc_onboarding_registration",
     ),
     path(
-        f"{_PREF}onboarding/entities/",
+        f"{_PREF}onboarding/entities",
         onboarding_entities,
         name="oidc_onboarding_entities",
     ),
     path(
-        f"{_PREF}onboarding/tools/create-jwk/",
+        f"{_PREF}onboarding/tools/create-jwk",
         onboarding_create_jwk,
         name="oidc_onboarding_create_jwk",
     ),
     path(
-        f"{_PREF}onboarding/tools/convert-jwk/",
+        f"{_PREF}onboarding/tools/convert-jwk",
         onboarding_convert_jwk,
         name="oidc_onboarding_convert_jwk",
     ),
     path(
-        f"{_PREF}onboarding/convert-pem/",
+        f"{_PREF}onboarding/convert-pem",
         onboarding_convert_pem,
         name="oidc_onboarding_convert_pem",
     ),
     path(
-        f"{_PREF}onboarding/tools/resolve-statement/",
+        f"{_PREF}onboarding/tools/resolve-statement",
         onboarding_resolve_statement,
         name="oidc_onboarding_resolve_statement",
     ),

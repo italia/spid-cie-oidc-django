@@ -117,7 +117,16 @@ class FederationDescendant(TimeStampedModel):
         validators = [validate_public_jwks]
     )
     metadata_policy = models.JSONField(
-        blank=True, help_text=_("if present overloads the DEFAULT policy"), default=dict
+        blank=True, help_text=_(
+            "if present it overloads the DEFAULT policy. This will be applied "
+            "recursively to all the descendants."
+        ), default=dict
+    )
+    metadata = models.JSONField(
+        blank=True, help_text=_(
+            "if present it overloads the descendants metadata, "
+            "in the defined parts. This will be applied to the subordinate only."
+        ), default=dict
     )
     constraints = models.JSONField(
         blank=True, help_text=_("if present overloads the DEFAULT policy"), default=dict
@@ -137,6 +146,7 @@ class FederationDescendant(TimeStampedModel):
         choices=[(i, i) for i in ENTITY_STATUS.keys()],
     )
     status_log = models.JSONField(blank=True, help_text=_("status log"), default=dict)
+
     is_active = models.BooleanField(
         default=False, help_text=_("If this entity is active. ")
     )
@@ -170,15 +180,19 @@ class FederationDescendant(TimeStampedModel):
 
         # apply custom policies if defined
         policies.update(self.metadata_policy)
-
+        ta = get_first_self_trust_anchor(iss)
         data = {
             "exp": exp_from_now(minutes=FEDERATION_DEFAULT_EXP),
             "iat": iat_now(),
-            "iss": get_first_self_trust_anchor(iss).sub,
+            "iss": ta.sub,
             "sub": self.sub,
             "jwks": {"keys": self.jwks},
             "metadata_policy": policies,
         }
+
+        if ta.fetch_endpoint:
+            data["source_endpoint"] = ta.fetch_endpoint
+
         if aud:
             data["aud"] = [aud] if isinstance(aud, str) else aud
 

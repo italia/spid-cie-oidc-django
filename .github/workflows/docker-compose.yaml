@@ -1,0 +1,41 @@
+  name: docker-compose test
+  on:
+    push:
+      branches: [ main ]
+    pull_request:
+      branches: [ "*" ]
+
+  jobs:
+    docker:
+      timeout-minutes: 10
+      runs-on: ubuntu-latest
+
+      steps:        
+
+        - name: Checkout
+          uses: actions/checkout@v3
+
+        - name: Where I am?
+          run: | 
+            pwd
+            ls -al 
+
+        - name: Setup example projects - folder creation
+          run: | 
+            cp -R examples example-docker 
+
+        - name: Setup example projects - strings replacement
+          run: |
+            bash docker-prepare.sh
+        
+        # permission denied -> obvious :-)
+        #- name: Adds fake hosts
+          #run: | 
+            #echo 127.0.0.1   localhost  trust-anchor.org relying-party.org cie-provider.org wallet.trust-anchor.org > /etc/hosts
+
+        - name: Start containers
+          run: docker-compose -f "docker-compose.yml" up -d --build
+
+        - name: Stop containers
+          if: always()
+          run: docker-compose -f "docker-compose.yml" down

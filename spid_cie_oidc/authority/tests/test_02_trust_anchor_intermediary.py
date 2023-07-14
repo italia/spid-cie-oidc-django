@@ -48,6 +48,8 @@ class TrustChainTest(TestCase):
         c = Client()
         res = c.get(url, data={"sub": self.rp.sub})
         data = verify_jws(res.content.decode(), self.ta_conf.jwks_fed[0])
+        
+        self.assertEqual(data['source_endpoint'], 'http://testserver//fetch')
         self.assertTrue(data["jwks"])
 
     def test_list_endpoint(self):

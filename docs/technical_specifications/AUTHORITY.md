@@ -51,19 +51,19 @@ The entity's result set must have a descendant ordering with higher iat on top.
 A response example: 
 ````
 {
-    "iss": "https://registry.spid.gov.it/",
+    "iss": "https://registry.spid.gov.it",
     "iat": 1620050972,
     "entities": [
         {
-            "https://rp.example.it/spid/": {
+            "https://rp.example.it/spid": {
             "iat": 1588455866,
             },
             {
-            "https://rp.another.it/spid/": {
+            "https://rp.another.it/spid": {
             "iat": 1588455856,
             },
             {
-            "https://rp.it/spid/": {
+            "https://rp.it/spid": {
             "iat": 1588355866,
             },
         ... # many other entries
@@ -71,7 +71,7 @@ A response example:
     "page": 1,
     "total_pages": 2,
     "total_entries": 189,
-    "next_page_path": "/federation_adv_list/?page=2",
+    "next_page_path": "/federation_adv_list?page=2",
     "prev_page_path": ""
 }
 ```` 
@@ -80,8 +80,8 @@ A response example:
 
 An entity MAY use the resolve endpoint to fetch resolved metadata and trust marks for an entity as seen/trusted by the resolver. 
 
-- `http://127.0.0.1:8000/resolve/?sub=http://127.0.0.1:8000/oidc/rp/&anchor=http://127.0.0.1:8000/&format=json`
-- `http://127.0.0.1:8000/resolve/?sub=http://127.0.0.1:8000/oidc/op/&anchor=http://127.0.0.1:8000/`
+- `http://127.0.0.1:8000/resolve?sub=http://127.0.0.1:8000/oidc/rp/&anchor=http://127.0.0.1:8000&format=json`
+- `http://127.0.0.1:8000/resolve?sub=http://127.0.0.1:8000/oidc/op/&anchor=http://127.0.0.1:8000`
 
 
 #### trust mark status

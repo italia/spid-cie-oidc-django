@@ -31,7 +31,7 @@ class IntrospectionEndpointTest(TestCase):
     def setUp(self):
         self.RP_SUB = rp_conf["sub"]
         self.RP_CLIENT_ID = rp_conf["metadata"]["openid_relying_party"]["client_id"]
-        self.jwt_auds = [op_conf["sub"], "http://testserver/oidc/op/", "http://testserver/oidc/op/introspection/"]
+        self.jwt_auds = [op_conf["sub"], "http://testserver/oidc/op/", "http://testserver/oidc/op/introspection"]
         CLIENT_ASSERTION = {
             "iss": self.RP_SUB,
             "sub": self.RP_SUB,

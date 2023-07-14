@@ -18,6 +18,7 @@ from django.urls import path
 
 from .views import (
     entity_configuration,
+    historical_keys,
     resolve_entity_statement
 )
 
@@ -29,5 +30,10 @@ urlpatterns = [
         entity_configuration,
         name="entity_configuration",
     ),
-    path(f"{_PREF}resolve/", resolve_entity_statement, name="oidcfed_resolve")
+    path(f"{_PREF}resolve", resolve_entity_statement, name="oidcfed_resolve"),
+    path(
+        f"{_PREF}.well-known/openid-federation-historical-jwks",
+        historical_keys,
+        name="oidcfed_historical_keys"
+    )
 ]

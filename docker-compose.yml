@@ -60,5 +60,22 @@ services:
         python3 manage.py loaddata dumps/example.json &&
         python3 manage.py runserver 0.0.0.0:8001"
 
+  wallet.trust-anchor.org:
+    image: ghcr.io/italia/spid-cie-oidc-django:latest
+    # build:
+      # context: .
+      # dockerfile: ./Dockerfile
+    ports:
+      - "8005:8005"
+    volumes:
+      - ./examples-docker/wallet_trust_anchor:/django-project
+    networks:
+      - oidcfed
+    command: |
+        bash -c "cd /django-project/ &&
+        python3 manage.py migrate &&
+        python3 manage.py loaddata dumps/ta-ec.json &&
+        python3 manage.py runserver 0.0.0.0:8005"
+
 networks:
   oidcfed:
