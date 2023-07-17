@@ -14,6 +14,7 @@ DEBUG = True
 # the path corresponding the admin backend, default if not defined: admin/
 # CHANGE THIS VALUE
 ADMIN_PATH = 'admin/'
+APPEND_SLASH = False
 
 # required for onboarding checks and also for all the leafs
 OIDCFED_DEFAULT_TRUST_ANCHOR = "http://127.0.0.1:8000"
