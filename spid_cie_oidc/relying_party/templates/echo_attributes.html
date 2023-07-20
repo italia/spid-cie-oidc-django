@@ -42,7 +42,7 @@ jQuery(function ($) {
     </dl>
 
     <a href="{% url 'spid_cie_rpinitiated_logout' %}" class="btn btn-secondary" role="button">Log out</a>
-    <a href="{% url 'spid_cie_rp_echo_introspection' %}" class="btn btn-secondary" role="button">Verify Token (Introspection)</a>
+    <a href="{% url 'spid_cie_rp_echo_introspection' %}" class="btn btn-secondary" role="button">Verify Access Token (Introspection)</a>
 
 </div>
 {% if rt_expiration == 0 %}
@@ -53,7 +53,7 @@ jQuery(function ($) {
 {% else %}
 <div class="col-6 p-4">
         <h4 class="text-left">ACCESS TOKEN</h4>
-    <p> {% trans "The" %} access token <em>{{ rt_jti }}</em> <br />
+    <p> {% trans "The" %} access token <em>{{ at_jti }}</em> <br />
         {% trans "expires in" %} <span id="at_time">{{ at_expiration }}</span> </p>
 </div>
 <div class="col-6 p-4">
