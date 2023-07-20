@@ -9,6 +9,8 @@ from spid_cie_oidc.entity.models import FederationEntityConfiguration
 from ..oidc import *
 from ..oauth2 import *
 
+from enum import Enum
+
 from spid_cie_oidc.entity.exceptions import InvalidTrustchain
 from spid_cie_oidc.entity.models import TrustChain
 from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
@@ -19,6 +21,12 @@ from spid_cie_oidc.relying_party.settings import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+class TokenRequestType(str, Enum):
+    refresh = "refresh"
+    revocation = "revocation"
+    introspection = "introspection"
 
 
 class SpidCieOidcRp:
@@ -110,16 +118,16 @@ class SpidCieOidcRp:
             client_assertion_type="urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
         )
 
-        if token_type == 'refresh': # nosec - B105
+        if token_type == TokenRequestType.refresh: #'refresh':  # nosec - B105
             token_request_data["grant_type"] = "refresh_token"
             token_request_data["refresh_token"] = auth_token.refresh_token
             audience = authz.provider_configuration["token_endpoint"]
 
-        elif token_type == 'revocation': # nosec - B105
+        elif token_type == TokenRequestType.revocation: #'revocation':  # nosec - B105
             token_request_data["token"] = auth_token.access_token
             audience = authz.provider_configuration["revocation_endpoint"]
 
-        elif token_type == 'introspection': # nosec - B105
+        elif token_type == TokenRequestType.introspection: #'introspection':  # nosec - B105
             token_request_data["token"] = auth_token.access_token
             audience = authz.provider_configuration["introspection_endpoint"]
 

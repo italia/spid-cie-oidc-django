@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.utils import timezone
 from ..models import OidcAuthenticationToken
 
-from . import SpidCieOidcRp
+from . import SpidCieOidcRp, TokenRequestType
 from django.views import View
 
 logger = logging.getLogger(__name__)
@@ -47,7 +47,7 @@ class SpidCieOidcRpLogout(SpidCieOidcRp, View):
         logout(request)
 
         try:
-            self.get_token_request(auth_token, request, "revocation")
+            self.get_token_request(auth_token, request, TokenRequestType.revocation) #"revocation")
             auth_token.logged_out = timezone.localtime()
             auth_token.save()
         except Exception as e:  # pragma: no cover

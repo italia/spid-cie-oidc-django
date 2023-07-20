@@ -7,7 +7,7 @@ from ..models import OidcAuthenticationToken
 from ..oauth2 import *
 from ..oidc import *
 
-from . import SpidCieOidcRp
+from . import SpidCieOidcRp, TokenRequestType
 from django.views import View
 
 
@@ -48,7 +48,7 @@ class SpidCieOidcRpIntrospection(SpidCieOidcRp, View):
         auth_token = auth_tokens.last()
 
         try:
-            token_response = self.get_token_request(auth_token, request, "introspection")
+            token_response = self.get_token_request(auth_token, request, TokenRequestType.introspection) # "introspection")
             introspection_token_response = json.loads(token_response.content.decode())
             data = {"introspection": introspection_token_response}
             return render(request, self.template, data)
