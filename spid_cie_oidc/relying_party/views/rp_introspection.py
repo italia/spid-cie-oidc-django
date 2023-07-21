@@ -1,7 +1,6 @@
 import logging
 
 from djagger.decorators import schema
-from django.urls import reverse
 
 from ..models import OidcAuthenticationToken
 from ..oauth2 import *
@@ -37,9 +36,6 @@ class SpidCieOidcRpIntrospection(SpidCieOidcRp, View):
             user=request.user
         ).filter(revoked__isnull=True)
 
-        default_logout_url = getattr(
-            settings, "LOGOUT_REDIRECT_URL", None
-        ) or reverse("spid_cie_rp_landing")
         if not auth_tokens:
             logger.warning(
                 "Token request failed: not found any authentication session"
@@ -48,7 +44,7 @@ class SpidCieOidcRpIntrospection(SpidCieOidcRp, View):
         auth_token = auth_tokens.last()
 
         try:
-            token_response = self.get_token_request(auth_token, request, TokenRequestType.introspection) # "introspection")
+            token_response = self.get_token_request(auth_token, request, TokenRequestType.introspection)
             introspection_token_response = json.loads(token_response.content.decode())
             data = {"introspection": introspection_token_response}
             return render(request, self.template, data)

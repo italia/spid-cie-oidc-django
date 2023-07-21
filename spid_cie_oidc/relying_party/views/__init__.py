@@ -47,7 +47,7 @@ class SpidCieOidcRp:
             )
 
         trust_anchor = request.GET.get("trust_anchor", None)
-        if trust_anchor != None and trust_anchor not in settings.OIDCFED_TRUST_ANCHORS:
+        if trust_anchor is not None and trust_anchor not in settings.OIDCFED_TRUST_ANCHORS:
             logger.warning("Unallowed Trust Anchor")
             raise InvalidTrustchain("Unallowed Trust Anchor")
 
@@ -118,16 +118,16 @@ class SpidCieOidcRp:
             client_assertion_type="urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
         )
 
-        if token_type == TokenRequestType.refresh: #'refresh':  # nosec - B105
+        if token_type == TokenRequestType.refresh:
             token_request_data["grant_type"] = "refresh_token"
             token_request_data["refresh_token"] = auth_token.refresh_token
             audience = authz.provider_configuration["token_endpoint"]
 
-        elif token_type == TokenRequestType.revocation: #'revocation':  # nosec - B105
+        elif token_type == TokenRequestType.revocation:
             token_request_data["token"] = auth_token.access_token
             audience = authz.provider_configuration["revocation_endpoint"]
 
-        elif token_type == TokenRequestType.introspection: #'introspection':  # nosec - B105
+        elif token_type == TokenRequestType.introspection:
             token_request_data["token"] = auth_token.access_token
             audience = authz.provider_configuration["introspection_endpoint"]
 

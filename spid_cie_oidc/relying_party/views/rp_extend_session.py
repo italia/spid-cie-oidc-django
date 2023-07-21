@@ -38,9 +38,6 @@ class SpidCieOidcRefreshToken(SpidCieOidcRp, View):
             user=request.user
         ).filter(revoked__isnull=True)
 
-        default_logout_url = getattr(
-            settings, "LOGOUT_REDIRECT_URL", None
-        ) or reverse("spid_cie_rp_landing")
         if not auth_tokens:
             logger.warning(
                 "Token request failed: not found any authentication session"
@@ -49,7 +46,7 @@ class SpidCieOidcRefreshToken(SpidCieOidcRp, View):
         auth_token = auth_tokens.last()
 
         try:
-            token_response = self.get_token_request(auth_token, request, TokenRequestType.refresh) #"refresh")
+            token_response = self.get_token_request(auth_token, request, TokenRequestType.refresh)  # "refresh")
             if token_response.status_code == 400:
                 return HttpResponseRedirect(reverse("spid_cie_rp_landing"))
 

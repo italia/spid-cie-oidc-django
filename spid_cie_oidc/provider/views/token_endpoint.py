@@ -1,6 +1,5 @@
 import base64
 import hashlib
-import json
 import logging
 
 from djagger.decorators import schema
@@ -23,7 +22,7 @@ from spid_cie_oidc.provider.settings import (
     OIDCFED_PROVIDER_PROFILES
 )
 
-from spid_cie_oidc.entity.utils import datetime_from_timestamp, exp_from_now, iat_now
+from spid_cie_oidc.entity.utils import iat_now
 from . import OpBase
 
 logger = logging.getLogger(__name__)
