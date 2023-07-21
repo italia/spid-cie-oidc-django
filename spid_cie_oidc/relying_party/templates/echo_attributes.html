@@ -62,7 +62,7 @@ jQuery(function ($) {
     <p> {% trans "The" %} Refresh Token <em>{{ rt_jti }}</em> <br />
         {% trans "expires in" %} <span id="rt_time">{{ rt_expiration }}</span> </p>
     <div class="alert alert-warning" role="alert">
-        <p>NB: {% "The time frame in which the refresh token is allowed to be used corresponds to the validity period of the consent given by the user and is set by the Provider with the variable" %} <em>OIDCFED_PROVIDER_MAX_CONSENT_TIMEFRAME</em> {% trans "in Provider settingslocal.py. Upon expiration the Provider returns error HTTP/400 and the RP example redirects to the landing page" %} </p>
+        <p>NB: {% trans "The time frame in which the refresh token is allowed to be used corresponds to the validity period of the consent given by the user and is set by the Provider with the variable" %} <em>OIDCFED_PROVIDER_MAX_CONSENT_TIMEFRAME</em> {% trans "in Provider settingslocal.py. Upon expiration the Provider returns error HTTP/400 and the RP example redirects to the landing page" %} </p>
     </div>
 </div>
 {% endif %}
