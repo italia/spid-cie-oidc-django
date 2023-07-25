@@ -19,7 +19,7 @@ from spid_cie_oidc.provider.exceptions import ValidationException
 from spid_cie_oidc.provider.models import IssuedToken, OidcSession
 from spid_cie_oidc.provider.settings import (
     OIDCFED_DEFAULT_PROVIDER_PROFILE,
-    OIDCFED_PROVIDER_PROFILES
+    OIDCFED_PROVIDER_PROFILES,
 )
 
 from spid_cie_oidc.entity.utils import iat_now
@@ -97,26 +97,31 @@ class TokenEndpoint(OpBase, View):
         return JsonResponse(iss_token_data)
 
     def is_token_renewable(self, session) -> bool:
-        issuedToken = IssuedToken.objects.filter(
-            session=session
-        ).first()
+        logger.info(OIDCFED_DEFAULT_PROVIDER_PROFILE)
+        if OIDCFED_DEFAULT_PROVIDER_PROFILE == "cie":
+            issuedToken = IssuedToken.objects.filter(
+                session=session
+            ).first()
 
-        id_token = unpad_jwt_payload(issuedToken.id_token)
+            id_token = unpad_jwt_payload(issuedToken.id_token)
 
-        consent_expiration = id_token['iat'] + getattr(settings, "OIDCFED_PROVIDER_MAX_CONSENT_TIMEFRAME")
+            consent_expiration = id_token['iat'] + getattr(settings, "OIDCFED_PROVIDER_MAX_CONSENT_TIMEFRAME")
 
-        delta = consent_expiration - iat_now()
+            delta = consent_expiration - iat_now()
 
-        if delta > 0:
-            return True
-        return False
-
-        # # TODO: check also ACR
-        # return (
-        #     (issuedToken.count() - 1) < getattr(
-        #         settings, "OIDCFED_PROVIDER_MAX_REFRESH", 1
-        #     )
-        # )
+            if delta > 0:
+                return True
+            return False
+        elif OIDCFED_DEFAULT_PROVIDER_PROFILE == "spid":
+            # TODO: check also ACR
+            issuedToken = IssuedToken.objects.filter(
+                session=session
+            )
+            return (
+                    (issuedToken.count() - 1) < getattr(
+                        settings, "OIDCFED_PROVIDER_MAX_REFRESH", 1
+                    )
+            )
 
     def grant_refresh_token(self, request, *args, **kwargs):
         """
