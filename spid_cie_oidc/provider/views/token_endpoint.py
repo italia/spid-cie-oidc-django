@@ -97,8 +97,8 @@ class TokenEndpoint(OpBase, View):
         return JsonResponse(iss_token_data)
 
     def is_token_renewable(self, session) -> bool:
-        logger.info(OIDCFED_DEFAULT_PROVIDER_PROFILE)
-        if OIDCFED_DEFAULT_PROVIDER_PROFILE == "cie":
+        provider = getattr(settings, "OIDCFED_PROVIDER_PROFILE")
+        if provider == "cie":
             issuedToken = IssuedToken.objects.filter(
                 session=session
             ).first()
@@ -112,7 +112,7 @@ class TokenEndpoint(OpBase, View):
             if delta > 0:
                 return True
             return False
-        elif OIDCFED_DEFAULT_PROVIDER_PROFILE == "spid":
+        elif provider == "spid":
             # TODO: check also ACR
             issuedToken = IssuedToken.objects.filter(
                 session=session
