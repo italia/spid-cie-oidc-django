@@ -10,8 +10,10 @@ If you're using the Docker-compose demo, you can skip the creation of a Federati
 __setup__
 1. add `spid_cie_oidc.entity` and `spid_cie_oidc.authority` in settings.INSTALLED_APPS
 2. do migrations `./manage.py migrate`
-3. create superuser `./manage.py createsuperuser`
-4. log in the `/admin` interface using __admin__ __oidcadmin__
+3. create superuser `./manage.py createsuperuser`, eg:
+   - username: admin
+   - password: oidcadmin
+5. log in the `/admin` interface using __admin__ __oidcadmin__
 
 __configure the federation entity__
 
