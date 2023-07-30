@@ -40,7 +40,7 @@ class RpIntiatedLogoutTest(TestCase):
 
     
     @patch("requests.post", return_value=MockedLogout())
-    def test_rpinitaited_logout(self, mokced):
+    def test_rpinitiated_logout(self, mokced):
         c = Client()
         c.login(username="test", password="test")
         url = reverse("spid_cie_rpinitiated_logout")
@@ -48,7 +48,7 @@ class RpIntiatedLogoutTest(TestCase):
         self.assertTrue(res.status_code == 302)
         self.assertTrue(res.url == "/oidc/rp/landing")
 
-    def test_rpinitaited_logout_no_revocation_endpoint(self):
+    def test_rpinitiated_logout_no_revocation_endpoint(self):
         OidcAuthentication.objects.all().delete()
         op_conf_local = deepcopy(op_conf["metadata"]["openid_provider"])
         op_conf_local.pop("revocation_endpoint")
@@ -67,7 +67,7 @@ class RpIntiatedLogoutTest(TestCase):
         self.assertTrue(res.status_code == 302)
         self.assertTrue(res.url == "/oidc/rp/landing")
 
-    def test_rpinitaited_logout_no_auth_token(self):
+    def test_rpinitiated_logout_no_auth_token(self):
         OidcAuthenticationToken.objects.all().delete()
         c = Client()
         c.login(username="test", password="test")

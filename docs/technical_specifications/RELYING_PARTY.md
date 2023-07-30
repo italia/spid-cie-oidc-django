@@ -40,10 +40,10 @@ Example
 ````
 OIDCFED_IDENTITY_PROVIDERS = {
   "spid": {
-    "http://127.0.0.1:8000/oidc/op/" : OIDCFED_DEFAULT_TRUST_ANCHOR,
+    "http://127.0.0.1:8000/oidc/op" : OIDCFED_DEFAULT_TRUST_ANCHOR,
   },
   "cie": {
-    "http://127.0.0.1:8002/oidc/op/" : OIDCFED_DEFAULT_TRUST_ANCHOR,
+    "http://127.0.0.1:8002/oidc/op" : OIDCFED_DEFAULT_TRUST_ANCHOR,
   }
 }
 ````

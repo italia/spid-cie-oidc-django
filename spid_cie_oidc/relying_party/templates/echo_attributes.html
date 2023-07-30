@@ -3,7 +3,31 @@
 {% load static %}
 
 {% block centered_container %}
+<script  type="text/javascript">
+function startTimer(duration, display) {
+    var timer = duration, minutes, seconds;
+    setInterval(function () {
+        minutes = parseInt(timer / 60, 10)
+        seconds = parseInt(timer % 60, 10);
 
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        display.text(minutes + ":" + seconds);
+
+        if (--timer < 0) {
+            timer = duration;
+        }
+    }, 1000);
+}
+
+jQuery(function ($) {
+    var at_display = $('#at_time'),
+        rt_display = $('#rt_time');
+    startTimer({{ at_expiration }}, at_display);
+    startTimer({{ rt_expiration }}, rt_display);
+});
+</script>
 <div class="col-12 p-4">
     {% csrf_token %}
     <h4 class="text-left">
@@ -18,7 +42,29 @@
     </dl>
 
     <a href="{% url 'spid_cie_rpinitiated_logout' %}" class="btn btn-secondary" role="button">Log out</a>
+    <a href="{% url 'spid_cie_rp_echo_introspection' %}" class="btn btn-secondary" role="button">Verify Token (Introspection)</a>
 
 </div>
+{% if rt_expiration == 0 %}
+<div class="col-12 p-4">
+<h4>{% trans "Warning" %}:</h4>
+    <p>{% trans 'To enable revocable long sessions you must set <em>OIDCFED_ACR_PROFILES</em> in settingslocal.py of the Relying Party' %} <em>OIDCFED_ACR_PROFILES=["https://www.spid.gov.it/SpidL2","https://www.spid.gov.it/SpidL1"]</em></p>
+</div>
+{% else %}
+<div class="col-6 p-4">
+        <h4 class="text-left">ACCESS TOKEN</h4>
+    <p> {% trans "The" %} access token <em>{{ rt_jti }}</em> <br />
+        {% trans "expires in" %} <span id="at_time">{{ at_expiration }}</span> </p>
+</div>
+<div class="col-6 p-4">
+        <h4 class="text-left">REFRESH TOKEN <a href="{% url 'spid_cie_rp_extend_session' %}" class="btn btn-primary btn-xs btn-me" role="button">{% trans "Extend Session" %}</a></h4>
+
+    <p> {% trans "The" %} Refresh Token <em>{{ rt_jti }}</em> <br />
+        {% trans "expires in" %} <span id="rt_time">{{ rt_expiration }}</span> </p>
+    <div class="alert alert-warning" role="alert">
+        <p>NB: {% trans "the number of Refresh Tokens that can be issued for a single session is set in the OPs configuration" %} <em>OIDCFED_PROVIDER_MAX_REFRESH</em>. {% trans "Past this number, the system returns error HTTP/400 and redirects to the landing page" %} </p>
+    </div>
+</div>
+{% endif %}
 
 {% endblock %}

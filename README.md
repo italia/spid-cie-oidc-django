@@ -104,7 +104,7 @@ sudo docker-compose up
 
 Configure a proper DNS resolution for trust-anchor.org. In GNU/Linux we can configure it in `/etc/hosts`:
 ````
-127.0.0.1   localhost  trust-anchor.org relying-party.org cie-provider.org
+127.0.0.1   localhost  trust-anchor.org relying-party.org cie-provider.org wallet.trust-anchor.org
 ````
 
 Point your web browser to `http://relying-party.org:8001/oidc/rp/landing` and do your first oidc authentication.

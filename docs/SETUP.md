@@ -15,7 +15,6 @@ pip install spid-cie-oidc
 # then include `spid_cie_oidc.{app_name}` in your project settings.INSTALLED_APPS
 ````
 
-
 #### Configure the example projects
 
 Install enviroment and dependencies

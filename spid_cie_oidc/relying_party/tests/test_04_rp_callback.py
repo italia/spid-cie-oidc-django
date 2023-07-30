@@ -16,7 +16,8 @@ from spid_cie_oidc.provider.tests.authn_request_settings import AUTHN_REQUEST_SP
 from spid_cie_oidc.relying_party.tests.mocked_response import (
     MockedTokenEndPointNoCorrectIdTokenResponse,
     MockedTokenEndPointNoCorrectResponse, 
-    MockedTokenEndPointResponse, 
+    MockedTokenEndPointResponse,
+    MockedTokenEndPointNoCorrectAtHashResponse,
     MockedUserInfoResponse
 )
 
@@ -167,3 +168,13 @@ class RpCallBack(TestCase):
         res = client.get(url, {"state": STATE, "code": CODE})
         self.assertTrue(res.status_code == 403)
         self.assertTrue("invalid_token" in res.content.decode())
+
+    @override_settings(HTTP_CLIENT_SYNC=True)
+    @patch("requests.post", return_value=MockedTokenEndPointNoCorrectAtHashResponse())
+    @patch("requests.get", return_value=MockedUserInfoResponse())
+    def test_rp_callback_no_correct_at_hash_response(self, mocked, mocked1):
+        client = Client()
+        url = reverse("spid_cie_rp_callback")
+        res = client.get(url, {"state": STATE, "code": CODE})
+        self.assertTrue(res.status_code == 403)
+        self.assertTrue("at_hash verification failed" in res.content.decode())

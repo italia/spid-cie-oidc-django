@@ -54,7 +54,7 @@ def validate_entity_configuration(value):
     )().sub
     if superior_sub not in authority_hints:
         raise NotDescendant(
-            f"This participant MUST have {superior_sub} in"
+            f"This participant MUST have {superior_sub} in "
             f"its authority_hints claim. It has: {authority_hints}."
         )
     return ec

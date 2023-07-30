@@ -10,8 +10,10 @@ If you're using the Docker-compose demo, you can skip the creation of a Federati
 __setup__
 1. add `spid_cie_oidc.entity` and `spid_cie_oidc.authority` in settings.INSTALLED_APPS
 2. do migrations `./manage.py migrate`
-3. create superuser `./manage.py createsuperuser`
-4. log in the `/admin` interface using __admin__ __oidcadmin__
+3. create superuser `./manage.py createsuperuser`, eg:
+   - username: admin
+   - password: oidcadmin
+5. log in the `/admin` interface using __admin__ __oidcadmin__
 
 __configure the federation entity__
 
@@ -48,7 +50,7 @@ The JWKS if not submitted it will be created automatically.
 ````
 from spid_cie_oidc.entity.models import *
 
-TA_SUB = "http://testserver/"
+TA_SUB = "http://testserver"
 FA_METADATA = {
     "federation_entity": {
         "contacts": ["ops@localhost"],
@@ -85,7 +87,7 @@ Using different kind of metadata we can create OpenID Relying Parties or Provide
 Just rememeber, for these latter, to add also the authority_hints value as follow.
 
 ````
-authority_hints = ["http://testserver/"]
+authority_hints = ["http://testserver"]
 ````
 
 ### Create a Federation Descendant via API
@@ -108,8 +110,8 @@ In examples/provider configure a federation entity configuration as OP:
 ````
 Open _http://127.0.0.1:8002/admin_ in you web browser and in FederationEntityConfiguration create a new entry with the following data:
 
-- sub (eg. 'http://127.0.0.1:8002/oidc/op/')
-- authority hints, list of trust anchor(eg. ["http://127.0.0.1:8000/"])
+- sub (eg. 'http://127.0.0.1:8002/oidc/op')
+- authority hints, list of trust anchor(eg. ["http://127.0.0.1:8000"])
 - Jwks, private jwks, if you don't have one please create a pair of private using the OnBoarding tool `Create a JWK`.
 - metadata, url paths in metadata need to be mapped in `examples/relying_party/urls.py`, [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/examples/provider/provider/urls.py#L48).
 
@@ -122,7 +124,7 @@ Access to the Federation Authority admin backend and configure your OP as a desc
 In the admin page of your Trust Anchor (http://127.0.0.1:8000/admin) create a descendant entity with the following paramenters:
 
 - OP name
-- sub (eg. 'http://127.0.0.1:8002/oidc/op/')
+- sub (eg. 'http://127.0.0.1:8002/oidc/op')
 - Jwks, public jwks available in the OP's entity configuration
 - is_active, must set to True
 
@@ -148,8 +150,8 @@ In examples/relying_party configure a federation entity configuration as RP:
 ````
 In the admin page (http://127.0.0.1:[port]/admin) create a FederationEntityConfiguration with at least these parameters:
 
-- sub (eg. 'http://127.0.0.1:[port]/oidc/rp/')
-- authority hints, list of trust anchor(eg. ["http://127.0.0.1:8000/"])
+- sub (eg. 'http://127.0.0.1:[port]/oidc/rp')
+- authority hints, list of trust anchor(eg. ["http://127.0.0.1:8000"])
 - Jwks, private jwks, If you don't have one please create a pair of private/public using the OnBoarding tool `Create a JWK`.
 - metadata, url paths in metadata need to be mapped in examples/relying_party/urls.py, [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/examples/relying_party/relying_party/urls.py#L42).
 - is_active, must set to True
@@ -165,7 +167,7 @@ Access to the Federation Authority admin backend and configure your RP as descen
 In the admin page of your Trust Anchor (http://127.0.0.1:8000/admin) create a descendant entity with the following paramenters:
 
 - RP name
-- sub (eg. 'http://127.0.0.1:[port]/oidc/rp/')
+- sub (eg. 'http://127.0.0.1:[port]/oidc/rp')
 - Jwks, public jwks, the public jwk of the private configurd in the FederationEntityConfiguration of the RP.
 - is_active, must set to True
 

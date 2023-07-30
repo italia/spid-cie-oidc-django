@@ -23,6 +23,14 @@ def create_jwk(key = None, hash_func=None):
     return jwk
 
 
+def public_jwk_from_private_jwk(jwk_dict: dict):
+    # exports public
+    _k = key_from_jwk_dict(jwk_dict)
+    jwk = _k.serialize()
+    jwk["kid"] = jwk_dict['kid']
+    return jwk
+
+
 def private_pem_from_jwk(jwk_dict: dict):
     # exports private
 

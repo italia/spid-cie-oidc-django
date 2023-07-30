@@ -14,14 +14,26 @@ from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chai
 
 from .models import (
     FederationEntityConfiguration,
+    FederationHistoricalKey,
     TrustChain,
     StaffToken
 )
 from .settings import HTTPC_PARAMS
 from .statements import OIDCFED_FEDERATION_WELLKNOWN_URL
-
+from .utils import iat_now
 
 logger = logging.getLogger(__name__)
+
+
+def get_subs_from_wellknown(request, wkuri :str):
+    sub = request.build_absolute_uri().split(wkuri)[0]
+
+    sub_values = []
+    if sub[-1] == "/":
+        sub_values.extend((sub, sub[:-1]))
+    elif sub[-1] != "/":
+        sub_values.extend((sub, sub + "/"))
+    return sub_values
 
 
 def entity_configuration(request):
@@ -29,10 +41,12 @@ def entity_configuration(request):
     OIDC Federation Entity Configuration at
     .well-known/openid-federation
     """
-    _sub = request.build_absolute_uri().split(OIDCFED_FEDERATION_WELLKNOWN_URL)[0]
+
+    _sub_values = get_subs_from_wellknown(request, OIDCFED_FEDERATION_WELLKNOWN_URL)
+
     conf = FederationEntityConfiguration.objects.filter(
         # TODO: check for reverse proxy and forwarders ...
-        sub=_sub,
+        sub__in=_sub_values,
         is_active=True,
     ).first()
     if not conf: # pragma: no cover
@@ -170,3 +184,38 @@ def openid_connect_signed_jwks_uri(request, metadata_type, resource_type="jwks.j
     OpenID Federation signed_jwks_uri
     """
     return openid_jwks(request, metadata_type, resource_type)
+
+
+def historical_keys(request):
+    """
+    OIDC Federation Entity Configuration at
+    .well-known/openid-federation
+    """
+
+    sub_values = get_subs_from_wellknown(request, '.well-known/openid-federation-historical-jwks')
+    keys = FederationHistoricalKey.objects.filter(entity__sub__in=sub_values)
+
+    entity = keys.first().entity if keys.first() else None
+
+    reg = {
+        "iss": entity.sub if entity else sub_values[0],
+        "iat": iat_now(),
+        "keys": []
+    }
+
+    for i in keys:
+        reg["keys"].append(i.as_dict)
+
+    if request.GET.get("format") == "json": # pragma: no cover
+        return JsonResponse(reg, safe=False)
+    else:
+        res = create_jws(
+            reg,
+            entity.jwks_fed[0],
+            typ="jwk-set+jwt",
+            # **kwargs,
+        )
+
+        return HttpResponse(
+            res, content_type="application/jwk-set+jwt"
+        )

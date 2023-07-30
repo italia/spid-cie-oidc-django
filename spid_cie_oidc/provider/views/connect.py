@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 def openid_configuration(request):
     """
     OIDC Discovery configuration at
-    .well-known/openid-connect
+    .well-known/openid-configuration
     """
     _sub = request.build_absolute_uri().split(".well-known/openid-configuration")[0]
     conf = FederationEntityConfiguration.objects.filter(

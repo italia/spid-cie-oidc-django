@@ -34,7 +34,7 @@ payload=
     'code_challenge_method': 'S256', 
     'nonce': 'MBzGqyf9QytD28eupyWhSqMj78WNqpc2', 
     'prompt': 'consent login', 
-    'redirect_uri': 'https://rp.cie.it/callback1/', 
+    'redirect_uri': 'https://rp.cie.it/callback1', 
     'acr_values': 'CIE_L1 CIE_L2', 
     'claims': {
         'id_token': {

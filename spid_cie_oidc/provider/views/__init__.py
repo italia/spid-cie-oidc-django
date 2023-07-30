@@ -322,7 +322,7 @@ class OpBase:
                 "sub": sub,
                 "at_hash": left_hash(jwt_at, "HS256"),
                 "c_hash": left_hash(authz.auth_code, "HS256"),
-                "aud": [authz.client_id],
+                "aud": authz.client_id,
                 "iss": iss_sub,
             }
             refresh_token.update(commons)
