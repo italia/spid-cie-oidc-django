@@ -18,12 +18,12 @@ on the button `Register your entity`.
 ### [User] Fill the form
 
 hint:
-![rp-onb](tutorial/onb1.png)
+![rp-onb](onb1.png)
 
 Then click on the button `Submit`. If the validation of the Entity's configuration passes,
 the user will be redirected to the onboarding status page, as shown below:
 
-![rp-onb2](tutorial/onb2.png)
+![rp-onb2](onb2.png)
  
 
 ### [FedOp] enable the descendant
@@ -31,7 +31,7 @@ the user will be redirected to the onboarding status page, as shown below:
 The admins of the platform opens the pending onboarding requests and after a 
 checks selects all the ones that are eligible to be subordinates of this federation.
 
-![rp-onb](tutorial/onb3.png)
+![rp-onb](onb3.png)
 
 ### [User] get the Entity Statement
 
