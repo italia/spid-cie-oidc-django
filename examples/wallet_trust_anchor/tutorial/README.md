@@ -2,8 +2,8 @@
 
 
 Please follow these steps described below to have a fully working demo.
-The sections identified with the prefix [FedOp] are related to the Federation operators that
-accreditates the subordinates. The sections identified with the prefix [User] are 
+The sections identified with the prefix **[FedOp]** are related to the Federation operators that
+accreditates the subordinates. The sections identified with the prefix **[User]** are 
 related to the User that asks to get a specific Entity onboarded within the onboarding service.
 
 ## [FedOp] Configure you Trust Anchor
