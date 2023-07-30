@@ -186,10 +186,12 @@ class FederationDescendant(TimeStampedModel):
             "iat": iat_now(),
             "iss": ta.sub,
             "sub": self.sub,
-            "jwks": {"keys": self.jwks},
-            "metadata_policy": policies,
+            "jwks": {"keys": self.jwks}
         }
-
+        
+        if policies:
+            data["metadata_policy"] = policies
+        
         if ta.fetch_endpoint:
             data["source_endpoint"] = ta.fetch_endpoint
 
@@ -202,7 +204,7 @@ class FederationDescendant(TimeStampedModel):
         )
 
         if contacts:
-            for k, v in data["metadata_policy"].items():
+            for k, v in data.get("metadata_policy", {}).items():
                 if data["metadata_policy"][k].get("contacts"):
                     data["metadata_policy"][k]["contacts"].update(
                         {"add": [i for i in contacts]}

@@ -47,3 +47,25 @@ Then User connects to
 [the fetch endpoint](http://127.0.0.1:8000/fetch?sub=https://localhost:10000/OpenID4VP&anchor=http://127.0.0.1:8000)
 and obtains the entity statement related to the onboarded Entity.
 
+Here an example of how the Entity Statement, with the minimum set of attributes, may be.
+
+````
+{
+  "exp": 1690907465,
+  "iat": 1690734665,
+  "iss": "http://127.0.0.1:8000",
+  "sub": "https://localhost:10000/OpenID4VP",
+  "jwks": {
+    "keys": [
+      {
+        "kty": "RSA",
+        "kid": "9Cquk0X-fNPSdePQIgQcQZtD6J0IjIRrFigW2PPK_-w",
+        "e": "AQAB",
+        "n": "utqtxbs-jnK0cPsV7aRkkZKA9t4S-WSZa3nCZtYIKDpgLnR_qcpeF0diJZvKOqXmj2cXaKFUE-8uHKAHo7BL7T-Rj2x3vGESh7SG1pE0thDGlXj4yNsg0qNvCXtk703L2H3i1UXwx6nq1uFxD2EcOE4a6qDYBI16Zl71TUZktJwmOejoHl16CPWqDLGo9GUSk_MmHOV20m4wXWkB4qbvpWVY8H6b2a0rB1B1YPOs5ZLYarSYZgjDEg6DMtZ4NgiwZ-4N1aaLwyO-GLwt9Vf-NBKwoxeRyD3zWE2FXRFBbhKGksMrCGnFDsNl5JTlPjaM3kYyImE941ggcuc495m-Fw"
+      }
+    ]
+  },
+  "source_endpoint": "http://127.0.0.1:8000/fetch"
+}
+````
+
