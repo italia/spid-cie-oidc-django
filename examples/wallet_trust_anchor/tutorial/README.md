@@ -11,7 +11,7 @@ related to the User that asks to get a specific Entity onboarded within the onbo
 For demo purpose you can even import the backup files located in the [dumps](dumps) 
 folder, containing a demo Trust Anchor setup.
 
-Generally, an admin that cocnfigures the projects creates the schemas, creates a superuser to access to the admin backend and then import the backup of the demo configuration.
+Generally, an admin that configures this project creates the schemas, creates a superuser to access to the admin backend and then imports the backup of the demo configuration.
 ````
 ./manage.py migrate
 ./manage.py createsuperuser
