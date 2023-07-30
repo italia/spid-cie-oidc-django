@@ -1,0 +1,2 @@
+2023-07-09 17:47:55,142 spid_cie_oidc.entity.statements INFO     Starting Entity Configuration Request for https://trust-anchor.oidc-federation.online/oidc/rp/.well-known/openid-federation
+2023-07-09 17:49:37,561 spid_cie_oidc.entity.statements INFO     Starting Entity Configuration Request for https://trust-anchor.oidc-federation.online/oidc/rp/.well-known/openid-federation

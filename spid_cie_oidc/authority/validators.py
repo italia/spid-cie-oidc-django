@@ -23,7 +23,7 @@ def validate_entity_configuration(value):
     """
     jwt = None
     try:
-        jwt = get_entity_configurations(value)[0]
+        jwt = get_entity_configurations(value, httpc_params = HTTPC_PARAMS)[0]
     except Exception as e:
         raise ValidationError(
             f"Failed to fetch Entity Configuration for {value}: {e}"
@@ -39,7 +39,7 @@ def validate_entity_configuration(value):
         ec.validate_by_itself()
     except Exception as e: # pragma: no cover
         raise ValidationError(
-            f"Failed to fetch Entity Configuration for {value}: {e}"
+            f"Failed to validate the Entity Configuration for {value}: {e}"
         )
 
     authority_hints = ec.payload.get("authority_hints", [])
