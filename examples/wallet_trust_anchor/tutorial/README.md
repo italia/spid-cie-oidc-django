@@ -52,9 +52,9 @@ The onboarding request appears as completed with success.
 
 Then the User connects to 
 [the fetch endpoint](http://127.0.0.1:8000/fetch?sub=https://localhost:10000/OpenID4VP&anchor=http://127.0.0.1:8000)
-and obtains the entity statement related to the onboarded Entity as a proof of fully operational setup.
+and obtains the entity statement related to the onboarded Entity as a proof of the fully operational setup.
 
-Below an example of how the Entity Statement, with the minimum set of attributes made available, according to OIDC Federation 1.0.
+Below an example of Entity Statement, with the minimum set of attributes made available, according to OIDC Federation 1.0 and this demo.
 
 ````
 {
