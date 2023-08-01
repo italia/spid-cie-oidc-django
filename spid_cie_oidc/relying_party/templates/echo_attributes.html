@@ -51,18 +51,23 @@ jQuery(function ($) {
     <p>{% trans 'To enable revocable long sessions you must set <em>OIDCFED_ACR_PROFILES</em> in settingslocal.py of the Relying Party' %} <em>OIDCFED_ACR_PROFILES=["https://www.spid.gov.it/SpidL2","https://www.spid.gov.it/SpidL1"]</em></p>
 </div>
 {% else %}
-<div class="col-6 p-4">
+<div class="col-4 p-4">
         <h4 class="text-left">ACCESS TOKEN</h4>
     <p> {% trans "The" %} access token <em>{{ at_jti }}</em> <br />
         {% trans "expires in" %} <span id="at_time">{{ at_expiration }}</span> </p>
 </div>
-<div class="col-6 p-4">
+<div class="col-8 p-4">
         <h4 class="text-left">REFRESH TOKEN <a href="{% url 'spid_cie_rp_extend_session' %}" class="btn btn-primary btn-xs btn-me" role="button">{% trans "Extend Session" %}</a></h4>
 
     <p> {% trans "The" %} Refresh Token <em>{{ rt_jti }}</em> <br />
         {% trans "expires in" %} <span id="rt_time">{{ rt_expiration }}</span> </p>
     <div class="alert alert-warning" role="alert">
-        <p>NB: {% trans "The time frame in which the refresh token is allowed to be used corresponds to the validity period of the consent given by the user and is set by the Provider with the variable" %} <em>OIDCFED_PROVIDER_MAX_CONSENT_TIMEFRAME</em> {% trans "in Provider settingslocal.py. Upon expiration the Provider returns error HTTP/400 and the RP example redirects to the landing page" %} </p>
+        <p style="text-align:justify;">NB:
+            <ul>
+                <li>{% trans "By selecting CIE PROVIDER, the Refresh Token is allowed to be used during the time frame validity of the consent given by the user and is set by the Provider with the variable" %} <em>OIDCFED_PROVIDER_MAX_CONSENT_TIMEFRAME</em> {% trans "in settingslocal.py. Upon expiration the Provider returns error HTTP/400 and the RP example redirects to the landing page" %}</li>
+                <li>{% trans "By selecting SPID PROVIDER, the number of Refresh Tokens that can be issued for a single session is set in the OPs configuration" %} <em>OIDCFED_PROVIDER_MAX_REFRESH</em>. {% trans "Past this number, the Provider returns error HTTP/400 and the RP example redirects to the landing page" %} </li>
+            </ul>
+        </p>
     </div>
 </div>
 {% endif %}
