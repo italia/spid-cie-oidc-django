@@ -149,7 +149,7 @@ class EntityConfiguration:
         self.sub = self.payload["sub"]
         self.iss = self.payload["iss"]
         self.jwks = get_federation_jwks(self.payload, httpc_params)
-        if not self.jwks[0]:
+        if not self.jwks or not self.jwks[0]:
             _msg = f"Missing jwks in the statement for {self.sub}"
             logger.error(_msg)
             raise MissingJwksClaim(_msg)

@@ -38,8 +38,12 @@ OIDCFED_FEDERATION_TRUST_MARKS_PROFILES = {
 }
 
 HTTPC_PARAMS = {
-    "connection": {"ssl": True},
-    "session": {"timeout": aiohttp.ClientTimeout(total=4)},
+    # enable/disable the connection params to avoid "Failed to fetch Entity Configuration -> ssl:True [SSLCertVerificationError: (1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:997)')]
+    # see: https://docs.aiohttp.org/en/v3.7.3/client_reference.html
+    # "connection": {"ssl": True, "verify_ssl": False},
+    "session": {
+        "timeout": aiohttp.ClientTimeout(total=4),
+    },
 }
 
 FEDERATION_DEFAULT_POLICY = {
