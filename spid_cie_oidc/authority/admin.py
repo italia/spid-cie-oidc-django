@@ -29,6 +29,7 @@ class FederationDescendantAdmin(admin.ModelAdmin):
         FederationDescendantContactAdminInline,
     )
 
+
 @admin.register(FederationEntityProfile)
 class FederationEntityProfileAdmin(admin.ModelAdmin):
     list_display = ("name", "profile_id")

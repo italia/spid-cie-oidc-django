@@ -111,6 +111,31 @@ def entity_list(request):
     return JsonResponse(list(set(entries)), safe=False)
 
 
+# TODO - add the schema
+# @schema(
+    # methods=['GET'],
+    # get_request_schema = {
+    # "application/x-www-form-urlencoded": ListRequest
+    # },
+    # get_response_schema = {
+    # "400": FedAPIErrorResponse,
+    # "404": FedAPIErrorResponse,
+    # "200": ListResponse
+    # },
+    # tags = ['Federation API']
+# )
+def trust_marked_list(request):
+    if request.GET.get("trust_mark_id", "").lower():
+        _q = {"profile__profile_id": request.GET["trust_mark_id"]}
+    else:
+        _q = {}
+
+    entries = FederationEntityAssignedProfile.objects.filter(**_q).values_list(
+        "descendant__sub", flat=True
+    )
+    return JsonResponse(list(set(entries)), safe=False)
+
+
 @schema(
     methods=['GET'],
     get_request_schema = {

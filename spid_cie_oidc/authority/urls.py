@@ -16,7 +16,13 @@ Including another URLconf
 from django.conf import settings
 from django.urls import path
 
-from .views import entity_list, fetch, trust_mark_status, advanced_entity_listing
+from .views import (
+    entity_list,
+    fetch,
+    trust_mark_status,
+    advanced_entity_listing,
+    trust_marked_list
+)
 
 _PREF = getattr(settings, "OIDC_PREFIX", "")
 urlpatterns = [
@@ -32,4 +38,5 @@ urlpatterns = [
         advanced_entity_listing,
         name="oidcfed_advanced_entity_listing",
     ),
+    path(f"{_PREF}trust_marked_list", trust_marked_list, name="oidcfed_tm_list"),
 ]

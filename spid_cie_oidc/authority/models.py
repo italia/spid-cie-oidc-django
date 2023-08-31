@@ -171,7 +171,7 @@ class FederationDescendant(TimeStampedModel):
             i.profile.profile_category
             for i in FederationEntityAssignedProfile.objects.filter(descendant=self)
         ]
-    
+
     def entity_statement_as_dict(self, iss: str = None, aud: list = None) -> dict:
 
         policies = {
@@ -188,10 +188,10 @@ class FederationDescendant(TimeStampedModel):
             "sub": self.sub,
             "jwks": {"keys": self.jwks}
         }
-        
+
         if policies:
             data["metadata_policy"] = policies
-        
+
         if ta.fetch_endpoint:
             data["source_endpoint"] = ta.fetch_endpoint
 
