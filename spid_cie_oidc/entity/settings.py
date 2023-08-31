@@ -74,8 +74,8 @@ OIDCFED_MAXIMUM_AUTHORITY_HINTS = getattr(
 FEDERATION_DEFAULT_EXP = getattr(settings, "FEDERATION_DEFAULT_EXP", 2880)
 
 ENTITY_TYPE_LEAFS = [
-    "openid_relying_party", 
-    "openid_provider", 
+    "openid_relying_party",
+    "openid_provider",
     "openid_credential_issuer",
     "oauth_resource",
     "wallet_provider",
