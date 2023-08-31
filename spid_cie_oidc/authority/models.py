@@ -175,7 +175,7 @@ class FederationDescendant(TimeStampedModel):
     def entity_statement_as_dict(self, iss: str = None, aud: list = None) -> dict:
 
         policies = {
-            k: FEDERATION_DEFAULT_POLICY[k] for k in self.entity_profiles
+            k: FEDERATION_DEFAULT_POLICY.get(k, {}) for k in self.entity_profiles
         }
 
         # apply custom policies if defined
