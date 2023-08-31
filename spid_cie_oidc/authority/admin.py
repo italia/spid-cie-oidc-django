@@ -23,12 +23,11 @@ class FederationDescendantAdmin(admin.ModelAdmin):
     readonly_fields = (
         "created",
         "modified",
-        "entity_statement_as_json",
+        "entity_statement_preview",
     )
     inlines = (
         FederationDescendantContactAdminInline,
     )
-
 
 @admin.register(FederationEntityProfile)
 class FederationEntityProfileAdmin(admin.ModelAdmin):

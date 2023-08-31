@@ -171,7 +171,7 @@ class FederationDescendant(TimeStampedModel):
             i.profile.profile_category
             for i in FederationEntityAssignedProfile.objects.filter(descendant=self)
         ]
-
+    
     def entity_statement_as_dict(self, iss: str = None, aud: list = None) -> dict:
 
         policies = {
@@ -223,6 +223,9 @@ class FederationDescendant(TimeStampedModel):
 
     def entity_statement_as_json(self, iss: str = None, aud: list = None) -> str:
         return json.dumps(self.entity_statement_as_dict(iss, aud))
+
+    def entity_statement_preview(self):
+        return self.entity_statement_as_json()
 
     def entity_statement_as_jws(self, iss: str = None, aud: list = None) -> str:
         issuer = get_first_self_trust_anchor(iss)
