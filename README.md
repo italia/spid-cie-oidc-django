@@ -18,7 +18,7 @@ each of these can be installed separately within a django project. These are the
 | :--- | --- |
 | __spid_cie_oidc.accounts__ | Customizable application that extends the django User model. |
 | __spid_cie_oidc.entity__ | OpenID Connect Federation django app that implements OIDC Federation 1.0 Entity Statements, metadata discovery, Trust Chain, Trust Marks and Metadata policy. Technical specifications: [__OIDC Federation Entity__](docs/technical_specifications/ENTITY.md) |
-| __spid_cie_oidc.authority__ | OpenID Connect Federation API and models for __OIDC Federation Authority/Intermediary__, [Technical specifications](docs/technical_specifications/AUTHORITY.md) and [tutorial](docs/CREATE_A_FEDERATION.md). 
+| __spid_cie_oidc.authority__ | OpenID Connect Federation API and models for __OIDC Federation Trust Chain/Intermediate__, [Technical specifications](docs/technical_specifications/AUTHORITY.md) and [tutorial](docs/CREATE_A_FEDERATION.md). 
 | __spid_cie_oidc.onboarding__ | [__OpenID Connect Federation onboarding demo service__](docs/technical_specifications/ONBOARDING.md) and tools|
 | __spid_cie_oidc.relying_party__ | [__OpenID Connect Relying Party__](docs/technical_specifications/RELYING_PARTY.md) and test suite for OIDC Providers |
 | __spid_cie_oidc.provider__ | [__OpenID Connect Provider__](docs/technical_specifications/PROVIDER.md) and test suite for OIDC Relying Parties |
