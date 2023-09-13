@@ -2,7 +2,7 @@
 
 
 In this document are illustrated the steps to get a fully working onboarding and trust anchor demo.
-The sections identified with the prefix **[FedOp]** are related to the Federation operators that
+The sections identified with the prefix **[FedOp]** are related to the Federation operators that 
 accreditate the subordinates. The sections identified with the prefix **[User]** are 
 related to the User that asks to get a specific Entity onboarded within the onboarding service.
 
@@ -54,7 +54,7 @@ Then the User connects to
 [the fetch endpoint](http://127.0.0.1:8000/fetch?sub=https://localhost:10000/OpenID4VP&anchor=http://127.0.0.1:8000)
 and obtains the entity statement related to the onboarded Entity as a proof of the fully operational setup.
 
-Below an example of Entity Statement, with the minimum set of attributes made available, according to OIDC Federation 1.0 and this demo.
+Below an example of the payload contained within an Entity Statement, with the minimum set of attributes made available, according to OIDC Federation 1.0 and this demo.
 
 ````
 {
