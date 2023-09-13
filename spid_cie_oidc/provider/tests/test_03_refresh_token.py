@@ -1,5 +1,6 @@
 from copy import deepcopy
-
+import time
+from cryptojwt.jws.utils import left_hash
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
@@ -66,6 +67,31 @@ class RefreshTokenTest(TestCase):
             "scope": "openid",
         }
         self.rt_jws = create_jws(refresh_token, op_conf_priv_jwk)
+        id_token = {
+            'sub': '2ed008b45e66ce53e48273dca5a4463bc8ebd036ebaa824f4582627683c2451b',
+            'nonce': 'ljbvL3rpscgS4ZGda7cgibXHr7vrNREW',
+            'at_hash': '',
+            'c_hash': 'tij0h-zL_bSrsVXy-d3qHw',
+            'aud': [rp_conf["metadata"]["openid_relying_party"]["client_id"], ],
+            'iss': op_conf["sub"],
+            'jti': '402e61bd-950c-4934-83d4-c09a05468828',
+            'exp': exp_from_now(),
+            'iat': iat_now()
+        }
+        access_token = {
+            'iss': op_conf["sub"],
+            'sub': '2ed008b45e66ce53e48273dca5a4463bc8ebd036ebaa824f4582627683c2451b',
+            'aud': [rp_conf["metadata"]["openid_relying_party"]["client_id"], ],
+            'client_id': rp_conf["metadata"]["openid_relying_party"]["client_id"],
+            'scope': 'openid',
+            'jti': '402e61bd-950c-4934-83d4-c09a05468828',
+            'exp': exp_from_now(),
+            'iat': iat_now()
+        }
+        self.jwt_at = create_jws(access_token, op_conf_priv_jwk, typ="at+jwt")
+        id_token['at_hash'] = left_hash(self.jwt_at, "HS256")
+        self.jwt_id = create_jws(id_token, op_conf_priv_jwk)
+
         session = OidcSession.objects.create(
             user=User.objects.create(username="username"),
             user_uid="",
@@ -77,11 +103,15 @@ class RefreshTokenTest(TestCase):
         )
         IssuedToken.objects.create(
             refresh_token=self.rt_jws,
+            id_token=self.jwt_id,
+            access_token=self.jwt_at,
             session=session,
             expires=timezone.localtime()
         )
+        self.assertEqual(refresh_token["iss"], self.op_local_conf["sub"])
 
-    def test_grant_refresh_token(self):
+    @override_settings(OIDCFED_PROVIDER_PROFILE="spid")
+    def test_grant_refresh_token_spid(self):
         client = Client()
         url = reverse("oidc_provider_token_endpoint")
         request = dict(
@@ -97,8 +127,47 @@ class RefreshTokenTest(TestCase):
         self.assertEqual(refresh_token["aud"], RP_CLIENT_ID)
         self.assertEqual(refresh_token["iss"], self.op_local_conf["sub"])
 
-    @override_settings(OIDCFED_PROVIDER_MAX_REFRESH=1)
-    def test_grant_refresh_token_two_times(self):
+    @override_settings(OIDCFED_PROVIDER_PROFILE="cie")
+    def test_grant_refresh_token_cie(self):
+        client = Client()
+        url = reverse("oidc_provider_token_endpoint")
+        request = dict(
+            client_id=RP_CLIENT_ID,
+            client_assertion=self.ca_jws,
+            client_assertion_type="urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+            refresh_token=self.rt_jws,
+            grant_type="refresh_token"
+        )
+        res = client.post(url, request)
+        self.assertTrue(res.status_code == 200)
+        refresh_token = verify_jws(res.json().get("refresh_token"), op_conf_priv_jwk)
+        self.assertEqual(refresh_token["aud"], RP_CLIENT_ID)
+
+    @override_settings(OIDCFED_PROVIDER_MAX_REFRESH=1, OIDCFED_PROVIDER_PROFILE="spid")
+    def test_grant_refresh_token_two_times_spid(self):
+            client = Client()
+            url = reverse("oidc_provider_token_endpoint")
+            request = dict(
+                client_id=RP_CLIENT_ID,
+                client_assertion=self.ca_jws,
+                client_assertion_type="urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+                refresh_token=self.rt_jws,
+                grant_type="refresh_token"
+            )
+            res = client.post(url, request)
+            self.assertTrue(res.status_code == 200)
+            request = dict(
+                client_id=RP_CLIENT_ID,
+                client_assertion=self.ca_jws,
+                client_assertion_type="urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+                refresh_token=res.json()["refresh_token"],
+                grant_type="refresh_token"
+            )
+            res = client.post(url, request)
+            self.assertTrue(res.status_code == 400)
+
+    @override_settings(OIDCFED_PROVIDER_MAX_CONSENT_TIMEFRAME=1, OIDCFED_PROVIDER_PROFILE="cie")
+    def test_grant_refresh_token_two_times_cie(self):
         client = Client()
         url = reverse("oidc_provider_token_endpoint")
         request = dict(
@@ -117,5 +186,6 @@ class RefreshTokenTest(TestCase):
             refresh_token=res.json()["refresh_token"],
             grant_type="refresh_token"
         )
+        time.sleep(2)
         res = client.post(url, request)
         self.assertTrue(res.status_code == 400)

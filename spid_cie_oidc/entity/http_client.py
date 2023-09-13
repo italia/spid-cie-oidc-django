@@ -20,7 +20,11 @@ async def fetch_all(session, urls, httpc_params):
 
 
 async def http_get(urls, httpc_params: dict = {}):
-    async with aiohttp.ClientSession(**httpc_params.get("session", {})) as session:
+    _con = aiohttp.TCPConnector(**httpc_params.get("connection", {}))
+    async with aiohttp.ClientSession(
+            connector=_con,
+            **httpc_params.get("session", {})
+    ) as session:
         text = await fetch_all(session, urls, httpc_params)
         return text
 

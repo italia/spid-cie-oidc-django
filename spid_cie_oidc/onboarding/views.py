@@ -152,7 +152,6 @@ def onboarding_resolve_statement(request):
     else:
         form = OnboardingCreateTrustChain()
     context = {'form': form}
-
     if form.is_valid():
         context = {
             'form': form,
@@ -164,6 +163,7 @@ def onboarding_resolve_statement(request):
             context["resolved_statement"] = json.dumps(resultJson, indent=4)
         except Exception:
             messages.error(request, _('Failed to resolve entity statement, Please check your inserted data'))
+    
     return render(request, 'onboarding_resolve_statement.html', context)
 
 
@@ -286,7 +286,7 @@ def onboarding_decode_jwt(request):
             if not form_dict.get('jwk'):
                 messages.error(
                     request,
-                    f"JWE needs a private jwk to be decrypted"
+                    "JWE needs a private jwk to be decrypted"
                 )
                 return render(
                     request, "onboarding_decode_jwt.html", context, status = 400

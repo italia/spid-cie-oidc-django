@@ -88,7 +88,7 @@ def validate_entity_metadata(value):
             raise ValidationError(
                 f"RP metadata fail {e}. "
             )
-    
+
     # TODO - add wallet_provider and wallet_relying_party once standardized
 
 

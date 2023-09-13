@@ -14,7 +14,8 @@ from spid_cie_oidc.entity.exceptions import InvalidTrustchain
 from spid_cie_oidc.entity.jwtse import create_jws
 from spid_cie_oidc.entity.utils import get_jwks
 from spid_cie_oidc.entity.models import FederationEntityConfiguration
-from spid_cie_oidc.relying_party.settings import OIDCFED_ACR_PROFILES, RP_PROVIDER_PROFILES, RP_DEFAULT_PROVIDER_PROFILES
+from spid_cie_oidc.relying_party.settings import OIDCFED_ACR_PROFILES, RP_PROVIDER_PROFILES, \
+    RP_DEFAULT_PROVIDER_PROFILES
 
 from ..models import OidcAuthentication
 from ..settings import (

@@ -238,7 +238,6 @@ class OpBase:
 
     def get_jwt_common_data(self):
         return {
-            "jti": str(uuid.uuid4()),
             "exp": exp_from_now(),
             "iat": iat_now()
         }
@@ -253,6 +252,7 @@ class OpBase:
             "aud": [authz.client_id],
             "client_id": authz.client_id,
             "scope": authz.authz_request["scope"],
+            "jti": str(uuid.uuid4())
         }
         access_token.update(commons)
 
@@ -293,7 +293,8 @@ class OpBase:
             "c_hash": left_hash(authz.auth_code, "HS256"),
             "aud": [authz.client_id],
             "iss": iss_sub,
-            "acr": authz.acr
+            "acr": authz.acr,
+            "jti": str(uuid.uuid4())
         }
         claims = self.get_id_token_claims(authz)
         if claims:
@@ -324,6 +325,7 @@ class OpBase:
                 "c_hash": left_hash(authz.auth_code, "HS256"),
                 "aud": authz.client_id,
                 "iss": iss_sub,
+                "jti": str(uuid.uuid4())
             }
             refresh_token.update(commons)
             return refresh_token

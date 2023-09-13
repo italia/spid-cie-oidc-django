@@ -11,9 +11,11 @@ from spid_cie_oidc.provider.schemas.authn_requests import (
     AuthenticationRequestDoc,
     AuthenticationRequestSpid
 )
-from spid_cie_oidc.provider.schemas.authn_response import AuthenticationErrorResponse, AuthenticationErrorResponseCie, AuthenticationResponse, AuthenticationResponseCie
+from spid_cie_oidc.provider.schemas.authn_response import AuthenticationErrorResponse, AuthenticationErrorResponseCie, \
+    AuthenticationResponse, AuthenticationResponseCie
 from spid_cie_oidc.provider.schemas.introspection_request import IntrospectionRequest
-from spid_cie_oidc.provider.schemas.introspection_response import IntrospectionErrorResponseCie, IntrospectionErrorResponseSpid, IntrospectionResponse
+from spid_cie_oidc.provider.schemas.introspection_response import IntrospectionErrorResponseCie, \
+    IntrospectionErrorResponseSpid, IntrospectionResponse
 from spid_cie_oidc.provider.schemas.revocation_request import RevocationRequest
 from spid_cie_oidc.provider.schemas.revocation_response import RevocationErrorResponse
 from spid_cie_oidc.provider.schemas.token_requests import TokenAuthnCodeRequest, TokenRefreshRequest
@@ -142,6 +144,11 @@ OIDCFED_PROVIDER_AUTH_CODE_MAX_AGE = getattr(
     10
 )
 
+OIDCFED_PROVIDER_MAX_CONSENT_TIMEFRAME = getattr(
+    settings,
+    "OIDCFED_PROVIDER_MAX_CONSENT_TIMEFRAME",
+    2
+)
 
 OIDCFED_PROVIDER_PROFILES_DEFAULT_ACR = getattr(
     settings,

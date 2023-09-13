@@ -1,4 +1,3 @@
-
 import base64
 import hashlib
 import logging
@@ -20,33 +19,35 @@ from spid_cie_oidc.provider.exceptions import ValidationException
 from spid_cie_oidc.provider.models import IssuedToken, OidcSession
 from spid_cie_oidc.provider.settings import (
     OIDCFED_DEFAULT_PROVIDER_PROFILE,
-    OIDCFED_PROVIDER_PROFILES
+    OIDCFED_PROVIDER_PROFILES,
+    OIDCFED_PROVIDER_MAX_CONSENT_TIMEFRAME
 )
 
+from spid_cie_oidc.entity.utils import iat_now
 from . import OpBase
-logger = logging.getLogger(__name__)
 
+logger = logging.getLogger(__name__)
 
 schema_profile = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
 
 
 @schema(
-    methods=['GET','POST'],
-    post_request_schema = {
+    methods=['GET', 'POST'],
+    post_request_schema={
         "authn_request": schema_profile["authorization_code"],
         "refresh_request": schema_profile["refresh_token"],
 
     },
-    post_response_schema = {
-            "200": schema_profile["authorization_code_response"],
-            # TODO
-            # "200": schema_profile["refresh_token_response"],
-            "400": schema_profile["token_error_response"],
+    post_response_schema={
+        "200": schema_profile["authorization_code_response"],
+        # TODO
+        # "200": schema_profile["refresh_token_response"],
+        "400": schema_profile["token_error_response"],
     },
-    get_response_schema = {
-            "400": BaseModel
+    get_response_schema={
+        "400": BaseModel
     },
-    tags = ['Provider']
+    tags=['Provider']
 )
 @method_decorator(csrf_exempt, name="dispatch")
 class TokenEndpoint(OpBase, View):
@@ -77,35 +78,50 @@ class TokenEndpoint(OpBase, View):
         #
 
         issued_token = IssuedToken.objects.filter(
-            session= self.authz,
-            revoked = False
+            session=self.authz,
+            revoked=False
         ).first()
 
         jwk_at = unpad_jwt_payload(issued_token.access_token)
         expires_in = self.get_expires_in(jwk_at['iat'], jwk_at['exp'])
 
-        iss_token_data = dict( # nosec B106
-            access_token = issued_token.access_token,
-            id_token = issued_token.id_token,
-            token_type = "Bearer", # nosec B106
-            expires_in = expires_in,
+        iss_token_data = dict(  # nosec B106
+            access_token=issued_token.access_token,
+            id_token=issued_token.id_token,
+            token_type="Bearer",  # nosec B106
+            expires_in=expires_in,
             # TODO: remove unsupported scope
-            scope = self.authz.authz_request["scope"],
+            scope=self.authz.authz_request["scope"],
         )
         if issued_token.refresh_token:
             iss_token_data['refresh_token'] = issued_token.refresh_token
         return JsonResponse(iss_token_data)
 
     def is_token_renewable(self, session) -> bool:
-        issuedToken = IssuedToken.objects.filter(
-            session = session
-        )
-        # TODO: check also ACR
-        return (
-            (issuedToken.count() - 1) < getattr(
-                settings, "OIDCFED_PROVIDER_MAX_REFRESH", 1
+        provider = getattr(settings, "OIDCFED_PROVIDER_PROFILE")
+        if provider == "cie":
+            issuedToken = IssuedToken.objects.filter(
+                session=session
+            ).first()
+
+            id_token = unpad_jwt_payload(issuedToken.id_token)
+
+            consent_expiration = id_token['iat'] + OIDCFED_PROVIDER_MAX_CONSENT_TIMEFRAME
+
+            delta = consent_expiration - iat_now()
+            if delta > 0:
+                return True
+            return False
+        elif provider == "spid":
+            # TODO: check also ACR
+            issuedToken = IssuedToken.objects.filter(
+                session=session
             )
-        )
+            return (
+                    (issuedToken.count() - 1) < getattr(
+                        settings, "OIDCFED_PROVIDER_MAX_REFRESH", 1
+                    )
+            )
 
     def grant_refresh_token(self, request, *args, **kwargs):
         """
@@ -119,8 +135,8 @@ class TokenEndpoint(OpBase, View):
         # 2. create a new instance of issuedtoken linked to the same sessions and revoke the older
         # 3. response with a new refresh, access and id_token
         issued_token = IssuedToken.objects.filter(
-            refresh_token = request.POST['refresh_token'],
-            revoked = False
+            refresh_token=request.POST['refresh_token'],
+            revoked=False
         ).first()
 
         if not issued_token:
@@ -130,17 +146,17 @@ class TokenEndpoint(OpBase, View):
                     "error_description": "Refresh token not found",
 
                 },
-                status = 400
+                status=400
             )
 
         session = issued_token.session
-        if not self.is_token_renewable(session): # pragma: no cover
+        if not self.is_token_renewable(session):  # pragma: no cover
             return JsonResponse(
-                    {
-                        "error": "invalid_request",
-                        "error_description": "Refresh Token can no longer be updated",
+                {
+                    "error": "invalid_request",
+                    "error_description": "Refresh Token can no longer be updated",
 
-                    }, status = 400
+                }, status=400
             )
         iss_token_data = self.get_iss_token_data(session, self.get_issuer())
         IssuedToken.objects.create(**iss_token_data)
@@ -150,12 +166,12 @@ class TokenEndpoint(OpBase, View):
         jwk_at = unpad_jwt_payload(iss_token_data['access_token'])
         expires_in = self.get_expires_in(jwk_at['iat'], jwk_at['exp'])
 
-        data = dict( # nosec B106
-            access_token = iss_token_data['access_token'],
-            id_token = iss_token_data['id_token'],
-            refresh_token = iss_token_data['refresh_token'],
-            token_type = "Bearer", # nosec B106
-            expires_in = expires_in,
+        data = dict(  # nosec B106
+            access_token=iss_token_data['access_token'],
+            id_token=iss_token_data['id_token'],
+            refresh_token=iss_token_data['refresh_token'],
+            token_type="Bearer",  # nosec B106
+            expires_in=expires_in,
         )
 
         return JsonResponse(data)
@@ -174,7 +190,7 @@ class TokenEndpoint(OpBase, View):
                     "error": "invalid_request",
                     "error_description": "Token request object validation failed",
                 },
-                status = 400
+                status=400
             )
 
         self.commons = self.get_jwt_common_data()
@@ -186,7 +202,7 @@ class TokenEndpoint(OpBase, View):
                 request.POST['client_id'],
                 request.POST['client_assertion']
             )
-        except Exception as e: # pragma: no cover
+        except Exception as e:  # pragma: no cover
             logger.warning(
                 "Client authentication failed for "
                 f"{request.POST.get('client_id', 'unknown')}: {e}"
@@ -197,7 +213,7 @@ class TokenEndpoint(OpBase, View):
                     'error': "unauthorized_client",
                     'error_description': ""
 
-                }, status = 403
+                }, status=403
             )
 
         if request.POST.get("grant_type") == 'authorization_code':
