@@ -80,7 +80,6 @@ def resolve_entity_statement(request, format: str = "jose"):
     Metadata if it's valid
     we avoid any possibility to trigger a new Metadata discovery if
     """
-
     if not all((request.GET.get("sub", None), request.GET.get("anchor", None))):
         raise Http404("sub and anchor parameters are REQUIRED.")
 

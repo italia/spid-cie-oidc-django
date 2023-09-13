@@ -20,6 +20,7 @@ from spid_cie_oidc.provider.models import IssuedToken, OidcSession
 from spid_cie_oidc.provider.settings import (
     OIDCFED_DEFAULT_PROVIDER_PROFILE,
     OIDCFED_PROVIDER_PROFILES,
+    OIDCFED_PROVIDER_MAX_CONSENT_TIMEFRAME
 )
 
 from spid_cie_oidc.entity.utils import iat_now
@@ -105,10 +106,9 @@ class TokenEndpoint(OpBase, View):
 
             id_token = unpad_jwt_payload(issuedToken.id_token)
 
-            consent_expiration = id_token['iat'] + getattr(settings, "OIDCFED_PROVIDER_MAX_CONSENT_TIMEFRAME")
+            consent_expiration = id_token['iat'] + OIDCFED_PROVIDER_MAX_CONSENT_TIMEFRAME
 
             delta = consent_expiration - iat_now()
-
             if delta > 0:
                 return True
             return False
