@@ -65,10 +65,9 @@
                             </li>
                          <li>
                             <a href="{% url 'spid_cie_rp_begin' %}?provider={{sub}}&profile=spid&scope=openid offline_access" id="provider-spid-refresh_token">
-                                <span class="spid-sr-only">{{ attrs.organization_name }} {% trans "LONG TERM SESSION" %}</span>
+                                <span class="spid-sr-only">{{ attrs.organization_name }}</span>
                                 {% if attrs.logo_uri %}
-                                <img src="{{ attrs.logo_uri }}" alt="{{ attrs.organization_name }}">
-                                 <p>{% trans "LONG TERM SESSION" %}</p>
+                                <img src="{{ attrs.logo_uri }}-LTS.svg" alt="{{ attrs.organization_name }}">
                                 {% else %}
                                 <img src="{% static 'svg/no_image_available.svg' %}" alt="{{ sub }}">
                                 <p>{{ sub }}</p>
@@ -112,10 +111,10 @@
                                 </li>
                                 <li>
                                     <a href="{% url 'spid_cie_rp_begin' %}?provider={{sub}}&profile=cie&scope=openid offline_access" id="provider-cie-refresh_token">
-                                        <span class="spid-sr-only">{{ attrs.organization_name }} {% trans "LONG TERM SESSION" %}</span>
+                                        <span class="spid-sr-only">{{ attrs.organization_name }} {% trans "INCLUDING REFRESH TOKEN" %}</span>
                                         {% if attrs.logo_uri %}
                                         <img src="{{ attrs.logo_uri }}" alt="{{ attrs.organization_name }}">
-                                        <p>{% trans "LONG TERM SESSION" %}</p>
+                                        <p>{% trans "INCLUDING REFRESH TOKEN" %}</p>
                                         {% else %}
                                         <img src="{% static 'svg/no_image_available.svg' %}" alt="{{ sub }}">
 

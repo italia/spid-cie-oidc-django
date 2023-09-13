@@ -286,7 +286,7 @@ def onboarding_decode_jwt(request):
             if not form_dict.get('jwk'):
                 messages.error(
                     request,
-                    f"JWE needs a private jwk to be decrypted"
+                    "JWE needs a private jwk to be decrypted"
                 )
                 return render(
                     request, "onboarding_decode_jwt.html", context, status = 400
