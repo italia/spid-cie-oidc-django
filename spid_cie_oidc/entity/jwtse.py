@@ -50,12 +50,12 @@ def create_jwe(plain_dict: Union[dict, str, int, None], jwk_dict: dict, **kwargs
     if isinstance(plain_dict, dict):
         _payload = json.dumps(plain_dict).encode()
     elif not plain_dict:
-        logger.warning(f"create_jwe with null payload!")
+        logger.warning("create_jwe with null payload!")
         _payload = ""
     elif isinstance(plain_dict, (str, int)):
         _payload = plain_dict
     else:
-        logger.error(f"create_jwe with unsupported payload type!")
+        logger.error("create_jwe with unsupported payload type!")
         _payload = ""
 
     _keyobj = JWE_CLASS(
