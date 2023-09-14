@@ -4,6 +4,7 @@ from cryptojwt.jws.utils import left_hash
 from django.conf import settings
 from pydantic import ValidationError
 from django.http import HttpResponseRedirect
+from django.urls import reverse
 from django.utils import timezone
 import urllib
 from spid_cie_oidc.entity.jwtse import create_jws, unpad_jwt_head, unpad_jwt_payload, verify_jws
@@ -245,11 +246,11 @@ class OpBase:
     def get_access_token(
             self, iss_sub:str, sub:str, authz: OidcSession, commons:dict
     ) -> dict:
-
+        
         access_token = {
             "iss": iss_sub,
             "sub": sub,
-            "aud": [authz.client_id],
+            "aud": [iss_sub, reverse("oidc_provider_userinfo_endpoint")],
             "client_id": authz.client_id,
             "scope": authz.authz_request["scope"],
             "jti": str(uuid.uuid4())
