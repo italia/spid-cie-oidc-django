@@ -106,7 +106,7 @@ def oidc_provider_not_consent(request):
         ),
         state = state
     )
-    url = f'{redirect_uri.scheme+"://"+redirect_uri.netloc+redirect_uri.path if redirect_uri.path else "/"}?{urllib.parse.urlencode(kwargs)}'
+    url = f'{redirect_uri.scheme}://{redirect_uri.netloc}{redirect_uri.path} if redirect_uri.path else "/"}?{urllib.parse.urlencode(kwargs)}'
     return HttpResponseRedirect(url)
 
 
