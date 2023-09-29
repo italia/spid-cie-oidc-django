@@ -66,7 +66,7 @@ jobs:
         ./manage.py migrate
         ./manage.py loaddata dumps/example.json
 
-    - uses: paambaati/codeclimate-action@v2.5.3
+    - uses: paambaati/codeclimate-action@v5.0.0
       if: always()
       env:
         CC_TEST_REPORTER_ID: ${{ secrets.CodeClimate }}
