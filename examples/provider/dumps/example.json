@@ -94,6 +94,9 @@
     "trust_marks_issuers": {},
     "entity_type": "openid_provider",
     "metadata": {
+      "federation_entity": {
+        "federation_resolve_endpoint": "http://127.0.0.1:8002/oidc/op/resolve"
+      },
       "openid_provider": {
         "authorization_endpoint": "http://127.0.0.1:8002/oidc/op/authorization",
         "revocation_endpoint": "http://127.0.0.1:8002/oidc/op/revocation",

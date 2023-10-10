@@ -63,6 +63,9 @@
     "trust_marks_issuers": {},
     "entity_type": "openid_relying_party",
     "metadata": {
+      "federation_entity": {
+        "federation_resolve_endpoint": "http://127.0.0.1:8001/resolve"
+      },
       "openid_relying_party": {
         "application_type": "web",
         "organization_name": "Example RP",
@@ -193,6 +196,9 @@
         ]
       },
       "metadata": {
+        "federation_entity": {
+          "federation_resolve_endpoint": "http://127.0.0.1:8000/oidc/op/resolve"
+        },
         "openid_provider": {
           "authorization_endpoint": "http://127.0.0.1:8000/oidc/op/authorization",
           "revocation_endpoint": "http://127.0.0.1:8000/oidc/op/revocation",
@@ -477,6 +483,9 @@
         ]
       },
       "metadata": {
+        "federation_entity": {
+          "federation_resolve_endpoint": "http://127.0.0.1:8002/oidc/op/resolve"
+        },
         "openid_provider": {
           "authorization_endpoint": "http://127.0.0.1:8002/oidc/op/authorization",
           "revocation_endpoint": "http://127.0.0.1:8002/oidc/op/revocation",
@@ -763,6 +772,9 @@
       }
     ],
     "metadata": {
+      "federation_entity": {
+        "federation_resolve_endpoint": "http://127.0.0.1:8000/oidc/op/resolve"
+      },
       "openid_provider": {
         "authorization_endpoint": "http://127.0.0.1:8000/oidc/op/authorization",
         "revocation_endpoint": "http://127.0.0.1:8000/oidc/op/revocation",
@@ -942,6 +954,9 @@
         ]
     },
     "metadata": {
+      "federation_entity": {
+        "federation_resolve_endpoint": "http://127.0.0.1:8002/oidc/op/resolve"
+      },
       "openid_provider": {
         "authorization_endpoint": "http://127.0.0.1:8002/oidc/op/authorization",
         "revocation_endpoint": "http://127.0.0.1:8002/oidc/op/revocation",
