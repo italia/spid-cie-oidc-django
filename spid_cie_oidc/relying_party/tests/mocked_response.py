@@ -193,7 +193,7 @@ class MockedUserInfoResponse:
     def content(self):
         jwt = {
             "sub": 'asdasdasdasasdasdas',
-            "https://attributes.spid.gov.it/fiscal_number": "sdfsfs908df09s8df90s8fd0"
+            "https://attributes.eid.gov.it/fiscal_number": "sdfsfs908df09s8df90s8fd0"
         }
         jws = create_jws(jwt, op_conf_priv_jwk)
         jwe = create_jwe(

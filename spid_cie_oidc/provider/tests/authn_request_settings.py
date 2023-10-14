@@ -10,7 +10,7 @@ CLAIMS_SPID = {
     "userinfo": {
         "given_name": {"values": ["str", "str"]},
         "family_name": None,
-        "date_of_birth": {"value": "str"},
+        "birthdate": {"value": "str"},
     },
 }
 
