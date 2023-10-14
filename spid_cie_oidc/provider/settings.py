@@ -37,32 +37,32 @@ OIDCFED_PROVIDER_PROFILES_MEDIA = getattr(
     },
 )
 OIDCFED_PROVIDER_ATTRIBUTES_SPID_MAP = {
-    "https://attributes.spid.gov.it/spidCode": (
+    "https://attributes.eid.gov.it/spid_code": (
         {
             "func": "spid_cie_oidc.provider.processors.spidCode",
             "kwargs": {"salt": "signiicusenz"},
         },
     ),
-    "given_name": ("name", "given_name"),
-    "family_name": ("family_name", "surname"),
+    "given_name": ("given_name",),
+    "family_name": ("family_name",),
     "place_of_birth": ("place_of_birth",),
-    "county_of_birth": ("county_of_birth",),
-    "date_of_birth": ("date_of_birth", "birthdate"),
+    "birthdate": ("birthdate",),
     "gender": ("gender",),
-    "https://attributes.spid.gov.it/companyName": ("company_name",),
-    "https://attributes.spid.gov.it/registeredOffice": ("registered_office",),
-    "https://attributes.spid.gov.it/fiscal_number": ("fiscal_number", "tin"),
-    "https://attributes.spid.gov.it/ivaCode": ("iva_code",),
-    "https://attributes.spid.gov.it/idCard": ("id_card",),
-    "https://attributes.spid.gov.it/mobilePhone": (
+    "https://attributes.eid.gov.it/company_name": ("company_name",),
+    "https://attributes.eid.gov.it/registered_office": ("registered_office",),
+    "https://attributes.eid.gov.it/fiscal_number": ("fiscal_number", ),
+    "https://attributes.eid.gov.it/company_fiscal_number": ("company_fiscal_number",),
+    "https://attributes.eid.gov.it/vat_number": ("vat_number",),
+    "document_details": ("document_details",),
+    "phone_number": ("phone_number",
         "mobile_phone",
         "phone",
         "telephone",
     ),
     "email": ("email",),
+    "https://attributes.eid.gov.it/e_delivery_service": ("e_delivery_service",),
+    "https://attributes.eid.gov.it/eid_exp_date": ("eid_exp_date",),
     "address": ("address",),
-    "https://attributes.spid.gov.it/expirationDate": ("expiration_date",),
-    "https://attributes.spid.gov.it/digitalAddress": ("digital_address",),
 }
 
 OIDCFED_PROVIDER_ATTRIBUTES_CIE_MAP = {
