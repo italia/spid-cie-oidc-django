@@ -15,15 +15,39 @@
     "email": "",
     "origin": null,
     "attributes": {
-      "https://attributes.eid.gov.it/fiscal_number": "8sada89s7da89sd7a98sd78",
+      "https://attributes.eid.gov.it/fiscal_number":"TINIT-ABCXYZ00W00Z000Z",
       "given_name": "peppe",
       "family_name": "maradona",
+      "place_of_birth":{
+        "region":"NA",
+        "locality":"F839"
+      },
+      "birthdate":"1980-10-10",
+      "gender":"male",
       "email": "that@ema.il",
-      "fiscal_number": "8sada89s7da89sd7a98sd78",
+      "email_verified": "true",
+      "document_details":{
+        "type":"cartaIdentita",
+        "document_number":"AS09452389",
+        "issuer":{
+          "name":"ComuneNapoli"
+        },
+        "date_of_issuance":"2017-01-02",
+        "date_of_expiry":"2027-01-31"
+      },
       "sub": "5f32567af7e0e77ea09de8521ae5f6a0fd6984176e99a6bc694a8a0198231dc3",
       "username": "http://127.0.0.1:8000/oidc/op/__5f32567af7e0e77ea09de8521ae5f6a0fd6984176e99a6bc694a8a0198231dc3",
-      "first_name": "peppe",
-      "last_name": "maradona"
+      "phone_number":"39081322222",
+      "phone_number_verified":"true",
+      "https://attributes.eid.gov.it/e_delivery_service":"peppe@pec.it",
+      "https://attributes.eid.gov.it/landline_number ":"12345678901",
+      "address":{
+          "street_address":"Via Liszt 21",
+          "postal_code":"00144",
+          "locality":"Roma",
+          "region":"RM",
+          "country_code":"IT"
+      }
     },
     "groups": [],
     "user_permissions": []
@@ -45,11 +69,38 @@
     "email": "",
     "origin": null,
     "attributes": {
-      "https://attributes.eid.gov.it/fiscal_number": "AATTTJDFKSKDF89",
-      "given_name": "antonio",
-      "family_name": "rossi",
-      "email": "that@ema.il",
-      "fiscal_number": "8sada89s7da89sd7a98sd78"
+      "https://attributes.eid.gov.it/fiscal_number":"TINIT-AATTTJDFKSKDF89",
+      "given_name": "peppe",
+      "family_name": "maradona",
+      "place_of_birth":{
+        "region":"NA",
+        "locality":"F839"
+      },
+      "birthdate":"1990-10-10",
+      "gender":"male",
+      "email": "antonio@ema.il",
+      "email_verified": "true",
+      "document_details":{
+        "type":"cartaIdentita",
+        "document_number":"AS01111189",
+        "issuer":{
+          "name":"ComuneRoma"
+        },
+        "date_of_issuance":"2017-01-02",
+        "date_of_expiry":"2027-01-31"
+      },
+      "sub": "5f32567af7e0e77ea09de8521ae5f6a0fd6984176e99a6bc694a8a0198231dc3",
+      "username": "http://127.0.0.1:8000/oidc/op/__5f32567af7e0e77ea09de8521ae5f6a0fd6984176e99a6bc694a8a0198231dc3",
+      "phone_number":"39081322222",
+      "phone_number_verified":"true",
+      "https://attributes.eid.gov.it/e_delivery_service":"peppe@pec.it",
+      "address":{
+          "street_address":"Via Liszt 21",
+          "postal_code":"00144",
+          "locality":"Roma",
+          "region":"RM",
+          "country_code":"IT"
+      }
     },
     "groups": [],
     "user_permissions": []
