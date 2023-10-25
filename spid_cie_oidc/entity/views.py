@@ -145,7 +145,7 @@ def openid_jwks(request, metadata_type:str, resource_type:str):
         resource_tytpe = set(jwks_uri, jwks.jose)
     """
     _sub = request.build_absolute_uri().rsplit(resource_type)[0]
-    _lookup = _sub.replace(f"{metadata_type}/", "")
+    _lookup = _sub.replace(f"/{metadata_type}/", "")
     conf = FederationEntityConfiguration.objects.filter(
         # TODO: check for reverse proxy and forwarders ...
         sub=_lookup,
