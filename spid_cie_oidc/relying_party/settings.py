@@ -65,7 +65,7 @@ RP_ATTR_MAP = getattr(
             "email",
             "email",
         ),
-        "fiscal_number": ("https://attributes.spid.gov.it/fiscal_number", "fiscal_number"),
+        "fiscal_number": ("https://attributes.eid.gov.it/fiscal_number", "fiscal_number"),
     },
 )
 
@@ -82,7 +82,7 @@ SPID_REQUESTED_CLAIMS = getattr(
             "given_name": None,
             "family_name": None,
             "email": None,
-            "https://attributes.spid.gov.it/fiscal_number": None,
+            "https://attributes.eid.gov.it/fiscal_number": None,
         },
     },
 )
@@ -96,7 +96,7 @@ CIE_REQUESTED_CLAIMS = getattr(
             "given_name": None,
             "family_name": None,
             "email": None,
-            "https://attributes.spid.gov.it/fiscal_number": None
+            "https://attributes.eid.gov.it/fiscal_number": None
         },
     },
 )
