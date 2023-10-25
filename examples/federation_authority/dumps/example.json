@@ -139,7 +139,9 @@
         "federation_resolve_endpoint": "http://127.0.0.1:8000/resolve",
         "federation_trust_mark_status_endpoint": "http://127.0.0.1:8000/trust_mark_status",
         "homepage_uri": "http://127.0.0.1:8000",
-        "name": "example TA",
+        "organization_name": "example TA",
+        "policy_uri": "http://127.0.0.1:8000/en/website/legal-information",
+        "logo_uri": "http://127.0.0.1:8000/static/svg/spid-logo-c-lb.svg",
         "federation_list_endpoint": "http://127.0.0.1:8000/list"
       }
     },
@@ -193,6 +195,16 @@
     "trust_marks_issuers": {},
     "entity_type": "openid_relying_party",
     "metadata": {
+      "federation_entity": {
+        "federation_resolve_endpoint": "http://127.0.0.1:8000/oidc/rp/resolve",
+        "organization_name": "that fancy RP",
+        "homepage_uri": "http://127.0.0.1:8000",
+        "policy_uri": "http://127.0.0.1:8000/oidc/rp/en/website/legal-information",
+        "logo_uri": "http://127.0.0.1:8000/static/svg/spid-logo-c-lb.svg",
+        "contacts": [
+          "ops@rp.example.it"
+        ]
+      },
       "openid_relying_party": {
         "organization_name": "that fancy RP",
         "application_type": "web",
@@ -273,6 +285,16 @@
     "trust_marks_issuers": {},
     "entity_type": "openid_provider",
     "metadata": {
+      "federation_entity": {
+        "federation_resolve_endpoint": "http://127.0.0.1:8000/oidc/op/resolve",
+        "organization_name": "SPID OIDC identity provider",
+        "homepage_uri": "http://127.0.0.1:8000",
+        "policy_uri": "http://127.0.0.1:8000/oidc/op/en/website/legal-information",
+        "logo_uri": "http://127.0.0.1:8000/static/svg/spid-logo-c-lb.svg",
+        "contacts": [
+          "tech@example.it"
+        ]    
+      },
       "openid_provider": {
         "authorization_endpoint": "http://127.0.0.1:8000/oidc/op/authorization",
         "revocation_endpoint": "http://127.0.0.1:8000/oidc/op/revocation",
@@ -454,6 +476,8 @@
           "federation_trust_mark_status_endpoint": "http://127.0.0.1:8000/trust_mark_status",
           "homepage_uri": "http://127.0.0.1:8000",
           "organization_name": "example TA",
+          "policy_uri": "http://127.0.0.1:8000/en/website/legal-information",
+          "logo_uri": "http://127.0.0.1:8000/static/svg/spid-logo-c-lb.svg",
           "federation_list_endpoint": "http://127.0.0.1:8000/list"
         }
       },
@@ -635,6 +659,16 @@
         ]
       },
       "metadata": {
+        "federation_entity": {
+          "federation_resolve_endpoint": "http://127.0.0.1:8000/oidc/op/resolve",
+          "organization_name": "SPID OIDC identity provider",
+          "homepage_uri": "http://127.0.0.1:8000",
+          "policy_uri": "http://127.0.0.1:8000/oidc/op/en/website/legal-information",
+          "logo_uri": "http://127.0.0.1:8000/static/svg/spid-logo-c-lb.svg",
+          "contacts": [
+            "tech@example.it"
+          ]      
+        },
         "openid_provider": {
           "authorization_endpoint": "http://127.0.0.1:8000/oidc/op/authorization",
           "revocation_endpoint": "http://127.0.0.1:8000/oidc/op/revocation",
@@ -1051,6 +1085,16 @@
         ]
       },
       "metadata": {
+        "federation_entity": {
+          "federation_resolve_endpoint": "http://127.0.0.1:8002/oidc/op/resolve",
+          "organization_name": "SPID OIDC identity provider",
+          "homepage_uri": "http://127.0.0.1:8002",
+          "policy_uri": "http://127.0.0.1:8002/oidc/op/en/website/legal-information",
+          "logo_uri": "http://127.0.0.1:8002/static/svg/logo-cie.svg",
+          "contacts": [
+            "tech@example.it"
+          ]      
+        },
         "openid_provider": {
           "authorization_endpoint": "http://127.0.0.1:8002/oidc/op/authorization",
           "revocation_endpoint": "http://127.0.0.1:8002/oidc/op/revocation",
@@ -1410,6 +1454,16 @@
       }
     ],
     "metadata": {
+      "federation_entity": {
+        "federation_resolve_endpoint": "http://127.0.0.1:8000/oidc/op/resolve",
+        "organization_name": "SPID OIDC identity provider",
+        "homepage_uri": "http://127.0.0.1:8000",
+        "policy_uri": "http://127.0.0.1:8000/oidc/op/en/website/legal-information",
+        "logo_uri": "http://127.0.0.1:8000/static/svg/spid-logo-c-lb.svg",
+        "contacts": [
+          "tech@example.it"
+        ]
+      },
       "openid_provider": {
         "authorization_endpoint": "http://127.0.0.1:8000/oidc/op/authorization",
         "revocation_endpoint": "http://127.0.0.1:8000/oidc/op/revocation",
@@ -1663,6 +1717,16 @@
         ]
     },
     "metadata": {
+      "federation_entity": {
+        "federation_resolve_endpoint": "http://127.0.0.1:8002/oidc/op/resolve",
+        "organization_name": "SPID OIDC identity provider",
+        "homepage_uri": "http://127.0.0.1:8002",
+        "policy_uri": "http://127.0.0.1:8002/oidc/op/en/website/legal-information",
+        "logo_uri": "http://127.0.0.1:8002/static/images/logo-cie.png",
+        "contacts": [
+          "tech@example.it"
+        ]
+      },
       "openid_provider": {
         "authorization_endpoint": "http://127.0.0.1:8002/oidc/op/authorization",
         "revocation_endpoint": "http://127.0.0.1:8002/oidc/op/revocation",
