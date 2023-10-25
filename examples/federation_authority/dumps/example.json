@@ -15,15 +15,43 @@
     "email": "",
     "origin": null,
     "attributes": {
-      "https://attributes.spid.gov.it/fiscal_number": "8sada89s7da89sd7a98sd78",
-      "given_name": "peppe",
-      "family_name": "maradona",
-      "email": "that@ema.il",
-      "fiscal_number": "8sada89s7da89sd7a98sd78",
-      "sub": "da750f319fa08358b1342d9de6156f590c8f97c6b5d33a9dfd71657e121ecc58",
-      "username": "http://127.0.0.1:8002/oidc/op/__da750f319fa08358b1342d9de6156f590c8f97c6b5d33a9dfd71657e121ecc58",
-      "first_name": "antonio",
-      "last_name": "rossi"
+      "https://attributes.eid.gov.it/spid_code":"ABCD123456789A",
+      "given_name":"peppe",
+      "family_name":"maradona",
+      "place_of_birth":{
+        "region":"NA",
+        "locality":"F839"
+      },
+      "birthdate":"1980-10-10",
+      "gender":"M",
+      "https://attributes.eid.gov.it/company_name":"Maradona Inc",
+      "https://attributes.eid.gov.it/registered_office":{
+        "formatted":"Via del miracolo 21 80100 Napoli"
+      },
+      "https://attributes.eid.gov.it/fiscal_number":"TINIT-ABCXYZ00W00Z000Z",
+      "https://attributes.eid.gov.it/company_fiscal_number":"TINIT-ABCXYZ00W00Z000Z",
+      "https://attributes.eid.gov.it/vat_number":"VATIT-12345678901",
+      "document_details":{
+        "type":"cartaIdentita",
+        "document_number":"AS09452389",
+        "issuer":{
+        "name":"ComuneNapoli"},
+        "date_of_issuance":"2016-01-02",
+        "date_of_expiry":"2026-01-31"
+      },
+      "phone_number":"39041322222",
+      "email":"that@ema.il",
+      "https://attributes.eid.gov.it/e_delivery_service":"peppe@pec.it",
+      "https://attributes.eid.gov.it/eid_exp_date":"2050-01-01",
+      "address": {
+        "street_address":"503,Washington Avenue",
+        "postal_code":"12401",
+        "locality":"Kingston",
+        "region":"New york",
+        "country_code":"US"
+      },
+      "sub": "76f6777878cc718fad7a6c4337268b33276a8492ef8e036d8cb0f421780d4ede",
+      "username": "http://127.0.0.1:8002/oidc/op__76f6777878cc718fad7a6c4337268b33276a8492ef8e036d8cb0f421780d4ede"
     },
     "groups": [],
     "user_permissions": []
@@ -45,12 +73,46 @@
     "email": "",
     "origin": null,
     "attributes": {
-      "https://attributes.spid.gov.it/fiscal_number": "AATTTJDFKSKDF89",
-      "given_name": "antonio",
-      "family_name": "rossi",
-      "email": "that@ema.il",
-      "fiscal_number": "8sada89s7da89sd7a98sd78"
-    },
+        "https://attributes.eid.gov.it/spid_code": "ABCD123456789A",
+        "given_name": "antonio",
+        "family_name": "rossi",
+        "place_of_birth": {
+          "region": "NA",
+          "locality": "F839"
+        },
+        "birthdate": "1980-10-10",
+        "gender": "male",
+        "https://attributes.eid.gov.it/company_name": "AgID",
+        "https://attributes.eid.gov.it/registered_office": {
+            "formatted":"via Listz 21 00144 Roma"
+        },
+        "https://attributes.eid.gov.it/fiscal_number": "TINIT-AATTTJDFKSKDF89",
+        "https://attributes.eid.gov.it/company_fiscal_number": "TINIT-ABCXYZ00W00Z000Z",
+        "https://attributes.eid.gov.it/vat_number": "VATIT-12345678901",
+        "document_details": {
+          "type": "cartaIdentita",
+          "document_number": "AS09452389",
+          "issuer": {
+            "name": "ComuneRoma"
+          },
+          "date_of_issuance": "2015-01-02",
+          "date_of_expiry": "2025-01-31"
+        },
+        "phone_number": "39041322222",
+        "email": "antonio@email.it",
+        "https://attributes.eid.gov.it/e_delivery_service": "antonio@pec.it",
+        "https://attributes.eid.gov.it/eid_exp_date": "2049-01-01",
+        "address": {
+          "street_address": "503,Washington Avenue",
+          "postal_code": "12401",
+          "locality": "Kingston",
+          "region": "New york",
+          "country_code": "US"
+        },
+        "sub": "da750f319fa08358b1342d9de6156f590c8f97c6b5d33a9dfd71657e121ecc58",
+        "username": "http://127.0.0.1:8000/oidc/op/__da750f319fa08358b1342d9de6156f590c8f97c6b5d33a9dfd71657e121ecc58"
+      },
+
     "groups": [],
     "user_permissions": []
   }
@@ -71,13 +133,12 @@
     "email": "antonio@email.it",
     "origin": null,
     "attributes": {
-      "sub": "da750f319fa08358b1342d9de6156f590c8f97c6b5d33a9dfd71657e121ecc58",
-      "username": "http://127.0.0.1:8000/oidc/op/__da750f319fa08358b1342d9de6156f590c8f97c6b5d33a9dfd71657e121ecc58",
-      "first_name": "antonio",
-      "last_name": "rossi",
-      "email": "antonio@email.it",
-      "fiscal_number": "AATTTJDFKSKDF89"
-    },
+          "https://attributes.eid.gov.it/fiscal_number": "AATTTJDFKSKDF89",
+          "given_name": "antonio",
+          "family_name": "rossi",
+          "email": "that@ema.il",
+          "fiscal_number": "8sada89s7da89sd7a98sd78"
+        },
     "groups": [],
     "user_permissions": []
   }
@@ -328,22 +389,23 @@
           "https://www.spid.gov.it/SpidL3"
         ],
         "claims_supported": [
-          "https://attributes.spid.gov.it/spidCode",
-          "given_name",
-          "family_name",
-          "place_of_birth",
-          "date_of_birth",
-          "gender",
-          "https://attributes.spid.gov.it/companyName",
-          "https://attributes.spid.gov.it/registeredOffice",
-          "https://attributes.spid.gov.it/fiscal_number",
-          "https://attributes.spid.gov.it/ivaCode",
-          "https://attributes.spid.gov.it/idCard",
-          "https://attributes.spid.gov.it/mobilePhone",
-          "email",
-          "address",
-          "https://attributes.spid.gov.it/expirationDate",
-          "https://attributes.spid.gov.it/digitalAddress"
+            "https://attributes.eid.gov.it/spid_code",
+            "given_name",
+            "family_name",
+            "place_of_birth",
+            "birthdate",
+            "gender",
+            "https://attributes.eid.gov.it/company_name",
+            "https://attributes.eid.gov.it/registered_office",
+            "https://attributes.eid.gov.it/fiscal_number",
+            "https://attributes.eid.gov.it/company_fiscal_number",
+            "https://attributes.eid.gov.it/vat_number",
+            "document_details",
+            "phone_number",
+            "email",
+            "https://attributes.eid.gov.it/e_delivery_service",
+            "https://attributes.eid.gov.it/eid_exp_date",
+            "address"
         ],
         "grant_types_supported": [
           "authorization_code",
@@ -702,22 +764,23 @@
             "https://www.spid.gov.it/SpidL3"
           ],
           "claims_supported": [
-              "https://attributes.spid.gov.it/spidCode",
-              "given_name",
-              "family_name",
-              "place_of_birth",
-              "date_of_birth",
-              "gender",
-              "https://attributes.spid.gov.it/companyName",
-              "https://attributes.spid.gov.it/registeredOffice",
-              "https://attributes.spid.gov.it/fiscal_number",
-              "https://attributes.spid.gov.it/ivaCode",
-              "https://attributes.spid.gov.it/idCard",
-              "https://attributes.spid.gov.it/mobilePhone",
-              "email",
-              "address",
-              "https://attributes.spid.gov.it/expirationDate",
-              "https://attributes.spid.gov.it/digitalAddress"
+            "https://attributes.eid.gov.it/spid_code",
+            "given_name",
+            "family_name",
+            "place_of_birth",
+            "birthdate",
+            "gender",
+            "https://attributes.eid.gov.it/company_name",
+            "https://attributes.eid.gov.it/registered_office",
+            "https://attributes.eid.gov.it/fiscal_number",
+            "https://attributes.eid.gov.it/company_fiscal_number",
+            "https://attributes.eid.gov.it/vat_number",
+            "document_details",
+            "phone_number",
+            "email",
+            "https://attributes.eid.gov.it/e_delivery_service",
+            "https://attributes.eid.gov.it/eid_exp_date",
+            "address"
           ],
           "grant_types_supported": [
             "authorization_code",
@@ -1497,22 +1560,23 @@
           "https://www.spid.gov.it/SpidL3"
         ],
         "claims_supported": [
-            "https://attributes.spid.gov.it/spidCode",
+            "https://attributes.eid.gov.it/spid_code",
             "given_name",
             "family_name",
             "place_of_birth",
-            "date_of_birth",
+            "birthdate",
             "gender",
-            "https://attributes.spid.gov.it/companyName",
-            "https://attributes.spid.gov.it/registeredOffice",
-            "https://attributes.spid.gov.it/fiscal_number",
-            "https://attributes.spid.gov.it/ivaCode",
-            "https://attributes.spid.gov.it/idCard",
-            "https://attributes.spid.gov.it/mobilePhone",
+            "https://attributes.eid.gov.it/company_name",
+            "https://attributes.eid.gov.it/registered_office",
+            "https://attributes.eid.gov.it/fiscal_number",
+            "https://attributes.eid.gov.it/company_fiscal_number",
+            "https://attributes.eid.gov.it/vat_number",
+            "document_details",
+            "phone_number",
             "email",
-            "address",
-            "https://attributes.spid.gov.it/expirationDate",
-            "https://attributes.spid.gov.it/digitalAddress"
+            "https://attributes.eid.gov.it/e_delivery_service",
+            "https://attributes.eid.gov.it/eid_exp_date",
+            "address"
         ],
         "grant_types_supported": [
           "authorization_code",

@@ -101,14 +101,14 @@ SPID_REQUESTED_CLAIMS = getattr(
     "RP_REQUIRED_CLAIMS",
     {
         "id_token": {
-            "https://attributes.spid.gov.it/familyName": {"essential": True},
-            "https://attributes.spid.gov.it/email": {"essential": True},
+            "https://attributes.eid.gov.it/family_name": {"essential": True},
+            "https://attributes.eid.gov.it/email": {"essential": True},
         },
         "userinfo": {
-            "https://attributes.spid.gov.it/name": None,
-            "https://attributes.spid.gov.it/familyName": None,
-            "https://attributes.spid.gov.it/email": None,
-            "https://attributes.spid.gov.it/fiscalNumber": None,
+            "https://attributes.eid.gov.it/given_name": None,
+            "https://attributes.eid.gov.it/family_name": None,
+            "https://attributes.eid.gov.it/email": None,
+            "https://attributes.eid.gov.it/fiscal_number": None,
         },
     },
 )

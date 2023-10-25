@@ -53,28 +53,28 @@ class UserInfoSpid(BaseModel):
         alias="place_of_birth", default=None
     )
     date_of_birth: Optional[dict] = Field(
-        alias="date_of_birth", default=None
+        alias="birthdate", default=None
     )
     gender: Optional[dict] = Field(
         alias="gender", default=None
     )
     company_name: Optional[dict] = Field(
-        alias="https://attributes.spid.gov.it/companyName", default=None
+        alias="https://attributes.eid.gov.it/company_name", default=None
     )
     registered_office: Optional[dict] = Field(
-        alias="https://attributes.spid.gov.it/registeredOffice", default=None
+        alias="https://attributes.eid.gov.it/registered_office", default=None
     )
     fiscal_number: Optional[dict] = Field(
-        alias="https://attributes.spid.gov.it/fiscal_number", default=None
+        alias="https://attributes.eid.gov.it/fiscal_number", default=None
     )
     iva_code: Optional[dict] = Field(
-        alias="https://attributes.spid.gov.it/ivaCode", default=None
+        alias="https://attributes.eid.gov.it/vat_number", default=None
     )
     id_card: Optional[dict] = Field(
-        alias="https://attributes.spid.gov.it/idCard", default=None
+        alias="https://attributes.eid.gov.it/document_details", default=None
     )
     mobile_phone: Optional[dict] = Field(
-        alias="https://attributes.spid.gov.it/mobilePhone", default=None
+        alias="https://attributes.eid.gov.it/phone_number", default=None
     )
     email: Optional[dict] = Field(
         alias="email", default=None
@@ -83,10 +83,10 @@ class UserInfoSpid(BaseModel):
         alias="address", default=None
     )
     expiration_date: Optional[dict] = Field(
-        alias="https://attributes.spid.gov.it/expirationDate", default=None
+        alias="https://attributes.eid.gov.it/eid_exp_date", default=None
     )
     digital_address: Optional[dict] = Field(
-        alias="https://attributes.spid.gov.it/digitalAddress", default=None
+        alias="https://attributes.eid.gov.it/e_delivery_service", default=None
     )
 
 
