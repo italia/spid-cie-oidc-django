@@ -239,7 +239,7 @@ class EntityConfiguration:
             raise MissingTrustMark("Required Trust marks are missing.") # pragma: no cover
 
         trust_mark_issuers_by_id = self.trust_anchor_entity_conf.payload.get(
-            "trust_marks_issuers", {}
+            "trust_mark_issuers", {}
         )
 
         # TODO : cache of issuers -> it would be better to have a proxy function

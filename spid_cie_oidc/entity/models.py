@@ -97,7 +97,7 @@ class FederationEntityConfiguration(TimeStampedModel):
         help_text=_("which trust marks MUST be exposed in its entity configuration"),
         default=list,
     )
-    trust_marks_issuers = models.JSONField(
+    trust_mark_issuers = models.JSONField(
         blank=True,
         help_text=_(
             "Only usable for Trust Anchors and intermediates. "
@@ -219,8 +219,8 @@ class FederationEntityConfiguration(TimeStampedModel):
             "metadata": self.metadata,
         }
 
-        if self.trust_marks_issuers:
-            conf["trust_marks_issuers"] = self.trust_marks_issuers
+        if self.trust_mark_issuers:
+            conf["trust_mark_issuers"] = self.trust_mark_issuers
 
         if self.trust_marks:
             conf["trust_marks"] = self.trust_marks

@@ -23,7 +23,7 @@
       ],
       "jwks_core": [],
       "trust_marks": [],
-      "trust_marks_issuers": {},
+      "trust_mark_issuers": {},
       "entity_type": "federation_entity",
       "metadata": {
         "federation_entity": {

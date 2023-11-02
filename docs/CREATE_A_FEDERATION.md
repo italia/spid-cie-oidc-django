@@ -77,7 +77,7 @@ ta_conf_data = dict(
     metadata=FA_METADATA,
     constraints=FA_CONSTRAINTS,
     is_active=True,
-    trust_marks_issuers=TM_ISSUERS,
+    trust_mark_issuers=TM_ISSUERS,
 )
 
 FederationEntityConfiguration.objects.create(**ta_conf_data)
