@@ -16,7 +16,7 @@ op_conf = {
     "jwks_fed": [op_conf_priv_jwk],
     "jwks_core": [op_conf_priv_jwk],
     "trust_marks": [],
-    "trust_marks_issuers": {},
+    "trust_mark_issuers": {},
     "entity_type": "openid_provider",
     "metadata": {
         "openid_provider": {

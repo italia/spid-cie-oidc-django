@@ -142,7 +142,7 @@
       }
     ],
     "trust_marks": [],
-    "trust_marks_issuers": {},
+    "trust_mark_issuers": {},
     "entity_type": "openid_provider",
     "metadata": {
       "federation_entity": {
@@ -340,7 +340,7 @@
           "federation_list_endpoint": "http://127.0.0.1:8000/list"
         }
       },
-      "trust_marks_issuers": {
+      "trust_mark_issuers": {
         "https://www.spid.gov.it/certification/rp/public": [
           "https://registry.spid.agid.gov.it",
           "https://public.intermediary.spid.it"

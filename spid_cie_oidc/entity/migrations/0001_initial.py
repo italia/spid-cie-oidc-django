@@ -77,7 +77,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    "trust_marks_issuers",
+                    "trust_mark_issuers",
                     models.JSONField(
                         blank=True,
                         default=dict,
