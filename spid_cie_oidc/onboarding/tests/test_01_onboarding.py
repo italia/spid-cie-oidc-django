@@ -40,6 +40,7 @@ class OnboardingTest(TestCase):
         res = client.get(url, self.data)
         self.assertEqual(res.status_code, 200)
         res = client.post(url, self.data)
+        print(res.content.decode())
         self.assertFormError(
             res, "form", "organization_name", "Enter your organization name"
         )
