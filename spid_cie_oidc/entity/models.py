@@ -296,7 +296,7 @@ class FetchedEntityStatement(TimeStampedModel):
     statement = models.JSONField(
         blank=False, null=False, help_text=_("Entity statement"), default=dict
     )
-    jwt = models.CharField(max_length=2048)
+    jwt = models.TextField(null=False, blank=False)
 
     class Meta:
         verbose_name = "Fetched Entity Statement"

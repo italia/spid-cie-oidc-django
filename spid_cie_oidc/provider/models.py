@@ -27,7 +27,7 @@ class OidcSession(TimeStampedModel):
         help_text=_("django session key")
     )
     nonce = models.CharField(max_length=2048, blank=False, null=False)
-    authz_request = models.JSONField(max_length=2048, blank=False, null=False)
+    authz_request = models.JSONField(max_length=65536, blank=False, null=False)
 
     revoked = models.BooleanField(default=False)
     auth_code = models.CharField(max_length=2048, blank=False, null=False)
