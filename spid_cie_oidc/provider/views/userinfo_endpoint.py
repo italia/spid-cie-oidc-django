@@ -5,7 +5,6 @@ from django.http import (
     HttpResponseForbidden,
 )
 from djagger.decorators import schema
-from django.conf import settings
 from django.utils import timezone
 from django.views import View
 from spid_cie_oidc.entity.jwtse import (
@@ -104,9 +103,4 @@ class UserInfoEndpoint(OpBase, View):
             client_jwk,
             cty="JWT"
         )
-        provider = getattr(settings, "OIDCFED_PROVIDER_PROFILE")
-        match provider:
-            case "cie":
-                return HttpResponse(jwe, content_type="application/jose")
-            case "spid":
-                return HttpResponse(jwe, content_type="application/jwt")
+        return HttpResponse(jwe, content_type="application/jwt")
