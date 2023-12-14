@@ -12,6 +12,7 @@ from spid_cie_oidc.entity.jwtse import (
     create_jwe,
     unpad_jwt_payload
 )
+
 from spid_cie_oidc.entity.models import (
     TrustChain
 )
@@ -102,4 +103,4 @@ class UserInfoEndpoint(OpBase, View):
             client_jwk,
             cty="JWT"
         )
-        return HttpResponse(jwe, content_type="application/jose")
+        return HttpResponse(jwe, content_type="application/jwt")
