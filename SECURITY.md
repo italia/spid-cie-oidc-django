@@ -1,9 +1,18 @@
 # Security Policy
 
-## Supported Versions
+A responsible security disclosure is a practice in the field of cybersecurity where a vulnerability found in software or a system is disclosed only to the software's vendor or a trusted entity capable of fixing the issue, rather than being publicly disclosed or sold.
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
+The process typically involves the following steps:
+
+1. Discovery: A security researcher discovers a vulnerability.
+2. Reporting: The vulnerability is reported to the software vendor or a trusted third-party, often via a dedicated security contact.
+3. Verification & Fixing: The vendor verifies the vulnerability and develops a patch or workaround.
+4. Release: The patch is released to users, often alongside a security advisory detailing the issue without revealing exploitable details.
+5. Public Disclosure: After a reasonable period of time, the vulnerability is publicly disclosed, allowing the community to understand the issue and verify that the patch resolves it.
+
+This practice is intended to prevent potential exploitation of the vulnerability by malicious actors, giving the vendor time to address the issue before it becomes widely known.
+
+## Supported Versions
 
 | Version | Supported          |
 | ------- | ------------------ |
