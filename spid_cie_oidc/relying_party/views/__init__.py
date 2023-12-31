@@ -144,7 +144,7 @@ class SpidCieOidcRp:
                 "aud": [audience],
                 "iat": iat_now(),
                 "exp": exp_from_now(),
-                "jti": str(uuid.uuid4()),
+                "jti": str(uuid.uuid4())
             },
             jwk_dict=rp_conf.jwks_core[0],
         )

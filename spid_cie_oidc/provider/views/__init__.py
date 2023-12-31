@@ -22,6 +22,7 @@ from spid_cie_oidc.provider.exceptions import (
     ValidationException
 )
 from spid_cie_oidc.provider.models import OidcSession
+from spid_cie_oidc.provider.schemas.client_assertion import ClientAssertion
 
 from spid_cie_oidc.provider.settings import (
     OIDCFED_ATTRNAME_I18N,
@@ -198,7 +199,12 @@ class OpBase:
         _op = self.get_issuer()
         _op_eid = _op.sub
         _op_eid_authz_endpoint = [_op.metadata['openid_provider']['authorization_endpoint']]
-
+        
+        try:
+            ClientAssertion(**payload)
+        except Exception as e:
+            raise Exception(f"Client Assertion: json schema validation error: {e}")
+        
         if isinstance(_aud, str):
             _aud = [_aud]
         _allowed_auds = _aud + _op_eid_authz_endpoint
@@ -208,7 +214,7 @@ class OpBase:
                 f"Client assertion failed: {_sub} != {client_id}"
             )
             # TODO Specialize exceptions
-            raise Exception()
+            raise Exception("Client Assertion: sub != client_id")
 
         if _op_eid:
             _allowed_auds.append(_op_eid)
@@ -219,7 +225,7 @@ class OpBase:
                 f"{self.request.build_absolute_uri()} not in {_allowed_auds}"
             )
             # TODO Specialize exceptions
-            raise Exception()
+            raise Exception("Client Assertion: fake audience")
 
         tc = TrustChain.objects.get(sub=client_id, is_active=True)
         jwk = self.find_jwk(head, tc.metadata['openid_relying_party']['jwks']['keys'])
