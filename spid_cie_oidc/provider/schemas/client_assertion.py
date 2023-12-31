@@ -22,8 +22,11 @@ class ClientAssertion(BaseModel):
 
     @validator("exp")
     def not_expired(cls, exp, values):
-        if not (values['iat'] < iat_now() < exp):
+        _now = iat_now()
+        if not (values['iat'] <= _now < exp):
             raise ValueError(
-                'Client Assertion: exp must be greater than iat and less than the current time'
+                'Client Assertion: exp must be greater than '
+                'iat and less than the current time.'
+                f'{values["iat"]} <= {_now} < {exp}'
             )
         return exp
