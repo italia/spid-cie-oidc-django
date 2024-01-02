@@ -14,7 +14,7 @@ INSTALL_REQUIRES = [
     "cryptojwt>=1.8.2",
     "pydantic>=1.8.2,<2.0",
     "pytz>=2021.3",
-    "aiohttp>=3.8,<3.9",
+    "aiohttp>3.9,<3.10",
     "requests>=2.20,<3.0",
     "pydantic[email]",
     "djagger"
