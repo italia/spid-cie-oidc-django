@@ -105,9 +105,7 @@ class TokenEndpoint(OpBase, View):
             ).first()
 
             id_token = unpad_jwt_payload(issuedToken.id_token)
-
             consent_expiration = id_token['iat'] + OIDCFED_PROVIDER_MAX_CONSENT_TIMEFRAME
-
             delta = consent_expiration - iat_now()
             if delta > 0:
                 return True
@@ -138,7 +136,7 @@ class TokenEndpoint(OpBase, View):
             refresh_token=request.POST['refresh_token'],
             revoked=False
         ).first()
-
+        
         if not issued_token:
             return JsonResponse(
                 {
@@ -148,7 +146,6 @@ class TokenEndpoint(OpBase, View):
                 },
                 status=400
             )
-
         session = issued_token.session
         if not self.is_token_renewable(session):  # pragma: no cover
             return JsonResponse(
@@ -171,7 +168,7 @@ class TokenEndpoint(OpBase, View):
             id_token=iss_token_data['id_token'],
             refresh_token=iss_token_data['refresh_token'],
             token_type="Bearer",  # nosec B106
-            expires_in=expires_in,
+            expires_in=expires_in
         )
 
         return JsonResponse(data)
@@ -192,10 +189,8 @@ class TokenEndpoint(OpBase, View):
                 },
                 status=400
             )
-
         self.commons = self.get_jwt_common_data()
         self.issuer = self.get_issuer()
-
         # check client_assertion and client ownership
         try:
             self.check_client_assertion(
