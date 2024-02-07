@@ -199,7 +199,7 @@ class AuthzRequestView(OpBase, View):
         # stores the authz request in a hidden field in the form
         form = self.get_login_form()()
         context = {
-            "client_organization_name": self.get_client_organisation_name(tc),
+            "client_organization_name": self.get_client_organization_name(tc),
             "hidden_form": AuthzHiddenForm(dict(authz_request_object=req)),
             "form": form,
             "redirect_uri": self.payload["redirect_uri"],
