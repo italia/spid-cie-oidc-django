@@ -396,7 +396,7 @@ class OpBase:
             filtered_user_claims=filtered_user_claims
         )
 
-    def get_client_organisation_name(self, tc):
+    def get_client_organization_name(self, tc):
         rp_metadata = (
                 tc.metadata.get(
                     "federation_entity", {}
