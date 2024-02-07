@@ -397,7 +397,6 @@ class OpBase:
         )
 
     def get_client_organisation_name(self, tc):
-        global name
         rp_metadata = (
                 tc.metadata.get(
                     "federation_entity", {}
