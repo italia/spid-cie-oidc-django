@@ -56,7 +56,7 @@ class ConsentPageView(OpBase, View):
         context = {
             "form": self.get_consent_form()(),
             "session": session,
-            "client_organization_name": self.get_client_organisation_name(tc),
+            "client_organization_name": self.get_client_organization_name(tc),
             "user_claims": sorted(set(i18n_user_claims),),
             "redirect_uri": session.authz_request["redirect_uri"],
             "state": session.authz_request["state"]
