@@ -397,13 +397,19 @@ class OpBase:
         )
 
     def get_client_organisation_name(self, tc):
-        fed_metadata = tc.metadata.get("federation_entity", {})
-        name = fed_metadata.get("organization_name", "")
-        if not name:
-            op_metadata = tc.metadata.get("openid_relying_party", {})
-            name = op_metadata.get("organization_name", "")
-            if not name:
-                name = op_metadata.get("client_name", "")
-                if not name:
-                    name = op_metadata.get("client_id", "")
+        global name
+        rp_metadata = (
+                tc.metadata.get(
+                    "federation_entity", {}
+                ) or
+                tc.metadata.get(
+                    "openid_relying_party", {}
+                )
+        )
+        if rp_metadata:
+            name = (
+                    rp_metadata.get("organization_name", "") or
+                    rp_metadata.get("client_name", "") or
+                    rp_metadata.get("client_id", "")
+            )
         return name
