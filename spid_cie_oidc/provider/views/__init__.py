@@ -32,6 +32,7 @@ from spid_cie_oidc.provider.settings import (
     OIDCFED_PROVIDER_PROFILES_ACR_4_REFRESH,
     OIDCFED_PROVIDER_PROFILES_ID_TOKEN_CLAIMS
 )
+
 logger = logging.getLogger(__name__)
 
 
@@ -40,7 +41,7 @@ class OpBase:
     Baseclass with common methods for OPs
     """
 
-    def redirect_response_data(self, redirect_uri:str, **kwargs) -> HttpResponseRedirect:
+    def redirect_response_data(self, redirect_uri: str, **kwargs) -> HttpResponseRedirect:
         if "?" in redirect_uri:
             qstring = "&"
         else:
@@ -114,7 +115,7 @@ class OpBase:
 
         jwks = get_jwks(
             rp_trust_chain.metadata['openid_relying_party'],
-            federation_jwks = rp_trust_chain.jwks
+            federation_jwks=rp_trust_chain.jwks
         )
         jwk = self.find_jwk(header, jwks)
         if not jwk:
@@ -178,7 +179,7 @@ class OpBase:
             )
 
         session_not_after = session.created + timezone.timedelta(
-            minutes = OIDCFED_PROVIDER_AUTH_CODE_MAX_AGE
+            minutes=OIDCFED_PROVIDER_AUTH_CODE_MAX_AGE
         )
         if session_not_after < timezone.localtime():
             raise ExpiredAuthCode(
@@ -199,12 +200,12 @@ class OpBase:
         _op = self.get_issuer()
         _op_eid = _op.sub
         _op_eid_authz_endpoint = [_op.metadata['openid_provider']['authorization_endpoint']]
-        
+
         try:
             ClientAssertion(**payload)
         except Exception as e:
             raise Exception(f"Client Assertion: json schema validation error: {e}")
-        
+
         if isinstance(_aud, str):
             _aud = [_aud]
         _allowed_auds = _aud + _op_eid_authz_endpoint
@@ -250,9 +251,9 @@ class OpBase:
         }
 
     def get_access_token(
-            self, iss_sub:str, sub:str, authz: OidcSession, commons:dict
+            self, iss_sub: str, sub: str, authz: OidcSession, commons: dict
     ) -> dict:
-        
+
         access_token = {
             "iss": iss_sub,
             "sub": sub,
@@ -266,8 +267,8 @@ class OpBase:
         return access_token
 
     def get_id_token_claims(
-        self,
-        authz:OidcSession
+            self,
+            authz: OidcSession
     ) -> dict:
         _provider_profile = getattr(settings, 'OIDCFED_DEFAULT_PROVIDER_PROFILE', OIDCFED_DEFAULT_PROVIDER_PROFILE)
         claims = {}
@@ -276,21 +277,21 @@ class OpBase:
             return claims
 
         for claim in (
-                    authz.authz_request.get(
-                        "claims", {}
-                    ).get("id_token", {}).keys()
+                authz.authz_request.get(
+                    "claims", {}
+                ).get("id_token", {}).keys()
         ):
             if claim in allowed_id_token_claims and authz.user.attributes.get(claim, None):
                 claims[claim] = authz.user.attributes[claim]
         return claims
 
     def get_id_token(
-                self,
-                iss_sub:str,
-                sub:str,
-                authz:OidcSession,
-                jwt_at:str,
-                commons:dict
+            self,
+            iss_sub: str,
+            sub: str,
+            authz: OidcSession,
+            jwt_at: str,
+            commons: dict
     ) -> dict:
 
         id_token = {
@@ -312,19 +313,19 @@ class OpBase:
 
     def get_refresh_token(
             self,
-            iss_sub:str,
-            sub:str,
-            authz:OidcSession,
-            jwt_at:str,
-            commons:dict
+            iss_sub: str,
+            sub: str,
+            authz: OidcSession,
+            jwt_at: str,
+            commons: dict
     ) -> dict:
         # refresh token is scope offline_access and prompt == consent
         refresh_acrs = OIDCFED_PROVIDER_PROFILES_ACR_4_REFRESH[OIDCFED_DEFAULT_PROVIDER_PROFILE]
         acrs = authz.authz_request.get('acr_values', [])
         if (
-            "offline_access" in authz.authz_request['scope'] and
-            'consent' in authz.authz_request['prompt'] and
-            set(refresh_acrs).intersection(set(acrs))
+                "offline_access" in authz.authz_request['scope'] and
+                'consent' in authz.authz_request['prompt'] and
+                set(refresh_acrs).intersection(set(acrs))
         ):
             refresh_token = {
                 "sub": sub,
@@ -337,8 +338,8 @@ class OpBase:
             refresh_token.update(commons)
             return refresh_token
 
-    def get_iss_token_data(self, session : OidcSession, issuer: FederationEntityConfiguration):
-        _sub = session.pairwised_sub(provider_id = issuer.sub)
+    def get_iss_token_data(self, session: OidcSession, issuer: FederationEntityConfiguration):
+        _sub = session.pairwised_sub(provider_id=issuer.sub)
         iss_sub = issuer.sub
         commons = self.get_jwt_common_data()
         jwk = issuer.jwks_core[0]
@@ -363,7 +364,7 @@ class OpBase:
 
     def get_expires_in(self, iat: int, exp: int):
         return timezone.timedelta(
-            seconds = exp - iat
+            seconds=exp - iat
         ).seconds
 
     def attributes_names_to_release(self, request, session: OidcSession) -> dict:
@@ -391,6 +392,23 @@ class OpBase:
             for i in filtered_user_claims.keys()
         ]
         return dict(
-            i18n_user_claims = i18n_user_claims,
-            filtered_user_claims = filtered_user_claims
+            i18n_user_claims=i18n_user_claims,
+            filtered_user_claims=filtered_user_claims
         )
+
+    def get_client_organization_name(self, tc):
+        rp_metadata = (
+                tc.metadata.get(
+                    "federation_entity", {}
+                ) or
+                tc.metadata.get(
+                    "openid_relying_party", {}
+                )
+        )
+        if rp_metadata:
+            name = (
+                    rp_metadata.get("organization_name", "") or
+                    rp_metadata.get("client_name", "") or
+                    rp_metadata.get("client_id", "")
+            )
+        return name
