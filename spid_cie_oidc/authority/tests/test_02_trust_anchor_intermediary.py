@@ -2,7 +2,7 @@ from django.test import TestCase, Client, override_settings
 from django.urls import reverse
 
 from spid_cie_oidc.entity.exceptions import InvalidRequiredTrustMark
-from spid_cie_oidc.entity.jwtse import verify_jws
+from spid_cie_oidc.entity.jwtse import verify_jws, unpad_jwt_payload
 from spid_cie_oidc.entity.models import *
 
 from spid_cie_oidc.entity.trust_chain_operations import (
@@ -132,6 +132,15 @@ class TrustChainTest(TestCase):
         self.assertTrue(len(trust_chain.trust_path) == 3)
         self.assertTrue((len(trust_chain.trust_path) - 2) == trust_chain.max_path_len)
 
+        tc_ser = trust_chain.serialize()
+        _p0 = unpad_jwt_payload(tc_ser[0])
+        _p1 = unpad_jwt_payload(tc_ser[1])
+        _p2 = unpad_jwt_payload(tc_ser[2])
+
+        self.assertEqual(_p0['iss'], _p0['sub'])
+        self.assertNotEqual(_p2['iss'], _p1['sub'])
+        self.assertEqual(_p2['iss'], _p2['sub'])
+        
         dumps = dumps_statements_from_trust_chain_to_db(trust_chain)
 
         self.assertTrue(isinstance(dumps, list) and len(dumps) == 5)
