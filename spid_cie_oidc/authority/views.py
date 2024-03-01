@@ -216,26 +216,13 @@ def advanced_entity_listing(request):
 def trust_mark_status(request):
     failed_data = {"active": False}
 
-    sub = ""
-    _id = ""
-
-    params: QueryDict
-
-    if request.method == "GET":
-        params = request.GET
-    elif request.method == "POST":
-        params = request.POST
-    else:
+    sub = request.POST.get("sub") or request.GET.get("sub", None)
+    _id = request.POST.get("trust_mark_id) or request.GET.get("trust_mark_id", None)
+    if not request.GET or request.POST:
         return JsonResponse({"error": "Method not allowed"}, status=400)
 
-    if not params:
-        return JsonResponse(failed_data)
 
-    if params.get("sub", "") and params.get("id", ""):
-        sub = params["sub"]
-        _id = params["id"]
-
-    elif params.get("trust_mark", ""):
+    if request.POST.get("trust_mark", ""):
         try:
             unpad_jwt_head(params["trust_mark"])
             payload = unpad_jwt_payload(params["trust_mark"])
