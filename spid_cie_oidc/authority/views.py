@@ -217,7 +217,8 @@ def trust_mark_status(request):
     failed_data = {"active": False}
 
     sub = request.POST.get("sub") or request.GET.get("sub", None)
-    _id = request.POST.get("trust_mark_id") or request.GET.get("trust_mark_id", None)
+    _id = request.POST.get("trust_mark_id") or request.GET.get("trust_mark_id", None) \
+        or request.POST.get("id") or request.GET.get("id", None)
     trust_mark = request.POST.get("trust_mark") or request.GET.get("trust_mark", None)
 
     if request.method not in ['GET', 'POST']:
@@ -227,8 +228,8 @@ def trust_mark_status(request):
         try:
             unpad_jwt_head(trust_mark)
             payload = unpad_jwt_payload(trust_mark)
-            sub = payload.get("sub", "")
-            _id = payload.get("id", "")
+            sub = payload["sub"]
+            _id = payload["id"]
         except Exception:
             return JsonResponse(failed_data)
     elif sub and _id:
