@@ -398,8 +398,6 @@ class TrustChain(TimeStampedModel):
     def is_valid(self):
         return self.is_active and ENTITY_STATUS[self.status]
 
-    # TODO: property is_expired
-
     def __str__(self):
         return "{} [{}] [{}]".format(
             self.sub, self.trust_anchor, self.is_valid
