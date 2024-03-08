@@ -13,6 +13,7 @@ from enum import Enum
 
 from spid_cie_oidc.entity.exceptions import InvalidTrustchain
 from spid_cie_oidc.entity.models import TrustChain
+from spid_cie_oidc.entity.utils import get_core_signing_key
 from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
 from spid_cie_oidc.relying_party.exceptions import ValidationException
 from spid_cie_oidc.relying_party.settings import (
@@ -146,7 +147,7 @@ class SpidCieOidcRp:
                 "exp": exp_from_now(),
                 "jti": str(uuid.uuid4())
             },
-            jwk_dict=rp_conf.jwks_core[0],
+            jwk_dict=get_core_signing_key(rp_conf)
         )
         token_request_data["client_assertion"] = client_assertion
 

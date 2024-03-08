@@ -12,7 +12,7 @@ from django.utils.translation import gettext as _
 from django.views import View
 from spid_cie_oidc.entity.exceptions import InvalidTrustchain
 from spid_cie_oidc.entity.jwtse import create_jws
-from spid_cie_oidc.entity.utils import get_jwks
+from spid_cie_oidc.entity.utils import get_jwks, get_core_signing_key
 from spid_cie_oidc.entity.models import FederationEntityConfiguration
 from spid_cie_oidc.relying_party.settings import OIDCFED_ACR_PROFILES, RP_PROVIDER_PROFILES, \
     RP_DEFAULT_PROVIDER_PROFILES
@@ -25,7 +25,7 @@ from ..settings import (
 )
 from ..utils import (
     http_dict_to_redirect_uri_path,
-    random_string,
+    random_string
 )
 
 from . import SpidCieOidcRp
@@ -188,7 +188,9 @@ class SpidCieOidcRpBeginView(SpidCieOidcRp, View):
         # could be reused as a private_key_jwt
         # authz_data_obj["sub"] = client_conf["client_id"]
 
-        request_obj = create_jws(authz_data_obj, entity_conf.jwks_core[0])
+        jwk_core_sig = get_core_signing_key(entity_conf)
+
+        request_obj = create_jws(authz_data_obj, jwk_core_sig)
         authz_data["request"] = request_obj
         uri_path = http_dict_to_redirect_uri_path(
             {

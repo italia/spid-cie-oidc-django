@@ -16,7 +16,7 @@ from spid_cie_oidc.entity.jwtse import (
 from spid_cie_oidc.entity.models import (
     TrustChain
 )
-from spid_cie_oidc.entity.utils import get_jwks
+from spid_cie_oidc.entity.utils import get_jwks, get_rp_encryption_key, get_core_signing_key
 from spid_cie_oidc.provider.models import IssuedToken
 
 from . import OpBase
@@ -85,18 +85,19 @@ class UserInfoEndpoint(OpBase, View):
                 jwt[claim] = token.session.user.attributes[claim]
 
         # sign the data
-        jws = create_jws(jwt, issuer.jwks_core[0])
+        key = get_core_signing_key(issuer)
+        jws = create_jws(jwt, key) #issuer.jwks_core[0])
 
         # encrypt the data
         client_jwks = get_jwks(
             rp_tc.metadata['openid_relying_party'],
             federation_jwks = rp_tc.jwks
         )
-        client_jwk = client_jwks[0]
-        for k in client_jwks:
-            if k.get('kid') and len(k["kid"]) >= 1:
-                client_jwk = k
-                break
+        client_jwk = get_rp_encryption_key(client_jwks) #[0]
+        # for k in client_jwks:
+        #     if k.get('kid') and len(k["kid"]) >= 1:
+        #         client_jwk = k
+        #         break
 
         jwe = create_jwe(
             jws,

@@ -14,6 +14,23 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+def get_core_signing_key(entity_conf):
+    jwk_core_sig = entity_conf.jwks_core[0]
+    if len(entity_conf.jwks_core) > 1:
+        for jwk in entity_conf.jwks_core:
+            if jwk['use'] == 'sig':
+                jwk_core_sig = jwk
+    return jwk_core_sig
+
+
+def get_rp_encryption_key(jwks_core):
+    jwk_core_enc = jwks_core[0]
+    if len(jwks_core) > 1:
+        for jwk in jwks_core:
+            if jwk['use'] == 'enc':
+                jwk_core_enc = jwk
+    return jwk_core_enc
+
 def iat_now() -> int:
     return int(datetime.datetime.now().timestamp())
 
