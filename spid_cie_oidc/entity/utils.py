@@ -5,7 +5,7 @@ from secrets import token_hex
 from spid_cie_oidc.entity.jwtse import unpad_jwt_head
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.statements import get_http_url
-
+from . import KeyUsage
 
 import datetime
 import json
@@ -14,10 +14,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def get_key(jwks_core, use='sig'):
-    selected_jwk = jwks_core[0]
-    if len(jwks_core) > 1:
-        for jwk in jwks_core:
+def get_key(jwks, use=KeyUsage.signature):
+    selected_jwk = jwks[0]
+    if len(jwks) > 1:
+        for jwk in jwks:
             if jwk['use'] == use:
                 selected_jwk = jwk
     return selected_jwk
