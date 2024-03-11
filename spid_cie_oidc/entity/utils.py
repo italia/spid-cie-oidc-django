@@ -16,10 +16,9 @@ logger = logging.getLogger(__name__)
 
 def get_key(jwks, use=KeyUsage.signature):
     selected_jwk = jwks[0]
-    if len(jwks) > 1:
-        for jwk in jwks:
-            if jwk['use'] == use:
-                selected_jwk = jwk
+    for jwk in jwks:
+        if jwk['use'] == use:
+            return jwk
     return selected_jwk
 
 def iat_now() -> int:
