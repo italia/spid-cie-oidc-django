@@ -268,12 +268,50 @@ class TrustChainTest(TestCase):
         res = c.post(
             url,
             data={
+                "trust_mark_id": self.rp_assigned_profile.profile.profile_id,
+                "sub": self.rp_assigned_profile.descendant.sub,
+            },
+        )
+        self.assertTrue(res.status_code == 200)
+        self.assertTrue(res.json() == {"active": True})
+
+        c = Client()
+        res = c.post(
+            url,
+            data={
                 "id": self.rp_assigned_profile.profile.profile_id,
                 "sub": self.rp_assigned_profile.descendant.sub,
             },
         )
         self.assertTrue(res.status_code == 200)
         self.assertTrue(res.json() == {"active": True})
+
+        res = c.get(
+            url,
+            data={
+                "trust_mark_id": self.rp_assigned_profile.profile.profile_id,
+                "sub": self.rp_assigned_profile.descendant.sub,
+            }
+        )
+        self.assertTrue(res.status_code == 200)
+        self.assertTrue(res.json() == {"active": True})
+
+        res = c.get(
+            url,
+            data={
+                "id": self.rp_assigned_profile.profile.profile_id,
+                "sub": self.rp_assigned_profile.descendant.sub,
+            }
+        )
+        self.assertTrue(res.status_code == 200)
+        self.assertTrue(res.json() == {"active": True})
+
+        res = c.get(
+            url,
+            data={}
+        )
+        self.assertTrue(res.status_code == 200)
+        self.assertTrue(res.json() == {"active": False})
 
         res = c.post(
             url,
@@ -288,6 +326,15 @@ class TrustChainTest(TestCase):
             url,
             data={
                 "trust_mark": self.rp_assigned_profile.trust_mark["trust_mark"][1:],
+            },
+        )
+        self.assertTrue(res.status_code == 200)
+        self.assertTrue(res.json() == {"active": False})
+
+        res = c.get(
+            url,
+            data={
+                "trust_mark_id": self.rp_assigned_profile.profile.profile_id,
             },
         )
         self.assertTrue(res.status_code == 200)

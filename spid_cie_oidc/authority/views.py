@@ -8,9 +8,11 @@ from django.core.paginator import Paginator
 from django.http import (
     Http404,
     HttpResponse,
-    JsonResponse
+    JsonResponse,
+    QueryDict
 )
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 
 from spid_cie_oidc.authority.models import (
     FederationDescendant,
@@ -199,7 +201,7 @@ def advanced_entity_listing(request):
 
 
 @schema(
-    methods=['GET'],
+    methods=['GET', 'POST'],
     get_request_schema = {
         "application/x-www-form-urlencoded": TrustMarkRequest
     },
@@ -210,20 +212,28 @@ def advanced_entity_listing(request):
     },
     tags = ['Federation API']
 )
+@csrf_exempt
 def trust_mark_status(request):
     failed_data = {"active": False}
-    if request.POST.get("sub", "") and request.POST.get("id", ""):
-        sub = request.POST["sub"]
-        _id = request.POST["id"]
 
-    elif request.POST.get("trust_mark", ""):
+    sub = request.POST.get("sub") or request.GET.get("sub", None)
+    _id = request.POST.get("trust_mark_id") or request.GET.get("trust_mark_id", None) \
+        or request.POST.get("id") or request.GET.get("id", None)
+    trust_mark = request.POST.get("trust_mark") or request.GET.get("trust_mark", None)
+
+    if request.method not in ['GET', 'POST']:
+        return JsonResponse({"error": "Method not allowed"}, status=400)
+
+    if trust_mark:
         try:
-            unpad_jwt_head(request.POST["trust_mark"])
-            payload = unpad_jwt_payload(request.POST["trust_mark"])
-            sub = payload.get("sub", "")
-            _id = payload.get("id", "")
+            unpad_jwt_head(trust_mark)
+            payload = unpad_jwt_payload(trust_mark)
+            sub = payload["sub"]
+            _id = payload["id"]
         except Exception:
             return JsonResponse(failed_data)
+    elif sub and _id:
+        pass
     else:
         return JsonResponse(failed_data)
 
