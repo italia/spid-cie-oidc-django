@@ -19,7 +19,6 @@ def get_key(jwks, use=KeyUsage.signature):
     for jwk in jwks:
         if jwk['use'] == use:
             return jwk
-    return selected_jwk
 
 def iat_now() -> int:
     return int(datetime.datetime.now().timestamp())
