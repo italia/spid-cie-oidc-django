@@ -94,10 +94,6 @@ class UserInfoEndpoint(OpBase, View):
             federation_jwks = rp_tc.jwks
         )
         client_jwk = get_key(client_jwks, KeyUsage.encryption)
-        # for k in client_jwks:
-        #     if k.get('kid') and len(k["kid"]) >= 1:
-        #         client_jwk = k
-        #         break
 
         jwe = create_jwe(
             jws,
