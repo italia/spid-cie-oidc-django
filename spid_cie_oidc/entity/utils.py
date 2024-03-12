@@ -14,11 +14,15 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def get_key(jwks, use=KeyUsage.signature):
-    for jwk in jwks:
-        if jwk['use'] == use:
-            return jwk
+def get_key(jwks, used=KeyUsage.signature):
+    # TODO change tests accordingly due 2 core keys
+    if len(jwks) > 1:
+        for jwk in jwks:
+            if jwk['use'] == used:
+                return jwk
     return jwks[0]
+
+
 def iat_now() -> int:
     return int(datetime.datetime.now().timestamp())
 
@@ -32,7 +36,7 @@ def datetime_from_timestamp(value) -> datetime.datetime:
     return make_aware(datetime.datetime.fromtimestamp(value))
 
 
-def get_jwks(metadata: dict, federation_jwks:list = []) -> dict:
+def get_jwks(metadata: dict, federation_jwks: list = []) -> dict:
     """
     get jwks or jwks_uri or signed_jwks_uri
     """
