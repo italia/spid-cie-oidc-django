@@ -15,11 +15,10 @@ logger = logging.getLogger(__name__)
 
 
 def get_key(jwks, use=KeyUsage.signature):
-    selected_jwk = jwks[0]
     for jwk in jwks:
         if jwk['use'] == use:
             return jwk
-
+    return jwks[0]
 def iat_now() -> int:
     return int(datetime.datetime.now().timestamp())
 
