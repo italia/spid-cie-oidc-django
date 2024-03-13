@@ -18,6 +18,11 @@ class Jwk(BaseModel):
             "PS256",
             "PS384",
             "PS512",
+            "RSA-OAEP",
+            "RSA-OAEP-256",
+            "ECDH-ES",
+            "ECDH-ES+A128KW",
+            "ECDH-ES+A256KW"
         ]
     ]
     use: Optional[Literal["sig", "enc"]]

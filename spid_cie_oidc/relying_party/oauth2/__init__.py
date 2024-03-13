@@ -6,7 +6,7 @@ import uuid
 from spid_cie_oidc.entity.models import FederationEntityConfiguration
 from spid_cie_oidc.entity.jwtse import create_jws
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS, HTTPC_TIMEOUT
-from spid_cie_oidc.entity.utils import iat_now, exp_from_now
+from spid_cie_oidc.entity.utils import iat_now, exp_from_now, get_key, KeyUsage
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +49,7 @@ class OAuth2AuthorizationCodeGrant(object):
                     "exp": exp_from_now(),
                     "jti": str(uuid.uuid4()),
                 },
-                jwk_dict=client_conf.jwks_core[0],
+                jwk_dict=get_key(client_conf.jwks_core, KeyUsage.signature),
             ),
         )
 

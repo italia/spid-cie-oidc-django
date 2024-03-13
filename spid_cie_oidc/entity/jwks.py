@@ -59,9 +59,9 @@ def public_pem_from_jwk(jwk_dict: dict):
 def serialize_rsa_key(rsa_key, kind="public", hash_func="SHA-256"):
     """
     rsa_key can be
-        cryptography.hazmat.backends.openssl.rsa._RSAPublicKey
+         cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey
         or
-        cryptography.hazmat.backends.openssl.rsa._RSAPrivateKey
+         cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey
     """
     data = {}
     if isinstance(rsa_key, rsa.RSAPublicKey):
