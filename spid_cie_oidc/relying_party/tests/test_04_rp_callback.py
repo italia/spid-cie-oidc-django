@@ -29,6 +29,7 @@ CODE = "usDwMnEzJPpG5oaV8x3j&"
 class RpCallBack(TestCase):
     def setUp(self):
         self.rp_jwk = {
+            'use': 'sig',
             'kty': 'RSA', 
             'kid': '19xSsWuFOo5bFBUECA5G3V5GEhC0s7X8TTCEykdzsmo', 
             'e': 'AQAB', 

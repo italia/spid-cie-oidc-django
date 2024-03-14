@@ -14,13 +14,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def get_key(jwks, used=KeyUsage.signature):
-    # TODO change tests accordingly due 2 core keys
-    if len(jwks) > 1:
-        for jwk in jwks:
-            if jwk['use'] == used:
-                return jwk
-    return jwks[0]
+def get_key(jwks, use=KeyUsage.signature):
+   for jwk in jwks:
+        if jwk['use'] == use:
+            return jwk
+   return jwks[0]
 
 
 def iat_now() -> int:
