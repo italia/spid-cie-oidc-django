@@ -156,6 +156,7 @@
     "authority_hints": [],
     "jwks_fed": [
       {
+        "use": "sig",
         "kty": "RSA",
         "n": "o8IolRjZlkzct-48rhrVlTnYU1pkMbVJD-DU05oMS9RVGrsFypg98m-Kw4H4qNPyQVx2OQORi-xShgk7HU-gK_2pVguYkv06FajL_edEAqqsqt_74Qf2WLRC5pfJG_z9OPzY8JGyk-z3SbeHN_BXKI8GY5E4WU2SstmQ9fyL4CxtRfjUia8limTC_3MOpT3zi5nr03jfbjpnjga51qXurxnlzc3a_xjk5RAApKxUvNwhJ275M0CmB99DjPwF6BLvUgJqgyCpUOn36LOhI4FquVqhqhiwKlMmiMe3yy0yNQ7FXBWxjzhexbpyc3Vu7zFIHPAcC4UyIQhc3waEj2viXw",
         "e": "AQAB",
@@ -167,6 +168,7 @@
     ],
     "jwks_core": [
       {
+        "use": "sig",
         "kty": "RSA",
         "kid": "FifYx03bnosD8m6gYQIfNHNP9cM_Sam9Tc5nLloIIrc",
         "e": "AQAB",
@@ -227,6 +229,7 @@
     ],
     "jwks_fed": [
       {
+        "use": "sig",
         "kty": "RSA",
         "n": "pn_IchC66SFQMhbTHLtbD58jKiYYvYo7S4wjPjzECMu27c6FJVFNXtlubtb7sC6-WTQ1Hv4rSQdPhafJbIxa32R51sRQpkTr3JFMYP7x22DRQD_ixtQJRaiHw-npnZ8qgVHJ_t4gRTc4HJkehBLGv4-rHVAKzFiQNU1u2AFw1fWMnMH4ob_pyisXVgcku3dy14l7sYSANlpXufY_qnkQFTv0wMH-C6Izl-akENS2UHpvTLhfCBVKPrFXJxul4XDbUwUbvNZUxTernEx8lV5gxCSgKSBEgoH9MgpD1YWFPbAnwi7p7e7MNGz5lH7eDFKkPQhXLWABU8UvEIIWyA95SQ",
         "e": "AQAB",
@@ -342,6 +345,7 @@
     ],
     "jwks_fed": [
       {
+        "use": "sig",
         "kty": "RSA",
         "e": "AQAB",
         "n": "1AYGF0C_j5CPeYMRH_mkhnYtnvM_CmdlWSFHK9YEas3gJ1922DnhFx3EIw1U-kZww7bgNz6C1l_1cyjkgBSuWxObObK4zVLZBGUZfXMBNFm2hdr5VoLKLemtZHpBOmdsxR1R3TJ30D0vY-LJbUtrwuRC8oOCYI5whcEc8B4utEex3W6dCjBIjsGfdJIqZHhfLN3xwPMOjkG5A_y8WnTVfGq9OUeuaUn3-PVs3O9LMpOBlaT7GreXgUqWAW-zxUCsiHHUVl9uIAGi5OHukIuBs2ClAlMX_S6mbN7_7KIGx2mTIrcgVBPJgYop9qnSqcXub_EQTKsFtNGigsUFnDqFNQ",
@@ -353,6 +357,7 @@
     ],
     "jwks_core": [
       {
+        "use": "sig",
         "kty": "RSA",
         "kid": "dB67gL7ck3TFiIAf7N6_7SHvqk0MDYMEQcoGGlkUAAw",
         "n": "01_4aI2Lu5ggsElmRkE_S_a83V_szXU0txV4db2hmJ8HR1Y2s7PsZZ5-emGpnTydGrR3n-QExeEEIcFt_a06Ryiink34RQcKoGXUDBMBU0Bu8G7NcZ99YX6yeG9wFi4xs-WviTPmtPqijkz6jm1_ltWDcwbktfkraIRKKggZaEl9ldtsFr2wSpin3AXuGIdeJ0hZqhF92ODBLGjJlaIL9KlwopDy56adReVnraawSdrxmuPGj78IEADNAme2nQNvv9UCu0FkAn5St1bKds3Gpv26W0kjr1gZLsmQrj9lTcDk_KbAwfEY__P7se62kusoSuKMTQqUG1TQpUY7oFGSdw",
