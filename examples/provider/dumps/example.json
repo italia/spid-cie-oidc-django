@@ -121,6 +121,7 @@
     ],
     "jwks_fed": [
       {
+        "use": "sig",
         "kty": "RSA",
         "n": "tg3aE9fd6ltXzNrim_4CGKYWfC3nqc_tv4Xjaw473CcrfiqDzeTKHfRfbvbqb1DwmI4fvCOi51EVcmKLnThzXynAUpyUvswvL8_uzgDWO1RSmBG1L0RE-CkKih4keXh1ku9hNs1_V-82dK5oLOR-VJLnhZCqThR4HH6TqLjjWrrXfsHVRvauJilX6FxGb5JFoc27VxxdH2c6P2SHC9wuB8tnfG7OSrSD1g2h7lTXbIfm78a0op67d_jupzkoKoCTmzkR2zvwTVVDd99vkDLY2WXmb8hIwG6dQZXYlkhqAYKzTuTZ0tjVh0OrqfDxYtLH3wQzzaJORewZYqLyB09P8w",
         "e": "AQAB",
@@ -132,6 +133,7 @@
     ],
     "jwks_core": [
       {
+        "use": "sig",
         "kty": "RSA",
         "e": "AQAB",
         "n": "rJoSYv1stwlbM11tR9SYGIJuzqlJe2bv2N35oPRbwV_epjNWvGG2ZqEj53YFMC8AMZNFhuLa_LNwr1kLVE-jXQe8xjiLhe7DgMf1OnSzq9yAEXVo19BPBwkgJe2jp9HIgM_nfbIsUbSSkFAM2CKvGb0Bk2GvvqXZ12P-fpbVyA9hIQr6rNTqnCGx2-v4oViGG4u_3iTw7D1ZvLWmrmZOaKnDAqG3MJSdQ-2ggQ-Aiahg48si9C9D_JgnBV9tJ2eCS58ZC6kVG5sftElQVdH6e26mz464TZj5QgCwZCTsAQfIvBoXSdCKxpnvsFfrajz4q9BiXAryxIOl5fLmCFVNhw",
