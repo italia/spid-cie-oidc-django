@@ -271,15 +271,14 @@ class TrustChainBuilder:
             if not isinstance(self.trust_anchor, str):
                 if (self.subject == stat.sub == stat.iss):
                     res.append(stat.jwt)
-                    continue
                 elif (self.trust_anchor.sub == stat.sub == stat.iss):
                     ta_ec = stat.jwt
-                    continue
 
             if stat.verified_descendant_statements:
                 res.extend(
-                    # [dict(i) for i in stat.verified_descendant_statements.values()]
-                    [i for i in stat.verified_descendant_statements_as_jwt.values()]
+                    [
+                        i for i in stat.verified_descendant_statements_as_jwt.values()
+                    ]
                 )
         if ta_ec:
             res.append(ta_ec)
