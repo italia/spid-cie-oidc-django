@@ -136,10 +136,12 @@ class TrustChainTest(TestCase):
         _p0 = unpad_jwt_payload(tc_ser[0])
         _p1 = unpad_jwt_payload(tc_ser[1])
         _p2 = unpad_jwt_payload(tc_ser[2])
+        _p3 = unpad_jwt_payload(tc_ser[3])
 
         self.assertEqual(_p0['iss'], _p0['sub'])
         self.assertNotEqual(_p2['iss'], _p1['sub'])
-        self.assertEqual(_p2['iss'], _p2['sub'])
+        self.assertNotEqual(_p2['iss'], _p2['sub'])
+        self.assertEqual(_p3['iss'], _p3['sub'])
         
         dumps = dumps_statements_from_trust_chain_to_db(trust_chain)
 
