@@ -147,7 +147,7 @@ class SpidCieOidcRp:
                 "exp": exp_from_now(),
                 "jti": str(uuid.uuid4())
             },
-            jwk_dict=get_key(rp_conf)
+            jwk_dict = get_key(rp_conf.jwks_core)
         )
         token_request_data["client_assertion"] = client_assertion
 
