@@ -158,7 +158,8 @@ def advanced_entity_listing(request):
     for descendant in desecendants:
         entity = {
             descendant.sub : {
-                "iat" : int(descendant.modified.timestamp())
+                "iat" : int(descendant.modified.timestamp()),
+                "subordinate_statement": descendant.entity_statement_as_jws()
             }
         }
         entities_list.append(entity)
