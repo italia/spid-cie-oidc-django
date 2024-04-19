@@ -138,13 +138,24 @@ class TrustChainTest(TestCase):
         _p2 = unpad_jwt_payload(tc_ser[2])
         _p3 = unpad_jwt_payload(tc_ser[3])
 
+        # Entity configurations
         self.assertEqual(_p0['iss'], _p0['sub'])
-        self.assertEqual(_p0['iss'], _p1['sub'])
-        self.assertNotEqual(_p2['iss'], _p1['sub'])
-        self.assertNotEqual(_p2['iss'], _p2['sub'])
-        self.assertEqual(_p3['sub'], _p2['iss'])
         self.assertEqual(_p3['iss'], _p3['sub'])
-        
+
+        # Entity statements
+        self.assertNotEqual(_p1['iss'], _p1['sub'])
+        self.assertNotEqual(_p2['iss'], _p2['sub'])
+
+        # Chain consistency (positive)
+        self.assertEqual(_p0['iss'], _p1['sub'])
+        self.assertEqual(_p1['iss'], _p2['sub'])
+        self.assertEqual(_p2['iss'], _p3['sub'])
+
+        # Chain consistency (negative)
+        self.assertNotEqual(_p1['iss'], _p0['sub'])
+        self.assertNotEqual(_p2['iss'], _p1['sub'])
+        self.assertNotEqual(_p3['iss'], _p2['sub'])
+
         dumps = dumps_statements_from_trust_chain_to_db(trust_chain)
 
         self.assertTrue(isinstance(dumps, list) and len(dumps) == 5)
