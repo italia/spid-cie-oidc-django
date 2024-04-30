@@ -168,6 +168,8 @@ The OnBoarding app comes with the following collection of tools:
 ![OIDC Tools](docs/images/onboard_tools_jwt_debug.png)
 _OIDC tools facilitates the lives of developers and service operators, here a simple interface to decode and verify a JWT._
 
+To explore a federation on the commandline, use the [ofcli](https://github.com/dianagudu/ofcli) tool. It can be used to export federation metadata to json files for further analysis.
+
 ## Contribute
 
 Your contribution is welcome, no question is useless and no answer is obvious, we need you.
