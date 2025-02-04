@@ -243,7 +243,7 @@ def trust_mark_status(request):
             unpad_jwt_head(trust_mark)
             payload = unpad_jwt_payload(trust_mark)
             sub = payload["sub"]
-            _id = payload["id"]
+            _id = payload["trust_mark_id"]
         except Exception:
             return JsonResponse(failed_data)
     elif sub and _id:

@@ -275,7 +275,7 @@ class FederationEntityAssignedProfile(TimeStampedModel):
     @property
     def trust_mark(self):
         return {
-            "id": self.profile.profile_id,
+            "trust_mark_id": self.profile.profile_id,
             "trust_mark": self.trust_mark_as_jws
         }
 

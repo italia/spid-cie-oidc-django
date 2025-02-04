@@ -294,7 +294,7 @@ class TrustChainTest(TestCase):
         res = c.post(
             url,
             data={
-                "id": self.rp_assigned_profile.profile.profile_id,
+                "trust_mark_id": self.rp_assigned_profile.profile.profile_id,
                 "sub": self.rp_assigned_profile.descendant.sub,
             },
         )
@@ -314,7 +314,7 @@ class TrustChainTest(TestCase):
         res = c.get(
             url,
             data={
-                "id": self.rp_assigned_profile.profile.profile_id,
+                "trust_mark_id": self.rp_assigned_profile.profile.profile_id,
                 "sub": self.rp_assigned_profile.descendant.sub,
             }
         )
@@ -358,7 +358,7 @@ class TrustChainTest(TestCase):
         res = c.get(
             url,
             data={
-                "id": self.rp_assigned_profile.profile.profile_id,
+                "trust_mark_id": self.rp_assigned_profile.profile.profile_id,
             },
         )
         self.assertTrue(res.status_code == 200)

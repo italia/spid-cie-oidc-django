@@ -102,7 +102,7 @@ class FederationEntityConfigurationAdmin(admin.ModelAdmin):
                         obj.trust_marks.append({k:v})
             else:
                 obj.trust_marks = [
-                    {"id":k, "trust_mark":v} for k,v in trust_marks.items()
+                    {"trust_mark_id":k, "trust_mark":v} for k,v in trust_marks.items()
                 ]
 
             obj.save()
