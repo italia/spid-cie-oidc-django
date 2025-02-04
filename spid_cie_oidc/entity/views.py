@@ -136,7 +136,7 @@ def resolve_entity_statement(request, format: str = "jose"):
     else:
         return HttpResponse(
             create_jws(res, iss.jwks_fed[0]),
-            content_type="application/jose",
+            content_type="application/resolve-response+jwt",
         )
 
 
