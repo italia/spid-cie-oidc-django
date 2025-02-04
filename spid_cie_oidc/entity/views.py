@@ -85,7 +85,7 @@ def resolve_entity_statement(request, format: str = "jose"):
             {
                 "error": "invalid_request",
                 "error_description": "sub and trust_anchor parameters are REQUIRED."
-            }, status=404
+            }, status=401
         )
 
     iss = FederationEntityConfiguration.objects.filter(is_active=True).first()
@@ -127,7 +127,7 @@ def resolve_entity_statement(request, format: str = "jose"):
             {
                 "error": "invalid_subject",
                 "error_description": "entity not found"
-            }, status=404
+            }, status = 404
         )
 
     res = {

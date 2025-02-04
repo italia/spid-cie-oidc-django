@@ -76,7 +76,12 @@ def fetch(request):
         sub=request.GET["sub"], is_active=True
     ).first()
     if not sub:
-        raise Http404()
+        return JsonResponse(
+            {
+                "error": "invalid_subject",
+                "error_description": "entity not found"
+            }, status = 404
+        )
 
     if request.GET.get("format") == "json":
         return JsonResponse(
