@@ -80,7 +80,7 @@ def resolve_entity_statement(request, format: str = "jose"):
     Metadata if it's valid
     we avoid any possibility to trigger a new Metadata discovery if
     """
-    if not all((request.GET.get("sub", None), request.GET.get("anchor", None))):
+    if not all((request.GET.get("sub", None), request.GET.get("trust_anchor", None))):
         raise Http404("sub and anchor parameters are REQUIRED.")
 
     iss = FederationEntityConfiguration.objects.filter(is_active=True).first()
@@ -104,7 +104,7 @@ def resolve_entity_statement(request, format: str = "jose"):
             try:
                 # a staff token get a fresh trust chain on each call
                 entity = get_or_create_trust_chain(
-                    httpc_params=HTTPC_PARAMS,
+                    httpc_params = HTTPC_PARAMS,
                     required_trust_marks = getattr(
                         settings, "OIDCFED_REQUIRED_TRUST_MARKS", []
                     ),
@@ -123,6 +123,7 @@ def resolve_entity_statement(request, format: str = "jose"):
     res = {
         "iss": iss.sub,
         "sub": request.GET["sub"],
+        # TODO: aud must be present only if the client is authenticated.
         # "aud": [],
         "iat": entity.iat_as_timestamp,
         "exp": entity.exp_as_timestamp,
