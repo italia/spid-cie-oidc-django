@@ -270,7 +270,7 @@ class TrustChainTest(TestCase):
         c = Client()
         res = c.get(url, data={
                 "sub": self.rp.sub, 
-                "anchor": self.ta_conf.sub
+                "trust_anchor": self.ta_conf.sub
             }
         )
         self.assertTrue(res.status_code == 200)

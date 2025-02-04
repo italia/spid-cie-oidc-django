@@ -79,7 +79,7 @@ class ResolveEntityStatementTest(TestCase):
         client = Client()
         url = reverse("oidcfed_resolve")
         client.login(username="test", password="test")
-        data = {"sub" : rp_conf["sub"], "anchor" : ta_conf_data["sub"]}
+        data = {"sub" : rp_conf["sub"], "trust_anchor" : ta_conf_data["sub"]}
         request = self.factory.get(url, data, **{'HTTP_AUTHORIZATION': "secret-token"})
         self.patcher = patch(
             "spid_cie_oidc.entity.trust_chain_operations.get_or_create_trust_chain", 

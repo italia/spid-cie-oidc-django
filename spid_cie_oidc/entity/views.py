@@ -81,13 +81,18 @@ def resolve_entity_statement(request, format: str = "jose"):
     we avoid any possibility to trigger a new Metadata discovery if
     """
     if not all((request.GET.get("sub", None), request.GET.get("trust_anchor", None))):
-        raise Http404("sub and anchor parameters are REQUIRED.")
+        return JsonResponse(
+            {
+                "error": "invalid_request",
+                "error_description": "sub and trust_anchor parameters are REQUIRED."
+            }, status=404
+        )
 
     iss = FederationEntityConfiguration.objects.filter(is_active=True).first()
 
     _q = dict(
         sub=request.GET["sub"],
-        trust_anchor__sub=request.GET["anchor"],
+        trust_anchor__sub=request.GET["trust_anchor"],
         is_active=True
     )
 
@@ -118,7 +123,12 @@ def resolve_entity_statement(request, format: str = "jose"):
                 )
 
     if not entity:
-        raise Http404("entity not found.")
+        return JsonResponse(
+            {
+                "error": "invalid_subject",
+                "error_description": "entity not found"
+            }, status=404
+        )
 
     res = {
         "iss": iss.sub,
