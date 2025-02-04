@@ -156,9 +156,18 @@ def advanced_entity_listing(request):
     ).order_by("-modified")
     entities_list = []
     for descendant in desecendants:
+        try:
+            _ss = descendant.entity_statement_as_jws()
+        except AttributeError as e:
+            logger.warning(
+                f"Subordinate {descendant} missing authority hint: {e}"
+            )
+            continue
+
         entity = {
             descendant.sub : {
-                "iat" : int(descendant.modified.timestamp())
+                "iat" : int(descendant.modified.timestamp()),
+                "subordinate_statement": _ss
             }
         }
         entities_list.append(entity)

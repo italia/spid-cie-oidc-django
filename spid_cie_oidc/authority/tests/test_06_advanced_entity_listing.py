@@ -15,7 +15,7 @@ class AdvanceEntityListing(TestCase):
         rp_onboarding_data_local = deepcopy(rp_onboarding_data)
         rp_onboarding_data_local["sub"] = "http://rp-test.it/oidc/rplocal/"
         FederationDescendant.objects.create(**rp_onboarding_data_local)
-        FederationEntityConfiguration.objects.create(**ta_conf_data)
+        self.ta = FederationEntityConfiguration.objects.create(**ta_conf_data)
 
     @override_settings(MAX_ENTRIES_PAGE=1)
     def test_advanced_entity_listing_1(self):
