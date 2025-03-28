@@ -18,7 +18,7 @@ class X509Issuer:
         public_key: bytes,
         subject_data: Union[bytes, None] = None,
         is_ca_or_int: bool = False,
-        path_length: int = 0
+        path_length: Union[int, None] = None
     ) -> x509.CertificateBuilder:
         """
             returns an X.509 certificate
@@ -27,7 +27,9 @@ class X509Issuer:
         # TODO: add CDP using CRL
 
         subject_name = [
-            x509.NameAttribute(NameOID.COMMON_NAME, subject_data['X509_COMMON_NAME'])
+            x509.NameAttribute(
+                NameOID.COMMON_NAME, subject_data['X509_COMMON_NAME']
+            )
         ] + [
             x509.NameAttribute(NameOID.getattr(i), subject_data[i])
             for i in (
@@ -37,6 +39,11 @@ class X509Issuer:
                 'X509_ORGANIZATION_NAME',
             ) if subject_data.get(i)
         ]
+
+        _basic_constraints = dict(ca=is_ca_or_int)
+        if path_length is None:
+            _basic_constraints["path_length"] = path_length
+        
         self.cert = (
             x509.CertificateBuilder()
                 .issuer_name(
@@ -64,10 +71,7 @@ class X509Issuer:
                     (timezone.localtime() + timezone.timedelta(days=365))
                 )
                 .add_extension(
-                    x509.BasicConstraints(
-                        ca=is_ca_or_int,
-                        path_length=path_length
-                    ),
+                    x509.BasicConstraints(**_basic_constraints),
                     critical=True,
                 )
                 .add_extension(

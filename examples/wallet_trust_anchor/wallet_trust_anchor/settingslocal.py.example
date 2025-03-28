@@ -5,6 +5,7 @@ import sys
 import logging
 
 from spid_cie_oidc import __version__
+from urllib.parse import urlparse
 
 
 if len(sys.argv) > 1 and sys.argv[1] == 'test':
@@ -131,6 +132,13 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = 65000
 
 ADMINS = [('name surname', 'user1@DOMAIN'),
           ('name surnale', 'user2@DOMAIN'),]
+
+# X.509 parade
+X509_COUNTRY_NAME = "IT"
+X509_STATE_OR_PROVINCE_NAME = "Lazio"
+X509_LOCALITY_NAME = "Rome"
+X509_ORGANIZATION_NAME = "Example Wallet Trust Anchor"
+X509_COMMON_NAME = urlparse(OIDCFED_DEFAULT_TRUST_ANCHOR).hostname
 
 # LOGGING
 LOGGING = {

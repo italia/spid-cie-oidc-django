@@ -185,7 +185,7 @@ class FederationDescendant(TimeStampedModel):
                 jwks = self.jwks,
                 private_key =  private_key.private_key(),
                 subject = self.sub,
-                path_length = 1,
+                path_length = None,
                 is_ca_or_int = True
             )
 

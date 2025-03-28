@@ -4,6 +4,7 @@ from django.utils import timezone
 from spid_cie_oidc.entity.x509 import X509Issuer
 
 from urllib.parse import urlparse
+from typing import Union
 
 
 def update_jwks_with_x5c(
@@ -11,7 +12,7 @@ def update_jwks_with_x5c(
         private_key: bytes,
         subject: str,
         is_ca_or_int: bool,
-        path_length: int = 0,
+        path_length: Union[int, None] = None,
     ) -> dict:
 
     subject_data: dict = dict(
