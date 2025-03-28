@@ -82,8 +82,8 @@ TRUST_MARK_PAYLOAD = {
     "iss": "$.issuer_sub",
     "sub": "$.sub",
     "iat": 1579621160,
-    "id": "https://www.spid.gov.it/certification/rp",
-    "mark": "https://www.agid.gov.it/themes/custom/agid/logo.svg",
+    "trust_mark_id": "https://www.spid.gov.it/certification/rp",
+    "logo_uri": "https://www.agid.gov.it/themes/custom/agid/logo.svg",
     "ref": "https://docs.italia.it/italia/spid/spid-regole-tecniche-oidc/it/stabile/index.html",
 }
 
@@ -124,13 +124,13 @@ TRUST_MARK = "eyJhbGciOiJSUzI1NiIsImtpZCI6IkZpZll4MDNibm9zRDhtNmdZUUlmTkhOUDljTV
 
 TRUST_MARK_REQUEST = {
     "sub": rp_conf["sub"],
-    "id" : rp_conf["sub"],
+    "trust_mark_id" : rp_conf["sub"],
     "trust_mark" : TRUST_MARK
 }
 
 TRUST_MARK_REQUEST_NO_SUB_ID = deepcopy(TRUST_MARK_REQUEST)
 TRUST_MARK_REQUEST_NO_SUB_ID.pop("sub")
-TRUST_MARK_REQUEST_NO_SUB_ID.pop("id")
+TRUST_MARK_REQUEST_NO_SUB_ID.pop("trust_mark_id")
 
 TRUST_MARK_REQUEST_NO_TRUST_MARK = deepcopy(TRUST_MARK_REQUEST)
 TRUST_MARK_REQUEST_NO_TRUST_MARK.pop("trust_mark")
@@ -143,7 +143,7 @@ TRUST_MARK_REQUEST_TRUST_MARK_NO_SUB_NO_TRUST_MARK.pop("sub")
 TRUST_MARK_REQUEST_TRUST_MARK_NO_SUB_NO_TRUST_MARK.pop("trust_mark")
 
 TRUST_MARK_REQUEST_TRUST_MARK_NO_ID_NO_TRUST_MARK = deepcopy(TRUST_MARK_REQUEST)
-TRUST_MARK_REQUEST_TRUST_MARK_NO_ID_NO_TRUST_MARK.pop("id")
+TRUST_MARK_REQUEST_TRUST_MARK_NO_ID_NO_TRUST_MARK.pop("trust_mark_id")
 TRUST_MARK_REQUEST_TRUST_MARK_NO_ID_NO_TRUST_MARK.pop("trust_mark")
 
 ADVANCED_LIST_REQUEST = {

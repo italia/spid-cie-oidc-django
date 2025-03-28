@@ -75,7 +75,7 @@ class TrustMark:
         self.header = unpad_jwt_head(jwt)
         self.payload = unpad_jwt_payload(jwt)
 
-        self.id = self.payload["id"]
+        self.id = self.payload["trust_mark_id"]
         self.sub = self.payload["sub"]
         self.iss = self.payload["iss"]
 
@@ -219,7 +219,7 @@ class EntityConfiguration:
         is_valid = False
         for tm in self.payload["trust_marks"]:
 
-            if tm.get("id", None) not in self.filter_by_allowed_trust_marks:
+            if tm.get("trust_mark_id", None) not in self.filter_by_allowed_trust_marks:
                 continue
 
             try:

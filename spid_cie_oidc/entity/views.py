@@ -80,14 +80,19 @@ def resolve_entity_statement(request, format: str = "jose"):
     Metadata if it's valid
     we avoid any possibility to trigger a new Metadata discovery if
     """
-    if not all((request.GET.get("sub", None), request.GET.get("anchor", None))):
-        raise Http404("sub and anchor parameters are REQUIRED.")
+    if not all((request.GET.get("sub", None), request.GET.get("trust_anchor", None))):
+        return JsonResponse(
+            {
+                "error": "invalid_request",
+                "error_description": "sub and trust_anchor parameters are REQUIRED."
+            }, status=401
+        )
 
     iss = FederationEntityConfiguration.objects.filter(is_active=True).first()
 
     _q = dict(
         sub=request.GET["sub"],
-        trust_anchor__sub=request.GET["anchor"],
+        trust_anchor__sub=request.GET["trust_anchor"],
         is_active=True
     )
 
@@ -104,7 +109,7 @@ def resolve_entity_statement(request, format: str = "jose"):
             try:
                 # a staff token get a fresh trust chain on each call
                 entity = get_or_create_trust_chain(
-                    httpc_params=HTTPC_PARAMS,
+                    httpc_params = HTTPC_PARAMS,
                     required_trust_marks = getattr(
                         settings, "OIDCFED_REQUIRED_TRUST_MARKS", []
                     ),
@@ -118,11 +123,17 @@ def resolve_entity_statement(request, format: str = "jose"):
                 )
 
     if not entity:
-        raise Http404("entity not found.")
+        return JsonResponse(
+            {
+                "error": "invalid_subject",
+                "error_description": "entity not found"
+            }, status = 404
+        )
 
     res = {
         "iss": iss.sub,
         "sub": request.GET["sub"],
+        # TODO: aud must be present only if the client is authenticated.
         # "aud": [],
         "iat": entity.iat_as_timestamp,
         "exp": entity.exp_as_timestamp,
@@ -136,7 +147,7 @@ def resolve_entity_statement(request, format: str = "jose"):
     else:
         return HttpResponse(
             create_jws(res, iss.jwks_fed[0]),
-            content_type="application/jose",
+            content_type="application/resolve-response+jwt",
         )
 
 

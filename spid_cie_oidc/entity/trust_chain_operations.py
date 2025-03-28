@@ -184,7 +184,7 @@ def get_or_create_trust_chain(
             parties_involved=[i.sub for i in trust_chain.trust_path],
             status="valid",
             trust_marks=[
-                {"id": i.id, "trust_mark": i.jwt}
+                {"trust_mark_id": i.id, "trust_mark": i.jwt}
                 for i in trust_chain.verified_trust_marks
             ],
             is_active=True,

@@ -91,7 +91,7 @@ class OnboardingCreateTrustChain(forms.Form):
         error_messages={"required": _("Select a entity type")},
     )
 
-    anchor = forms.ChoiceField(
+    trust_anchor = forms.ChoiceField(
         choices=[(i, i) for i in OIDCFED_TRUST_ANCHORS],
         label=_("url of the trust anchor"),
         error_messages={"required": _("Enter the url of trust anchor")},

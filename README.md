@@ -77,11 +77,6 @@ docker pull ghcr.io/italia/spid-cie-oidc-django:latest
 
 ### Docker compose
 
-Install Docker using the packages distributed from the official website and the following tools.
-````
-sudo pip install docker-compose
-````
-
 Please do your customizations in each _settingslocal.py_ files and/or in the example dumps json file.
 
 Change hostnames from 127.0.0.1 to which one configured in the compose file, in the settingslocal.py files and in the dumps/example.json files.
