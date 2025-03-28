@@ -16,13 +16,11 @@ from spid_cie_oidc.entity.models import (
 )
 
 from spid_cie_oidc.entity.jwtse import create_jws
-from spid_cie_oidc.entity.x509 import X509Issuer
+from spid_cie_oidc.entity.jwk_x5c import update_jwks_with_x5c
 from spid_cie_oidc.entity.validators import validate_public_jwks
 from spid_cie_oidc.entity.utils import iat_now, exp_from_now
 from spid_cie_oidc.entity.settings import FEDERATION_DEFAULT_EXP
 from spid_cie_oidc.entity.models import get_first_self_trust_anchor
-
-from urllib.parse import urlparse
 
 from . settings import FEDERATION_DEFAULT_POLICY
 from .validators import validate_entity_configuration
@@ -179,28 +177,22 @@ class FederationDescendant(TimeStampedModel):
 
     def entity_statement_as_dict(self, iss: str = None, aud: list = None) -> dict:
 
+        ta = get_first_self_trust_anchor(iss)
+        private_key = key_from_jwk_dict(ta.jwks_fed[0])
+        
+        if hasattr(settings, "X509_COMMON_NAME"):
+            self.jwks = update_jwks_with_x5c(
+                jwks = self.jwks,
+                private_key =  private_key.private_key(),
+                subject = self.sub,
+                path_length = 1,
+                is_ca_or_int = True
+            )
+
         policies = {
             k: FEDERATION_DEFAULT_POLICY.get(k, {}) for k in self.entity_profiles
         }
-
-        ta = get_first_self_trust_anchor(iss)
-        
-        if hasattr(settings, "X509_COMMON_NAME"):
-            subject_data: dict = dict(
-                X509_COMMON_NAME = urlparse(self.sub).hostname,
-                # TODO: please add COUNTRY_NAME, X509_STATE_OR_PROVINCE_NAME, X509_LOCALITY_NAME, X509_ORGANIZATION_NAME
-                entity_id = self.sub
-            )
-            private_key = key_from_jwk_dict(ta.jwks_fed[0])
-            for i in self.jwks:
-                i['x5c'] = X509Issuer(
-                    private_key = private_key.private_key(),
-                    public_key = key_from_jwk_dict(i).public_key(),
-                    subject_data = subject_data,
-                    is_ca_or_int = True,
-                    path_length = 1
-                ).x5c
-
+            
         # apply custom policies if defined
         policies.update(self.metadata_policy)
         

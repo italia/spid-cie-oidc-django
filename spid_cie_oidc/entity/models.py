@@ -5,6 +5,7 @@ import uuid
 
 from cryptojwt.jwk.jwk import key_from_jwk_dict
 from django.contrib.auth import get_user_model
+from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext as _
@@ -30,6 +31,7 @@ from spid_cie_oidc.entity.validators import (
     validate_private_jwks
 )
 
+from .jwk_x5c import update_jwks_with_x5c
 from .jwks import public_jwk_from_private_jwk
 
 logger = logging.getLogger(__name__)
@@ -233,6 +235,14 @@ class FederationEntityConfiguration(TimeStampedModel):
         elif self.is_leaf: # pragma: no cover
             _msg = f"Entity {self.sub} is a leaf and requires authority_hints valued"
             logger.error(_msg)
+
+        if hasattr(settings, "X509_COMMON_NAME"):
+            conf['jwks'] = update_jwks_with_x5c(
+                jwks = self.public_jwks,
+                private_key =  key_from_jwk_dict(self.jwks_fed[0]).private_key(),
+                subject = self.sub,
+                is_ca_or_int = True
+            )
 
         return conf
 
