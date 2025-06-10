@@ -14,7 +14,7 @@ from spid_cie_oidc.entity.jwks import (
     create_jwk,
     private_pem_from_jwk,
     public_pem_from_jwk,
-    serialize_rsa_key
+    serialize_key
 )
 from spid_cie_oidc.entity.jwtse import create_jws
 from spid_cie_oidc.entity.settings import (
@@ -179,7 +179,7 @@ class FederationEntityConfiguration(TimeStampedModel):
     def public_jwks(self):
         res = []
         for i in self.jwks_fed:
-            skey = serialize_rsa_key(key_from_jwk_dict(i).public_key())
+            skey = serialize_key(key_from_jwk_dict(i).public_key())
             skey["kid"] = i["kid"]
             res.append(skey)
         return res

@@ -26,10 +26,13 @@ class X509Issuer:
         # private_key = COSEKey.from_bytes(self.private_key.encode())
         # TODO: add CDP using CRL
 
+        if subject_data.get("X509_COMMON_NAME"):
+            cn = subject_data["X509_COMMON_NAME"]
+        else:
+            cn = getattr(settings, "X509_COMMON_NAME")
+        
         subject_name = [
-            x509.NameAttribute(
-                NameOID.COMMON_NAME, subject_data['X509_COMMON_NAME']
-            )
+            x509.NameAttribute(NameOID.COMMON_NAME, cn)
         ] + [
             x509.NameAttribute(NameOID.getattr(i), subject_data[i])
             for i in (
@@ -41,8 +44,7 @@ class X509Issuer:
         ]
 
         _basic_constraints = dict(ca=is_ca_or_int)
-        if path_length is None:
-            _basic_constraints["path_length"] = path_length
+        _basic_constraints["path_length"] = path_length
         
         self.cert = (
             x509.CertificateBuilder()
@@ -63,11 +65,11 @@ class X509Issuer:
                 .not_valid_before(
                     getattr(settings, "X509_NOT_VALID_BEFORE", None) or
                     subject_data.get('X509_NOT_VALID_BEFORE') or
-                    (timezone.localtime() - timezone.timedelta(days=1))
+                    (timezone.localtime() - timezone.timedelta(minutes=12))
                 )
                 .not_valid_after(
                     getattr(settings, "X509_NOT_VALID_AFTER", None) or
-                    subject_data.get('X509_NOT_VALID_BEFORE') or
+                    subject_data.get('X509_NOT_VALID_AFTER') or
                     (timezone.localtime() + timezone.timedelta(days=365))
                 )
                 .add_extension(
@@ -76,7 +78,7 @@ class X509Issuer:
                 )
                 .add_extension(
                     x509.SubjectAlternativeName([
-                        x509.DNSName(subject_data.get('X509_COMMON_NAME')),
+                        x509.DNSName(cn),
                         x509.UniformResourceIdentifier(subject_data.get('entity_id')),
                     ]),
                     critical=False
