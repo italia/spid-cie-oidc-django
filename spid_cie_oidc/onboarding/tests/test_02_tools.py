@@ -127,7 +127,7 @@ class ToolsTests(TestCase):
         res = self.client.get(url, {
             "sub":"http://127.0.0.1:8000/oidc",
             "type": "openid_provider",
-            "anchor": "http://127.0.0.1:8000"
+            "trust_anchor": "http://127.0.0.1:8000"
         })
         self.assertEqual(res.status_code, 200)
         self.assertIn("text-danger", res.content.decode())
@@ -138,7 +138,7 @@ class ToolsTests(TestCase):
         form_data= {
             "sub": "http://127.0.0.1:8000/oidc/op",
             "type": "openid_provider",
-            "anchor": "http://127.0.0.1:8000",
+            "trust_anchor": "http://127.0.0.1:8000",
         }
         res = self.client.get(url, form_data)
         self.assertEqual(res.status_code, 200)

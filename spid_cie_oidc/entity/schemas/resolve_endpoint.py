@@ -16,13 +16,13 @@ class ResolveErrorResponse(BaseModel):
 
 class ResolveRequest(BaseModel):
     sub : HttpUrl
-    anchor : HttpUrl
+    trust_anchor : HttpUrl
     format :Literal["json"]
 
     def example():  # pragma: no cover
         return ResolveRequest(
             sub= "http://127.0.0.1:8000/oidc/rp",
-            anchor= "http://127.0.0.1:8000",
+            trust_anchor= "http://127.0.0.1:8000",
             format= "json",
         )
 

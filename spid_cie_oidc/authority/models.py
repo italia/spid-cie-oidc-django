@@ -1,5 +1,7 @@
 from copy import deepcopy
+from cryptojwt.jwk.jwk import key_from_jwk_dict
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
 
@@ -14,6 +16,7 @@ from spid_cie_oidc.entity.models import (
 )
 
 from spid_cie_oidc.entity.jwtse import create_jws
+from spid_cie_oidc.entity.jwk_x5c import update_jwks_with_x5c
 from spid_cie_oidc.entity.validators import validate_public_jwks
 from spid_cie_oidc.entity.utils import iat_now, exp_from_now
 from spid_cie_oidc.entity.settings import FEDERATION_DEFAULT_EXP
@@ -174,13 +177,25 @@ class FederationDescendant(TimeStampedModel):
 
     def entity_statement_as_dict(self, iss: str = None, aud: list = None) -> dict:
 
+        ta = get_first_self_trust_anchor(iss)
+        private_key = key_from_jwk_dict(ta.jwks_fed[0])
+        
+        if hasattr(settings, "X509_COMMON_NAME"):
+            self.jwks = update_jwks_with_x5c(
+                jwks = self.jwks,
+                private_key =  private_key.private_key(),
+                subject = self.sub,
+                path_length = None,
+                is_ca_or_int = True
+            )
+
         policies = {
             k: FEDERATION_DEFAULT_POLICY.get(k, {}) for k in self.entity_profiles
         }
-
+            
         # apply custom policies if defined
         policies.update(self.metadata_policy)
-        ta = get_first_self_trust_anchor(iss)
+        
         data = {
             "exp": exp_from_now(minutes=FEDERATION_DEFAULT_EXP),
             "iat": iat_now(),
@@ -275,7 +290,7 @@ class FederationEntityAssignedProfile(TimeStampedModel):
     @property
     def trust_mark(self):
         return {
-            "id": self.profile.profile_id,
+            "trust_mark_id": self.profile.profile_id,
             "trust_mark": self.trust_mark_as_jws
         }
 

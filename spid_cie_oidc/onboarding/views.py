@@ -22,7 +22,7 @@ from spid_cie_oidc.entity.jwks import (
     private_pem_from_jwk,
     public_pem_from_jwk,
     new_rsa_key,
-    serialize_rsa_key,
+    serialize_key,
     private_jwk_from_pem,
     public_jwk_from_pem
 )
@@ -87,8 +87,8 @@ def onboarding_entities(request):
 
 def onboarding_create_jwk(request):
     _rsa_key = new_rsa_key()
-    private_jwk = serialize_rsa_key(_rsa_key.priv_key, 'private')
-    public_jwk = serialize_rsa_key(_rsa_key.pub_key)
+    private_jwk = serialize_key(_rsa_key.priv_key, 'private')
+    public_jwk = serialize_key(_rsa_key.pub_key)
     context = {
         "private_jwk": json.dumps(private_jwk, indent=4),
         "public_jwk": json.dumps(public_jwk, indent=4)
