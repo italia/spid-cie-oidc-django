@@ -179,7 +179,7 @@ class FederationDescendant(TimeStampedModel):
 
         ta = get_first_self_trust_anchor(iss)
         private_key = key_from_jwk_dict(ta.jwks_fed[0])
-        
+
         if hasattr(settings, "X509_COMMON_NAME"):
             self.jwks = update_jwks_with_x5c(
                 jwks = self.jwks,

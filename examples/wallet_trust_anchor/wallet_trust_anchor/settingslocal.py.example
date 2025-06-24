@@ -140,6 +140,8 @@ X509_LOCALITY_NAME = "Rome"
 X509_ORGANIZATION_NAME = "Example Wallet Trust Anchor"
 X509_COMMON_NAME = urlparse(OIDCFED_DEFAULT_TRUST_ANCHOR).hostname
 
+PRIVATE_KEY_TYPE = "EC"
+
 # LOGGING
 LOGGING = {
     'version': 1,

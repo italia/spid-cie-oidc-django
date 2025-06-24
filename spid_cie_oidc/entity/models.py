@@ -69,7 +69,7 @@ class FederationEntityConfiguration(TimeStampedModel):
     )
     default_signature_alg = models.CharField(
         max_length=16,
-        default="RS256",
+        default="ES256" if getattr(settings, "PRIVATE_KEY_TYPE") == "EC" else "RS256",
         blank=False,
         null=False,
         help_text=_("default signature algorithm, eg: RS256"),
