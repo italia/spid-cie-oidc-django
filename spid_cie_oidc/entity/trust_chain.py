@@ -2,7 +2,7 @@ import datetime
 import logging
 
 from collections import OrderedDict
-from typing import Union
+from typing import Union, Optional, List
 
 from spid_cie_oidc.entity.policy import apply_policy
 
@@ -72,73 +72,97 @@ class TrustChainBuilder:
 
     def apply_metadata_policy(self) -> dict:
         """
-        filters the trust path from subject to trust anchor
-        apply the metadata policies along the path and
-        returns the final metadata
+        Starts the search for a trust path and, if found, applies the
+        metadata policies to generate the final metadata.
         """
-        # find the path of trust
-        if not self.trust_path:
-            self.trust_path = [self.subject_configuration]
-        elif self.trust_path[-1].sub == self.trust_anchor_configuration.sub:
-            # ok trust path completed, I just have to return over all the parent calls
-            return
-
         logger.info(
-            f"Applying metadata policy for {self.subject} over "
-            f"{self.trust_anchor_configuration.sub} starting from "
-            f"{self.trust_path[-1]}"
+            f"Starting trust path search for {self.subject} to "
+            f"{self.trust_anchor_configuration.sub}"
         )
-        last_path = self.tree_of_trust[len(self.trust_path) - 1]
 
-        path_found = False
-        for ec in last_path:
-            for sup_ec in ec.verified_by_superiors.values():
-                while len(self.trust_path) - 2 < self.max_path_len:
-                    if sup_ec.sub == self.trust_anchor_configuration.sub:
-                        self.trust_path.append(sup_ec)
-                        path_found = True
-                        break
-                    if sup_ec.verified_by_superiors:
-                        self.trust_path.append(sup_ec)
-                        self.apply_metadata_policy()
-                    else:
-                        logger.info(
-                            f"'Cul de sac' in {sup_ec.sub} for {self.subject} "
-                            f"to {self.trust_anchor_configuration.sub}"
+
+        start_path = [self.subject_configuration]
+
+        valid_path = self._find_trust_path_recursive(start_path)
+
+        if valid_path:
+            logger.info(f"Found a valid trust path: {[e.sub for e in valid_path]}")
+            self.trust_path = valid_path
+
+            final_metadata = self.subject_configuration.payload.get("metadata", {})
+            if not final_metadata:
+                logger.error(f"Missing metadata in subject {self.subject}")
+                return {}
+
+            for i in range(len(self.trust_path) - 1, 0, -1):
+                superior_ec = self.trust_path[i]
+                subordinate_ec = self.trust_path[i-1]
+
+                statement = superior_ec.verified_descendant_statements.get(subordinate_ec.sub, {})
+                policy = statement.get("metadata_policy", {})
+
+                for md_type, pol_value in policy.items():
+                    if final_metadata.get(md_type):
+                        final_metadata[md_type] = apply_policy(
+                            final_metadata[md_type], pol_value
                         )
-                        self.trust_path = [self.subject_configuration]
-                        break
 
-        # once I filtered a concrete and unique trust path I can apply the metadata policy
-        if path_found:
-            logger.info(f"Found a trust path: {self.trust_path}")
-            self.final_metadata = self.subject_configuration.payload.get("metadata", {})
-            if not self.final_metadata:
-                logger.error(
-                    f"Missing metadata in {self.subject_configuration.payload['metadata']}"
-                )
-                return
+            self.final_metadata = final_metadata
+            self.set_exp()
+            return self.final_metadata
+        else:
+            logger.warning(
+                f"Could not find a valid trust path for {self.subject} "
+                f"to {self.trust_anchor_configuration.sub}"
+            )
+            self.trust_path = []
+            return {}
 
-            for i in range(len(self.trust_path))[::-1]:
-                self.trust_path[i - 1].sub
-                _pol = (
-                    self.trust_path[i]
-                    .verified_descendant_statements.get("metadata_policy", {})
-                )
-                for md_type, md in _pol.items():
-                    if not self.final_metadata.get(md_type):
-                        continue
-                    self.final_metadata[md_type] = apply_policy(
-                        self.final_metadata[md_type], _pol[md_type]
-                    )
+    def _find_trust_path_recursive(self, current_path: list) -> Optional[list]:
+        """
+        Recursively searches for a valid trust path (Depth-First Search).
 
-        # set exp
-        self.set_exp()
-        return self.final_metadata
+        Args:
+            current_path: The list of EntityConfigurations in the current path.
+
+        Returns:
+            The list representing the complete path if found, otherwise None.
+        """
+        last_entity = current_path[-1]
+
+        # Base case (SUCCESS): we have reached the trust anchor
+        if last_entity.sub == self.trust_anchor_configuration.sub:
+            return current_path
+
+        # Base case (FAILURE): path has exceeded the maximum allowed length
+        # The +1 is because max_path_len is the number of intermediaries
+        if len(current_path) > self.max_path_len + 1:
+            logger.warning(
+                f"Path length ({len(current_path)}) exceeds max_path_len "
+                f"({self.max_path_len}). Backtracking."
+            )
+            return None
+
+        for superior_ec in last_entity.verified_by_superiors.values():
+
+            # Loop prevention: do not visit an entity that is already in the path
+            if superior_ec.sub in [e.sub for e in current_path]:
+                logger.warning(f"Loop detected with entity {superior_ec.sub}. Skipping path.")
+                continue
+
+            new_path = current_path + [superior_ec]
+            result = self._find_trust_path_recursive(new_path)
+
+            # If the recursive call found a path, propagate the result upwards
+            if result:
+                return result
+
+        # If the loop finishes, it means no superior led to a solution
+        return None
 
     @property
     def exp_datetime(self) -> datetime.datetime:
-        if self.exp:# pragma: no cover
+        if self.exp:  # pragma: no cover
             return datetime_from_timestamp(self.exp)
 
     def set_exp(self) -> int:
@@ -214,7 +238,7 @@ class TrustChainBuilder:
 
         try:
             self.trust_anchor_configuration.validate_by_itself()
-        except Exception as e: # pragma: no cover
+        except Exception as e:  # pragma: no cover
             _msg = (
                 f"Trust Anchor Entity Configuration failed for {self.trust_anchor}. "
                 f"{e}"
@@ -266,7 +290,7 @@ class TrustChainBuilder:
     def serialize(self):
         res = []
         # we have only the leaf's and TA's EC, all the intermediate EC will be dropped
-        ta_ec:str = ""
+        ta_ec: str = ""
         for stat in self.trust_path:
             if not isinstance(self.trust_anchor, str):
                 if (self.subject == stat.sub == stat.iss):
