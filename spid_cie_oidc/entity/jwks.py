@@ -3,8 +3,6 @@ from cryptojwt.jwk.rsa import new_rsa_key
 from cryptography.hazmat.primitives import serialization
 from cryptojwt.jwk.rsa import RSAKey
 from cryptography.hazmat.primitives.asymmetric import rsa
-
-import cryptography
 from django.conf import settings
 
 from . import settings as local_settings

@@ -1,41 +1,39 @@
-  name: docker-compose test
-  on:
-    push:
-      branches: [ main ]
-    pull_request:
-      branches: [ "*" ]
+name: Docker Compose test
 
-  jobs:
-    docker:
-      timeout-minutes: 10
-      runs-on: ubuntu-latest
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: ["*"]
 
-      steps:        
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
-        - name: Checkout
-          uses: actions/checkout@v3
+jobs:
+  docker:
+    name: Docker Compose
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
 
-        - name: Where I am?
-          run: | 
-            pwd
-            ls -al 
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-        - name: Setup example projects - folder creation
-          run: | 
-            cp -R examples example-docker 
+      - name: Where I am?
+        run: |
+          pwd
+          ls -al
 
-        - name: Setup example projects - strings replacement
-          run: |
-            bash docker-prepare.sh
-        
-        # permission denied -> obvious :-)
-        #- name: Adds fake hosts
-          #run: | 
-            #echo 127.0.0.1   localhost  trust-anchor.org relying-party.org cie-provider.org wallet.trust-anchor.org > /etc/hosts
+      - name: Setup example projects - folder creation
+        run: cp -R examples example-docker
 
-        - name: Start containers
-          run: docker compose -f "docker-compose.yml" up -d --build
+      - name: Setup example projects - strings replacement
+        run: bash docker-prepare.sh
 
-        - name: Stop containers
-          if: always()
-          run: docker compose -f "docker-compose.yml" down
+      - name: Start containers
+        run: docker compose -f "docker-compose.yml" up -d --build
+
+      - name: Stop containers
+        if: always()
+        run: docker compose -f "docker-compose.yml" down

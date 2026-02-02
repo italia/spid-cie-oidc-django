@@ -14,10 +14,16 @@ INSTALL_REQUIRES = [
     "cryptojwt>=1.8.2",
     "pydantic>=1.8.2,<2.0",
     "pytz>=2021.3",
-    "aiohttp>3.9,<3.10",
-    "requests>=2.20,<3.0",
+    "aiohttp>=3.9,<4",
+    "requests>=2.32.0,<3.0",
     "pydantic[email]",
-    "djagger"
+    "djagger",
+    # Security: pin transitive deps to fix known CVEs (pip-audit)
+    "certifi>=2024.7.4",
+    "idna>=3.7",
+    "sqlparse>=0.4.4",
+    "urllib3>=2.2.0",
+    "setuptools>=78.1.1",
 ]
 
 with open(os.path.join(os.path.dirname(__file__), 'README.md'), encoding='utf-8') as readme:
