@@ -69,7 +69,12 @@ class FederationEntityConfiguration(TimeStampedModel):
     )
     default_signature_alg = models.CharField(
         max_length=16,
-        default="ES256" if (hasattr(settings, "PRIVATE_KEY_TYPE") and getattr(settings, "PRIVATE_KEY_TYPE") == "EC") else "RS256",
+        default=(
+            "ES256" if (
+                hasattr(settings, "PRIVATE_KEY_TYPE")
+                and getattr(settings, "PRIVATE_KEY_TYPE") == "EC"
+            ) else "RS256"
+        ),
         blank=False,
         null=False,
         help_text=_("default signature algorithm, eg: RS256"),
@@ -239,7 +244,7 @@ class FederationEntityConfiguration(TimeStampedModel):
         if hasattr(settings, "X509_COMMON_NAME"):
             conf['jwks'] = update_jwks_with_x5c(
                 jwks = self.public_jwks,
-                private_key =  key_from_jwk_dict(self.jwks_fed[0]).private_key(),
+                private_key=key_from_jwk_dict(self.jwks_fed[0]).private_key(),
                 subject = self.sub,
                 is_ca_or_int = True
             )

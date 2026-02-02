@@ -1,7 +1,6 @@
 from cryptojwt.jwk.jwk import key_from_jwk_dict
 from cryptojwt.jwk.rsa import new_rsa_key
 from cryptojwt.jwk.ec import new_ec_key
-from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives import serialization
 from cryptojwt.jwk.rsa import RSAKey
 from cryptojwt.jwk.ec import ECKey
@@ -16,7 +15,8 @@ DEFAULT_HASH_FUNC = getattr(
     settings, "DEFAULT_HASH_FUNC", local_settings.DEFAULT_HASH_FUNC
 )
 
-def create_jwk(key = None, hash_func=None, typ :str = getattr(settings, "PRIVATE_KEY_TYPE", None)):
+
+def create_jwk(key=None, hash_func=None, typ: str = getattr(settings, "PRIVATE_KEY_TYPE", None)):
     if key:
         key = key
     elif typ and typ.lower() == 'ec':
@@ -62,6 +62,7 @@ def public_pem_from_jwk(jwk_dict: dict):
     )
     return cert.decode()
 
+
 def serialize_key(key, kind="public", hash_func="SHA-256"):
     """
     key can be:
@@ -72,7 +73,7 @@ def serialize_key(key, kind="public", hash_func="SHA-256"):
         - str or bytes (PEM format)
     """
     data = {}
-    
+
     # Handle RSA keys
     if isinstance(key, rsa.RSAPublicKey):
         data = {"pub_key": key}

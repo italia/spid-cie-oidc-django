@@ -1,26 +1,24 @@
-from cryptojwt.jwk.jwk import key_from_jwk_dict
-
-from django.utils import timezone
-from spid_cie_oidc.entity.x509 import X509Issuer
-
 from urllib.parse import urlparse
 from typing import Union
 
+from cryptojwt.jwk.jwk import key_from_jwk_dict
+
+from spid_cie_oidc.entity.x509 import X509Issuer
+
 
 def update_jwks_with_x5c(
-        jwks: list,
-        private_key: bytes,
-        subject: str,
-        is_ca_or_int: bool,
-        path_length: Union[int, None] = None,
-    ) -> dict:
-
+    jwks: list,
+    private_key: bytes,
+    subject: str,
+    is_ca_or_int: bool,
+    path_length: Union[int, None] = None,
+) -> dict:
     subject_data: dict = dict(
-        X509_COMMON_NAME = urlparse(subject).hostname,
-        # TODO: please add COUNTRY_NAME, X509_STATE_OR_PROVINCE_NAME, X509_LOCALITY_NAME, X509_ORGANIZATION_NAME
-        entity_id = subject
+        X509_COMMON_NAME=urlparse(subject).hostname,
+        # TODO: add COUNTRY_NAME, X509_STATE_OR_PROVINCE_NAME, X509_LOCALITY_NAME, X509_ORGANIZATION_NAME
+        entity_id=subject
     )
-    
+
     for i in jwks:
         i['x5c'] = X509Issuer(
             private_key = private_key,

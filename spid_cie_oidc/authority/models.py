@@ -183,7 +183,7 @@ class FederationDescendant(TimeStampedModel):
         if hasattr(settings, "X509_COMMON_NAME"):
             self.jwks = update_jwks_with_x5c(
                 jwks = self.jwks,
-                private_key =  private_key.private_key(),
+                private_key=private_key.private_key(),
                 subject = self.sub,
                 path_length = None,
                 is_ca_or_int = True
@@ -192,10 +192,10 @@ class FederationDescendant(TimeStampedModel):
         policies = {
             k: FEDERATION_DEFAULT_POLICY.get(k, {}) for k in self.entity_profiles
         }
-            
+
         # apply custom policies if defined
         policies.update(self.metadata_policy)
-        
+
         data = {
             "exp": exp_from_now(minutes=FEDERATION_DEFAULT_EXP),
             "iat": iat_now(),

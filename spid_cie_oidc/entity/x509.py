@@ -30,7 +30,7 @@ class X509Issuer:
             cn = subject_data["X509_COMMON_NAME"]
         else:
             cn = getattr(settings, "X509_COMMON_NAME")
-        
+
         subject_name = [
             x509.NameAttribute(NameOID.COMMON_NAME, cn)
         ] + [
@@ -45,45 +45,43 @@ class X509Issuer:
 
         _basic_constraints = dict(ca=is_ca_or_int)
         _basic_constraints["path_length"] = path_length
-        
+
         self.cert = (
             x509.CertificateBuilder()
-                .issuer_name(
-                    x509.Name(
-                        [
-                            x509.NameAttribute(NameOID.COUNTRY_NAME, settings.X509_COUNTRY_NAME),
-                            x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, settings.X509_STATE_OR_PROVINCE_NAME),
-                            x509.NameAttribute(NameOID.LOCALITY_NAME, settings.X509_LOCALITY_NAME),
-                            x509.NameAttribute(NameOID.ORGANIZATION_NAME, settings.X509_ORGANIZATION_NAME),
-                            x509.NameAttribute(NameOID.COMMON_NAME, settings.X509_COMMON_NAME)
-                        ]
-                    )
-                )
-                .subject_name(x509.Name(subject_name))
-                .public_key(public_key)
-                .serial_number(x509.random_serial_number())
-                .not_valid_before(
-                    getattr(settings, "X509_NOT_VALID_BEFORE", None) or
-                    subject_data.get('X509_NOT_VALID_BEFORE') or
-                    (timezone.localtime() - timezone.timedelta(minutes=12))
-                )
-                .not_valid_after(
-                    getattr(settings, "X509_NOT_VALID_AFTER", None) or
-                    subject_data.get('X509_NOT_VALID_AFTER') or
-                    (timezone.localtime() + timezone.timedelta(days=365))
-                )
-                .add_extension(
-                    x509.BasicConstraints(**_basic_constraints),
-                    critical=True,
-                )
-                .add_extension(
-                    x509.SubjectAlternativeName([
-                        x509.DNSName(cn),
-                        x509.UniformResourceIdentifier(subject_data.get('entity_id')),
-                    ]),
-                    critical=False
-                )
-                .sign(private_key, hashes.SHA256())
+            .issuer_name(
+                x509.Name([
+                    x509.NameAttribute(NameOID.COUNTRY_NAME, settings.X509_COUNTRY_NAME),
+                    x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, settings.X509_STATE_OR_PROVINCE_NAME),
+                    x509.NameAttribute(NameOID.LOCALITY_NAME, settings.X509_LOCALITY_NAME),
+                    x509.NameAttribute(NameOID.ORGANIZATION_NAME, settings.X509_ORGANIZATION_NAME),
+                    x509.NameAttribute(NameOID.COMMON_NAME, settings.X509_COMMON_NAME),
+                ])
+            )
+            .subject_name(x509.Name(subject_name))
+            .public_key(public_key)
+            .serial_number(x509.random_serial_number())
+            .not_valid_before(
+                getattr(settings, "X509_NOT_VALID_BEFORE", None) or
+                subject_data.get('X509_NOT_VALID_BEFORE') or
+                (timezone.localtime() - timezone.timedelta(minutes=12))
+            )
+            .not_valid_after(
+                getattr(settings, "X509_NOT_VALID_AFTER", None) or
+                subject_data.get('X509_NOT_VALID_AFTER') or
+                (timezone.localtime() + timezone.timedelta(days=365))
+            )
+            .add_extension(
+                x509.BasicConstraints(**_basic_constraints),
+                critical=True,
+            )
+            .add_extension(
+                x509.SubjectAlternativeName([
+                    x509.DNSName(cn),
+                    x509.UniformResourceIdentifier(subject_data.get('entity_id')),
+                ]),
+                critical=False
+            )
+            .sign(private_key, hashes.SHA256())
         )
 
     @property

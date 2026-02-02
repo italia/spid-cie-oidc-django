@@ -6,7 +6,6 @@ from djagger.decorators import schema
 from django.conf import settings
 from django.core.paginator import Paginator
 from django.http import (
-    Http404,
     HttpResponse,
     JsonResponse,
 )
