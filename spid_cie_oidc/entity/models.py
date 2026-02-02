@@ -5,6 +5,7 @@ import uuid
 
 from cryptojwt.jwk.jwk import key_from_jwk_dict
 from django.contrib.auth import get_user_model
+from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext as _
@@ -13,7 +14,7 @@ from spid_cie_oidc.entity.jwks import (
     create_jwk,
     private_pem_from_jwk,
     public_pem_from_jwk,
-    serialize_rsa_key
+    serialize_key
 )
 from spid_cie_oidc.entity.jwtse import create_jws
 from spid_cie_oidc.entity.settings import (
@@ -30,6 +31,7 @@ from spid_cie_oidc.entity.validators import (
     validate_private_jwks
 )
 
+from .jwk_x5c import update_jwks_with_x5c
 from .jwks import public_jwk_from_private_jwk
 
 logger = logging.getLogger(__name__)
@@ -67,7 +69,12 @@ class FederationEntityConfiguration(TimeStampedModel):
     )
     default_signature_alg = models.CharField(
         max_length=16,
-        default="RS256",
+        default=(
+            "ES256" if (
+                hasattr(settings, "PRIVATE_KEY_TYPE")
+                and getattr(settings, "PRIVATE_KEY_TYPE") == "EC"
+            ) else "RS256"
+        ),
         blank=False,
         null=False,
         help_text=_("default signature algorithm, eg: RS256"),
@@ -177,7 +184,7 @@ class FederationEntityConfiguration(TimeStampedModel):
     def public_jwks(self):
         res = []
         for i in self.jwks_fed:
-            skey = serialize_rsa_key(key_from_jwk_dict(i).public_key())
+            skey = serialize_key(key_from_jwk_dict(i).public_key())
             skey["kid"] = i["kid"]
             res.append(skey)
         return res
@@ -233,6 +240,14 @@ class FederationEntityConfiguration(TimeStampedModel):
         elif self.is_leaf: # pragma: no cover
             _msg = f"Entity {self.sub} is a leaf and requires authority_hints valued"
             logger.error(_msg)
+
+        if hasattr(settings, "X509_COMMON_NAME"):
+            conf['jwks'] = update_jwks_with_x5c(
+                jwks = self.public_jwks,
+                private_key=key_from_jwk_dict(self.jwks_fed[0]).private_key(),
+                subject = self.sub,
+                is_ca_or_int = True
+            )
 
         return conf
 

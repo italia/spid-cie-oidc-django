@@ -140,6 +140,7 @@ examples/federation_authority/federation_authority/settingslocal.py
 examples/relying_party/relying_party/settingslocal.py
 examples/provider/provider/settingslocal.py
 examples/wallet_trust_anchor/wallet_trust_anchor/settingslocal.py
+examples/wallet_trust_anchor/logs/*
 
 examples-docker/
 docker-compose-externalrp.yml

@@ -13,7 +13,7 @@ from spid_cie_oidc.relying_party.settings import (
     RP_PROVIDER_PROFILES
 )
 
-from .jwks import serialize_rsa_key
+from .jwks import serialize_key
 from .settings import (
     ENCRYPTION_ALG_VALUES_SUPPORTED,
     ENCRYPTION_ENC_SUPPORTED,
@@ -29,7 +29,7 @@ def validate_public_jwks(values: Union[dict, list]):
         for jwk_dict in values:
             _k = key_from_jwk_dict(jwk_dict)
             if _k.private_key():
-                _pub = serialize_rsa_key(_k.public_key())
+                _pub = serialize_key(_k.public_key())
                 raise ValidationError(
                     f"This JWK is is private {json.dumps(jwk_dict)}. "
                     f"It MUST be public instead, like this: {json.dumps([_pub])}."

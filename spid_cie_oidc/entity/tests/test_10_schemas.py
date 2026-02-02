@@ -6,10 +6,9 @@ from .rp_metadata_settings import rp_conf
 TA_SUB = "http://testserver.it/"
 
 RESOLVE_REQUEST = {
-    "iss": rp_conf["sub"],
     "sub": rp_conf["sub"],
-    "anchor" : TA_SUB,
-    "format" :"json",
+    "trust_anchor": TA_SUB,
+    "format": "json",
 }
 
 

@@ -5,7 +5,7 @@ import json
 from spid_cie_oidc.authority.tests.settings import *
 from spid_cie_oidc.entity.models import *
 from spid_cie_oidc.onboarding.urls import *
-from spid_cie_oidc.entity.jwks import serialize_rsa_key
+from spid_cie_oidc.entity.jwks import serialize_key
 from spid_cie_oidc.entity.jwks import new_rsa_key
 from spid_cie_oidc.entity.tests.settings import *
 
@@ -59,7 +59,7 @@ class OnboardingTest(TestCase):
         res = client.post(url, self.data)
         self.assertContains(res, "Inserisci un JSON valido.")
         self.assertEqual(res.status_code, 200)
-        jwk = serialize_rsa_key(new_rsa_key().pub_key)
+        jwk = serialize_key(new_rsa_key().pub_key)
         self.data["public_jwks"] = json.dumps(jwk)
         # res = client.post(url, self.data)
         # self.assertEqual(res.status_code, 200)

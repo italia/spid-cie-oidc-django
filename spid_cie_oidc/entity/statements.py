@@ -69,13 +69,48 @@ def get_entity_configurations(subjects: list, httpc_params: dict = {}):
     return get_http_url(urls, httpc_params)
 
 
+def validate_entity_statement_header(header: dict) -> None:
+    """
+    OpenID Federation 3.2: Entity Statements MUST have typ entity-statement+jwt
+    and kid (Key ID) in the header. Trust Marks are not validated here (typ can be customized).
+    """
+    if header.get("typ") != "entity-statement+jwt":
+        raise ValueError(
+            f"Entity Statement must have typ=entity-statement+jwt, got {header.get('typ')}"
+        )
+    kid = header.get("kid")
+    if not kid or not isinstance(kid, str) or not kid.strip():
+        raise ValueError("Entity Statement must have non-empty kid header")
+
+
+def get_trust_mark_type_id(payload_or_obj) -> str:
+    """
+    Return trust mark type identifier from a Trust Mark JWT payload or from
+    a trust_marks array element (dict with trust_mark_type, trust_mark_id, or id).
+    Retrocompat: accepts trust_mark_type (draft 48), trust_mark_id, or id.
+    """
+    if hasattr(payload_or_obj, "get"):
+        return (
+            payload_or_obj.get("trust_mark_type")
+            or payload_or_obj.get("trust_mark_id")
+            or payload_or_obj.get("id")
+        )
+    return None
+
+
 class TrustMark:
     def __init__(self, jwt: str, httpc_params: dict = {}):
         self.jwt = jwt
         self.header = unpad_jwt_head(jwt)
         self.payload = unpad_jwt_payload(jwt)
 
-        self.id = self.payload["id"]
+        # Retrocompat: id from trust_mark_type (draft 48), trust_mark_id, or id
+        self.id = get_trust_mark_type_id(self.payload)
+        if not self.id:
+            raise KeyError(
+                "Trust Mark payload must contain one of: "
+                "trust_mark_type, trust_mark_id, id"
+            )
         self.sub = self.payload["sub"]
         self.iss = self.payload["iss"]
 
@@ -145,6 +180,7 @@ class EntityConfiguration:
     ):
         self.jwt = jwt
         self.header = unpad_jwt_head(jwt)
+        validate_entity_statement_header(self.header)
         self.payload = unpad_jwt_payload(jwt)
         self.sub = self.payload["sub"]
         self.iss = self.payload["iss"]
@@ -218,8 +254,9 @@ class EntityConfiguration:
         trust_marks = []
         is_valid = False
         for tm in self.payload["trust_marks"]:
-
-            if tm.get("id", None) not in self.filter_by_allowed_trust_marks:
+            # Retrocompat: accept trust_mark_type, trust_mark_id, or id
+            tm_type_id = get_trust_mark_type_id(tm)
+            if tm_type_id not in self.filter_by_allowed_trust_marks:
                 continue
 
             try:
@@ -351,8 +388,8 @@ class EntityConfiguration:
         """
         jwt is a descendant entity statement issued by self
         """
-        # TODO: pydantic entity configuration validation here
         header = unpad_jwt_head(jwt)
+        validate_entity_statement_header(header)
         payload = unpad_jwt_payload(jwt)
 
         if header.get("kid") not in self.kids:

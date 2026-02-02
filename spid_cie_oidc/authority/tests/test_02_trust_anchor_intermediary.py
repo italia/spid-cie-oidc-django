@@ -2,7 +2,7 @@ from django.test import TestCase, Client, override_settings
 from django.urls import reverse
 
 from spid_cie_oidc.entity.exceptions import InvalidRequiredTrustMark
-from spid_cie_oidc.entity.jwtse import verify_jws, unpad_jwt_payload
+from spid_cie_oidc.entity.jwtse import verify_jws, unpad_jwt_head, unpad_jwt_payload
 from spid_cie_oidc.entity.models import *
 
 from spid_cie_oidc.entity.trust_chain_operations import (
@@ -270,7 +270,7 @@ class TrustChainTest(TestCase):
         c = Client()
         res = c.get(url, data={
                 "sub": self.rp.sub, 
-                "anchor": self.ta_conf.sub
+                "trust_anchor": self.ta_conf.sub
             }
         )
         self.assertTrue(res.status_code == 200)
@@ -278,8 +278,8 @@ class TrustChainTest(TestCase):
 
     def test_trust_mark_status_endpoint(self):
         url = reverse("oidcfed_trust_mark_status")
-
         c = Client()
+        # Legacy: sub + trust_mark_id -> 200 + JWT (application/trust-mark-status-response+jwt)
         res = c.post(
             url,
             data={
@@ -287,82 +287,64 @@ class TrustChainTest(TestCase):
                 "sub": self.rp_assigned_profile.descendant.sub,
             },
         )
-        self.assertTrue(res.status_code == 200)
-        self.assertTrue(res.json() == {"active": True})
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.get("Content-Type"), "application/trust-mark-status-response+jwt")
+        payload = unpad_jwt_payload(res.content.decode())
+        self.assertEqual(payload.get("status"), "active")
+        self.assertIn("trust_mark", payload)
+        self.assertIn("iss", payload)
+        self.assertIn("iat", payload)
 
-        c = Client()
+        # Draft 48: trust_mark JWT only -> 200 + JWT
         res = c.post(
             url,
-            data={
-                "id": self.rp_assigned_profile.profile.profile_id,
-                "sub": self.rp_assigned_profile.descendant.sub,
-            },
+            data={"trust_mark": self.rp_assigned_profile.trust_mark["trust_mark"]},
         )
-        self.assertTrue(res.status_code == 200)
-        self.assertTrue(res.json() == {"active": True})
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.get("Content-Type"), "application/trust-mark-status-response+jwt")
+        payload = unpad_jwt_payload(res.content.decode())
+        self.assertEqual(payload.get("status"), "active")
 
+        # Legacy: GET with sub + trust_mark_id -> 200 + JWT
         res = c.get(
             url,
             data={
                 "trust_mark_id": self.rp_assigned_profile.profile.profile_id,
                 "sub": self.rp_assigned_profile.descendant.sub,
-            }
-        )
-        self.assertTrue(res.status_code == 200)
-        self.assertTrue(res.json() == {"active": True})
-
-        res = c.get(
-            url,
-            data={
-                "id": self.rp_assigned_profile.profile.profile_id,
-                "sub": self.rp_assigned_profile.descendant.sub,
-            }
-        )
-        self.assertTrue(res.status_code == 200)
-        self.assertTrue(res.json() == {"active": True})
-
-        res = c.get(
-            url,
-            data={}
-        )
-        self.assertTrue(res.status_code == 200)
-        self.assertTrue(res.json() == {"active": False})
-
-        res = c.post(
-            url,
-            data={
-                "trust_mark": self.rp_assigned_profile.trust_mark["trust_mark"],
             },
         )
-        self.assertTrue(res.status_code == 200)
-        self.assertTrue(res.json() == {"active": True})
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.get("Content-Type"), "application/trust-mark-status-response+jwt")
 
+        # Empty request -> 400 invalid_request
+        res = c.get(url, data={})
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(res.json().get("error"), "invalid_request")
+
+        # Invalid trust_mark JWT -> 400
         res = c.get(
             url,
-            data={
-                "trust_mark": self.rp_assigned_profile.trust_mark["trust_mark"][1:],
-            },
+            data={"trust_mark": self.rp_assigned_profile.trust_mark["trust_mark"][1:]},
         )
-        self.assertTrue(res.status_code == 200)
-        self.assertTrue(res.json() == {"active": False})
+        self.assertEqual(res.status_code, 400)
 
+        # trust_mark_id without sub -> 400
+        res = c.get(
+            url,
+            data={"trust_mark_id": self.rp_assigned_profile.profile.profile_id},
+        )
+        self.assertEqual(res.status_code, 400)
+
+        # Unknown trust mark (wrong sub) -> 404 not_found
         res = c.get(
             url,
             data={
                 "trust_mark_id": self.rp_assigned_profile.profile.profile_id,
+                "sub": "https://nonexistent.example/",
             },
         )
-        self.assertTrue(res.status_code == 200)
-        self.assertTrue(res.json() == {"active": False})
-
-        res = c.get(
-            url,
-            data={
-                "id": self.rp_assigned_profile.profile.profile_id,
-            },
-        )
-        self.assertTrue(res.status_code == 200)
-        self.assertTrue(res.json() == {"active": False})
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(res.json().get("error"), "not_found")
 
 class TrustChainWithSignedJwksUriTest(TestCase):
     def setUp(self):

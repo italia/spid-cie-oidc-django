@@ -80,14 +80,20 @@ def resolve_entity_statement(request, format: str = "jose"):
     Metadata if it's valid
     we avoid any possibility to trigger a new Metadata discovery if
     """
-    if not all((request.GET.get("sub", None), request.GET.get("anchor", None))):
-        raise Http404("sub and anchor parameters are REQUIRED.")
+    if not all((request.GET.get("sub"), request.GET.get("trust_anchor"))):
+        return JsonResponse(
+            {
+                "error": "invalid_request",
+                "error_description": "sub and trust_anchor parameters are REQUIRED."
+            },
+            status=400
+        )
 
     iss = FederationEntityConfiguration.objects.filter(is_active=True).first()
 
     _q = dict(
         sub=request.GET["sub"],
-        trust_anchor__sub=request.GET["anchor"],
+        trust_anchor__sub=request.GET["trust_anchor"],
         is_active=True
     )
 
@@ -104,7 +110,7 @@ def resolve_entity_statement(request, format: str = "jose"):
             try:
                 # a staff token get a fresh trust chain on each call
                 entity = get_or_create_trust_chain(
-                    httpc_params=HTTPC_PARAMS,
+                    httpc_params = HTTPC_PARAMS,
                     required_trust_marks = getattr(
                         settings, "OIDCFED_REQUIRED_TRUST_MARKS", []
                     ),
@@ -118,26 +124,47 @@ def resolve_entity_statement(request, format: str = "jose"):
                 )
 
     if not entity:
-        raise Http404("entity not found.")
+        return JsonResponse(
+            {
+                "error": "not_found",
+                "error_description": "entity not found"
+            },
+            status=404
+        )
+
+    metadata = entity.metadata
+    # Filter by entity_type if requested (OpenID Federation 8.3.1)
+    entity_types = request.GET.getlist("entity_type")
+    if entity_types:
+        metadata = {
+            k: v for k, v in (metadata or {}).items()
+            if k in entity_types
+        }
 
     res = {
         "iss": iss.sub,
         "sub": request.GET["sub"],
-        # "aud": [],
         "iat": entity.iat_as_timestamp,
         "exp": entity.exp_as_timestamp,
         "trust_marks": entity.trust_marks,
-        "metadata": entity.metadata,
+        "metadata": metadata,
         "trust_chain": entity.chain
     }
 
     if request.GET.get("format") == "json" or format == "json":
         return JsonResponse(res, safe=False)
-    else:
-        return HttpResponse(
-            create_jws(res, iss.jwks_fed[0]),
-            content_type="application/jose",
-        )
+
+    jwk = iss.jwks_fed[0]
+    signed = create_jws(
+        res,
+        jwk,
+        alg=iss.default_signature_alg,
+        protected={"typ": "resolve-response+jwt", "kid": jwk.get("kid")},
+    )
+    return HttpResponse(
+        signed,
+        content_type="application/resolve-response+jwt",
+    )
 
 
 def openid_jwks(request, metadata_type:str, resource_type:str):
