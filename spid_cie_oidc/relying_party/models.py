@@ -39,7 +39,7 @@ class OidcAuthenticationToken(models.Model):
         get_user_model(), on_delete=models.SET_NULL, blank=True, null=True
     )
     authz_request = models.ForeignKey(OidcAuthentication, on_delete=models.CASCADE)
-    code = models.CharField(max_length=255, blank=True, null=True)
+    code = models.CharField(max_length=2048, blank=True, null=True)
     access_token = models.TextField(blank=True, null=True)
     id_token = models.TextField(blank=True, null=True)
     refresh_token = models.TextField(blank=True, null=True)
