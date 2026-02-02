@@ -228,7 +228,7 @@ with a full support of explicit client registration, please look at idpy's
 
 This software is released under the Apache 2 License by:
 
-- Giuseppe De Marco <giuseppe.demarco@teamdigitale.governo.it>.
+- Giuseppe De Marco <gi.demarco@innovazione.gov.it>.
 
 In this project we use the 
 [metadata policy code](https://github.com/peppelinux/spid-cie-oidc-django/blob/main/spid_cie_oidc/entity/policy.py)

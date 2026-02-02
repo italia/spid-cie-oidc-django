@@ -136,7 +136,7 @@ class TokenEndpoint(OpBase, View):
             refresh_token=request.POST['refresh_token'],
             revoked=False
         ).first()
-        
+
         if not issued_token:
             return JsonResponse(
                 {

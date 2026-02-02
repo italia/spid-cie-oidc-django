@@ -47,7 +47,10 @@ schema_profile = OIDCFED_PROVIDER_PROFILES[OIDCFED_DEFAULT_PROVIDER_PROFILE]
     },
     external_docs = {
         "alt_text": "AgID SPID OIDC Guidelines",
-        "url": "https://www.agid.gov.it/it/agenzia/stampa-e-comunicazione/notizie/2021/12/06/openid-connect-spid-adottate-linee-guida"
+        "url": (
+            "https://www.agid.gov.it/it/agenzia/stampa-e-comunicazione/"
+            "notizie/2021/12/06/openid-connect-spid-adottate-linee-guida"
+        ),
     },
     tags = ['Provider']
 )
@@ -82,7 +85,8 @@ class AuthzRequestView(OpBase, View):
         redirect_uri = payload.get("redirect_uri", "")
         p = urllib.parse.urlparse(redirect_uri)
         scheme_fqdn = f"{p.scheme}://{p.hostname}"
-        if payload.get("client_id", None) in scheme_fqdn:
+        client_id = payload.get("client_id") or ""
+        if scheme_fqdn not in client_id:
             raise ValidationException("client_id not in redirect_uri")
 
         self.validate_json_schema(

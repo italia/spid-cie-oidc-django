@@ -36,7 +36,10 @@ logger = logging.getLogger(__name__)
     # ],
     external_docs = {
         "alt_text": "AgID SPID OIDC Guidelines",
-        "url": "https://www.agid.gov.it/it/agenzia/stampa-e-comunicazione/notizie/2021/12/06/openid-connect-spid-adottate-linee-guida"
+        "url": (
+            "https://www.agid.gov.it/it/agenzia/stampa-e-comunicazione/"
+            "notizie/2021/12/06/openid-connect-spid-adottate-linee-guida"
+        ),
     },
     tags = ['Provider']
 )

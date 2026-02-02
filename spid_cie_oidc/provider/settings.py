@@ -54,7 +54,8 @@ OIDCFED_PROVIDER_ATTRIBUTES_SPID_MAP = {
     "https://attributes.eid.gov.it/company_fiscal_number": ("company_fiscal_number",),
     "https://attributes.eid.gov.it/vat_number": ("vat_number",),
     "document_details": ("document_details",),
-    "phone_number": ("phone_number",
+    "phone_number": (
+        "phone_number",
         "mobile_phone",
         "phone",
         "telephone",
@@ -169,8 +170,8 @@ OIDCFED_PROVIDER_PROFILES_ACR_4_REFRESH = getattr(
 )
 
 
-OIDCFED_ATTRNAME_I18N = {
-    # SPID
+# SPID and CIE attribute labels (CIE entries override SPID for shared keys)
+_OIDCFED_ATTRNAME_I18N_SPID = {
     "given_name": _("Name"),
     "family_name": _("Family name"),
     "place_of_birth": _("Place of birth"),
@@ -186,8 +187,8 @@ OIDCFED_ATTRNAME_I18N = {
     "address": _("Address"),
     "https://attributes.eid.gov.it/eid_exp_date": _("Expiration date"),
     "https://attributes.eid.gov.it/e_delivery_service": _("Digital address"),
-
-    # CIE
+}
+_OIDCFED_ATTRNAME_I18N_CIE = {
     "given_name": _("Name"),
     "family_name": _("Family name"),
     "email": _("Email"),
@@ -199,7 +200,6 @@ OIDCFED_ATTRNAME_I18N = {
     "phone_number_verified": _("Verified phone"),
     "address": _("Address"),
     "place_of_birth": _("Place of birth"),
-    # "document_details":  ,
-    # "e_delivery_service":  ,
     "physical_phone_number": _("Phone number"),
 }
+OIDCFED_ATTRNAME_I18N = {**_OIDCFED_ATTRNAME_I18N_SPID, **_OIDCFED_ATTRNAME_I18N_CIE}

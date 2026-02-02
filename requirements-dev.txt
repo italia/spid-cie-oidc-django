@@ -1,7 +1,9 @@
 autoflake
 autopep8
-coverage
+bandit
 black
+coverage
 flake8
 isort
-bandit
+pip-audit
+radon

@@ -7,7 +7,6 @@ from cryptojwt.jwk.rsa import RSAKey
 from cryptojwt.jwk.ec import ECKey
 from cryptography.hazmat.primitives.asymmetric import rsa, ec
 
-import cryptography
 from django.conf import settings
 
 from . import settings as local_settings
