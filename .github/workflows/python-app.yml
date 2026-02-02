@@ -82,11 +82,3 @@ jobs:
           cd examples/federation_authority/
           ./manage.py migrate
           ./manage.py loaddata dumps/example.json
-
-      - name: CodeClimate (coverage)
-        if: always()
-        uses: paambaati/codeclimate-action@v5.0.0
-        env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CodeClimate }}
-        with:
-          coverageCommand: coverage xml
