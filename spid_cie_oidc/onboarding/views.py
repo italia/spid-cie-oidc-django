@@ -179,7 +179,8 @@ def onboarding_validating_trustmark(request):
         res = trust_mark_status(request)
         body = res.content.decode()
         context = {'form': form}
-        if res.status_code == 200 and res.get("Content-Type", "").startswith("application/trust-mark-status-response+jwt"):
+        ct = res.get("Content-Type", "")
+        if res.status_code == 200 and ct.startswith("application/trust-mark-status-response+jwt"):
             # Draft 48: response is a signed JWT with status claim
             from spid_cie_oidc.entity.jwtse import unpad_jwt_payload
             content = unpad_jwt_payload(body)

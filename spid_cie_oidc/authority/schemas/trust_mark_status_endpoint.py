@@ -3,10 +3,13 @@ from typing import Literal, Optional
 
 from pydantic import BaseModel, HttpUrl, constr
 
+# JWT pattern (three base64url segments) to avoid flake8 F722 on constr(regex=...)
+_JWT_PATTERN = r"^[a-zA-Z\_\-0-9]+\.[a-zA-Z\_\-0-9]+\.[a-zA-Z\_\-0-9]+"
+
 
 class TrustMarkRequest(BaseModel):
     # Draft 48: trust_mark (JWT) REQUIRED for new flow
-    trust_mark: Optional[constr(regex=r"^[a-zA-Z\_\-0-9]+\.[a-zA-Z\_\-0-9]+\.[a-zA-Z\_\-0-9]+")]  # noqa: E501
+    trust_mark: Optional[constr(regex=_JWT_PATTERN)]
     # Retrocompat: sub + trust_mark_id / trust_mark_type / id
     sub: Optional[HttpUrl]
     trust_mark_id: Optional[HttpUrl]
