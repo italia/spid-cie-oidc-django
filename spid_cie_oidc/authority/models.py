@@ -207,6 +207,7 @@ class FederationDescendant(TimeStampedModel):
         if policies:
             data["metadata_policy"] = policies
 
+        # OpenID Federation 8.1.2: source_endpoint enables optimized refresh
         if ta.fetch_endpoint:
             data["source_endpoint"] = ta.fetch_endpoint
 
@@ -272,6 +273,9 @@ class FederationEntityAssignedProfile(TimeStampedModel):
         data["sub"] = self.descendant.sub
         data["iss"] = self.issuer.sub
         data["iat"] = iat_now()
+        # Draft 48: trust_mark_type; retrocompat: also set trust_mark_id
+        data["trust_mark_type"] = self.profile.profile_id
+        data.setdefault("trust_mark_id", self.profile.profile_id)
         return data
 
     @property
@@ -289,9 +293,12 @@ class FederationEntityAssignedProfile(TimeStampedModel):
 
     @property
     def trust_mark(self):
+        # Draft 48: trust_mark_type; retrocompat: also trust_mark_id and id
         return {
+            "trust_mark_type": self.profile.profile_id,
+            "trust_mark": self.trust_mark_as_jws,
             "trust_mark_id": self.profile.profile_id,
-            "trust_mark": self.trust_mark_as_jws
+            "id": self.profile.profile_id,
         }
 
     def __str__(self):

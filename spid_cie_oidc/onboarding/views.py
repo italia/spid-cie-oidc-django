@@ -177,9 +177,21 @@ def onboarding_validating_trustmark(request):
 
     if form.is_valid():
         res = trust_mark_status(request)
-        content = json.loads(res.content.decode())
+        body = res.content.decode()
         context = {'form': form}
-        if content['active']:
+        if res.status_code == 200 and res.get("Content-Type", "").startswith("application/trust-mark-status-response+jwt"):
+            # Draft 48: response is a signed JWT with status claim
+            from spid_cie_oidc.entity.jwtse import unpad_jwt_payload
+            content = unpad_jwt_payload(body)
+            active = content.get("status") == "active"
+        else:
+            # Error response (e.g. 404) or legacy JSON body
+            try:
+                content = json.loads(body)
+                active = content.get("active", False)
+            except (json.JSONDecodeError, TypeError):
+                active = False
+        if active:
             messages.success(request, _('Validation Trust Mark Successfully'))
         else:
             messages.error(request, _('Validation Trust Mark Failed'))

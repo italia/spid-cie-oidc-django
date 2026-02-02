@@ -80,12 +80,13 @@ def resolve_entity_statement(request, format: str = "jose"):
     Metadata if it's valid
     we avoid any possibility to trigger a new Metadata discovery if
     """
-    if not all((request.GET.get("sub", None), request.GET.get("trust_anchor", None))):
+    if not all((request.GET.get("sub"), request.GET.get("trust_anchor"))):
         return JsonResponse(
             {
                 "error": "invalid_request",
                 "error_description": "sub and trust_anchor parameters are REQUIRED."
-            }, status=401
+            },
+            status=400
         )
 
     iss = FederationEntityConfiguration.objects.filter(is_active=True).first()
@@ -125,30 +126,45 @@ def resolve_entity_statement(request, format: str = "jose"):
     if not entity:
         return JsonResponse(
             {
-                "error": "invalid_subject",
+                "error": "not_found",
                 "error_description": "entity not found"
-            }, status = 404
+            },
+            status=404
         )
+
+    metadata = entity.metadata
+    # Filter by entity_type if requested (OpenID Federation 8.3.1)
+    entity_types = request.GET.getlist("entity_type")
+    if entity_types:
+        metadata = {
+            k: v for k, v in (metadata or {}).items()
+            if k in entity_types
+        }
 
     res = {
         "iss": iss.sub,
         "sub": request.GET["sub"],
-        # TODO: aud must be present only if the client is authenticated.
-        # "aud": [],
         "iat": entity.iat_as_timestamp,
         "exp": entity.exp_as_timestamp,
         "trust_marks": entity.trust_marks,
-        "metadata": entity.metadata,
+        "metadata": metadata,
         "trust_chain": entity.chain
     }
 
     if request.GET.get("format") == "json" or format == "json":
         return JsonResponse(res, safe=False)
-    else:
-        return HttpResponse(
-            create_jws(res, iss.jwks_fed[0]),
-            content_type="application/resolve-response+jwt",
-        )
+
+    jwk = iss.jwks_fed[0]
+    signed = create_jws(
+        res,
+        jwk,
+        alg=iss.default_signature_alg,
+        protected={"typ": "resolve-response+jwt", "kid": jwk.get("kid")},
+    )
+    return HttpResponse(
+        signed,
+        content_type="application/resolve-response+jwt",
+    )
 
 
 def openid_jwks(request, metadata_type:str, resource_type:str):

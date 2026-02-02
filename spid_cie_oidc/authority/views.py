@@ -18,15 +18,21 @@ from spid_cie_oidc.authority.models import (
 )
 from spid_cie_oidc.authority.settings import MAX_ENTRIES_PAGE
 from spid_cie_oidc.entity.jwtse import (
-    unpad_jwt_head, unpad_jwt_payload
+    create_jws,
+    unpad_jwt_head,
+    unpad_jwt_payload,
 )
 from spid_cie_oidc.entity.models import get_first_self_trust_anchor
+from spid_cie_oidc.entity.statements import get_trust_mark_type_id
 from spid_cie_oidc.entity.utils import iat_now
 
 from . schemas.fetch_endpoint_request import FetchRequest, FedAPIErrorResponse, FetchResponse
 from . schemas.list_endpoint import ListRequest, ListResponse
 from . schemas.advanced_entity_list_endpoint import AdvancedEntityListRequest, AdvancedEntityListResponse
-from . schemas.trust_mark_status_endpoint import TrustMarkRequest, TrustMarkResponse
+from . schemas.trust_mark_status_endpoint import (
+    TrustMarkRequest,
+    TrustMarkResponse,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -45,30 +51,19 @@ logger = logging.getLogger(__name__)
 )
 def fetch(request):
     """
-    All entities that are expected to publish entity statements
-    about other entities MUST expose a Fetch endpoint.
-
-    Fetching entity statements is performed to collect entity statements
-    one by one to gather trust chains.
-
-    To fetch an entity statement, an entity needs to know the identifier
-    of the entity to ask (the issuer), the fetch endpoint of that entity
-    and the identifier of the entity that you want the statement to be about (the subject).
+    OpenID Federation 8.1: Fetch endpoint.
+    Request: GET with sub REQUIRED (issuer implied by this endpoint's URL).
     """
-    if request.GET.get("iss"):
-        iss = get_first_self_trust_anchor(sub=request.GET["iss"])
-    else:
-        iss = get_first_self_trust_anchor()
+    iss = get_first_self_trust_anchor()
 
     if not request.GET.get("sub"):
         conf = get_first_self_trust_anchor()
         if request.GET.get("format") == "json":
             return JsonResponse(conf.entity_configuration_as_dict, safe=False)
-        else:
-            return HttpResponse(
-                conf.entity_configuration_as_jws,
-                content_type="application/entity-statement+jwt"
-            )
+        return HttpResponse(
+            conf.entity_configuration_as_jws,
+            content_type="application/entity-statement+jwt"
+        )
 
     sub = FederationDescendant.objects.filter(
         sub=request.GET["sub"], is_active=True
@@ -78,18 +73,18 @@ def fetch(request):
             {
                 "error": "invalid_subject",
                 "error_description": "entity not found"
-            }, status = 404
+            },
+            status=404
         )
 
     if request.GET.get("format") == "json":
         return JsonResponse(
-            sub.entity_statement_as_dict(iss.sub, request.GET.get("aud",[])), safe=False
+            sub.entity_statement_as_dict(iss.sub), safe=False
         )
-    else:
-        return HttpResponse(
-            sub.entity_statement_as_jws(iss.sub, request.GET.get("aud",[])),
-            content_type="application/entity-statement+jwt",
-        )
+    return HttpResponse(
+        sub.entity_statement_as_jws(iss.sub),
+        content_type="application/entity-statement+jwt",
+    )
 
 
 @schema(
@@ -105,10 +100,19 @@ def fetch(request):
     tags = ['Federation API']
 )
 def entity_list(request):
-    if request.GET.get("entity_type", "").lower():
-        _q = {"profile__profile_category": request.GET["entity_type"]}
-    else:
-        _q = {}
+    """
+    OpenID Federation 8.2: Subordinate Listing.
+    Optional filters: entity_type, trust_marked, trust_mark_type, intermediate.
+    """
+    _q = {"descendant__is_active": True}
+
+    if request.GET.get("intermediate", "").lower() == "true":
+        _q["profile__profile_category"] = "federation_entity"
+    elif request.GET.get("entity_type"):
+        _q["profile__profile_category"] = request.GET["entity_type"]
+
+    if request.GET.get("trust_mark_type"):
+        _q["profile__profile_id"] = request.GET["trust_mark_type"]
 
     entries = FederationEntityAssignedProfile.objects.filter(**_q).values_list(
         "descendant__sub", flat=True
@@ -214,45 +218,84 @@ def advanced_entity_listing(request):
 
 @schema(
     methods=['GET', 'POST'],
-    get_request_schema = {
+    get_request_schema={
         "application/x-www-form-urlencoded": TrustMarkRequest
     },
-    get_response_schema = {
-            "400": FedAPIErrorResponse,
-            "404": FedAPIErrorResponse,
-            "200": TrustMarkResponse
+    get_response_schema={
+        "400": FedAPIErrorResponse,
+        "404": FedAPIErrorResponse,
+        "200": TrustMarkResponse
     },
-    tags = ['Federation API']
+    tags=['Federation API']
 )
 @csrf_exempt
 def trust_mark_status(request):
-    failed_data = {"active": False}
-
+    """
+    OpenID Federation 8.4: Trust Mark Status endpoint.
+    Request: trust_mark (JWT) REQUIRED [draft 48], or legacy: sub + trust_mark_id/trust_mark_type/id.
+    Response: 200 application/trust-mark-status-response+jwt (signed JWT), or 404 not_found.
+    """
     sub = request.POST.get("sub") or request.GET.get("sub", None)
-    _id = request.POST.get("trust_mark_id") or request.GET.get("trust_mark_id", None) \
-        or request.POST.get("id") or request.GET.get("id", None)
-    trust_mark = request.POST.get("trust_mark") or request.GET.get("trust_mark", None)
-
-    if request.method not in ['GET', 'POST']:
-        return JsonResponse({"error": "Method not allowed"}, status=400)
-
-    if trust_mark:
-        try:
-            unpad_jwt_head(trust_mark)
-            payload = unpad_jwt_payload(trust_mark)
-            sub = payload["sub"]
-            _id = payload["trust_mark_id"]
-        except Exception:
-            return JsonResponse(failed_data)
-    elif sub and _id:
-        pass
-    else:
-        return JsonResponse(failed_data)
-
-    res = FederationEntityAssignedProfile.objects.filter(
-        descendant__sub=sub, profile__profile_id=_id, descendant__is_active=True
+    _id = (
+        request.POST.get("trust_mark_type") or request.GET.get("trust_mark_type")
+        or request.POST.get("trust_mark_id") or request.GET.get("trust_mark_id")
+        or request.POST.get("id") or request.GET.get("id")
     )
-    if res:
-        return JsonResponse({"active": True})
-    else:
-        return JsonResponse(failed_data)
+    trust_mark_jwt = request.POST.get("trust_mark") or request.GET.get("trust_mark", None)
+
+    if request.method not in ("GET", "POST"):
+        return JsonResponse(
+            {"error": "invalid_request", "error_description": "Method not allowed"},
+            status=400
+        )
+
+    if trust_mark_jwt:
+        try:
+            unpad_jwt_head(trust_mark_jwt)
+            payload = unpad_jwt_payload(trust_mark_jwt)
+            sub = payload.get("sub")
+            _id = get_trust_mark_type_id(payload)
+        except Exception:
+            return JsonResponse(
+                {"error": "invalid_request", "error_description": "Invalid trust_mark JWT"},
+                status=400
+            )
+    elif not (sub and _id):
+        return JsonResponse(
+            {"error": "invalid_request", "error_description": "trust_mark REQUIRED or sub + trust_mark_type/id"},
+            status=400
+        )
+
+    assigned = FederationEntityAssignedProfile.objects.filter(
+        descendant__sub=sub,
+        profile__profile_id=_id,
+        descendant__is_active=True,
+    ).select_related("issuer").first()
+
+    if not assigned:
+        return JsonResponse(
+            {"error": "not_found", "error_description": "Trust Mark not found or not active"},
+            status=404
+        )
+
+    # Draft 48: response is signed JWT with iss, iat, trust_mark, status
+    tm_jwt_for_response = trust_mark_jwt or assigned.trust_mark.get("trust_mark") or assigned.trust_mark_as_jws
+    issuer = assigned.issuer
+    jwk = issuer.jwks_fed[0]
+    status_payload = {
+        "iss": issuer.sub,
+        "iat": iat_now(),
+        "trust_mark": tm_jwt_for_response,
+        "status": "active",
+    }
+    signed = create_jws(
+        status_payload,
+        jwk,
+        alg=issuer.default_signature_alg,
+        protected={"typ": "trust-mark-status-response+jwt", "kid": jwk.get("kid")},
+    )
+    return HttpResponse(
+        signed,
+        content_type="application/trust-mark-status-response+jwt",
+        status=200,
+    )

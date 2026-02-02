@@ -111,9 +111,7 @@ RP_METADATA = {
 TA_SUB = "http://testserver.it/"
 
 FETCH_REQUEST = {
-    "iss": rp_conf["sub"],
     "sub": rp_conf["sub"],
-    "format" :"json",
 }
 
 LIST_REQUEST = {

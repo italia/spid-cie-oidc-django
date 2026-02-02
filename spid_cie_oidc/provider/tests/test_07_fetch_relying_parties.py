@@ -28,8 +28,8 @@ EXP = datetime_from_timestamp(exp_from_now(33))
 NOW = datetime_from_timestamp(iat_now())
 
 def create_entity_config():
-    JWS_RP = create_jws(RP_CONF_AS_JSON, RP_METADATA_JWK1)
-    JWS_TA = create_jws(ta_conf_data_as_json, TA_JWK_PRIVATE)
+    JWS_RP = create_jws(RP_CONF_AS_JSON, RP_METADATA_JWK1, typ="entity-statement+jwt")
+    JWS_TA = create_jws(ta_conf_data_as_json, TA_JWK_PRIVATE, typ="entity-statement+jwt")
     return [JWS_RP, JWS_TA]
 
 def create_tc():
