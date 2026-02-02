@@ -9,7 +9,6 @@ from django.http import (
     Http404,
     HttpResponse,
     JsonResponse,
-    QueryDict
 )
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt

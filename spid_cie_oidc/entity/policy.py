@@ -117,7 +117,7 @@ DO_POLICY = {
 }
 
 
-def combine_claim_policy(superior, child):  # pragma: no cover
+def combine_claim_policy(superior, child):  # noqa: C901  # pragma: no cover
     """
     Combine policy rules.
     Applying the child policy can only make the combined policy more restrictive.
