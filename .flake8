@@ -1,5 +1,27 @@
 [flake8]
-ignore = D203,E121,E124,E126,E203,E231,E261,E251,E701,F403,F405,E402
-exclude = .git,__pycache__,docs/source/conf.py,old,build,dist,*/migrations/*,tests.py,*/tests/*
-max-line-length=148
+# Enforce PEP 8–style layout; stricter subset for CI
+max-line-length = 120
 max-complexity = 25
+
+# Ignore: docstring/formatting preferences and star imports in legacy code
+ignore = D203, E121, E124, E126, E203, E231, E261, E251, F403, F405, E402
+
+# W503: line break before binary operator (PEP 8 allows both styles)
+# W504: line break after binary operator
+extend-ignore = W503, W504
+
+exclude =
+    .git,
+    __pycache__,
+    docs/source/conf.py,
+    old,
+    build,
+    dist,
+    */migrations/*,
+    tests.py,
+    */tests/*
+
+# Per-file: long example JWT strings in OpenAPI examples (paths relative to cwd)
+per-file-ignores =
+    spid_cie_oidc/provider/schemas/authn_requests.py:E501
+    spid_cie_oidc/provider/schemas/token_requests.py:E501

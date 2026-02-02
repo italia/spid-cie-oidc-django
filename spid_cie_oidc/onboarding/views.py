@@ -163,7 +163,7 @@ def onboarding_resolve_statement(request):
             context["resolved_statement"] = json.dumps(resultJson, indent=4)
         except Exception:
             messages.error(request, _('Failed to resolve entity statement, Please check your inserted data'))
-    
+
     return render(request, 'onboarding_resolve_statement.html', context)
 
 

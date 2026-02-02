@@ -37,7 +37,7 @@ def get_pkce(code_challenge_method: str = "S256", code_challenge_length: int = 6
     code_verifier_length = secrets.choice(range(43, 128 + 1))
     alpha = string.ascii_letters + string.digits + "-._~"
     code_verifier = "".join([secrets.choice(alpha) for _ in range(code_verifier_length)])
-    
+
     code_challenge = hashers.get(code_challenge_method)(
         code_verifier.encode("utf-8")
     ).digest()

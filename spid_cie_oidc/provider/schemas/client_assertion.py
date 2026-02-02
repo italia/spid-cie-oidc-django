@@ -1,7 +1,7 @@
 from spid_cie_oidc.entity.utils import iat_now
 
-from pydantic import BaseModel, AnyHttpUrl, constr, validator
-from typing import Literal, Optional, List
+from pydantic import BaseModel, AnyHttpUrl, validator
+from typing import Optional, List
 
 
 class ClientAssertion(BaseModel):
