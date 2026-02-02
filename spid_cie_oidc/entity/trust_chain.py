@@ -2,7 +2,7 @@ import datetime
 import logging
 
 from collections import OrderedDict
-from typing import Union, Optional, List
+from typing import Union, Optional
 
 from spid_cie_oidc.entity.policy import apply_policy
 
@@ -80,7 +80,6 @@ class TrustChainBuilder:
             f"{self.trust_anchor_configuration.sub}"
         )
 
-
         start_path = [self.subject_configuration]
 
         valid_path = self._find_trust_path_recursive(start_path)
@@ -96,7 +95,7 @@ class TrustChainBuilder:
 
             for i in range(len(self.trust_path) - 1, 0, -1):
                 superior_ec = self.trust_path[i]
-                subordinate_ec = self.trust_path[i-1]
+                subordinate_ec = self.trust_path[i - 1]
 
                 statement = superior_ec.verified_descendant_statements.get(subordinate_ec.sub, {})
                 policy = statement.get("metadata_policy", {})
