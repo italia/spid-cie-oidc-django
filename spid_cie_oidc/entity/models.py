@@ -3,7 +3,6 @@ import logging
 from typing import Union
 import uuid
 
-from cryptojwt.jwk.jwk import key_from_jwk_dict
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils import timezone
@@ -13,7 +12,6 @@ from spid_cie_oidc.entity.jwks import (
     create_jwk,
     private_pem_from_jwk,
     public_pem_from_jwk,
-    serialize_rsa_key
 )
 from spid_cie_oidc.entity.jwtse import create_jws
 from spid_cie_oidc.entity.settings import (
@@ -175,10 +173,14 @@ class FederationEntityConfiguration(TimeStampedModel):
 
     @property
     def public_jwks(self):
+        """
+        Export public JWKs from private jwks_fed.
+        Uses public_jwk_from_private_jwk to avoid SerializationNotPossible
+        when serialize_rsa_key+RSAKey.thumbprint() fails with cryptojwt.
+        """
         res = []
         for i in self.jwks_fed:
-            skey = serialize_rsa_key(key_from_jwk_dict(i).public_key())
-            skey["kid"] = i["kid"]
+            skey = public_jwk_from_private_jwk(i)
             res.append(skey)
         return res
 
