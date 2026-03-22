@@ -40,12 +40,12 @@ class SchemaTest(TestCase):
         TrustMarkRequest(**TRUST_MARK_REQUEST_TRUST_MARK_NO_SUB)
 
     def test_trust_mark_request_no_id_no_tust_mark(self):
-        with self.assertRaises(ValueError):
-            TrustMarkRequest(**TRUST_MARK_REQUEST_TRUST_MARK_NO_ID_NO_TRUST_MARK)
-        
+        # Schema allows optional fields; view returns 400 if neither (sub+id) nor trust_mark provided
+        TrustMarkRequest(**TRUST_MARK_REQUEST_TRUST_MARK_NO_ID_NO_TRUST_MARK)
+
     def test_trust_mark_request_no_sub_no_tust_mark(self):
-        with self.assertRaises(ValueError):
-            TrustMarkRequest(**TRUST_MARK_REQUEST_TRUST_MARK_NO_SUB_NO_TRUST_MARK)
+        # Schema allows optional fields; view returns 400 if neither (sub+id) nor trust_mark provided
+        TrustMarkRequest(**TRUST_MARK_REQUEST_TRUST_MARK_NO_SUB_NO_TRUST_MARK)
 
     def test_advanced_list_request(self):
         AdvancedEntityListRequest(**ADVANCED_LIST_REQUEST)

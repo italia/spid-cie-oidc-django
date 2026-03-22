@@ -22,7 +22,7 @@ from spid_cie_oidc.entity.jwks import (
     private_pem_from_jwk,
     public_pem_from_jwk,
     new_rsa_key,
-    serialize_rsa_key,
+    serialize_key,
     private_jwk_from_pem,
     public_jwk_from_pem
 )
@@ -87,8 +87,8 @@ def onboarding_entities(request):
 
 def onboarding_create_jwk(request):
     _rsa_key = new_rsa_key()
-    private_jwk = serialize_rsa_key(_rsa_key.priv_key, 'private')
-    public_jwk = serialize_rsa_key(_rsa_key.pub_key)
+    private_jwk = serialize_key(_rsa_key.priv_key, 'private')
+    public_jwk = serialize_key(_rsa_key.pub_key)
     context = {
         "private_jwk": json.dumps(private_jwk, indent=4),
         "public_jwk": json.dumps(public_jwk, indent=4)
@@ -177,9 +177,22 @@ def onboarding_validating_trustmark(request):
 
     if form.is_valid():
         res = trust_mark_status(request)
-        content = json.loads(res.content.decode())
+        body = res.content.decode()
         context = {'form': form}
-        if content['active']:
+        ct = res.get("Content-Type", "")
+        if res.status_code == 200 and ct.startswith("application/trust-mark-status-response+jwt"):
+            # Draft 48: response is a signed JWT with status claim
+            from spid_cie_oidc.entity.jwtse import unpad_jwt_payload
+            content = unpad_jwt_payload(body)
+            active = content.get("status") == "active"
+        else:
+            # Error response (e.g. 404) or legacy JSON body
+            try:
+                content = json.loads(body)
+                active = content.get("active", False)
+            except (json.JSONDecodeError, TypeError):
+                active = False
+        if active:
             messages.success(request, _('Validation Trust Mark Successfully'))
         else:
             messages.error(request, _('Validation Trust Mark Failed'))

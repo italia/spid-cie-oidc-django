@@ -200,6 +200,8 @@ _OIDCFED_ATTRNAME_I18N_CIE = {
     "phone_number_verified": _("Verified phone"),
     "address": _("Address"),
     "place_of_birth": _("Place of birth"),
+    # "document_details":  ,
+    # "e_delivery_service":  ,
     "physical_phone_number": _("Phone number"),
 }
 OIDCFED_ATTRNAME_I18N = {**_OIDCFED_ATTRNAME_I18N_SPID, **_OIDCFED_ATTRNAME_I18N_CIE}

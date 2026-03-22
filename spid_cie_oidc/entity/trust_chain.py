@@ -273,7 +273,6 @@ class TrustChainBuilder:
             if self.required_trust_marks:
                 sc = self.subject_configuration
                 sc.filter_by_allowed_trust_marks = self.required_trust_marks
-
                 # TODO: create a proxy function that gets tm issuers ec from
                 # a previously populated cache
                 # sc.trust_mark_issuers_entity_confs = [

@@ -14,13 +14,13 @@ from spid_cie_oidc.entity.jwtse import create_jws
 from spid_cie_oidc.entity.models import FederationEntityConfiguration
 from spid_cie_oidc.entity.tests.settings import ta_conf_data
 
-JWS = create_jws(RP_CONF_AS_JSON, RP_METADATA_JWK1)
+JWS = create_jws(RP_CONF_AS_JSON, RP_METADATA_JWK1, typ="entity-statement+jwt")
 RP_CONF_AS_JSON_NO_HINTS = deepcopy(RP_CONF_AS_JSON)
 RP_CONF_AS_JSON_NO_HINTS.pop("authority_hints")
-JWS_NO_HINTS = create_jws(RP_CONF_AS_JSON_NO_HINTS, RP_METADATA_JWK1)
+JWS_NO_HINTS = create_jws(RP_CONF_AS_JSON_NO_HINTS, RP_METADATA_JWK1, typ="entity-statement+jwt")
 RP_CONF_AS_JSON_WRONG_HINTS = deepcopy(RP_CONF_AS_JSON)
 RP_CONF_AS_JSON_WRONG_HINTS["authority_hints"] = ["http://wrong.url.it"]
-JWS_WRONG_HINTS = create_jws(RP_CONF_AS_JSON_WRONG_HINTS, RP_METADATA_JWK1)
+JWS_WRONG_HINTS = create_jws(RP_CONF_AS_JSON_WRONG_HINTS, RP_METADATA_JWK1, typ="entity-statement+jwt")
 
 class ValidatorTest(TestCase):
 
