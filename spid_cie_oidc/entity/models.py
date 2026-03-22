@@ -9,6 +9,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from spid_cie_oidc.entity.abstract_models import TimeStampedModel
+from cryptojwt.jwk.jwk import key_from_jwk_dict
 from spid_cie_oidc.entity.jwks import (
     create_jwk,
     private_pem_from_jwk,
