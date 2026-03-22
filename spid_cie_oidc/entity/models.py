@@ -245,12 +245,12 @@ class FederationEntityConfiguration(TimeStampedModel):
             logger.error(_msg)
 
         if hasattr(settings, "X509_COMMON_NAME"):
-            conf['jwks'] = update_jwks_with_x5c(
-                jwks = self.public_jwks,
+            conf['jwks'] = {"keys": update_jwks_with_x5c(
+                jwks=self.public_jwks,
                 private_key=key_from_jwk_dict(self.jwks_fed[0]).private_key(),
-                subject = self.sub,
-                is_ca_or_int = True
-            )
+                subject=self.sub,
+                is_ca_or_int=True
+            )}
 
         return conf
 
