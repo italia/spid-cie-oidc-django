@@ -1,6 +1,7 @@
 from django.test import Client
 from django.urls import reverse
 
+from spid_cie_oidc.authority.models import FederationDescendant
 from spid_cie_oidc.entity.models import FederationEntityConfiguration
 from spid_cie_oidc.entity.jwtse import unpad_jwt_payload, create_jws
 from spid_cie_oidc.entity.exceptions import HttpError
@@ -106,14 +107,10 @@ class EntityResponseWithIntermediate(EntityResponse):
             sa = FederationEntityConfiguration.objects.get(sub=intermediary_conf["sub"])
             self.result = DummyContent(sa.entity_configuration_as_jws)
         elif self.req_counter == 3:
-            url = reverse("oidcfed_fetch")
-            self.result = self.client.get(
-                url,
-                data={
-                    "sub": rp_onboarding_data["sub"],
-                    "iss": intermediary_conf["sub"],
-                },
-            )
+            # Subordinate statement: intermediate -> RP (not TA -> RP)
+            rp_desc = FederationDescendant.objects.get(sub=rp_onboarding_data["sub"])
+            stmt_jws = rp_desc.entity_statement_as_jws(intermediary_conf["sub"])
+            self.result = DummyContent(stmt_jws)
         elif self.req_counter == 4:
             url = reverse("oidcfed_fetch")
             self.result = self.client.get(url, data={"sub": intermediary_conf["sub"]})
@@ -126,7 +123,7 @@ class EntityResponseWithIntermediate(EntityResponse):
             )
 
         if self.result.status_code != 200:
-            raise HttpError(f"Something went wrong with Http Request: {res.__dict__}")
+            raise HttpError(f"Something went wrong with Http Request: {self.result.__dict__}")
 
         logger.info("-------------------------------------------------")
         logger.info("")
@@ -144,29 +141,23 @@ class EntityResponseWithIntermediateManyHints(EntityResponse):
             sa = FederationEntityConfiguration.objects.get(sub=intermediary_conf["sub"])
             self.result = DummyContent(sa.entity_configuration_as_jws)
         elif self.req_counter == 3:
+            # Second authority hint (that-faulty): invalid response
             self.result = DummyContent("crap")
-
         elif self.req_counter == 4:
-            url = reverse("oidcfed_fetch")
-            self.result = self.client.get(
-                url,
-                data={
-                    "sub": rp_onboarding_data["sub"],
-                    "iss": intermediary_conf["sub"],
-                },
-            )
+            # Subordinate statement: intermediate -> RP
+            rp_desc = FederationDescendant.objects.get(sub=rp_onboarding_data["sub"])
+            stmt_jws = rp_desc.entity_statement_as_jws(intermediary_conf["sub"])
+            self.result = DummyContent(stmt_jws)
         elif self.req_counter == 5:
+            # TA -> intermediate subordinate statement
             url = reverse("oidcfed_fetch")
             self.result = self.client.get(url, data={"sub": intermediary_conf["sub"]})
-        elif self.req_counter == 6:
-            url = reverse("entity_configuration")
-            self.result = self.client.get(url, data={"sub": ta_conf_data["sub"]})
-        elif self.req_counter > 6:
+        elif self.req_counter > 5:
             raise NotImplementedError(
                 "The mocked resposes seems to be not aligned with the correct flow"
             )
         if self.result.status_code != 200:
-            raise HttpError(f"Something went wrong with Http Request: {res.__dict__}")
+            raise HttpError(f"Something went wrong with Http Request: {self.result.__dict__}")
 
         try:
             return self.result_as_jws()
