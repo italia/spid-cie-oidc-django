@@ -63,7 +63,7 @@ jobs:
           radon cc ./spid_cie_oidc -a -nb --total-average --min D
 
       - name: pip-audit (dependency vulnerabilities)
-        run: pip-audit --strict
+        run: pip-audit --strict --skip-editable
 
       - name: Bandit (security scan)
         run: bandit -r -x tests/ spid_cie_oidc/ -ll
