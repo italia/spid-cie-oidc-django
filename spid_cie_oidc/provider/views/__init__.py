@@ -9,6 +9,7 @@ from django.utils import timezone
 import urllib
 from spid_cie_oidc.entity.jwtse import create_jws, unpad_jwt_head, unpad_jwt_payload, verify_jws
 from spid_cie_oidc.entity.models import FederationEntityConfiguration, TrustChain
+from spid_cie_oidc.entity.network_utils import is_fetchable_federation_url
 from spid_cie_oidc.entity.settings import HTTPC_PARAMS
 from spid_cie_oidc.entity.trust_chain_operations import get_or_create_trust_chain
 from spid_cie_oidc.entity.utils import datetime_from_timestamp, exp_from_now, iat_now
@@ -85,6 +86,29 @@ class OpBase:
             raise Exception(_msg)
 
         elif not rp_trust_chain or rp_trust_chain.is_expired:
+            # A trust chain may be (re)built on the fly ONLY for a subject we
+            # already know inside our federation. `self.payload["iss"]` here
+            # comes from a request object whose signature has NOT been verified
+            # yet (its verifying key is only obtained through the trust chain
+            # below), so rebuilding a chain for an arbitrary iss would let any
+            # unauthenticated caller coerce this server into issuing outbound
+            # requests to a URL of their choosing - SSRF / request laundering.
+            # New relying parties are onboarded and fetched out of band, not
+            # discovered from an incoming authorization request.
+            known_subject = TrustChain.objects.filter(
+                sub=self.payload["iss"],
+                trust_anchor__sub__in=settings.OIDCFED_TRUST_ANCHORS,
+            ).exists()
+            if not known_subject or not is_fetchable_federation_url(self.payload["iss"]):
+                _msg = (
+                    "Refusing on-the-fly trust chain discovery for unknown or "
+                    f"unsafe subject {self.payload['iss']}. "
+                    "error=unauthorized_client, "
+                    f"state={state}"
+                )
+                logger.warning(_msg)
+                raise Exception(_msg)
+
             rp_trust_chain = None
             # TODO: get async here
             for ta in settings.OIDCFED_TRUST_ANCHORS:
