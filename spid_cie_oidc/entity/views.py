@@ -1,4 +1,5 @@
 import logging
+from urllib.parse import urlparse, urlunparse
 
 from django.conf import settings
 from djagger.decorators import schema
@@ -25,15 +26,31 @@ from .utils import iat_now
 logger = logging.getLogger(__name__)
 
 
-def get_subs_from_wellknown(request, wkuri :str):
-    sub = request.build_absolute_uri().split(wkuri)[0]
+def _sub_variants_from_well_known_prefix(raw_prefix: str) -> list:
+    """
+    Distinct ``sub`` values that may be stored for this issuer URL prefix
+    (the part of the request URL before ``.well-known/...``).
 
-    sub_values = []
-    if sub[-1] == "/":
-        sub_values.extend((sub, sub[:-1]))
-    elif sub[-1] != "/":
-        sub_values.extend((sub, sub + "/"))
-    return sub_values
+    Federation ``sub`` strings are often normalized with or without a
+    trailing slash; the request-derived prefix must never be normalized with
+    naive ``rstrip('/')`` on the full string (that breaks ``http://``).
+    """
+    pu = urlparse(raw_prefix)
+    path = pu.path.rstrip("/")
+    canonical = urlunparse((pu.scheme, pu.netloc, path, "", "", ""))
+    out = []
+    for candidate in (raw_prefix, canonical, f"{canonical}/"):
+        if candidate and candidate not in out:
+            out.append(candidate)
+    return out
+
+
+def get_subs_from_wellknown(request, wkuri: str) -> list:
+    full = request.build_absolute_uri()
+    if wkuri not in full:
+        return [full]
+    raw_prefix = full.split(wkuri, 1)[0]
+    return _sub_variants_from_well_known_prefix(raw_prefix)
 
 
 def entity_configuration(request):
