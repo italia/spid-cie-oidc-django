@@ -48,7 +48,7 @@ def _sub_variants_from_well_known_prefix(raw_prefix: str) -> list:
 def get_subs_from_wellknown(request, wkuri: str) -> list:
     full = request.build_absolute_uri()
     if wkuri not in full:
-        return [full]
+        return _sub_variants_from_well_known_prefix(full)
     raw_prefix = full.split(wkuri, 1)[0]
     return _sub_variants_from_well_known_prefix(raw_prefix)
 
