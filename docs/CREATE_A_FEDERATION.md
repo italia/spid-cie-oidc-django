@@ -56,6 +56,7 @@ FA_METADATA = {
         "contacts": ["ops@localhost"],
         "federation_fetch_endpoint": f"{TA_SUB}/fetch",
         "homepage_uri": f"{TA_SUB}",
+        "organization_uri": f"{TA_SUB}",
         "name": "example TA",
     }
 }

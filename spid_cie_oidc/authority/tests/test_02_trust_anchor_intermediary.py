@@ -51,6 +51,25 @@ class TrustChainTest(TestCase):
         
         self.assertEqual(data['source_endpoint'], 'http://testserver//fetch')
         self.assertTrue(data["jwks"])
+        self.assertEqual(data["constraints"], FA_CONSTRAINTS)
+
+    def test_fetch_statement_uses_descendant_constraints(self):
+        own = {
+            "max_path_length": 4,
+            "naming_constraints": {"permitted": ["https://.example.it"]},
+        }
+        self.rp.constraints = own
+        self.rp.save()
+
+        url = reverse("oidcfed_fetch")
+        c = Client()
+        res = c.get(url, data={"sub": self.rp.sub})
+        data = verify_jws(res.content.decode(), self.ta_conf.jwks_fed[0])
+        self.assertEqual(data["constraints"], own)
+        self.assertEqual(
+            self.ta_conf.entity_configuration_as_dict["constraints"],
+            FA_CONSTRAINTS,
+        )
 
     def test_list_endpoint(self):
         url = reverse("oidcfed_list")
