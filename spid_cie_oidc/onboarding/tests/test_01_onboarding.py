@@ -40,14 +40,16 @@ class OnboardingTest(TestCase):
         res = client.get(url, self.data)
         self.assertEqual(res.status_code, 200)
         res = client.post(url, self.data)
+        form = res.context["form"]
         self.assertFormError(
-            res, "form", "organization_name", "Enter your organization name"
+            form, "organization_name", "Enter your organization name"
         )
-        self.assertFormError(res, "form", "url_entity", 
+        self.assertFormError(
+            form, "url_entity",
             "Enter the entity unique identifier (HTTP URL)"
         )
         self.assertFormError(
-            res, "form", "public_jwks", 
+            form, "public_jwks",
             "Enter the public JWKs published in your Entity Configuration, as double check."
         )
         self.assertEqual(res.status_code, 200)
