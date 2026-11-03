@@ -73,7 +73,8 @@ class AuthzRequestView(OpBase, View):
 
     def validate_authz(self, payload: dict):
 
-        must_list = ("scope", "acr_values")
+        # ui_locales is a space-separated string in the request object (OIDC Core).
+        must_list = ("scope", "acr_values", "ui_locales")
         payload = self.string_to_list(payload, must_list)
         if (
             'offline_access' in payload['scope'] and
