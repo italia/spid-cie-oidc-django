@@ -211,6 +211,16 @@ class FederationDescendant(TimeStampedModel):
         if ta.fetch_endpoint:
             data["source_endpoint"] = ta.fetch_endpoint
 
+        # Final spec places constraints on the subordinate statement.
+        # The Italian profile at draft 22 also publishes them on the
+        # entity configuration; that publication is left in place.
+        # A non-empty descendant value overrides the issuer's constraints.
+        constraints = self.constraints or None
+        if not constraints and ta.constraints:
+            constraints = ta.constraints
+        if constraints:
+            data["constraints"] = deepcopy(constraints)
+
         if aud:
             data["aud"] = [aud] if isinstance(aud, str) else aud
 
