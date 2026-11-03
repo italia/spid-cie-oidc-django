@@ -1,5 +1,5 @@
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from spid_cie_oidc.provider.models import OidcSession
 from spid_cie_oidc.provider.views.__init__ import OpBase
 
@@ -34,3 +34,68 @@ class InitTest(TestCase):
             commons= {}
         )
         self.assertEqual(result["sub"], "sub")
+
+    def test_scope_releases_profile_and_email_claims(self):
+        view = OpBase()
+        attributes = {
+            "username": "ada",
+            "given_name": "Ada",
+            "family_name": "Lovelace",
+            "birthdate": "1815-12-10",
+            "fiscal_number": "TINIT-ADA",
+            "email": "ada@example.it",
+            "email_verified": True,
+        }
+        authz_request = {"scope": "openid profile email"}
+        released = view.claims_released_by_scope(authz_request, attributes)
+        self.assertEqual(released["given_name"], "Ada")
+        self.assertEqual(released["family_name"], "Lovelace")
+        self.assertEqual(released["birthdate"], "1815-12-10")
+        self.assertEqual(released["username"], "ada")
+        self.assertEqual(
+            released["https://attributes.eid.gov.it/fiscal_number"],
+            "TINIT-ADA",
+        )
+        self.assertEqual(released["email"], "ada@example.it")
+        self.assertIs(released["email_verified"], True)
+
+        as_list = view.claims_released_by_scope(
+            {"scope": ["openid", "profile"]},
+            attributes,
+        )
+        self.assertEqual(as_list["given_name"], "Ada")
+        self.assertNotIn("email", as_list)
+
+    @override_settings(OIDCFED_DEFAULT_PROVIDER_PROFILE="cie")
+    def test_cie_id_token_includes_profile_scope(self):
+        view = OpBase()
+
+        class Authz:
+            authz_request = {"scope": "openid profile email", "nonce": "n"}
+            user = type("User", (), {})()
+
+        Authz.user.attributes = {
+            "given_name": "Ada",
+            "family_name": "Lovelace",
+            "birthdate": "1815-12-10",
+            "username": "ada",
+            "fiscal_number": "TINIT-ADA",
+            "email": "ada@example.it",
+            "email_verified": False,
+        }
+        claims = view.get_id_token_claims(Authz())
+        self.assertEqual(claims["given_name"], "Ada")
+        self.assertEqual(claims["family_name"], "Lovelace")
+        self.assertEqual(claims["birthdate"], "1815-12-10")
+        self.assertEqual(claims["email"], "ada@example.it")
+        self.assertIs(claims["email_verified"], False)
+        self.assertNotIn("username", claims)
+
+    def test_spid_id_token_does_not_take_scope_attributes(self):
+        view = OpBase()
+
+        class Authz:
+            authz_request = {"scope": "openid profile"}
+            user = type("User", (), {"attributes": {"given_name": "Ada"}})()
+
+        self.assertEqual(view.get_id_token_claims(Authz()), {})

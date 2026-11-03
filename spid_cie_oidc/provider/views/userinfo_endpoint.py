@@ -84,8 +84,13 @@ class UserInfoEndpoint(OpBase, View):
                 "claims", {}
             ).get("userinfo", {}).keys()
         ):
-            if claim in token.session.user.attributes:
-                jwt[claim] = token.session.user.attributes[claim]
+            value = self._claim_value(token.session.user.attributes, claim)
+            if value is not None:
+                jwt[claim] = value
+        jwt.update(self.claims_released_by_scope(
+            token.session.authz_request,
+            token.session.user.attributes,
+        ))
 
         # sign the data
         key = get_key(issuer.jwks_core, KeyUsage.signature)
