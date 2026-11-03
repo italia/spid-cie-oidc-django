@@ -28,10 +28,12 @@ from spid_cie_oidc.provider.schemas.client_assertion import ClientAssertion
 from spid_cie_oidc.provider.settings import (
     OIDCFED_ATTRNAME_I18N,
     OIDCFED_DEFAULT_PROVIDER_PROFILE,
+    OIDCFED_PROVIDER_ATTRIBUTES_MAP,
     OIDCFED_PROVIDER_AUTH_CODE_MAX_AGE,
     OIDCFED_PROVIDER_PROFILES,
     OIDCFED_PROVIDER_PROFILES_ACR_4_REFRESH,
-    OIDCFED_PROVIDER_PROFILES_ID_TOKEN_CLAIMS
+    OIDCFED_PROVIDER_PROFILES_ID_TOKEN_CLAIMS,
+    OIDC_SCOPES_CLAIMS_MAP,
 )
 
 logger = logging.getLogger(__name__)
@@ -307,6 +309,11 @@ class OpBase:
         ):
             if claim in allowed_id_token_claims and authz.user.attributes.get(claim, None):
                 claims[claim] = authz.user.attributes[claim]
+        claims.update(self.claims_released_by_scope(
+            authz.authz_request,
+            authz.user.attributes,
+            allowed=allowed_id_token_claims,
+        ))
         return claims
 
     def get_id_token(
@@ -410,6 +417,11 @@ class OpBase:
                 if claim in user_claims:
                     filtered_user_claims[claim] = user_claims[claim]
 
+        filtered_user_claims.update(self.claims_released_by_scope(
+            session.authz_request,
+            user_claims,
+        ))
+
         # mapping with human names
         i18n_user_claims = [
             OIDCFED_ATTRNAME_I18N.get(i, i)
@@ -419,6 +431,47 @@ class OpBase:
             i18n_user_claims=i18n_user_claims,
             filtered_user_claims=filtered_user_claims
         )
+
+    def _authz_scopes(self, authz_request):
+        scope = (authz_request or {}).get("scope", "")
+        if isinstance(scope, str):
+            return [item for item in scope.split() if item]
+        if isinstance(scope, (list, tuple)):
+            return [item for item in scope if isinstance(item, str) and item]
+        return []
+
+    def _claim_value(self, attributes, claim):
+        if not isinstance(attributes, dict):
+            return None
+        if claim in attributes and attributes[claim] is not None:
+            return attributes[claim]
+        for source in OIDCFED_PROVIDER_ATTRIBUTES_MAP.get(claim) or ():
+            if not isinstance(source, str) or source not in attributes:
+                continue
+            value = attributes[source]
+            if value is None:
+                continue
+            if claim.endswith("_verified") and not isinstance(value, bool):
+                continue
+            return value
+        return None
+
+    def claims_released_by_scope(self, authz_request, attributes, allowed=None):
+        """
+        Claims implied by scope (profile, email) for UserInfo and the ID token.
+
+        Italian SPID/CIE rules put scope-requested attributes in both.
+        The ID token still keeps only claims allowed for the provider profile.
+        """
+        released = {}
+        for scope in self._authz_scopes(authz_request):
+            for claim in OIDC_SCOPES_CLAIMS_MAP.get(scope, []):
+                if allowed is not None and claim not in allowed:
+                    continue
+                value = self._claim_value(attributes, claim)
+                if value is not None:
+                    released[claim] = value
+        return released
 
     def get_client_organization_name(self, tc):
         rp_metadata = (
