@@ -1,9 +1,15 @@
 autoflake
 autopep8
 bandit
-black
+black>=26.10.1
 coverage
 flake8
 isort
 pip-audit
 radon
+# Security: pin transitive dev deps to fix known CVEs (pip-audit).
+filelock>=4.2.1
+GitPython>=3.2.1
+msgpack>=1.2.3
+Pygments>=2.20.0
+zipp>=3.19.1

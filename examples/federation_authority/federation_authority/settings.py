@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 from pathlib import Path
 from .settingslocal import *  # noqa: F401
 
+# Bare `manage.py test` discovers under cwd. Tests live in the installed package.
+TEST_RUNNER = "federation_authority.test_runner.SpidCieOidcDiscoverRunner"
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 

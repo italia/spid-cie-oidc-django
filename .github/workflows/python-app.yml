@@ -22,7 +22,7 @@ jobs:
       fail-fast: false
       matrix:
         # 3.14 excluded until Django officially supports it (template context copy issue)
-        python-version: ["3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.11", "3.12", "3.13"]
 
     steps:
       - name: Checkout

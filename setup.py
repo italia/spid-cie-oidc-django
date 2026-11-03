@@ -10,20 +10,23 @@ SRC_FOLDER = '.'
 PKG_NAME = 'spid_cie_oidc'
 
 INSTALL_REQUIRES = [
-    "Django>=4.0,<5.0",
+    "Django>=5.2.17,<6.0",
     "cryptojwt>=1.8.2",
-    "pydantic>=1.8.2,<2.0",
+    "pydantic>=1.10.13,<2.0",
     "pytz>=2021.3",
-    "aiohttp>=3.9,<4",
-    "requests>=2.32.0,<3.0",
+    "aiohttp>=3.14.4,<4",
+    "requests>=2.33.0,<3.0",
     "pydantic[email]",
     "djagger",
     # Security: pin transitive deps to fix known CVEs (pip-audit)
-    "certifi>=2024.7.4",
-    "idna>=3.7",
-    "sqlparse>=0.4.4",
-    "urllib3>=2.2.0",
-    "setuptools>=78.1.1",
+    "certifi>=2026.10.18",
+    "cryptography>=49.0.0",
+    "djangorestframework>=3.18.2",
+    "dnspython>=2.9.0",
+    "idna>=3.15",
+    "sqlparse>=0.6.0",
+    "urllib3>=2.8.0",
+    "setuptools>=84.1.0",
 ]
 
 with open(os.path.join(os.path.dirname(__file__), 'README.md'), encoding='utf-8') as readme:
@@ -65,11 +68,11 @@ setup(
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         LICENSE,
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "Topic :: Software Development :: Libraries :: Python Modules"],
+    python_requires=">=3.11",
     install_requires=INSTALL_REQUIRES,
     zip_safe=False,
 )
