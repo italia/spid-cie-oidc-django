@@ -34,3 +34,70 @@ class InitTest(TestCase):
             commons= {}
         )
         self.assertEqual(result["sub"], "sub")
+
+    def test_client_organization_name_fallback_order(self):
+        class TrustChain:
+            def __init__(self, metadata):
+                self.metadata = metadata
+
+        view = OpBase()
+        view.payload = {"client_id": "https://rp.example/oidc"}
+        full = {
+            "federation_entity": {
+                "federation_fetch_endpoint": "https://rp.example/fetch",
+                "organization_name": "Federation Org",
+            },
+            "openid_relying_party": {
+                "organization_name": "RP Org",
+                "client_name": "RP Client",
+                "client_id": "https://rp.example/oidc",
+            },
+        }
+        self.assertEqual(
+            view.get_client_organization_name(TrustChain(full)),
+            "Federation Org",
+        )
+
+        no_federation_name = {
+            "federation_entity": {
+                "federation_fetch_endpoint": "https://rp.example/fetch",
+            },
+            "openid_relying_party": {
+                "organization_name": "RP Org",
+                "client_name": "RP Client",
+                "client_id": "https://rp.example/oidc",
+            },
+        }
+        self.assertEqual(
+            view.get_client_organization_name(TrustChain(no_federation_name)),
+            "RP Org",
+        )
+
+        client_name_only = {
+            "federation_entity": {
+                "federation_fetch_endpoint": "https://rp.example/fetch",
+            },
+            "openid_relying_party": {
+                "client_name": "RP Client",
+                "client_id": "https://rp.example/oidc",
+            },
+        }
+        self.assertEqual(
+            view.get_client_organization_name(TrustChain(client_name_only)),
+            "RP Client",
+        )
+
+        client_id_only = {
+            "federation_entity": {"contacts": ["ops@rp.example"]},
+            "openid_relying_party": {"client_id": "https://rp.example/oidc"},
+        }
+        self.assertEqual(
+            view.get_client_organization_name(TrustChain(client_id_only)),
+            "https://rp.example/oidc",
+        )
+
+        self.assertEqual(
+            view.get_client_organization_name(TrustChain({})),
+            "https://rp.example/oidc",
+        )
+        self.assertEqual(view.get_client_organization_name(None), "https://rp.example/oidc")
