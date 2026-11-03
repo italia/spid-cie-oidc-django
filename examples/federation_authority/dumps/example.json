@@ -1979,7 +1979,7 @@
       "iss": "$.issuer_sub",
       "sub": "$.sub",
       "iat": 1579621160,
-      "id": "https://www.spid.gov.it/certification/rp",
+      "id": "https://www.spid.gov.it/openid-federation/agreement/sp-public",
       "mark": "https://www.agid.gov.it/themes/custom/agid/logo.svg",
       "ref": "https://docs.italia.it/italia/spid/spid-regole-tecniche-oidc/it/stabile/index.html"
     }
@@ -1998,7 +1998,7 @@
       "iss": "$.issuer_sub",
       "sub": "$.sub",
       "iat": 1579621160,
-      "id": "https://www.spid.gov.it/certification/rp/private",
+      "id": "https://www.spid.gov.it/openid-federation/agreement/sp-private",
       "logo_uri": "https://www.agid.gov.it/themes/custom/agid/logo.svg",
       "ref": "https://docs.italia.it/italia/spid/spid-regole-tecniche-oidc/it/stabile/index.html"
     }
@@ -2017,7 +2017,7 @@
       "iss": "$.issuer_sub",
       "sub": "$.sub",
       "iat": 1579621160,
-      "id": "https://www.spid.gov.it/certification/op",
+      "id": "https://www.spid.gov.it/openid-federation/agreement/op-public",
       "mark": "https://www.agid.gov.it/themes/custom/agid/logo.svg",
       "ref": "https://docs.italia.it/italia/spid/spid-regole-tecniche-oidc/it/stabile/index.html"
     }
