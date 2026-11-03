@@ -143,3 +143,20 @@ class RefreshTokenTest(TestCase):
         )
         res = client.post(url, request)
         self.assertTrue(res.status_code == 400)
+
+    def test_token_endpoint_rejects_replayed_client_assertion(self):
+        client = Client()
+        url = reverse("oidc_provider_token_endpoint")
+        request = dict(
+            client_id=RP_CLIENT_ID,
+            client_assertion=self.ca_jws,
+            client_assertion_type="urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+            grant_type="authorization_code",
+            code="code",
+            code_verifier=PKCE["code_verifier"]
+        )
+        res = client.post(url, request)
+        self.assertTrue(res.status_code == 200)
+        res = client.post(url, request)
+        self.assertTrue(res.status_code == 403)
+        self.assertEqual(res.json().get("error"), "unauthorized_client")

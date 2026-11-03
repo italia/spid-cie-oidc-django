@@ -110,6 +110,19 @@ class RefreshTokenTest(TestCase):
         )
         self.assertEqual(refresh_token["iss"], self.op_local_conf["sub"])
 
+    def client_assertion(self, jti):
+        return create_jws(
+            {
+                "iss": RP_SUB,
+                "sub": RP_SUB,
+                "aud": self.jwt_auds,
+                "exp": exp_from_now(),
+                "iat": iat_now(),
+                "jti": jti,
+            },
+            RP_METADATA_JWK1,
+        )
+
     @override_settings(OIDCFED_PROVIDER_PROFILE="spid")
     def test_grant_refresh_token_spid(self):
         client = Client()
@@ -158,7 +171,7 @@ class RefreshTokenTest(TestCase):
             self.assertTrue(res.status_code == 200)
             request = dict(
                 client_id=RP_CLIENT_ID,
-                client_assertion=self.ca_jws,
+                client_assertion=self.client_assertion("jti-2"),
                 client_assertion_type="urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
                 refresh_token=res.json()["refresh_token"],
                 grant_type="refresh_token"
@@ -181,7 +194,7 @@ class RefreshTokenTest(TestCase):
         self.assertTrue(res.status_code == 200)
         request = dict(
             client_id=RP_CLIENT_ID,
-            client_assertion=self.ca_jws,
+            client_assertion=self.client_assertion("jti-2"),
             client_assertion_type="urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
             refresh_token=res.json()["refresh_token"],
             grant_type="refresh_token"
