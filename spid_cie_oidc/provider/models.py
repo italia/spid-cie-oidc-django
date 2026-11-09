@@ -105,3 +105,24 @@ class IssuedToken(TimeStampedModel):
 
     def __str__(self):
         return "{} @ {}".format(self.session.user_uid, self.session.client_id)
+
+
+class ClientAssertionJti(TimeStampedModel):
+    """
+    A private_key_jwt jti already accepted by this provider.
+    A second presentation of the same jti is a replay.
+    """
+
+    jti = models.CharField(max_length=255, unique=True)
+    client_id = models.URLField()
+    expires = models.DateTimeField()
+
+    class Meta:
+        verbose_name = "Client Assertion jti"
+        verbose_name_plural = "Client Assertion jti"
+        indexes = [
+            models.Index(fields=["expires"]),
+        ]
+
+    def __str__(self):
+        return f"{self.client_id} {self.jti}"

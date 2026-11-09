@@ -5,5 +5,6 @@ FA_METADATA = {
     "federation_trust_mark_status_endpoint": "https://registry.spid.agid.gov.it/oidc/status/",
     "federation_resolve_endpoint": "https://registry.spid.agid.gov.it/oidc/resolve/",
     "homepage_uri": "https://spid.agid.gov.it/",
+    "organization_uri": "https://spid.agid.gov.it/",
     "organization_name": "Tal dei tali"
 }

@@ -1,3 +1,4 @@
+from copy import deepcopy
 import json
 import logging
 from typing import Union
@@ -34,6 +35,27 @@ from .jwk_x5c import update_jwks_with_x5c
 from .jwks import public_jwk_from_private_jwk
 
 logger = logging.getLogger(__name__)
+
+
+def _with_organization_uri(metadata):
+    """
+    Publish organization_uri (OpenID Federation 1.0) beside homepage_uri
+    (Italian profile at draft 22). If only one is set, fill the other with
+    the same value. Never drop homepage_uri.
+    """
+    if not isinstance(metadata, dict):
+        return metadata
+    published = deepcopy(metadata)
+    federation_entity = published.get("federation_entity")
+    if not isinstance(federation_entity, dict):
+        return published
+    homepage_uri = federation_entity.get("homepage_uri")
+    organization_uri = federation_entity.get("organization_uri")
+    if homepage_uri and not organization_uri:
+        federation_entity["organization_uri"] = homepage_uri
+    elif organization_uri and not homepage_uri:
+        federation_entity["homepage_uri"] = organization_uri
+    return published
 
 
 def is_leaf(statement_metadata):
@@ -226,7 +248,7 @@ class FederationEntityConfiguration(TimeStampedModel):
             "iss": self.sub,
             "sub": self.sub,
             "jwks": {"keys": self.public_jwks},
-            "metadata": self.metadata,
+            "metadata": _with_organization_uri(self.metadata),
         }
 
         if self.trust_mark_issuers:

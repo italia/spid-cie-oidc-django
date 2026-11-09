@@ -151,6 +151,7 @@
         "federation_resolve_endpoint": "http://127.0.0.1:8002/oidc/op/resolve",
         "organization_name": "CIE OIDC identity provider",
         "homepage_uri": "http://127.0.0.1:8002",
+        "organization_uri": "http://127.0.0.1:8002",
         "policy_uri": "http://127.0.0.1:8002/oidc/op/en/website/legal-information",
         "logo_uri": "http://127.0.0.1:8002/static/svg/logo-cie.svg",
         "contacts": [
@@ -336,6 +337,7 @@
           "federation_resolve_endpoint": "http://127.0.0.1:8000/resolve",
           "federation_trust_mark_status_endpoint": "http://127.0.0.1:8000/trust_mark_status",
           "homepage_uri": "http://127.0.0.1:8000",
+          "organization_uri": "http://127.0.0.1:8000",
           "organization_name": "example TA",
           "policy_uri": "http://127.0.0.1:8000/en/website/legal-information",
           "logo_uri": "http://127.0.0.1:8000/static/svg/spid-logo-c-lb.svg",

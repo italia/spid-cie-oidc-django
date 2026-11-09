@@ -1,7 +1,7 @@
 from spid_cie_oidc.entity.utils import iat_now
 
 from pydantic import BaseModel, AnyHttpUrl, validator
-from typing import Optional, List
+from typing import List
 
 
 class ClientAssertion(BaseModel):
@@ -9,8 +9,14 @@ class ClientAssertion(BaseModel):
     sub: AnyHttpUrl
     iat: int
     exp: int
-    jti: Optional[str]
+    jti: str
     aud: str | List[AnyHttpUrl]
+
+    @validator("jti")
+    def jti_must_be_present(cls, jti):
+        if not str(jti).strip():
+            raise ValueError("Client Assertion: jti is required")
+        return jti
 
     @validator("sub")
     def iss_and_sub_must_match(cls, sub, values):

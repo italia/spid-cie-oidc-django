@@ -47,10 +47,62 @@ class TrustChainTest(TestCase):
         url = reverse("oidcfed_fetch")
         c = Client()
         res = c.get(url, data={"sub": self.rp.sub})
+        self.assertEqual(res.status_code, 200)
         data = verify_jws(res.content.decode(), self.ta_conf.jwks_fed[0])
         
         self.assertEqual(data['source_endpoint'], 'http://testserver//fetch')
         self.assertTrue(data["jwks"])
+        self.assertEqual(data["constraints"], FA_CONSTRAINTS)
+
+    def test_fetch_without_sub_is_invalid_request(self):
+        url = reverse("oidcfed_fetch")
+        c = Client()
+        res = c.get(url)
+        self.assertEqual(res.status_code, 400)
+        body = res.json()
+        self.assertEqual(body["error"], "invalid_request")
+        self.assertEqual(body["error_description"], "sub REQUIRED")
+        self.assertTrue(res["Content-Type"].startswith("application/json"))
+
+    def test_fetch_without_sub_format_json_is_invalid_request(self):
+        url = reverse("oidcfed_fetch")
+        c = Client()
+        res = c.get(url, data={"format": "json"})
+        self.assertEqual(res.status_code, 400)
+        body = res.json()
+        self.assertEqual(body["error"], "invalid_request")
+        self.assertNotIn("metadata", body)
+
+    def test_fetch_sub_equal_to_issuer_is_invalid_request(self):
+        url = reverse("oidcfed_fetch")
+        c = Client()
+        issuer = self.ta_conf.sub
+        bare = issuer[:-1] if issuer.endswith("/") else issuer
+        with_slash = issuer if issuer.endswith("/") else f"{issuer}/"
+        for sub in (bare, with_slash):
+            res = c.get(url, data={"sub": sub})
+            self.assertEqual(res.status_code, 400, sub)
+            body = res.json()
+            self.assertEqual(body["error"], "invalid_request")
+            self.assertEqual(body["error_description"], "sub is the issuer")
+
+    def test_fetch_statement_uses_descendant_constraints(self):
+        own = {
+            "max_path_length": 4,
+            "naming_constraints": {"permitted": ["https://.example.it"]},
+        }
+        self.rp.constraints = own
+        self.rp.save()
+
+        url = reverse("oidcfed_fetch")
+        c = Client()
+        res = c.get(url, data={"sub": self.rp.sub})
+        data = verify_jws(res.content.decode(), self.ta_conf.jwks_fed[0])
+        self.assertEqual(data["constraints"], own)
+        self.assertEqual(
+            self.ta_conf.entity_configuration_as_dict["constraints"],
+            FA_CONSTRAINTS,
+        )
 
     def test_list_endpoint(self):
         url = reverse("oidcfed_list")

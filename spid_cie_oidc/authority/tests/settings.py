@@ -59,6 +59,7 @@ intermediary_conf = {
             "contacts": ["ops@localhost"],
             "federation_fetch_endpoint": "http://intermediary-test/fetch",
             "homepage_uri": "http://intermediary-test",
+            "organization_uri": "http://intermediary-test",
             "name": "example Intermediate",
         }
     },

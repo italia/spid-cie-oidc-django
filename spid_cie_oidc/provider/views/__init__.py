@@ -2,6 +2,7 @@ import logging
 import uuid
 from cryptojwt.jws.utils import left_hash
 from django.conf import settings
+from django.db import IntegrityError, transaction
 from pydantic import ValidationError
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -17,12 +18,13 @@ from spid_cie_oidc.entity.utils import get_jwks
 from spid_cie_oidc.entity.exceptions import TrustchainMissingMetadata
 from spid_cie_oidc.provider.exceptions import (
     AuthzRequestReplay,
+    ClientAssertionReplay,
     ExpiredAuthCode,
     InvalidSession,
     RevokedSession,
     ValidationException
 )
-from spid_cie_oidc.provider.models import OidcSession
+from spid_cie_oidc.provider.models import ClientAssertionJti, OidcSession
 from spid_cie_oidc.provider.schemas.client_assertion import ClientAssertion
 
 from spid_cie_oidc.provider.settings import (
@@ -257,7 +259,30 @@ class OpBase:
         tc = TrustChain.objects.get(sub=client_id, is_active=True)
         jwk = self.find_jwk(head, tc.metadata['openid_relying_party']['jwks']['keys'])
         verify_jws(client_assertion, jwk)
+        self.remember_client_assertion_jti(client_id, payload["jti"], payload["exp"])
         return True
+
+    def remember_client_assertion_jti(self, client_id: str, jti: str, exp: int):
+        """
+        Reject a private_key_jwt whose jti was already accepted and is still
+        inside its validity window.
+        """
+        now = timezone.localtime()
+        ClientAssertionJti.objects.filter(expires__lte=now).delete()
+        try:
+            with transaction.atomic():
+                ClientAssertionJti.objects.create(
+                    jti=jti,
+                    client_id=client_id,
+                    expires=datetime_from_timestamp(exp),
+                )
+        except IntegrityError:
+            logger.warning(
+                f"Client assertion replayed: jti {jti} for {client_id}"
+            )
+            raise ClientAssertionReplay(
+                f"Client Assertion: jti {jti} replayed"
+            )
 
     def validate_json_schema(self, payload, schema_type, error_description):
         try:
@@ -474,18 +499,24 @@ class OpBase:
         return released
 
     def get_client_organization_name(self, tc):
-        rp_metadata = (
-                tc.metadata.get(
-                    "federation_entity", {}
-                ) or
-                tc.metadata.get(
-                    "openid_relying_party", {}
-                )
+        """
+        Name shown on login and consent.
+
+        Order: federation_entity.organization_name, then the relying party's
+        organization_name, client_name, and client_id. The request client_id
+        is the last resort.
+        """
+        metadata = {}
+        if tc is not None:
+            metadata = getattr(tc, "metadata", None) or {}
+        federation_entity = metadata.get("federation_entity") or {}
+        relying_party = metadata.get("openid_relying_party") or {}
+        payload = getattr(self, "payload", None) or {}
+        return (
+            federation_entity.get("organization_name")
+            or relying_party.get("organization_name")
+            or relying_party.get("client_name")
+            or relying_party.get("client_id")
+            or payload.get("client_id")
+            or ""
         )
-        if rp_metadata:
-            name = (
-                    rp_metadata.get("organization_name", "") or
-                    rp_metadata.get("client_name", "") or
-                    rp_metadata.get("client_id", "")
-            )
-        return name

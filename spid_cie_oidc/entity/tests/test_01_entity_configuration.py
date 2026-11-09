@@ -1,3 +1,5 @@
+import copy
+
 from django.contrib.auth import get_user_model
 from django.test import RequestFactory, TestCase, Client
 from django.urls import reverse
@@ -53,6 +55,12 @@ class EntityConfigurationTest(TestCase):
         md = self.ta_conf.entity_configuration_as_dict["metadata"]["federation_entity"]
         for i in ("federation_fetch_endpoint",):
             self.assertTrue(md.get(i))
+        self.assertEqual(md["homepage_uri"], f"{TA_SUB}")
+        self.assertEqual(md["organization_uri"], f"{TA_SUB}")
+        self.assertEqual(
+            self.ta_conf.entity_configuration_as_dict["constraints"],
+            FA_CONSTRAINTS,
+        )
 
         # dulcis in fundo -> test the .well-knwon/openid-federation
         wk_url = reverse("entity_configuration")
@@ -98,3 +106,38 @@ class EntityConfigurationTest(TestCase):
 
         res = entity_configuration(req)
         self.assertEqual(res.status_code, 200)
+
+    def test_organization_uri_filled_from_homepage_uri(self):
+        metadata = copy.deepcopy(self.ta_conf.metadata)
+        metadata["federation_entity"].pop("organization_uri")
+        self.ta_conf.metadata = metadata
+        self.ta_conf.save()
+
+        published = self.ta_conf.entity_configuration_as_dict["metadata"]["federation_entity"]
+        self.assertEqual(published["homepage_uri"], f"{TA_SUB}")
+        self.assertEqual(published["organization_uri"], f"{TA_SUB}")
+        self.assertNotIn("organization_uri", self.ta_conf.metadata["federation_entity"])
+        self.assertEqual(
+            self.ta_conf.entity_configuration_as_dict["constraints"],
+            FA_CONSTRAINTS,
+        )
+
+    def test_explicit_homepage_and_organization_uri_are_kept(self):
+        metadata = copy.deepcopy(self.ta_conf.metadata)
+        metadata["federation_entity"]["homepage_uri"] = "https://homepage.example/"
+        metadata["federation_entity"]["organization_uri"] = "https://org.example/"
+        self.ta_conf.metadata = metadata
+
+        published = self.ta_conf.entity_configuration_as_dict["metadata"]["federation_entity"]
+        self.assertEqual(published["homepage_uri"], "https://homepage.example/")
+        self.assertEqual(published["organization_uri"], "https://org.example/")
+
+    def test_homepage_uri_filled_from_organization_uri(self):
+        metadata = copy.deepcopy(self.ta_conf.metadata)
+        metadata["federation_entity"].pop("homepage_uri")
+        metadata["federation_entity"]["organization_uri"] = "https://org.example/"
+        self.ta_conf.metadata = metadata
+
+        published = self.ta_conf.entity_configuration_as_dict["metadata"]["federation_entity"]
+        self.assertEqual(published["homepage_uri"], "https://org.example/")
+        self.assertEqual(published["organization_uri"], "https://org.example/")

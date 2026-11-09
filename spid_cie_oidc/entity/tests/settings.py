@@ -5,6 +5,7 @@ FA_METADATA = {
         "federation_fetch_endpoint": f"{TA_SUB}/fetch",
         "federation_list_endpoint": f"{TA_SUB}/list/",
         "homepage_uri": f"{TA_SUB}",
+        "organization_uri": f"{TA_SUB}",
         "name": "example TA",
     }
 }

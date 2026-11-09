@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import IssuedToken, OidcSession
+from .models import ClientAssertionJti, IssuedToken, OidcSession
 
 
 @admin.register(OidcSession)
@@ -34,3 +34,11 @@ class IssuedTokenAdmin(admin.ModelAdmin):
         "created",
         "session",
     )
+
+
+@admin.register(ClientAssertionJti)
+class ClientAssertionJtiAdmin(admin.ModelAdmin):
+    list_display = ("jti", "client_id", "expires", "created")
+    list_filter = ("created", "expires")
+    search_fields = ("jti", "client_id")
+    readonly_fields = ("jti", "client_id", "expires", "created", "modified")
