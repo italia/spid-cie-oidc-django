@@ -29,3 +29,22 @@ Examples of requests to this endpoint are:
 ### API
 
 See [The Entity API documentation](../FEDERATION_ENTITY_API.md).
+
+### Settings
+
+`is_fetchable_federation_url` decides whether a federation URL may be fetched from an authorization request whose signature is not verified yet.
+
+- `OIDCFED_FETCH_PRIVATE_NETS`, default `False`. Read from the project settings. When it is omitted, the default applies.
+
+When it is `False`, a URL is fetchable only if every resolved address is a public IP.
+
+When it is `True`, a URL is also fetchable when every resolved address belongs to `10.0.0.0/8`, `172.16.0.0/12` or `192.168.0.0/16`.
+
+Loopback and link-local addresses stay refused. This includes `127.0.0.1`, `::1` and `169.254.169.254`.
+
+The setting does not start trust chain discovery. Discovery runs when the subject is already stored as a `TrustChain` for a configured trust anchor.
+
+Example
+````
+OIDCFED_FETCH_PRIVATE_NETS = False
+````

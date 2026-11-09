@@ -1,6 +1,6 @@
 from unittest.mock import patch
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 from spid_cie_oidc.entity.network_utils import (
     is_fetchable_federation_url,
@@ -39,6 +39,7 @@ class SSRFNetworkUtilsTest(TestCase):
         self.assertTrue(is_fetchable_federation_url("https://8.8.8.8/.well-known/openid-federation"))
         self.assertFalse(is_fetchable_federation_url("http://127.0.0.1/.well-known/openid-federation"))
         self.assertFalse(is_fetchable_federation_url("http://169.254.169.254/latest/meta-data/"))
+        self.assertFalse(is_fetchable_federation_url("http://172.21.0.9/.well-known/openid-federation"))
         self.assertFalse(is_fetchable_federation_url("http://[::1]/x"))
 
     def test_fetchable_url_hostname_resolution(self):
@@ -63,3 +64,21 @@ class SSRFNetworkUtilsTest(TestCase):
 
         with patch("socket.getaddrinfo", side_effect=socket.gaierror):
             self.assertFalse(is_fetchable_federation_url("https://nxdomain.invalid/"))
+
+    @override_settings(OIDCFED_FETCH_PRIVATE_NETS=True)
+    def test_fetchable_url_allows_configured_private_nets(self):
+        self.assertTrue(
+            is_fetchable_federation_url("http://172.21.0.9/.well-known/openid-federation")
+        )
+        self.assertFalse(
+            is_fetchable_federation_url("http://127.0.0.1/.well-known/openid-federation")
+        )
+        self.assertFalse(
+            is_fetchable_federation_url("http://169.254.169.254/latest/meta-data/")
+        )
+        with patch("socket.getaddrinfo", return_value=[(2, 1, 6, "", ("172.21.0.9", 443))]):
+            self.assertTrue(
+                is_fetchable_federation_url(
+                    "https://iam-proxy-italia.example.org/CieOidcRp"
+                )
+            )

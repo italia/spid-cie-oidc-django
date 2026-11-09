@@ -14,6 +14,46 @@ import ipaddress
 import socket
 from urllib.parse import urlparse
 
+_PRIVATE_NETWORKS = (
+    ipaddress.ip_network("10.0.0.0/8"),
+    ipaddress.ip_network("172.16.0.0/12"),
+    ipaddress.ip_network("192.168.0.0/16"),
+)
+
+
+def _address(ip: str):
+    try:
+        addr = ipaddress.ip_address(ip)
+    except ValueError:
+        return None
+    if isinstance(addr, ipaddress.IPv6Address) and addr.ipv4_mapped is not None:
+        return addr.ipv4_mapped
+    return addr
+
+
+def _private_nets_allowed() -> bool:
+    """Return True when RFC1918 federation subjects may be fetched."""
+    try:
+        from django.conf import settings
+        from django.core.exceptions import ImproperlyConfigured
+    except ImportError:
+        return False
+    try:
+        return bool(getattr(settings, "OIDCFED_FETCH_PRIVATE_NETS", False))
+    except ImproperlyConfigured:
+        return False
+
+
+def _is_fetchable_address(ip: str) -> bool:
+    addr = _address(ip)
+    if addr is None:
+        return False
+    if addr.is_global:
+        return True
+    if not _private_nets_allowed():
+        return False
+    return any(addr in network for network in _PRIVATE_NETWORKS)
+
 
 def is_public_ip(ip: str) -> bool:
     """Return True only for a globally routable IP address."""
@@ -35,8 +75,10 @@ def is_fetchable_federation_url(url: str) -> bool:
     """
     Return True only if ``url`` is an http(s) URL whose host is safe to fetch:
     a public IP literal, or a hostname that resolves exclusively to public
-    addresses. Resolving here (and rejecting on any non-public answer) also
-    blocks DNS-rebinding style bypasses.
+    addresses. ``OIDCFED_FETCH_PRIVATE_NETS`` also accepts 10.0.0.0/8,
+    172.16.0.0/12 and 192.168.0.0/16. Loopback and link-local stay refused.
+    Resolving here (and rejecting any other non-public answer) also blocks
+    DNS-rebinding style bypasses.
     """
     try:
         parsed = urlparse(url)
@@ -53,11 +95,11 @@ def is_fetchable_federation_url(url: str) -> bool:
     # Host given as an IP literal: classify it directly.
     try:
         ipaddress.ip_address(host)
-        return is_public_ip(host)
+        return _is_fetchable_address(host)
     except ValueError:
         pass
 
-    # Host given as a name: every resolved address must be public.
+    # Host given as a name: every resolved address must be fetchable.
     try:
         infos = socket.getaddrinfo(host, parsed.port or 0, proto=socket.IPPROTO_TCP)
     except socket.gaierror:
@@ -67,4 +109,4 @@ def is_fetchable_federation_url(url: str) -> bool:
     if not resolved:
         return False
 
-    return all(is_public_ip(ip) for ip in resolved)
+    return all(_is_fetchable_address(ip) for ip in resolved)
