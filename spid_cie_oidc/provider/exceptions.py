@@ -2,6 +2,10 @@ class AuthzRequestReplay(Exception):
     pass
 
 
+class ClientAssertionReplay(Exception):
+    pass
+
+
 class InvalidSession(Exception):
     pass
 
