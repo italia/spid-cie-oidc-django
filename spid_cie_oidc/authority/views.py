@@ -25,6 +25,7 @@ from spid_cie_oidc.entity.jwtse import (
 from spid_cie_oidc.entity.models import get_first_self_trust_anchor
 from spid_cie_oidc.entity.statements import get_trust_mark_type_id
 from spid_cie_oidc.entity.utils import iat_now
+from spid_cie_oidc.entity.views import _sub_variants_from_well_known_prefix
 
 from . schemas.fetch_endpoint_request import FetchRequest, FedAPIErrorResponse, FetchResponse
 from . schemas.list_endpoint import ListRequest, ListResponse
@@ -55,18 +56,29 @@ def fetch(request):
     Request: GET with sub REQUIRED (issuer implied by this endpoint's URL).
     """
     iss = get_first_self_trust_anchor()
+    requested_sub = request.GET.get("sub")
 
-    if not request.GET.get("sub"):
-        conf = get_first_self_trust_anchor()
-        if request.GET.get("format") == "json":
-            return JsonResponse(conf.entity_configuration_as_dict, safe=False)
-        return HttpResponse(
-            conf.entity_configuration_as_jws,
-            content_type="application/entity-statement+jwt"
+    if not requested_sub:
+        return JsonResponse(
+            {
+                "error": "invalid_request",
+                "error_description": "sub REQUIRED",
+            },
+            status=400,
+        )
+
+    # Section 8.1.2: sub naming this issuer is not a subordinate statement.
+    if iss and iss.sub in _sub_variants_from_well_known_prefix(requested_sub):
+        return JsonResponse(
+            {
+                "error": "invalid_request",
+                "error_description": "sub is the issuer",
+            },
+            status=400,
         )
 
     sub = FederationDescendant.objects.filter(
-        sub=request.GET["sub"], is_active=True
+        sub=requested_sub, is_active=True
     ).first()
     if not sub:
         return JsonResponse(

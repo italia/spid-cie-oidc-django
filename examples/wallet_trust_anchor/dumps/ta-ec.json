@@ -34,6 +34,7 @@
           "federation_resolve_endpoint": "http://127.0.0.1:8000/resolve",
           "federation_trust_mark_status_endpoint": "http://127.0.0.1:8000/trust_mark_status",
           "homepage_uri": "http://127.0.0.1:8000",
+          "organization_uri": "http://127.0.0.1:8000",
           "organization_name": "Trust Anchor - Wallet interop lab",
           "policy_uri": "http://127.0.0.1:8000/en/website/legal-information",
           "logo_uri": "http://127.0.0.1:8000/static/svg/spid-logo-c-lb.svg",
