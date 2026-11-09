@@ -142,7 +142,7 @@ and correspond to `spid_cie_oidc.provider.views.AuthzRequestView`.
 
 The Authorization Endpoint support the use of the HTTP GET and POST methods.
 
-An on-the-fly trust chain refresh calls `is_fetchable_federation_url`. Private network fetches follow [`OIDCFED_FETCH_PRIVATE_NETS`](ENTITY.md#settings).
+An unknown or expired RP starts trust chain discovery when `is_fetchable_federation_url` is true. Private network fetches follow [`OIDCFED_FETCH_PRIVATE_NETS`](ENTITY.md#settings). See [Unknown RP discovery](../UNKNOWN_RP_DISCOVERY.md).
 
 An exemple of accepted request is [here](https://github.com/italia/spid-cie-oidc-django/blob/dev/spid_cie_oidc/onboarding/tests/authn_request_settings.py#L30)
 

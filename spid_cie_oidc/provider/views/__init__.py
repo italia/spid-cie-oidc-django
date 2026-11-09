@@ -90,23 +90,16 @@ class OpBase:
             raise Exception(_msg)
 
         elif not rp_trust_chain or rp_trust_chain.is_expired:
-            # A trust chain may be (re)built on the fly ONLY for a subject we
-            # already know inside our federation. `self.payload["iss"]` here
-            # comes from a request object whose signature has NOT been verified
-            # yet (its verifying key is only obtained through the trust chain
-            # below), so rebuilding a chain for an arbitrary iss would let any
-            # unauthenticated caller coerce this server into issuing outbound
-            # requests to a URL of their choosing - SSRF / request laundering.
-            # New relying parties are onboarded and fetched out of band, not
-            # discovered from an incoming authorization request.
-            known_subject = TrustChain.objects.filter(
-                sub=self.payload["iss"],
-                trust_anchor__sub__in=settings.OIDCFED_TRUST_ANCHORS,
-            ).exists()
-            if not known_subject or not is_fetchable_federation_url(self.payload["iss"]):
+            # An unknown RP is discovered here. Admission is the trust chain
+            # to a configured trust anchor, not a TrustChain row that already
+            # exists. See docs/UNKNOWN_RP_DISCOVERY.md.
+            # Unsafe URLs are refused before any fetch. Loopback, link-local
+            # and, unless OIDCFED_FETCH_PRIVATE_NETS is set, private addresses
+            # stay closed.
+            if not is_fetchable_federation_url(self.payload["iss"]):
                 _msg = (
-                    "Refusing on-the-fly trust chain discovery for unknown or "
-                    f"unsafe subject {self.payload['iss']}. "
+                    "Refusing trust chain discovery for unsafe subject "
+                    f"{self.payload['iss']}. "
                     "error=unauthorized_client, "
                     f"state={state}"
                 )

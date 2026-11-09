@@ -42,7 +42,7 @@ When it is `True`, a URL is also fetchable when every resolved address belongs t
 
 Loopback and link-local addresses stay refused. This includes `127.0.0.1`, `::1` and `169.254.169.254`.
 
-The setting does not start trust chain discovery. Discovery runs when the subject is already stored as a `TrustChain` for a configured trust anchor.
+An unknown RP is discovered during the authorization request when this check is true. A stored `TrustChain` is not required. The trust chain to a configured trust anchor is what admits the RP. See [Unknown RP discovery](../UNKNOWN_RP_DISCOVERY.md).
 
 Example
 ````

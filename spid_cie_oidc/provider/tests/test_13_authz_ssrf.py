@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase, override_settings
@@ -19,9 +19,8 @@ ATTACKER_SUB = "https://attacker.example/oidc/rp/"
 
 class AuthzRequestSSRFTest(TestCase):
     """
-    An unauthenticated authorization request must not be able to make the OP
-    fetch an arbitrary URL: on-the-fly trust chain discovery is only allowed for
-    subjects already known inside the federation (CWE-918).
+    An unknown RP is discovered. An URL that is not fetchable is refused
+    before any outbound call.
     """
 
     def setUp(self):
@@ -53,19 +52,41 @@ class AuthzRequestSSRFTest(TestCase):
         }
 
     @override_settings(OIDCFED_TRUST_ANCHORS=[TA_SUB])
-    def test_unknown_subject_does_not_trigger_outbound_fetch(self):
+    @patch(
+        "spid_cie_oidc.provider.views.is_fetchable_federation_url",
+        return_value=True,
+    )
+    def test_unknown_subject_starts_discovery(self, _fetchable):
         jws = create_jws(self.payload, RP_METADATA_JWK1)
         client = Client()
         url = reverse("oidc_provider_authnrequest")
 
         with patch(
             "spid_cie_oidc.provider.views.get_or_create_trust_chain",
-            new=MagicMock(name="get_or_create_trust_chain"),
+            return_value=None,
         ) as mocked_discovery:
             res = client.get(url, {"request": jws})
 
-        # The server refused the request instead of building a trust chain, and
-        # crucially it did NOT perform any outbound discovery fetch.
+        mocked_discovery.assert_called()
+        self.assertEqual(res.status_code, 302)
+        self.assertIn("error", res.url)
+
+    @override_settings(OIDCFED_TRUST_ANCHORS=[TA_SUB])
+    @patch(
+        "spid_cie_oidc.provider.views.is_fetchable_federation_url",
+        return_value=False,
+    )
+    def test_unsafe_subject_does_not_trigger_outbound_fetch(self, _fetchable):
+        jws = create_jws(self.payload, RP_METADATA_JWK1)
+        client = Client()
+        url = reverse("oidc_provider_authnrequest")
+
+        with patch(
+            "spid_cie_oidc.provider.views.get_or_create_trust_chain",
+            return_value=None,
+        ) as mocked_discovery:
+            res = client.get(url, {"request": jws})
+
         mocked_discovery.assert_not_called()
         self.assertEqual(res.status_code, 302)
         self.assertIn("error", res.url)
