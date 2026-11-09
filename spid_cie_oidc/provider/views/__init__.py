@@ -421,18 +421,24 @@ class OpBase:
         )
 
     def get_client_organization_name(self, tc):
-        rp_metadata = (
-                tc.metadata.get(
-                    "federation_entity", {}
-                ) or
-                tc.metadata.get(
-                    "openid_relying_party", {}
-                )
+        """
+        Name shown on login and consent.
+
+        Order: federation_entity.organization_name, then the relying party's
+        organization_name, client_name, and client_id. The request client_id
+        is the last resort.
+        """
+        metadata = {}
+        if tc is not None:
+            metadata = getattr(tc, "metadata", None) or {}
+        federation_entity = metadata.get("federation_entity") or {}
+        relying_party = metadata.get("openid_relying_party") or {}
+        payload = getattr(self, "payload", None) or {}
+        return (
+            federation_entity.get("organization_name")
+            or relying_party.get("organization_name")
+            or relying_party.get("client_name")
+            or relying_party.get("client_id")
+            or payload.get("client_id")
+            or ""
         )
-        if rp_metadata:
-            name = (
-                    rp_metadata.get("organization_name", "") or
-                    rp_metadata.get("client_name", "") or
-                    rp_metadata.get("client_id", "")
-            )
-        return name
