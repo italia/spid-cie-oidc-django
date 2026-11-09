@@ -1,3 +1,4 @@
+import copy
 import logging
 
 from django.test import TestCase
@@ -6,6 +7,7 @@ from spid_cie_oidc.provider.schemas.authn_requests import (
     AuthenticationRequestCie,
     AuthenticationRequestSpid,
 )
+from spid_cie_oidc.provider.views.authz_request_view import AuthzRequestView
 
 from .authn_request_settings import (
     AUTHN_REQUEST_CIE,
@@ -125,6 +127,18 @@ class AuthRequestTest(TestCase):
     def test_validate_spid_no_correct_ui_locales(self):
         with self.assertRaises(ValidationError):
             AuthenticationRequestSpid(**AUTHN_REQUEST_SPID_NO_CORRECT_UI_LOCALES)
+
+    def test_validate_authz_splits_ui_locales_string(self):
+        view = AuthzRequestView()
+        several = copy.deepcopy(AUTHN_REQUEST_SPID)
+        several["ui_locales"] = "it en"
+        view.validate_authz(several)
+        self.assertEqual(several["ui_locales"], ["it", "en"])
+
+        one = copy.deepcopy(AUTHN_REQUEST_SPID)
+        one["ui_locales"] = "it"
+        view.validate_authz(one)
+        self.assertEqual(one["ui_locales"], ["it"])
 
     def test_validate_cie(self):
         AuthenticationRequestCie(**AUTHN_REQUEST_CIE)
