@@ -169,6 +169,23 @@ OIDCFED_PROVIDER_PROFILES_ACR_4_REFRESH = getattr(
     )
 )
 
+# Attributes granted by OAuth scope when the request has no claims parameter.
+# Overloadable from the project settings.
+OIDC_SCOPES_CLAIMS_MAP = getattr(
+    settings,
+    "OIDC_SCOPES_CLAIMS_MAP",
+    {
+        "profile": [
+            "username",
+            "given_name",
+            "family_name",
+            "birthdate",
+            "https://attributes.eid.gov.it/fiscal_number",
+        ],
+        "email": ["email", "email_verified"],
+    },
+)
+
 
 # SPID and CIE attribute labels (CIE entries override SPID for shared keys)
 _OIDCFED_ATTRNAME_I18N_SPID = {
